@@ -105,9 +105,41 @@ dialog{padding:42px 26px}
  .header-actions{gap:14px}
 }
 
+
+/* Persistent book-index tab */
+.book-index-button{
+ position:fixed;right:22px;top:50%;z-index:120;
+ transform:translateY(-50%);
+ writing-mode:vertical-rl;
+ padding:18px 11px;
+ background:#e9ddbf;
+ color:#2b251c;
+ border:1px solid #8c795c;
+ box-shadow:0 8px 24px #0004;
+ font-family:'Song Myung','Gowun Batang',Batang,serif;
+ font-size:14px;
+ letter-spacing:.18em;
+ line-height:1;
+ transition:transform .2s ease,background .2s ease;
+}
+.book-index-button:before{
+ content:'';
+ position:absolute;
+ inset:5px;
+ border:1px solid #3d342842;
+ pointer-events:none;
+}
+.book-index-button:hover{
+ background:#f2e8cf;
+ transform:translateY(-50%) translateX(-3px);
+}
+@media(max-width:700px){
+ .book-index-button{right:10px;padding:14px 9px;font-size:12px}
+}
 </style>
 </head>
 <body>
+<a class="book-index-button" href="chapters.html" aria-label="서책형 목차 페이지 열기">서책 목차</a>
 
 <section class="prologue" id="intro" aria-label="석사자 인트로">
   <div class="intro-video-slot" id="introVideoSlot" data-future-video="stone-lion-render" aria-hidden="true"></div>
