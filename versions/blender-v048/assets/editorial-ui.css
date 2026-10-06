@@ -1,0 +1,36 @@
+/* Presentation only: scene geometry, shot sequence and timing are unchanged. */
+#experienceChoice{background:#eeece5!important;color:#253d33!important;padding:0!important;overflow:auto!important}
+#experienceChoice .experience-card{width:min(1120px,calc(100% - 96px))!important;max-width:none!important;padding:0!important;border:0!important;background:transparent!important;text-align:left!important;margin:auto!important;box-shadow:none!important}
+.landing-masthead{display:flex;justify-content:space-between;padding:28px 0;border-bottom:1px solid #66796740;font-size:12px;letter-spacing:.12em;color:#506353}
+.landing-body{display:grid;grid-template-columns:1.45fr 1fr;align-items:center;gap:48px;padding:68px 0 64px}
+#experienceChoice .experience-eyebrow{font-size:12px!important;letter-spacing:.13em!important;color:#6b796a!important;margin:0 0 22px!important}
+#experienceHeading{font-size:clamp(42px,5.6vw,76px)!important;line-height:1.25!important;letter-spacing:-.045em!important;color:#253d33!important;margin:0!important}
+.landing-description{font-size:16px;line-height:1.95;color:#617065;margin:25px 0 32px;word-break:keep-all}
+#experienceChoice .experience-options{display:flex!important;gap:12px!important;margin:0!important}
+#experienceChoice .experience-options button{display:flex!important;justify-content:space-between;align-items:center;gap:28px;width:210px!important;min-height:56px!important;padding:16px 20px!important;border:1px solid #6f827060!important;border-radius:2px!important;background:transparent!important;color:#324c3c!important;font-size:14px!important;transition:background .2s,color .2s,transform .2s}
+#experienceChoice .experience-options button:first-child{background:#2d4438!important;color:#f1eee4!important;border-color:#2d4438!important}
+#experienceChoice .experience-options button:hover{transform:translateY(-2px);box-shadow:0 7px 16px #23382a16}
+.landing-hint{font-size:11px;color:#7b8378;margin-top:14px}
+.landing-art{height:350px;border-left:1px solid #78867530;display:flex;align-items:center;justify-content:center;gap:30px;background:radial-gradient(ellipse at center,#8c9c8314,transparent 65%)}
+.landing-hanja{font-size:74px;line-height:1.15;color:#6a7d654d;letter-spacing:.08em}.landing-art-caption{font-size:13px;line-height:2.3;writing-mode:vertical-rl;letter-spacing:.22em;color:#687b66}
+.landing-footer{display:flex;justify-content:space-between;gap:24px;border-top:1px solid #66796740;padding:23px 0;font-size:10px;line-height:1.8;color:#73806f}
+body .intro-controls{border:1px solid #ecebe630!important;background:#17291fd9!important;box-shadow:0 4px 20px #00000012;border-radius:4px!important;padding:13px 18px!important;backdrop-filter:blur(14px)}
+body .intro-controls .intro-control{color:#e8ebde!important;opacity:.85}
+body #cinemaControls{align-items:center;gap:12px;padding:8px 10px;background:#182a21e8;border:1px solid #c8d2be38;border-radius:4px;backdrop-filter:blur(12px)}
+body #cinemaControls button{border:0!important;background:transparent!important;border-radius:0!important;padding:9px 12px!important;font-size:12px!important;color:#ecebe6!important}
+#cinemaSeek{accent-color:#b6c5a6;width:150px;height:3px;cursor:pointer}
+body #cinemaDialogue,body .episode-panel{width:350px!important;height:310px!important;max-width:none!important;box-sizing:border-box!important;border:1px solid #6b7d6433!important;border-top:2px solid #778b6d!important;background:#f0eee7f5!important;border-radius:2px!important;padding:24px 26px!important;box-shadow:0 12px 36px #14251b18!important;overflow:auto!important;color:#304538!important}
+body #cinemaDialogue{left:28px;bottom:48px}
+body #cinemaDialogue small,body .episode-panel small{font-size:10px!important;letter-spacing:.14em!important;color:#73816c!important}
+body #cinemaDialogue h2,body .episode-panel h2{font-size:21px!important;line-height:1.5!important;margin:10px 0 5px!important;color:#304538!important;letter-spacing:-.025em!important}
+.dialogue-role{font-size:11px;color:#71816d;margin-bottom:17px}
+body #cinemaDialogue p,body .episode-panel p{font-size:14px!important;line-height:1.95!important;color:#405443!important;margin:14px 0!important;word-break:keep-all}
+.dialogue-folio{display:flex;gap:12px;border-top:1px solid #7c8b7129;margin-top:18px;padding-top:12px;font-size:9px;color:#7c8775}.dialogue-folio span{flex:1;text-align:right}
+@media(max-width:700px){#experienceChoice .experience-card{width:calc(100% - 40px)!important}.landing-masthead{font-size:10px;padding:20px 0}.landing-body{grid-template-columns:1fr;padding:40px 0;gap:0}.landing-art{display:none}.landing-description{font-size:14px}.landing-footer{flex-direction:column;gap:8px}.experience-options{flex-wrap:wrap}#experienceChoice .experience-options button{width:100%!important}.landing-copy{width:100%}body #cinemaControls{right:12px;bottom:12px}#cinemaSeek{width:90px}body #cinemaDialogue,body .episode-panel{left:16px!important;bottom:78px!important;width:350px!important;max-width:calc(100vw - 32px)!important;height:310px!important}}
+@media(prefers-reduced-motion:reduce){#experienceChoice button{transition:none!important}}
+#experienceChoice{display:flex!important;align-items:center!important;min-height:100dvh}
+#experienceChoice .landing-masthead,#experienceChoice .landing-footer{position:static!important;inset:auto!important;transform:none!important;width:auto!important}
+#experienceChoice .experience-options button{flex-direction:row!important;height:56px!important;min-width:0!important}
+#experienceChoice .experience-options button span{font-size:14px!important;line-height:1.4!important;display:inline!important;margin:0!important}
+@media(min-width:701px) and (max-height:750px){.landing-body{padding:34px 0}.landing-art{height:290px}#experienceHeading{font-size:54px!important}.landing-description{margin:18px 0 24px}.landing-masthead{padding:20px 0}.landing-footer{padding:16px 0}}
+#experienceChoice[hidden]{display:none!important}

@@ -139,11 +139,20 @@ dialog{padding:42px 26px}
 </style>
 <link rel="stylesheet" href="assets/lion-viewer.css?v=weather-5">
 <script type="importmap">{"imports":{"three":"./assets/vendor/three.module.js"}}</script>
-<link rel="stylesheet" href="assets/mobile-mode.css?v=story-flow-55"><link rel="stylesheet" href="assets/refined-ui.css?v=story-flow-55"></head>
+<link rel="stylesheet" href="assets/mobile-mode.css?v=story-flow-56"><link rel="stylesheet" href="assets/refined-ui.css?v=story-flow-56"><link rel="stylesheet" href="assets/editorial-ui.css?v=ui-56"></head>
 <body>
 <div id="experienceChoice" role="dialog" aria-modal="true" aria-labelledby="experienceHeading">
-  <div class="experience-card"><p class="experience-eyebrow">석사자와 공주목 이야기</p><h2 id="experienceHeading">화면 선택</h2>
-  <div class="experience-options"><button data-experience="desktop"><span>데스크톱</span></button><button data-experience="mobile"><span>모바일</span></button></div></div>
+  <div class="experience-card">
+    <header class="landing-masthead"><span>공주 봉황동 석사자</span><span>디지털 헤리티지 · 공주목</span></header>
+    <div class="landing-body"><div class="landing-copy">
+      <p class="experience-eyebrow">돌에 새겨진 시간, 사람으로 잇는 이야기</p>
+      <h2 id="experienceHeading">석사자와<br>공주목 이야기</h2>
+      <p class="landing-description">두 석사자의 무늬를 따라<br>옛 공주의 공간과 그곳을 오가던 사람들을 만납니다.</p>
+      <div class="experience-options"><button data-experience="desktop"><span>데스크톱으로 시작</span><span aria-hidden="true">↗</span></button><button data-experience="mobile"><span>모바일로 시작</span><span aria-hidden="true">↗</span></button></div>
+      <p class="landing-hint">화면에 맞는 감상 방식을 선택해 주세요.</p>
+    </div><div class="landing-art" aria-hidden="true"><span class="landing-hanja">石<br>獅<br>子</span><span class="landing-art-caption">형태를 살피고<br>기억을 거닐다</span></div></div>
+    <footer class="landing-footer"><span>형태 관찰 ─ 무늬 속 마을 ─ 시간을 지나</span><span>인물의 이야기는 장소와 생활상을 바탕으로 구성한 가상 증언입니다.</span></footer>
+  </div>
 </div>
 
 
@@ -213,6 +222,6 @@ settings.addEventListener('click',e=>{if(e.target===settings){const r=settings.g
 about.addEventListener('click',e=>{if(e.target===about){const r=about.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)about.close()}});
 readScroll();
 </script>
-<script type="module" src="assets/lion-viewer.js?v=story-flow-55"></script>
-<script type="module" src="assets/story-journey.js?v=story-flow-55"></script>
+<script type="module" src="assets/lion-viewer.js?v=story-flow-56"></script>
+<script type="module" src="assets/story-journey.js?v=story-flow-56"></script>
 </body></html>

@@ -1,4 +1,5 @@
-import {storyStops} from './story-sequence.js?v=story-flow-55';
+import {dialogueCopy} from './dialogue-copy.js?v=ui-56';
+import {storyStops} from './story-sequence.js?v=story-flow-56';
 const emit=(name,detail)=>document.dispatchEvent(new CustomEvent(name,{detail}));
 const shots=[];let duration=0;
 function shot(kind,seconds,extra={}){shots.push({kind,start:duration,end:duration+seconds,...extra});duration+=seconds;}
@@ -29,7 +30,7 @@ function renderStory(){
   if(changed){emit('stage-navigate','terrain');if(q.stop)emit('capture-story-motif',q.stop);}
   const index=q.stop.route;
   if(q.kind==='motif'){emit('ink-landscape-frame',{index,progress:u*.235});emit('blender-route-frame',{index,time:0,opacity:u<.8?0:(u-.8)/.2});}
-  else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1});if(q.kind==='dialogue'){panel.hidden=false;panel.innerHTML='<small>가상 증언</small><h2>'+titles[index]+'</h2><p>'+(u<.5?introductions[index]:lines[index])+'</p>';}}
+  else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1});if(q.kind==='dialogue'){panel.hidden=false;const copy=dialogueCopy[index];panel.innerHTML='<small>가상 증언 · '+(u<.5?'인물 이야기':'돌짐승의 기억')+'</small><h2>'+copy.place+'</h2><div class=dialogue-role>'+copy.role+'</div><p>“'+(u<.5?copy.intro:copy.testimony)+'”</p><div class=dialogue-folio>'+(u<.5?'01':'02')+' / 02 <span>'+copy.context+'</span></div>';}}
  }else{
   if(changed){emit('stage-navigate','memory');emit('ink-landscape-frame',{index:0,progress:1});}
   const source=q.kind==='guesthouse'?u*70:q.kind==='settle'?70:q.kind==='seasons'?70+u*74:144;
