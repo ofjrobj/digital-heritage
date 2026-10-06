@@ -1,0 +1,74 @@
+
+.prologue{min-height:640px}.prologue .intro-video-slot{z-index:0;inset:76px 86px 200px 60px}.intro-vignette{z-index:1}.intro-note{z-index:3}
+#lionViewport{position:absolute;inset:0;outline-offset:-4px;touch-action:pan-y;cursor:default}
+#lionViewport.inspecting{touch-action:none}#lionViewport canvas{display:block;width:100%;height:100%}
+.lion-interface{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:4;text-align:center;font-size:12px;color:#eee6d8;width:540px;max-width:calc(100% - 180px);height:164px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:9px}
+#lionStatus{margin:0;color:#d6cabc;letter-spacing:.04em;font-size:11px;min-height:16px}
+.lion-modes,.lion-selection{display:flex;gap:4px}.lion-modes button,.lion-selection button{padding:8px 16px;border:1px solid #9c8d6c55;border-radius:20px;font-size:12px;color:#c8bcab;background:#080808}
+.lion-modes button[aria-pressed=true],.lion-selection button[aria-pressed=true]{background:#d7c6a2;color:#201c14;border-color:#d7c6a2}.lion-modes button:disabled{opacity:.4;cursor:default}
+.lion-selection button{font-size:11px;padding:5px 13px}
+#lionTools{display:flex;align-items:center;gap:18px}
+.lion-arrows{display:grid;grid-template-columns:repeat(5,32px);gap:6px}
+.lion-arrows button,.lion-zoom button{border:1px solid #b5a68b55;border-radius:50%;background:#111;min-width:32px;height:32px;font-family:system-ui}
+.lion-arrows button:hover,.lion-zoom button:hover{background:#5a4d37}.lion-zoom{display:flex;gap:6px}
+#lionLens{display:none;position:absolute;top:0;left:0;width:144px;height:144px;overflow:hidden;border-radius:50%;border:1px solid #eee3cbcc;box-shadow:0 0 0 3px #0006,0 6px 20px #0009;pointer-events:none;z-index:2}
+#lionLens.visible{display:block}#lionLens canvas{width:100%;height:100%;display:block}.lens-cross{position:absolute;inset:67px;border:1px solid #fff5;border-radius:50%;z-index:1}
+.prologue .intro-scroll{left:auto;right:36px;bottom:26px;transform:none}.prologue .intro-note{bottom:28px}
+@media(max-width:700px){.prologue{min-height:640px}.prologue .intro-video-slot{inset:66px 26px 230px 16px}.lion-interface{bottom:65px;max-width:calc(100% - 30px);height:153px;gap:8px}#lionStatus{font-size:10px}.lion-modes button{padding:8px 13px}.lion-arrows{gap:4px}#lionTools{gap:12px}.prologue .intro-scroll{right:22px;bottom:16px;flex-direction:row;font-size:10px;gap:9px}.intro-scroll-line{height:22px}.prologue .intro-note{left:16px;bottom:19px;font-size:9px}#lionLens{width:120px;height:120px}.lens-cross{inset:55px}}
+
+@font-face{font-family:'KoPub World Batang';font-style:normal;font-weight:300;font-display:swap;src:url('./fonts/KoPubWorld-Batang-Light.woff2') format('woff2')}
+:root{--heritage-sage:#889f8a;--heritage-paper:#ecebe6;--heritage-blush:#e7dfe0;font-family:'KoPub World Batang','KoPub Batang','Gowun Batang',Batang,serif;font-weight:300}
+body,button,a,.intro-control,.intro-scroll,.intro-note,.book-index-button,.identity,dialog h2{font-family:'KoPub World Batang','KoPub Batang','Gowun Batang',Batang,serif;font-weight:300}
+.prologue{background:#000;color:var(--heritage-paper)}.prologue .intro-video-slot{top:150px;background:#000}
+.intro-title{position:absolute;top:66px;left:8%;right:8%;z-index:3;text-align:center;pointer-events:none}.intro-title h1{font:300 clamp(24px,2.4vw,40px)/1.5 'KoPub World Batang','KoPub Batang',serif;color:var(--heritage-paper);margin:0}.intro-title p{font-size:12px;line-height:1.7;color:var(--heritage-sage);margin:9px 0 0;letter-spacing:.04em}
+.lion-interface{color:var(--heritage-paper)}#lionStatus{color:#abbcad}.lion-modes button,.lion-selection button{color:#bbc8bb;border-color:#889f8a55;background:#889f8a0c;font-weight:300}
+.lion-modes button[aria-pressed=true],.lion-selection button[aria-pressed=true]{background:#889f8a24;color:var(--heritage-paper);border-color:#889f8a;box-shadow:0 0 0 3px #889f8a0c}
+.lion-arrows button,.lion-zoom button{background:#889f8a10;border-color:#889f8a65;color:var(--heritage-paper)}.lion-arrows button:hover,.lion-zoom button:hover{background:#889f8a35}
+#lionLens{border-color:var(--heritage-paper);box-shadow:0 0 0 4px #889f8a24,0 6px 20px #0009}
+.intro-control{color:#bbc8bb}.intro-control .state{color:var(--heritage-paper)}.intro-control:hover{border-color:var(--heritage-sage)}.intro-note{color:#889f8a99}.intro-scroll{color:#bbc8bb}
+.book-index-button{background:#ecebe6e8;color:#46594a;border-color:#889f8a66;box-shadow:none}.book-index-button:hover{background:#ecebe6}.book-index-button:before{border-color:#889f8a55}
+button:focus-visible,a:focus-visible{outline:1px solid #889f8a;outline-offset:4px}
+dialog{background:var(--heritage-paper);color:#46594a;border-color:#889f8a88}dialog h2{color:#607b64}
+@media(max-width:700px){.intro-title{top:70px;left:5%;right:5%}.intro-title h1{font-size:25px}.intro-title p{font-size:10px;max-width:300px;margin:8px auto 0}.prologue .intro-video-slot{top:146px}}
+
+@media(max-width:700px){.prologue .intro-video-slot{right:52px}}
+
+/* Explicit entry choice: the selected layout also works independently of device width. */
+[hidden]{display:none!important}
+body.choosing-experience{overflow:hidden}
+#experienceChoice{position:fixed;inset:0;z-index:500;background:#000;display:grid;place-items:center;padding:24px}
+.experience-card{text-align:center;max-width:640px;width:100%;color:var(--heritage-paper)}
+.experience-eyebrow{font-size:13px;letter-spacing:.12em;color:var(--heritage-sage);margin-bottom:30px}
+.experience-card h2{font-size:clamp(24px,4vw,36px);font-weight:300;margin:0 0 16px}.experience-card p{color:var(--heritage-sage);font-size:13px;line-height:1.8}
+.experience-options{display:flex;gap:16px;margin:36px auto;justify-content:center}.experience-options button{width:250px;min-height:140px;border:1px solid #889f8a77;border-radius:12px;background:#889f8a0c;color:var(--heritage-paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:background .2s,border-color .2s}.experience-options button:hover{background:#889f8a20;border-color:#889f8a}.experience-options span{font-size:22px}.experience-options small{color:var(--heritage-sage);font-size:12px}.experience-note{font-size:11px!important}
+#lionHoverHint{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);z-index:3;pointer-events:none;color:var(--heritage-paper);background:#0009;padding:8px 16px;border-radius:20px;font-size:13px;opacity:0}
+#lionHoverHint.visible{animation:invitation 1.6s ease-in-out infinite}@keyframes invitation{0%,100%{opacity:.3}50%{opacity:1}}
+body[data-experience=mobile] .prologue{min-height:680px}body[data-experience=mobile] .intro-title{top:82px;left:5%;right:5%}body[data-experience=mobile] .intro-title h1{font-size:25px}body[data-experience=mobile] .intro-title p{font-size:10px;max-width:300px;margin:8px auto 0}
+body[data-experience=mobile] .prologue .intro-video-slot{top:155px;left:max(16px,calc((100% - 540px)/2));right:max(48px,calc((100% - 540px)/2));bottom:235px}
+body[data-experience=mobile] .lion-interface{bottom:64px;width:360px;max-width:calc(100% - 28px);height:160px;gap:10px}body[data-experience=mobile] .lion-modes button{padding:10px 14px}body[data-experience=mobile] .lion-arrows button,body[data-experience=mobile] .lion-zoom button{min-width:36px;height:36px}body[data-experience=mobile] .lion-arrows{grid-template-columns:repeat(5,36px);gap:3px}body[data-experience=mobile] #lionTools{gap:9px}body[data-experience=mobile] .intro-controls{padding:16px 20px;gap:15px}body[data-experience=mobile] .intro-scroll{right:20px;bottom:16px;flex-direction:row}body[data-experience=mobile] .intro-note{bottom:20px;left:16px;font-size:9px}
+body[data-experience=desktop] .intro-title{top:66px}body[data-experience=desktop] .prologue .intro-video-slot{inset:150px 86px 200px 60px}body[data-experience=desktop] .lion-interface{bottom:24px;width:540px;height:164px;max-width:calc(100% - 100px)}
+@media(max-width:520px){.experience-options{flex-direction:column;align-items:center;gap:12px}.experience-options button{width:100%;min-height:110px}.experience-eyebrow{margin-bottom:20px}}
+@media(prefers-reduced-motion:reduce){#lionHoverHint.visible{opacity:1;animation:none}}
+
+/* Quiet observation: only the way back remains below the sculpture. */
+.lion-interface{height:48px;bottom:76px!important;justify-content:center;pointer-events:none}
+#lionStatus:empty{display:none}#lionBack{pointer-events:auto;color:var(--heritage-sage);background:none;border:none;border-bottom:1px solid #889f8a55;padding:10px 4px;font-size:13px;letter-spacing:.06em}
+#lionBack:hover{color:var(--heritage-paper);border-color:var(--heritage-paper)}
+.prologue .intro-video-slot,body[data-experience=desktop] .prologue .intro-video-slot{bottom:150px}
+body[data-experience=mobile] .prologue .intro-video-slot{bottom:160px}
+body[data-experience=mobile] .lion-interface{height:48px;bottom:80px!important}
+#lionViewport.inspecting{touch-action:pan-y}
+.experience-options button{min-height:110px;border-radius:0;background:transparent}.experience-options span{font-size:20px}
+.experience-card h2{font-size:24px}.experience-eyebrow{margin-bottom:38px}
+
+#introBackdrop{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0;pointer-events:none;transition:opacity 2s ease;filter:saturate(.7)}
+.prologue.story-playing #introBackdrop{opacity:.7}
+.prologue .intro-video-slot{z-index:2;background:transparent}.intro-vignette{z-index:1;background:radial-gradient(ellipse at center,#0001 0%,#0006 55%,#000 95%)}
+#introStoryLine{position:absolute;left:15%;right:15%;bottom:115px;text-align:center;color:var(--heritage-paper);font-size:17px;letter-spacing:.1em;z-index:3;pointer-events:none;transition:opacity 1s;opacity:0;font-weight:300}
+.prologue.story-playing #introStoryLine{opacity:1}.intro-title p{opacity:.75}
+.intro-control svg{width:20px;height:20px;display:block}.intro-control{padding:8px;border:none}.intro-control:hover{color:var(--heritage-paper);background:#889f8a15;border:none}.intro-controls{gap:15px}
+#soundToggle[aria-pressed=true]{color:var(--heritage-paper);box-shadow:0 1px 0 var(--heritage-sage)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:700px){#introStoryLine{font-size:13px;bottom:125px;left:8%;right:8%}.intro-control svg{width:18px;height:18px}}
+
+#memoryPaths{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;color:#d2c4a4;opacity:0;transition:opacity 2s,filter 2s;stroke-dasharray:1600;stroke-dashoffset:1600}.story-past #memoryPaths,.story-present #memoryPaths{opacity:.38;stroke-dashoffset:0;transition:opacity 2s,stroke-dashoffset 5s}.story-present #memoryPaths{color:#889f8a;filter:drop-shadow(0 0 5px #889f8a44)}
