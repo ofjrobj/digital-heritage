@@ -1,4 +1,4 @@
-import {storyStops} from './story-sequence.js?v=story-flow-56';
+import {storyStops} from './story-sequence.js?v=story-flow-58';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
