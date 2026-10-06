@@ -1,0 +1,7 @@
+const controls=document.querySelector('.intro-controls');document.body.append(controls);
+const settings=document.querySelector('#settings');const row=document.createElement('div');row.className='settings-row';row.innerHTML='<label for="textSize">글자 크기</label><select id="textSize"><option value="1">기본</option><option value="1.15">크게</option><option value="1.3">더 크게</option></select>';settings.append(row);row.querySelector('select').onchange=e=>document.body.style.setProperty('--text-scale',e.target.value);
+const style=document.createElement('style');style.textContent='body .episode-panel p{font-size:calc(15px * var(--text-scale,1))!important}#settings select{background:transparent;color:#889f8a;border:1px solid #889f8a55;padding:8px}body[data-experience=mobile] .episode-panel p{font-size:calc(13px * var(--text-scale,1))!important}';document.head.append(style);
+// Preserve the existing prototype voice when scroll replaces the Next button.
+let spokenText='';
+document.addEventListener('prototype-episode',e=>{if(!e.detail.active)return;queueMicrotask(()=>{const text=document.querySelector('#epText')?.textContent;if(!text||text===spokenText)return;spokenText=text;if(document.querySelector('#soundToggle').getAttribute('aria-pressed')!=='true'||!('speechSynthesis' in window))return;speechSynthesis.cancel();const voice=new SpeechSynthesisUtterance(text);voice.lang='ko-KR';voice.rate=.86;speechSynthesis.speak(voice);});});
+document.addEventListener('episode-active',e=>{if(!e.detail){spokenText='';if('speechSynthesis' in window)speechSynthesis.cancel();}});
