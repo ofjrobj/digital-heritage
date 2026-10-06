@@ -1,10 +1,13 @@
+import {storyStops} from './story-sequence.js?v=story-flow-50';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
 const host=document.querySelector('#lionViewport'),intro=document.querySelector('#intro'),status=document.querySelector('#lionStatus');
 const backButton=document.querySelector('#lionBack'),lens=document.querySelector('#lionLens');
 const choice=document.querySelector('#experienceChoice'),hint=document.querySelector('#lionHoverHint');
-let experience=null;
+let experience=null;let cinemaDriven=false,cinemaShot='';let nextStoryStop=0;
+document.addEventListener('story-restart',()=>nextStoryStop=0);
+document.addEventListener('episode-complete',()=>nextStoryStop=Math.min(storyStops.length,nextStoryStop+1));
 const backgroundUI=[intro,document.querySelector('#journey'),document.querySelector('.book-index-button')];
 function blockBackground(block){backgroundUI.forEach(el=>{if(el)el.inert=block;});}
 blockBackground(true);
@@ -93,7 +96,7 @@ function showPairObservation(){cancelFilm();guidedPose=null;setMode(true,'both')
 function finishObservation(){if(filmFinished)return;filmFinished=true;intro.dataset.observationPhase='waiting';filmPart.textContent='';filmDelay=setTimeout(showPairObservation,900);}
 document.addEventListener('lion-pair-observe',showPairObservation);
 function scrubFilm(delta){if(!filmPlaying||!true)return;filmTarget=Math.max(0,Math.min(filmDuration,filmTarget+delta));filmLayer.dataset.scrollTime=String(filmTarget);updateFilm();if(filmFinished&&filmTarget<filmDuration-.1){clearTimeout(filmDelay);filmFinished=false;intro.dataset.observationPhase='film';}}
-window.addEventListener('wheel',e=>{if(!filmPlaying)return;e.preventDefault();e.stopImmediatePropagation();scrubFilm(Math.max(-180,Math.min(180,e.deltaY))*.012);},{capture:true,passive:false});
+window.addEventListener('wheel',e=>{if(cinemaDriven)return;if(!filmPlaying)return;e.preventDefault();e.stopImmediatePropagation();scrubFilm(Math.max(-180,Math.min(180,e.deltaY))*.012);},{capture:true,passive:false});
 let filmTouchY=null;
 intro.addEventListener('touchstart',e=>{if(filmPlaying)filmTouchY=e.touches[0]?.clientY;},{passive:true});
 intro.addEventListener('touchmove',e=>{if(!filmPlaying||filmTouchY===null)return;e.preventDefault();e.stopImmediatePropagation();const y=e.touches[0].clientY;scrubFilm((filmTouchY-y)*.035);filmTouchY=y;},{capture:true,passive:false});
@@ -132,7 +135,7 @@ function cameraSample(t,column,component){
  const m0=tangent(left,d),m1=tangent(d,right);
  return (2*u3-3*u2+1)*val(a)+(u3-2*u2+u)*span*m0+(-2*u3+3*u2)*val(b)+(u3-u2)*span*m1;
 }
-function updateFilm(){if(!filmPlaying||!loaded)return;filmClock+=(filmTarget-filmClock)*.065;if(Math.abs(filmTarget-filmClock)<.008)filmClock=filmTarget;
+function updateFilm(){if(!filmPlaying||!loaded)return;if(!cinemaDriven)filmClock+=(filmTarget-filmClock)*.065;if(Math.abs(filmTarget-filmClock)<.008)filmClock=filmTarget;
  const subject=filmClock<132?'female':'male';
  if(filmSubject!==subject){filmSubject=subject;intro.dataset.observationSubject=subject;selectSubject(subject);subjects.get(subject).rotation.y=0;home();clearPointer();}
  const localTime=Math.min(132,filmClock<132?filmClock:filmClock-132);
@@ -140,7 +143,7 @@ function updateFilm(){if(!filmPlaying||!loaded)return;filmClock+=(filmTarget-fil
  const key=[...cinematicKeys].reverse().find(k=>localTime>=k[0])||cinematicKeys[0];
  filmPart.textContent=(subject==='female'?'암사자':'수사자')+' · '+key[4];filmLayer.dataset.scrollTime=filmClock.toFixed(2);filmLayer.dataset.shot=filmPart.textContent;
  const seam=Math.max(0,1-Math.abs(filmClock-132)/1.7);host.style.opacity=String(1-seam*.95);
- if(filmTarget>=filmDuration-.01&&filmClock>=filmDuration-.06){host.style.opacity='1';finishObservation();}
+ if(!cinemaDriven&&filmTarget>=filmDuration-.01&&filmClock>=filmDuration-.06){host.style.opacity='1';finishObservation();}
 }
 function cinematicLight(){if(blenderScans&&filmPlaying)return;if(!filmPlaying){for(const item of scanTraces)item.visible=false;return;}const side=camera.position.clone().sub(controls.target).normalize(),right=new THREE.Vector3().crossVectors(side,camera.up).normalize(),up=new THREE.Vector3().crossVectors(right,side).normalize();studioLights[0].position.copy(controls.target).addScaledVector(side,.65).addScaledVector(right,3.2).addScaledVector(up,1.8);studioLights[0].intensity=2.35;studioLights[1].position.copy(camera.position);studioLights[1].intensity=.85;studioLights[2].position.copy(controls.target).addScaledVector(side,-2.5).addScaledVector(right,-1.4).addScaledVector(up,2);studioLights[2].intensity=2.2;for(const item of scanTraces){item.visible=true;item.material.uniforms.scanFocus.value.copy(controls.target);item.material.uniforms.scanAxis.value.copy(right);item.material.uniforms.scanTime.value=filmClock+performance.now()*.00035;}}
 
@@ -172,7 +175,7 @@ const regionButtons=['female','male'].flatMap(subject=>regions.filter(([region])
  button.addEventListener('click',e=>{e.stopPropagation();observedRegions.add(id);document.dispatchEvent(new CustomEvent('capture-story-motif',{detail:{subject,region}}));clearPointer();regionHover=null;intro.dataset.selectedRegion=region;intro.dataset.selectedSubject=subject;intro.dataset.observationPhase='complete';document.dispatchEvent(new CustomEvent('stage-navigate',{detail:'terrain'}));});
  return {button,anchor,id,subject,region};}));
 function updateHotspots(){const enabled=inspecting&&!filmPlaying&&document.body.dataset.stage==='intro'&&intro.dataset.observationPhase==='magnifier';
- for(const item of regionButtons){const pivot=subjects.get(item.subject);item.button.hidden=!enabled||(observedRegions.has(item.id)&&regionHover!==item.id)||!pivot?.visible;if(item.button.hidden)continue;
+ for(const item of regionButtons){const pivot=subjects.get(item.subject);const next=storyStops[nextStoryStop];item.button.hidden=!enabled||!next||item.subject!==next.subject||item.region!==next.region||(observedRegions.has(item.id)&&regionHover!==item.id)||!pivot?.visible;if(item.button.hidden)continue;
  const root=pivot.children[0];pivot.updateWorldMatrix(true,true);
  const localBox=pivot.userData.anchorBounds||new THREE.Box3();if(!pivot.userData.anchorBounds)root.traverse(mesh=>{if(mesh.isMesh){mesh.geometry.computeBoundingBox();localBox.union(mesh.geometry.boundingBox.clone().applyMatrix4(mesh.matrixWorld.clone().premultiply(pivot.matrixWorld.clone().invert())));}});pivot.userData.anchorBounds=localBox;
  const localSize=localBox.getSize(new THREE.Vector3()),localCenter=localBox.getCenter(new THREE.Vector3());
@@ -263,7 +266,7 @@ function renderLensWithRakingLight(item){
 const lensCamera=camera.clone();
 function tick(now){requestAnimationFrame(tick);const delta=Math.min((now-last)/1000,.05);last=now;updateFilm();if(!visible||document.hidden)return;host.classList.toggle('motif-focus',!!regionHover);
  if(guidedPose&&loaded){camera.zoom+=(guidedPose.zoom-camera.zoom)*.07;camera.updateProjectionMatrix();const nextY=baseFocus.y+(guidedPose.height||0);const dy=(nextY-controls.target.y)*.07;controls.target.y+=dy;camera.position.y+=dy;for(const o of subjects.values())o.rotation.y+=(guidedPose.yaw-o.rotation.y)*.07;}
- if(document.body.dataset.stage==='intro'&&!filmPlaying&&!guidedPose&&loaded&&experience&&!intro.classList.contains('story-playing')&&intro.dataset.observationPhase!=='magnifier'&&!reduced.matches&&!document.body.classList.contains('choosing-experience')&&now>=readyAt){for(const o of subjects.values())if(o.visible)o.rotation.y-=delta*.075;}
+ if(!cinemaDriven&&document.body.dataset.stage==='intro'&&!filmPlaying&&!guidedPose&&loaded&&experience&&!intro.classList.contains('story-playing')&&intro.dataset.observationPhase!=='magnifier'&&!reduced.matches&&!document.body.classList.contains('choosing-experience')&&now>=readyAt){for(const o of subjects.values())if(o.visible)o.rotation.y-=delta*.075;}
  weather(now);cinematicLight();controls.update();scene.updateMatrixWorld(true);renderer.render(scene,camera);drawSurfaceTrace(now);updateEntry(now);updateHotspots();
  if(pointer&&loaded&&!down&&!filmPlaying){if(now-lastHit>90){lastHit=now;hovered=(inspecting&&document.body.dataset.stage==='intro')?regionHover:hit(pointer.x,pointer.y);host.style.cursor=hovered?(inspecting?'none':'pointer'):'default';lens.classList.toggle('visible',inspecting&&hovered);hint.classList.toggle('visible',!inspecting&&Boolean(hovered));}
   if(inspecting&&hovered&&now-lastLens>50){lastLens=now;
@@ -292,4 +295,28 @@ intro.addEventListener('touchmove',e=>{if(loaded&&document.body.dataset.stage===
 document.addEventListener('lion-return-progress',e=>{const p=Math.max(0,Math.min(1,(e.detail-.80)/.20));for(const o of subjects.values())o.rotation.y=-Math.PI/4+(1-p)*1.22;camera.zoom=.78;camera.updateProjectionMatrix();});
 
 const motifFocusStyle=document.createElement('style');motifFocusStyle.textContent='#lionViewport>canvas{transition:filter 700ms ease}#lionViewport.motif-focus>canvas{filter:brightness(.60) saturate(.72)}#lionLens>canvas:not(.lens-trace){filter:contrast(1.10);transition:filter 900ms ease}';document.head.append(motifFocusStyle);
-document.addEventListener('capture-story-motif',e=>{const item=e.detail;if(!subjects.has(item.subject))return;if(!lensRenderer){lensRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});lensRenderer.setSize(768,768);lensRenderer.outputColorSpace=renderer.outputColorSpace;lensRenderer.toneMapping=renderer.toneMapping;lensRenderer.toneMappingExposure=renderer.toneMappingExposure;}const state=[...subjects].map(([name,o])=>[o,o.visible]);for(const [name,o] of subjects)o.visible=name===item.subject;scene.updateMatrixWorld(true);frameLens(item);surface(true);renderLensWithRakingLight(item);document.dispatchEvent(new CustomEvent('motif-capture',{detail:lensRenderer.domElement.toDataURL('image/png')}));surface(false);for(const [o,v] of state)o.visible=v;});
+document.addEventListener('capture-story-motif',e=>{const item=e.detail;if(!subjects.has(item.subject))return;if(!lensRenderer){lensRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});lensRenderer.setSize(768,768);lensRenderer.outputColorSpace=renderer.outputColorSpace;lensRenderer.toneMapping=renderer.toneMapping;lensRenderer.toneMappingExposure=renderer.toneMappingExposure;}const state=[...subjects].map(([name,o])=>[o,o.visible]);for(const [name,o] of subjects)o.visible=name===item.subject;scene.updateMatrixWorld(true);frameLens(item);surface(true);renderLensWithRakingLight(item);document.dispatchEvent(new CustomEvent('motif-capture',{detail:isolatedMotif(lensRenderer.domElement)}));surface(false);for(const [o,v] of state)o.visible=v;});
+
+// Deterministic presentation reuses the same scans, lights and particle layer.
+const cinemaFocus=document.createElement('div');cinemaFocus.style.cssText='position:absolute;width:66px;height:66px;border:2px solid #ddd;border-radius:50%;pointer-events:none;display:none;z-index:7;box-shadow:0 0 0 5px #0005';cinemaFocus.innerHTML='<span style="position:absolute;right:-17px;bottom:-10px;width:25px;height:3px;background:#ddd;transform:rotate(45deg)"></span>';host.append(cinemaFocus);
+document.addEventListener('cinema-lion-frame',e=>{
+ if(!loaded)return;const d=e.detail;cinemaDriven=true;
+ if(cinemaShot!==d.kind){finishEntry();cancelFilm();guidedPose=null;cinemaShot=d.kind;setMode(false);selectSubject('both');for(const o of subjects.values())o.rotation.y=-Math.PI/4;home();if(d.kind==='entry')beginEntry();}
+ cinemaFocus.style.display='none';
+ if(d.kind==='entry'){if(entryStart)entryStart=performance.now()-d.time*1000;}
+ else if(d.kind==='scan'){
+  filmPlaying=true;filmTarget=filmClock=d.time;filmSubject=d.time<132?'female':'male';selectSubject(filmSubject);subjects.get(filmSubject).rotation.y=0;surface(true);updateFilm();
+ }else{
+  filmPlaying=false;surface(true);intro.dataset.observationPhase='cinema';
+  for(const o of subjects.values())o.rotation.y=d.kind==='rotate'?-Math.PI/4-d.progress*Math.PI*2:-Math.PI/4;
+  home();
+  if(d.kind==='lens'){const item=regionButtons.find(x=>x.subject===d.subject&&x.region===d.region);scene.updateMatrixWorld(true);if(item){frameLens(item);const p=controls.target.clone();const pivot=subjects.get(item.subject),bounds=pivot.userData.anchorBounds;if(bounds){p.copy(bounds.getCenter(new THREE.Vector3())).add(new THREE.Vector3(...item.anchor).multiply(bounds.getSize(new THREE.Vector3()))).applyMatrix4(pivot.matrixWorld);}p.project(camera);cinemaFocus.style.left=((p.x+1)*width/2-33)+'px';cinemaFocus.style.top=((-p.y+1)*height/2-33)+'px';cinemaFocus.style.display='block';cinemaFocus.style.transform=`scale(${d.progress>.8?.88:1})`;}}
+ }
+});
+document.addEventListener('cinema-release',()=>{cinemaDriven=false;cinemaShot='';cinemaFocus.style.display='none';finishEntry();returnToPair();});
+
+function isolatedMotif(source){
+ const c=document.createElement('canvas');c.width=c.height=512;const x=c.getContext('2d',{willReadFrequently:true});x.filter='blur(1.6px)';x.drawImage(source,0,0,512,512);x.filter='none';const src=x.getImageData(0,0,512,512),out=x.createImageData(512,512),g=new Float32Array(512*512);
+ for(let i=0;i<g.length;i++)g[i]=(src.data[i*4]+src.data[i*4+1]+src.data[i*4+2])/3;
+ for(let y=0;y<512;y++)for(let xx=0;xx<512;xx++){const i=y*512+xx;let ink=0;if(y>3&&y<508&&xx>3&&xx<508&&g[i]>35&&g[i-2]>30&&g[i+2]>30&&g[i-1024]>30&&g[i+1024]>30){const relief=Math.max((g[i-2]+g[i+2])/2-g[i],(g[i-1024]+g[i+1024])/2-g[i]);ink=Math.min(1,Math.max(0,(relief-2)/12));}const shade=250-ink*215;out.data.set([shade,shade,shade,255],i*4);}x.putImageData(out,0,0);return c.toDataURL('image/png');
+}

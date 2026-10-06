@@ -1,4 +1,5 @@
-import './ink-landscape-transition.js';
+import {storyStops} from './story-sequence.js?v=story-flow-50';
+import './ink-landscape-transition.js?v=story-flow-50';
 const $=s=>document.querySelector(s);
 const layers=['intro','observe','terrain','village','overview','memory'];
 const css=document.createElement('style');css.textContent=`html,body{height:100%;overflow:hidden!important;overscroll-behavior:none}#intro,.story-section,.observation-flow{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;min-height:0!important;margin:0!important;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 2.2s,visibility 2.2s;padding:0!important;overflow:clip!important}body[data-stage=intro] #intro,body[data-stage=observe] #intro,body[data-stage=terrain] #terrain,body[data-stage=village] #village,body[data-stage=overview] #village,body[data-stage=memory] #memory{opacity:1;visibility:visible;pointer-events:auto}#observe,#overview{display:none!important}#intro .intro-title{display:none}body[data-stage=observe] #introContinue{display:none}.terrain-stage{position:absolute!important;inset:0;top:0!important;height:100%!important;display:grid;place-items:center;background:#07100b}.terrain-stage h2,.terrain-stage small,.terrain-stage button{display:none}.terrain-stage svg{width:100%;height:100%;transform:perspective(1000px) rotateX(var(--map-tilt,0deg)) scale(var(--map-scale,1));transition:transform .15s}.terrain-stage path{stroke-dashoffset:calc(1400 * (1 - var(--map-reveal,0)));transition:none}#villageCanvas{position:absolute;inset:0;height:100%!important;width:100%!important}.story-section>h2,.story-section>small,#visitedCount{position:absolute;left:7vw;top:10vh;z-index:2;pointer-events:none}.story-section>small{top:7vh}.story-section>h2{font-size:26px}#spotList{position:absolute;left:5vw;right:5vw;bottom:5vh;justify-content:center;z-index:3}.episode-panel{top:15vh!important;right:5vw!important;max-width:30vw}#finishEpisodes{position:absolute;bottom:12vh;right:5vw;z-index:3}#memory h2,#memory small{display:none}#endingFilm{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:contain}#endingPlay,#restartStory{position:absolute;bottom:4vh;z-index:4}#endingPlay{left:4vw}#restartStory{right:4vw}.flow-nav{display:none!important}#stageCue{position:fixed;bottom:5vh;left:50%;transform:translateX(-50%);color:#a7b6a2;z-index:5;font:12px 'Gowun Batang';pointer-events:none;letter-spacing:.08em}#stageVeil{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 56%,transparent,#0009);opacity:var(--reveal-veil,.85);transition:opacity .25s}body[data-stage=village] #stageCue,body[data-stage=memory] #stageCue{display:none}@media(max-width:650px){.episode-panel{max-width:none;width:84vw;left:8vw;right:auto!important;top:12vh!important}#spotList{gap:5px}#spotList button{font-size:11px;padding:7px 10px}.flow-nav{max-width:calc(100vw - 120px);flex-wrap:wrap}#village>h2{font-size:20px;top:10vh}}`;document.head.append(css);
@@ -34,7 +35,7 @@ function pose(){const parts=['whole','face','head','back','mane'];const i=Math.m
 let transitionFilm=null,transitionTarget=0,transitionCurrent=0,returnStarted=0,routeIndex=0;let finishedEpisodes=0;
 document.addEventListener('episode-complete',e=>finishedEpisodes=e.detail.total);
 document.addEventListener('story-restart',()=>finishedEpisodes=0);
-function beginReturn(){navigate('terrain',6);returnStarted=1;document.body.dataset.transitionDirection='out';cue.textContent='스크롤하여 돌의 무늬로 돌아가기';document.dispatchEvent(new CustomEvent('lion-return-prep'));drawRoute();}
+function beginReturn(){if(finishedEpisodes>=storyStops.length){navigate('memory');document.dispatchEvent(new CustomEvent('story-ending-autoplay'));return;}navigate('terrain',6);returnStarted=1;document.body.dataset.transitionDirection='out';cue.textContent='스크롤하여 돌의 무늬로 돌아가기';document.dispatchEvent(new CustomEvent('lion-return-prep'));drawRoute();}
 function completeReturn(){returnStarted=0;document.body.classList.remove('surface-morph');navigate('intro');document.dispatchEvent(new CustomEvent('lion-pair-observe'));}
 
 function map(){const p=Math.min(1,Math.max(0,progress-6));$('#terrain').style.setProperty('--map-reveal',p);$('#terrain').style.setProperty('--map-tilt',(p*52)+'deg');$('#terrain').style.setProperty('--map-scale',1+p*.45);transitionTarget=p;}
@@ -46,7 +47,7 @@ $('#restartStory').addEventListener('click',()=>{document.dispatchEvent(new Cust
 document.addEventListener('story-scan',e=>{if(!e.detail.guided){scanReturnStage=e.detail.episode?'village':'observe';stage='observe';document.body.dataset.stage=stage;veil.style.display='none';cue.textContent='';boundary();document.querySelectorAll('.flow-nav a').forEach(a=>a.setAttribute('aria-current',String(a.hash==='#observe')));}});
 function advance(delta){if(document.body.classList.contains('choosing-experience')||document.querySelector('dialog[open]')||performance.now()<blockedUntil)return;
  if(stage==='memory'){progress=Math.max(9,Math.min(10,progress+delta*.00012));document.dispatchEvent(new CustomEvent('blender-ending-frame',{detail:progress-9}));return;}
- if(stage==='intro'&&document.querySelector('#intro').dataset.observationPhase==='magnifier'){if(finishedEpisodes===5&&delta>0){navigate('overview');document.dispatchEvent(new CustomEvent('blender-route-frame',{detail:{index:routeIndex,time:134}}));}return;}
+ if(stage==='intro'&&document.querySelector('#intro').dataset.observationPhase==='magnifier'){if(finishedEpisodes===storyStops.length&&delta>0){navigate('overview');document.dispatchEvent(new CustomEvent('blender-route-frame',{detail:{index:routeIndex,time:134}}));}return;}
  if(stage==='intro'&&!storyStarted)return;
  if(stage==='village'||episodeActive){document.dispatchEvent(new CustomEvent('episode-scroll',{detail:delta}));return;}
  progress=Math.max(0,progress+delta*(stage==='terrain'?(returnStarted?.00022:.00005):.0015));
@@ -92,6 +93,6 @@ const overheadStyle=document.createElement('style');overheadStyle.textContent=`b
 $('#villageCanvas').setAttribute('aria-label','공주의 마을');
 $('#scanReturn').textContent='돌의 무늬로 돌아가기';
 // No extra click gate between testimony and the return journey.
-document.addEventListener('lion-pair-ready',()=>{cue.textContent=finishedEpisodes===5?'스크롤하여 시간의 풍경으로':'';});
+document.addEventListener('lion-pair-ready',()=>{cue.textContent=finishedEpisodes===storyStops.length?'스크롤하여 시간의 풍경으로':'';});
 
 import "./cinematic-story.js";
