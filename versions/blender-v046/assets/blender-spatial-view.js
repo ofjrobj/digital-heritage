@@ -1,0 +1,46 @@
+import {bytes,json as loadJSON} from './asset-transport.js';
+import * as THREE from 'three';
+import {GLTFLoader} from './vendor/GLTFLoader.js';
+// Geometry and every route sample originate in the saved Blender files.
+const host=document.createElement('div');host.id='blenderSpatialView';host.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:2;display:none';document.body.append(host);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;host.append(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#b6bcb5');scene.fog=new THREE.Fog('#b6bcb5',90,230);scene.add(new THREE.HemisphereLight(0xf5f1df,0x64715b,1.1));const sun=new THREE.DirectionalLight(0xfff1dc,2.3);sun.position.set(-30,70,30);scene.add(sun);
+const camera=new THREE.PerspectiveCamera(35,1,.05,900),loader=new GLTFLoader();let village,ending,route=0,time=0,mode='route',lastEvent=null;
+const routes=await fetch('./assets/blender-routes-v045.json').then(r=>r.json());
+const css=document.createElement('style');css.textContent=`body[data-stage=terrain] #terrain,body[data-stage=terrain] .terrain-stage{background:transparent!important}body[data-stage=terrain] #terrain svg,#villageCanvas,#episodeFilm,#villageInkBackdrop,#terrainTransitionFilm{display:none!important}body[data-stage=village] #village,body[data-stage=overview] #village,body[data-stage=memory] #memory{background:transparent!important;z-index:3}body[data-stage=terrain] #terrain{z-index:3}body[data-stage=village] .episode-panel{left:3vw!important;right:auto!important;top:auto!important;bottom:7vh!important;width:28vw!important;max-width:350px!important;max-height:55vh;overflow:auto;box-sizing:border-box;padding:20px!important}body[data-stage=village] .episode-panel h2{font-size:21px!important}body[data-stage=village] .episode-panel p{font-size:15px!important;line-height:1.8!important}body[data-stage=memory] #endingFilm,body[data-stage=memory] #endingPlay,body[data-stage=memory] #restartStory{display:none!important}#spatialClosing{position:fixed;inset:0;background:#090c09;color:#d4d8c9;z-index:12;display:none;align-items:center;justify-content:center;text-align:center;font-family:'Gowun Batang',serif}#spatialClosing p{line-height:2;font-size:clamp(20px,3vw,34px)}#spatialClosing a{display:inline-block;color:inherit;border-bottom:1px solid #8e9b87;padding:12px;text-decoration:none;font-size:16px}@media(max-width:700px){body[data-stage=village] .episode-panel{left:5vw!important;bottom:5vh!important;width:90vw!important;max-width:none!important;max-height:25vh!important;padding:12px!important}body[data-stage=village] .episode-panel h2{font-size:16px!important}body[data-stage=village] .episode-panel p{font-size:12px!important;margin:6px 0!important}}`;document.head.append(css);
+const closing=document.createElement('div');closing.id='spatialClosing';closing.innerHTML='<div><p>사람은 지나가고, 풍경은 달라져도<br>돌에 새겨진 시간은 남아 있습니다.</p><a href="./chapters.html">서책에서 이야기를 이어 읽기 →</a></div>';document.body.append(closing);
+const cv=v=>new THREE.Vector3(v[0],v[2],-v[1]);
+function size(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.fov=innerWidth<700?52:35;camera.updateProjectionMatrix();render();}window.addEventListener('resize',size);
+// Soft depth haze plus a feathered veil, confined to transitions.
+const mist=document.createElement('div');mist.id='transitionMist';mist.setAttribute('aria-hidden','true');mist.style.cssText='position:absolute;inset:-10%;pointer-events:none;opacity:0;background:radial-gradient(ellipse at 18% 62%,rgba(222,226,213,.66),transparent 66%),radial-gradient(ellipse at 84% 35%,rgba(222,226,213,.48),transparent 72%);filter:blur(28px)';host.append(mist);
+function transitionHaze(strength,phase){const q=THREE.MathUtils.clamp(strength,0,1);mist.style.opacity=String(q*.62);mist.style.transform=`translateX(${Math.sin(phase*.12)*2}%)`;scene.fog.near=90-60*q;scene.fog.far=230-100*q;}
+function render(){if(host.style.display!=='none')renderer.render(scene,camera);}
+function sampleRoute(index,seconds){const r=routes[index],samples=r.samples,frame=seconds*24+1;let lo=0,hi=samples.length-1;while(lo+1<hi){const mid=(lo+hi)>>1;if(samples[mid].frame<=frame)lo=mid;else hi=mid;}const i=Math.min(samples.length-2,lo);const a=samples[i],b=samples[i+1],t=THREE.MathUtils.clamp((frame-a.frame)/(b.frame-a.frame),0,1);camera.position.copy(cv(a.position).lerp(cv(b.position),t));camera.lookAt(cv(a.target).lerp(cv(b.target),t));}
+function update(detail){lastEvent=detail;if(!village)return;route=detail.index??route;time=detail.time??time;mode='route';scene.background.set('#b6bcb5');sun.color.set(0xfff1dc);host.style.filter='none';village.visible=true;if(ending)ending.visible=false;host.style.display='block';host.style.opacity=String(detail.opacity??1);sampleRoute(route,time);transitionHaze((1-THREE.MathUtils.smoothstep(time,0,22))*.75+THREE.MathUtils.smoothstep(time,132,144)*.45,time);host.dataset.route=String(route);host.dataset.time=time.toFixed(3);closing.style.display='none';render();}
+document.addEventListener('blender-route-frame',e=>update(e.detail));
+document.addEventListener('prototype-episode',e=>{if(e.detail.active)update({index:e.detail.index,time:90+Math.min(1,e.detail.progress/2.5)*24});});
+document.addEventListener('story-home',()=>{host.style.display='none';closing.style.display='none';});
+const gltf=await loader.loadAsync('./assets/blender-village-v046.glb?v=46');village=gltf.scene;scene.add(village);size();if(lastEvent)update(lastEvent);
+// Formation animation and closing camera are authored in the v043 Blender file.
+let endingLoad,endingMixer,endingCamera,endingDuration=144,endingProgress=0;
+async function loadEnding(){if(endingLoad)return endingLoad;endingLoad=(async()=>{const g=await bytes('./assets/blender-ending-v046.glb').then(b=>loader.parseAsync(b,'./assets/'));ending=g.scene;scene.add(ending);ending.visible=false;endingMixer=new THREE.AnimationMixer(ending);for(const clip of g.animations){endingDuration=Math.max(endingDuration,clip.duration);const action=endingMixer.clipAction(clip);action.setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.play();}endingCamera=await fetch('./assets/blender-ending-camera-v045.json').then(r=>r.json());})();return endingLoad;}
+async function showEnding(p){endingProgress=p;await loadEnding();if(p!==endingProgress||document.body.dataset.stage!=='memory')return;mode='ending';village.visible=false;ending.visible=true;host.style.display='block';const f=THREE.MathUtils.clamp(p,0,1)*144,i=Math.min(143,Math.floor(f)),u=f-i,a=endingCamera[i],b=endingCamera[i+1];endingMixer.setTime(f);ending.traverse(o=>{if(!o.isMesh)return;const modern=o.name.startsWith('Present'),snow=o.name.startsWith('Season_falling')||o.name.startsWith('Season falling'),lion=o.name.startsWith('Original');o.visible=modern?f>=119:snow?f>=99&&f<114:lion||f<119;if(snow){if(o.userData.snowY===undefined)o.userData.snowY=o.position.y;o.position.y=((o.userData.snowY-(f-99)*.35)%4+4)%4;}});
+const season=f<78?0:f<86?1:f<94?2:f<99?3:f<114?4:5;
+sun.color.set([0xfff1dc,0xffecd4,0xe2efff,0xffcf99,0xd7e5ff,0xfff1dc][season]);
+scene.background.set(season===4?'#ccd5d8':'#b6bcb5');
+const passage=f>114&&f<126?Math.pow(Math.sin((f-114)/12*Math.PI),2):0;transitionHaze(passage,f);host.style.filter='none';
+camera.position.copy(cv(a.position).lerp(cv(b.position),u));camera.lookAt(cv(a.target).lerp(cv(b.target),u));const fade=THREE.MathUtils.smoothstep(p,.975,1);host.style.opacity=String(1-fade);closing.style.display=p>=.999?'flex':'none';host.dataset.ending=p.toFixed(4);render();}
+document.addEventListener('blender-ending-frame',e=>showEnding(e.detail));
+
+// Blender-authored background loops. Narrative heroes deliberately have no ambient_kind.
+const ambient=[];village.traverse(o=>{if(o.userData.ambient_kind){o.userData.neutralPosition=o.position.clone();o.userData.neutralQuaternion=o.quaternion.clone();ambient.push(o);}});
+const quietMotion=matchMedia('(prefers-reduced-motion: reduce)');let ambientElapsed=0,ambientLast=0;
+function livingFrame(now){requestAnimationFrame(livingFrame);const dt=ambientLast?Math.min(.05,(now-ambientLast)/1000):0;ambientLast=now;if(document.hidden||host.style.display==='none'||mode!=='route'||quietMotion.matches)return;ambientElapsed+=dt;
+ for(const o of ambient){const d=o.userData,a=2*Math.PI*ambientElapsed/d.ambient_period+d.ambient_phase,p=d.neutralPosition;o.position.copy(p);o.quaternion.copy(d.neutralQuaternion);
+  if(d.ambient_kind==='child'){o.position.x+=d.ambient_amplitude*(Math.sin(a)-Math.sin(d.ambient_phase));o.position.y+=.025*(1-Math.cos(a*8));o.rotateY(.12*Math.sin(a));}
+  else if(d.ambient_kind==='cat')o.rotateY(.12*Math.sin(a));
+  else if(d.ambient_kind==='butterfly'){o.position.x+=.18*Math.sin(a);o.position.y+=.10*Math.cos(a*2);for(const part of o.children)if(part.name.includes('wing'))part.rotation.z=.4*Math.sin(ambientElapsed*9);}
+  else{o.rotateY(.025*Math.sin(a));o.position.y+=.006*Math.sin(a*2);}
+ }
+ render();}
+requestAnimationFrame(livingFrame);
