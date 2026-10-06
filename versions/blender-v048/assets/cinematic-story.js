@@ -1,10 +1,10 @@
-import {storyStops} from './story-sequence.js?v=story-flow-50';
+import {storyStops} from './story-sequence.js?v=story-flow-51';
 const emit=(name,detail)=>document.dispatchEvent(new CustomEvent(name,{detail}));
 const shots=[];let duration=0;
 function shot(kind,seconds,extra={}){shots.push({kind,start:duration,end:duration+seconds,...extra});duration+=seconds;}
 shot('entry',4);shot('rotate',8);shot('female-click',2);shot('female-scan',28);shot('male-transition',2);shot('male-scan',28);shot('pair',3);
 for(let i=0;i<storyStops.length;i++){const stop=storyStops[i];shot('lens',4,{stop});shot('motif',10,{stop});shot('travel',50,{stop});shot('dialogue',14,{stop});if(i<storyStops.length-1){shot('retreat',12,{stop});shot('pair',3);} }
-shot('guesthouse',20);shot('seasons',30);shot('closing',6);shot('book',3);
+shot('guesthouse',65);shot('settle',3);shot('seasons',30);shot('closing',6);shot('book',3);
 const control=document.createElement('div');control.id='cinemaControls';control.innerHTML=`<button id="cinemaPlay">스토리 재생</button><input id="cinemaSeek" aria-label="스토리 시간" type="range" min="0" max="${duration}" step=".1" value="0" hidden><button id="cinemaStop" hidden>스토리 닫기</button>`;document.body.append(control);
 const panel=document.createElement('aside');panel.id='cinemaDialogue';panel.hidden=true;document.body.append(panel);
 const style=document.createElement('style');style.textContent=`#cinemaControls{position:fixed;right:24px;bottom:24px;z-index:60;display:flex;gap:8px}#cinemaControls button{background:#18231e;color:#e8e5dc;border:1px solid #829184;border-radius:20px;padding:9px 16px;font:14px 'KoPub World Batang',serif;cursor:pointer}.choosing-experience #cinemaControls{display:none}body.cinema-running #episode,body.cinema-running #stageCue,body.cinema-running .scroll-cue,body.cinema-running #spotList,body.cinema-running #lionObservationFilm{visibility:hidden!important}#cinemaDialogue{position:fixed;left:28px;bottom:48px;width:350px;height:278px;box-sizing:border-box;padding:24px;background:#eeece4;color:#6a826e;z-index:20;font-family:'KoPub World Batang',serif}#cinemaDialogue h2{font-size:21px;line-height:1.5;margin:8px 0 22px;word-break:keep-all}#cinemaDialogue p{font-size:15px;line-height:1.8;word-break:keep-all;margin:0}#cinemaDialogue small{font-size:12px}body.cinema-running #introVideoSlot{inset:0!important}`;document.head.append(style);
@@ -32,7 +32,7 @@ function renderStory(){
   else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1});if(q.kind==='dialogue'){panel.hidden=false;panel.innerHTML='<small>가상 증언</small><h2>'+titles[index]+'</h2><p>'+(u<.5?introductions[index]:lines[index])+'</p>';}}
  }else{
   if(changed){emit('stage-navigate','memory');emit('ink-landscape-frame',{index:0,progress:1});}
-  const source=q.kind==='guesthouse'?u*70:q.kind==='seasons'?70+u*74:144;
+  const source=q.kind==='guesthouse'?u*70:q.kind==='settle'?70:q.kind==='seasons'?70+u*74:144;
   emit('blender-ending-frame',source/144);
   emit('cinema-closing',{visible:q.kind==='closing'||q.kind==='book',book:q.kind==='book'});
  }

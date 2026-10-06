@@ -1,4 +1,4 @@
-import {storyStops} from './story-sequence.js?v=story-flow-50';
+import {storyStops} from './story-sequence.js?v=story-flow-51';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
@@ -316,7 +316,26 @@ document.addEventListener('cinema-lion-frame',e=>{
 document.addEventListener('cinema-release',()=>{cinemaDriven=false;cinemaShot='';cinemaFocus.style.display='none';finishEntry();returnToPair();});
 
 function isolatedMotif(source){
- const c=document.createElement('canvas');c.width=c.height=512;const x=c.getContext('2d',{willReadFrequently:true});x.filter='blur(1.6px)';x.drawImage(source,0,0,512,512);x.filter='none';const src=x.getImageData(0,0,512,512),out=x.createImageData(512,512),g=new Float32Array(512*512);
+ // Extract broad relief only. Texture flecks and the photograph's rectangular
+ // background must never become the transition artwork.
+ const n=256,c=document.createElement('canvas');c.width=c.height=n;
+ const x=c.getContext('2d',{willReadFrequently:true});
+ x.filter='blur(3px)';x.drawImage(source,0,0,n,n);x.filter='none';
+ const src=x.getImageData(0,0,n,n),out=x.createImageData(n,n),g=new Float32Array(n*n),mask=new Uint8Array(n*n);
  for(let i=0;i<g.length;i++)g[i]=(src.data[i*4]+src.data[i*4+1]+src.data[i*4+2])/3;
- for(let y=0;y<512;y++)for(let xx=0;xx<512;xx++){const i=y*512+xx;let ink=0;if(y>3&&y<508&&xx>3&&xx<508&&g[i]>35&&g[i-2]>30&&g[i+2]>30&&g[i-1024]>30&&g[i+1024]>30){const relief=Math.max((g[i-2]+g[i+2])/2-g[i],(g[i-1024]+g[i+1024])/2-g[i]);ink=Math.min(1,Math.max(0,(relief-2)/12));}const shade=250-ink*215;out.data.set([shade,shade,shade,255],i*4);}x.putImageData(out,0,0);return c.toDataURL('image/png');
+ for(let y=8;y<n-8;y++)for(let a=8;a<n-8;a++){
+  const i=y*n+a,r=Math.hypot((a-n/2)/(n*.43),(y-n/2)/(n*.43));
+  if(r>1||g[i]<50||g[i-4]<40||g[i+4]<40||g[i-4*n]<40||g[i+4*n]<40)continue;
+  const relief=Math.max((g[i-4]+g[i+4])/2-g[i],(g[i-4*n]+g[i+4*n])/2-g[i]);
+  if(relief>2.8)mask[i]=1;
+ }
+ const seen=new Uint8Array(n*n);
+ for(let i=0;i<mask.length;i++){
+  if(!mask[i]||seen[i])continue;
+  const group=[i];seen[i]=1;
+  for(let k=0;k<group.length;k++){const a=group[k];for(const d of [-n-1,-n,-n+1,-1,1,n-1,n,n+1]){const b=a+d;if(b>=0&&b<mask.length&&mask[b]&&!seen[b]){seen[b]=1;group.push(b);}}}
+  if(group.length<30)continue;
+  for(const a of group){const r=Math.hypot((a%n-n/2)/(n*.43),(Math.floor(a/n)-n/2)/(n*.43));out.data.set([235,233,223,Math.round(140*Math.min(1,(1-r)*5))],a*4);}
+ }
+ x.putImageData(out,0,0);const soft=document.createElement('canvas');soft.width=soft.height=1024;const sx=soft.getContext('2d');sx.filter='blur(3px)';sx.drawImage(c,0,0,1024,1024);return soft.toDataURL('image/png');
 }
