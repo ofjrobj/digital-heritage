@@ -1,4 +1,4 @@
-import {storyStops} from './story-sequence.js?v=story-flow-54';
+import {storyStops} from './story-sequence.js?v=story-flow-55';
 const emit=(name,detail)=>document.dispatchEvent(new CustomEvent(name,{detail}));
 const shots=[];let duration=0;
 function shot(kind,seconds,extra={}){shots.push({kind,start:duration,end:duration+seconds,...extra});duration+=seconds;}
