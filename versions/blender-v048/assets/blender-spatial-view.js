@@ -30,7 +30,7 @@ const season=f<78?0:f<86?1:f<94?2:f<99?3:f<114?4:5;
 sun.color.set([0xfff1dc,0xffecd4,0xe2efff,0xffcf99,0xd7e5ff,0xfff1dc][season]);
 scene.background.set(season===4?'#ccd5d8':'#b6bcb5');
 const passage=f>114&&f<126?Math.pow(Math.sin((f-114)/12*Math.PI),2):0;transitionHaze(passage,f);host.style.filter='none';
-if(f<70&&endingBridge){const k=f/70,e=k*k*k*(10+k*(-15+6*k)),end=endingCamera[70];camera.position.copy(endingBridge.position).lerp(cv(end.position),e);camera.lookAt(endingBridge.target.clone().lerp(cv(end.target),e));}else{camera.position.copy(cv(a.position).lerp(cv(b.position),u));camera.lookAt(cv(a.target).lerp(cv(b.target),u));}const fade=THREE.MathUtils.smoothstep(p,.975,1);host.style.opacity=String(1-fade);closing.style.display=p>=.999?'flex':'none';host.dataset.ending=p.toFixed(4);render();}
+if(f<70&&endingBridge){const k=f/70,e=k*k*k*(10+k*(-15+6*k)),end=endingCamera[70];camera.position.copy(endingBridge.position).lerp(cv(end.position),e);camera.position.y+=Math.sin(Math.PI*e)*14;camera.lookAt(endingBridge.target.clone().lerp(cv(end.target),e));}else{camera.position.copy(cv(a.position).lerp(cv(b.position),u));camera.lookAt(cv(a.target).lerp(cv(b.target),u));}const fade=THREE.MathUtils.smoothstep(p,.975,1);host.style.opacity=String(1-fade);closing.style.display=p>=.999?'flex':'none';host.dataset.ending=p.toFixed(4);render();}
 document.addEventListener('blender-ending-frame',e=>showEnding(e.detail));
 
 // Blender-authored background loops. Narrative heroes deliberately have no ambient_kind.
