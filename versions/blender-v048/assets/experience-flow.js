@@ -15,6 +15,6 @@ $('#endingPlay').onclick=()=>document.dispatchEvent(new CustomEvent('prototype-e
 $('#memoryButton').onclick=()=>{document.dispatchEvent(new CustomEvent('stage-navigate',{detail:'memory'}));document.dispatchEvent(new CustomEvent('prototype-ending'));};
 $('#restartStory').onclick=()=>{document.dispatchEvent(new CustomEvent('story-home'));document.dispatchEvent(new CustomEvent('stage-navigate',{detail:'intro'}));};
 const sound=$('#soundToggle');sound.addEventListener('click',()=>film.muted=sound.getAttribute('aria-pressed')!=='true');
-import('./immersive-stage.js?v=story-flow-58');
+import('./immersive-stage.js?v=story-flow-59');
 
 
