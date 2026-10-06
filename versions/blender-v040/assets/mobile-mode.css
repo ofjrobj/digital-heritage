@@ -1,0 +1,15 @@
+body[data-experience="mobile"] #intro,
+body[data-experience="mobile"] .story-section,
+body[data-experience="mobile"] .observation-flow {
+ width:min(100%,480px)!important;left:50%!important;right:auto!important;
+ transform:translateX(-50%);background:#050705;
+}
+body[data-experience="mobile"] .episode-panel {
+ left:6%!important;right:6%!important;top:auto!important;bottom:17vh;
+ width:88%;max-width:none;padding:18px;max-height:32vh;
+}
+body[data-experience="mobile"] .episode-panel h2 {font-size:16px}
+body[data-experience="mobile"] .episode-panel p {font-size:13px;line-height:1.8}
+body[data-experience="mobile"] #spotList {gap:5px;bottom:4vh}
+body[data-experience="mobile"] #spotList button {font-size:11px;padding:7px 10px}
+body[data-experience="mobile"] .intro-controls {right:20px;top:20px;gap:14px}

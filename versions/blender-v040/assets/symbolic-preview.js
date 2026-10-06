@@ -1,0 +1,13 @@
+import * as THREE from 'three';
+import {GLTFLoader} from './vendor/GLTFLoader.js';
+const frames=await fetch('./assets/symbolic-frames-v002.json').then(r=>r.json());
+const loader=new GLTFLoader();
+const models=await Promise.all(['stone-lion.glb','stone-lion-female.glb'].map(name=>loader.loadAsync('./assets/'+name)));
+for(const frame of [...frames].sort((a,b)=>['goryeo-spring','joseon-rain','joseon-winter','current-summer'].indexOf(a.id)-['goryeo-spring','joseon-rain','joseon-winter','current-summer'].indexOf(b.id))){
+ const figure=document.createElement('figure');figure.innerHTML=`<div><img alt="${frame.title} 배경 시안" src="${frame.url}"></div><figcaption>${frame.title}<small>저화질 정지 컷 · 실제 석사자 3D 합성 미리보기</small></figcaption>`;document.querySelector('#frames').append(figure);
+ const host=figure.firstElementChild,scene=new THREE.Scene();scene.add(new THREE.HemisphereLight(0xffffee,0x435441,2.5));const sun=new THREE.DirectionalLight(0xffe8cb,3);sun.position.set(-3,6,4);scene.add(sun);
+ const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.domElement.style.width='100%';renderer.domElement.style.height='100%';renderer.toneMapping=THREE.ACESFilmicToneMapping;host.append(renderer.domElement);
+ models.forEach((gltf,i)=>{const model=gltf.scene.clone(true),box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());model.position.sub(center);const pivot=new THREE.Group();pivot.add(model);pivot.scale.setScalar(1.1/size.y);pivot.rotation.y=-Math.PI/4;pivot.position.set(i===0?.72:-.72,-.7,0);if(frame.id==='joseon-winter')model.traverse(o=>{if(!o.isMesh)return;const snow=m=>{m=m.clone();m.onBeforeCompile=shader=>{shader.vertexShader='varying float snowUp;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <beginnormal_vertex>','#include <beginnormal_vertex>\nsnowUp=normalize(mat3(modelMatrix)*objectNormal).y;');shader.fragmentShader='varying float snowUp;\n'+shader.fragmentShader;shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.rgb=mix(diffuseColor.rgb,vec3(.91,.94,.93),smoothstep(.3,.75,snowUp)*.9);');};m.customProgramCacheKey=()=>"winter-still";return m;};o.material=Array.isArray(o.material)?o.material.map(snow):snow(o.material);});scene.add(pivot);});
+ const camera=new THREE.OrthographicCamera(-3.2,3.2,1.8,-1.8,.1,50);camera.position.set(0,1.2,8);camera.lookAt(0,0,0);
+ new ResizeObserver(()=>{renderer.setSize(host.clientWidth,host.clientHeight,false);renderer.render(scene,camera);}).observe(host);
+}
