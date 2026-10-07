@@ -1,5 +1,5 @@
 import {dialogueCopy,dialoguePages} from './dialogue-copy.js?v=dialogue-66';
-import {storyStops} from './story-sequence.js?v=story-flow-69';
+import {storyStops} from './story-sequence.js?v=story-flow-70';
 const emit=(name,detail)=>document.dispatchEvent(new CustomEvent(name,{detail}));
 const shots=[];let duration=0;
 function shot(kind,seconds,extra={}){shots.push({kind,start:duration,end:duration+seconds,...extra});duration+=seconds;}
@@ -11,7 +11,7 @@ if(cameraTest){
  else{shot('pair',4);shot('back-zoom',14);shot('motif',7,{stop:{subject:'male',region:'back',route:0}});}
  shot('travel',50,{stop:{route:0}});
  for(let index=0;index<5;index++){if(index)shot('transfer',90,{from:index-1,to:index});shot('dialogue',dialogueSeconds(index),{stop:{route:index}});}
- shot('transfer',100,{from:4,to:5});shot('settle',3);shot('seasons',60);shot('fade',5);
+ shot('transfer',100,{from:4,to:5});shot('settle',3);shot('seasons',60);shot('fade',3);shot('archive',1);
 }else{
  shot('entry',4);shot('rotate',8);shot('female-click',2);shot('female-scan',28);shot('male-transition',2);shot('male-scan',28);shot('pair',3);
  for(let i=0;i<storyStops.length;i++){const stop=storyStops[i];shot('lens',4,{stop});shot('motif',10,{stop});shot('travel',50,{stop});shot('dialogue',dialogueSeconds(stop.route),{stop});if(i<storyStops.length-1){shot('retreat',12,{stop});shot('pair',3);}}
@@ -31,18 +31,19 @@ stop.onclick=()=>{active=running=false;previous=null;panel.hidden=true;testFade.
 
 if(cameraTest&&!fullStory){
  const jump=document.createElement('select');jump.setAttribute('aria-label','카메라 테스트 장면');jump.style.cssText='max-width:190px;background:#18231e;color:#e8e5dc;border:1px solid #829184;padding:8px';
- const labels={'pair-reveal':'유물 · 두 석사자','head-push':'머리로 접근','crown-zoom':'갈기 클로즈업','relief-trace':'무늬의 선','relief-landscape':'유물 → 마을','landscape-expand':'마을 진입',pair:'유물 · 반측면 고정','back-zoom':'등 무늬로 접근',entry:'유물 등장',rotate:'유물 회전',motif:'유물 → 마을',travel:'마을 → 인물 1',guesthouse:'객사터 석사자로 이동',settle:'석사자 앞 정지',seasons:'시대·계절 변화',fade:'페이드아웃'};
+ const labels={'pair-reveal':'유물 · 두 석사자','head-push':'머리로 접근','crown-zoom':'등 무늬 클로즈업','relief-trace':'무늬의 선','relief-landscape':'유물 → 마을','landscape-expand':'마을 진입',pair:'유물 · 반측면 고정','back-zoom':'등 무늬로 접근',entry:'유물 등장',rotate:'유물 회전',motif:'유물 → 마을',travel:'마을 → 인물 1',guesthouse:'객사터 석사자로 이동',settle:'석사자 앞 정지',seasons:'시대·계절 변화',fade:'가치해석으로',archive:'가치해석 · 석사자의 결'};
  shots.forEach((q,i)=>{const option=document.createElement('option');option.value=i;option.textContent=q.kind==='dialogue'?`인물 ${q.stop.route+1} · ${titles[q.stop.route]}`:q.kind==='transfer'?(q.from===4?'마을 귀환':`인물 ${q.from+1} → 인물 ${q.to+1}`):labels[q.kind];jump.append(option);});control.prepend(jump);
  jump.onchange=()=>{const choice=Number(jump.value);if(!active){play.click();running=false;play.textContent='이어서 재생';}elapsed=shots[choice].start;seek.value=elapsed;previous=null;renderStory();};
 }
 // The reference's quiet vertical index remains usable, rather than decorative.
 const chapterIndex=document.createElement('nav');chapterIndex.id='storySectionIndex';chapterIndex.setAttribute('aria-label','이야기 구간');
-const sections=[['형태','pair-reveal'],['무늬','crown-zoom'],['마을','travel'],['시간','settle']];
+const sections=[['형태','pair-reveal'],['무늬','crown-zoom'],['마을','travel'],['시간','settle'],['가치해석','archive']];
 sections.forEach(([label,kind],i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+'  '+label;b.onclick=()=>{const q=shots.find(s=>s.kind===kind);if(!q)return;if(!active)play.click();elapsed=q.start;seek.value=elapsed;previous=null;renderStory();};chapterIndex.append(b);});if(cameraTest)document.body.append(chapterIndex);
-window.addEventListener('wheel',e=>{if(active){e.preventDefault();e.stopImmediatePropagation();}},{capture:true,passive:false});
+window.addEventListener('wheel',e=>{if(active&&!document.body.classList.contains('archive-active')){e.preventDefault();e.stopImmediatePropagation();}},{capture:true,passive:false});
 function renderStory(){
  const q=shots.find(s=>elapsed<s.end)||shots.at(-1),u=Math.min(1,(elapsed-q.start)/(q.end-q.start)),t=elapsed-q.start;const changed=previous!==q;previous=q;
- chapterIndex.querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-current',String(i===(elapsed<13?0:elapsed<36?1:elapsed<shots.find(s=>s.kind==='settle')?.start?2:3))));testFade.style.opacity='0';emit('relief-landscape-frame',{progress:1});if(cameraTest&&!fullStory)control.querySelector('select').value=String(shots.indexOf(q));document.body.dataset.storyShot=q.kind;panel.hidden=true;emit('cinema-closing',{visible:false,book:false});
+ chapterIndex.querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-current',String(i===(elapsed<13?0:elapsed<36?1:elapsed<shots.find(s=>s.kind==='settle')?.start?2:q.kind==='archive'?4:3))));testFade.style.opacity='0';emit('relief-landscape-frame',{progress:1});if(cameraTest&&!fullStory)control.querySelector('select').value=String(shots.indexOf(q));document.body.dataset.storyShot=q.kind;panel.hidden=true;emit('cinema-closing',{visible:false,book:false});
+ if(q.kind==='archive'){running=false;emit('archive-open');return;}
  if(['pair-reveal','head-push','crown-zoom','relief-trace','back-zoom','entry','rotate','female-click','female-scan','male-transition','male-scan','pair','lens'].includes(q.kind)){
   if(changed){emit('stage-navigate','intro');emit('ink-landscape-frame',{progress:1,index:0});}
   let kind=['pair-reveal','head-push','crown-zoom','relief-trace'].includes(q.kind)?q.kind:q.kind==='back-zoom'?'back-zoom':q.kind==='entry'?'entry':q.kind==='rotate'?'rotate':q.kind==='lens'?'lens':q.kind.endsWith('scan')?'scan':'pair';
@@ -63,8 +64,12 @@ function renderStory(){
   const source=q.kind==='guesthouse'?u*70:q.kind==='settle'?70:q.kind==='seasons'?70+u*70:140;
   emit('blender-ending-frame',source/144);
   emit('cinema-closing',{visible:q.kind==='closing'||q.kind==='book',book:q.kind==='book'});
- if(q.kind==='fade'){testFade.style.opacity=String(u);}
+ if(q.kind==='fade'){testFade.style.background='#e5e9e3';testFade.style.opacity=String(u);if(u>.3)emit('archive-preload');}
  }
  if(elapsed>=duration){running=false;play.textContent='다시 재생';}
 }
-function tick(now){requestAnimationFrame(tick);const dt=last?Math.min(.1,(now-last)/1000):0;last=now;if(!running||document.hidden||document.querySelector('#intro').dataset.lionReady!=='true')return;elapsed=Math.min(duration,elapsed+dt);seek.value=elapsed;renderStory();}requestAnimationFrame(tick);
+function tick(now){requestAnimationFrame(tick);const dt=last?Math.min(.1,(now-last)/1000):0;last=now;if(!running||document.hidden||document.querySelector('#intro').dataset.lionReady!=='true')return;if(elapsed>=12)emit('village-preload');if(elapsed>=28&&document.body.dataset.spatialReady!=='true')return;const memoryStart=shots.find(s=>s.kind==='settle')?.start??Infinity;if(elapsed>=memoryStart-85)emit('ending-preload');if(elapsed>=memoryStart&&document.body.dataset.endingReady!=='true')return;elapsed=Math.min(duration,elapsed+dt);seek.value=elapsed;renderStory();}requestAnimationFrame(tick);
+
+document.addEventListener('archive-open',()=>{running=false;panel.hidden=true;});
+document.addEventListener('archive-story',()=>{active=true;running=false;elapsed=0;previous=null;seek.hidden=false;stop.hidden=false;seek.value=0;play.textContent='이어서 재생';document.body.classList.add('cinema-running');renderStory();});
+document.addEventListener('exhibition-start',()=>{if(!running)play.click();});

@@ -21,7 +21,7 @@ function size(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidt
 // Soft depth haze plus a feathered veil, confined to transitions.
 const mist=document.createElement('div');mist.id='transitionMist';mist.setAttribute('aria-hidden','true');mist.style.cssText='position:absolute;inset:-10%;pointer-events:none;opacity:0;background:radial-gradient(ellipse at 18% 62%,rgba(222,226,213,.66),transparent 66%),radial-gradient(ellipse at 84% 35%,rgba(222,226,213,.48),transparent 72%);filter:blur(28px)';host.append(mist);
 function transitionHaze(strength,phase){const q=THREE.MathUtils.clamp(strength,0,1);mist.style.opacity=String(q*.62);mist.style.transform=`translateX(${Math.sin(phase*.12)*2}%)`;scene.fog.near=90-60*q;scene.fog.far=230-100*q;}
-function render(){if(host.style.display!=='none')renderer.render(scene,camera);}
+let renderPending=false;function render(){if(renderPending)return;renderPending=true;requestAnimationFrame(()=>{renderPending=false;if(host.style.display!=='none'&&!document.hidden&&!document.body.classList.contains('archive-active'))renderer.render(scene,camera);});}
 const easeMotion=v=>{v=THREE.MathUtils.clamp(v,0,1);return v*v*v*(10+v*(-15+6*v));};
 // Keep dialogue on its arrival axis; retreat opens distance on that same axis.
 function sampleRoute(index,seconds){const storySeconds=seconds;seconds=seconds>150?150:150*easeMotion(seconds/150);const r=routes[index],samples=r.samples,frame=seconds*24+1;let lo=0,hi=samples.length-1;while(lo+1<hi){const mid=(lo+hi)>>1;if(samples[mid].frame<=frame)lo=mid;else hi=mid;}const i=Math.min(samples.length-2,lo);const a=samples[i],b=samples[i+1],t=THREE.MathUtils.clamp((frame-a.frame)/(b.frame-a.frame),0,1);camera.position.copy(cv(a.position).lerp(cv(b.position),t));const target=cv(a.target).lerp(cv(b.target),t);
@@ -56,7 +56,7 @@ async function loadEnding(){if(endingLoad)return endingLoad;endingLoad=(async()=
  for(let k=0;k<3&&people.length;k++){const person=people[k%people.length].clone(true);person.name='Ending passer '+k;person.userData={};scene.add(person);people[k%people.length].updateWorldMatrix(true,false);people[k%people.length].matrixWorld.decompose(person.position,person.quaternion,person.scale);person.position.set(-34,1,-20-k*2);person.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(person);person.position.y-=box.min.y;person.userData.footOffset=person.position.y;person.visible=false;endingWalkers.push(person);}
 ending.visible=false;endingMixer=new THREE.AnimationMixer(ending);for(const clip of g.animations){endingDuration=Math.max(endingDuration,clip.duration);const action=endingMixer.clipAction(clip);action.setLoop(THREE.LoopOnce,1);action.clampWhenFinished=true;action.play();}let catSource;village.traverse(o=>{if(!catSource&&o.userData.ambient_kind==='cat')catSource=o;});if(catSource){endingCat=catSource.clone(true);scene.add(endingCat);catSource.updateWorldMatrix(true,false);catSource.matrixWorld.decompose(endingCat.position,endingCat.quaternion,endingCat.scale);endingCat.position.set(-13,0,-18);endingCat.updateMatrixWorld(true);endingCat.position.y-=new THREE.Box3().setFromObject(endingCat).min.y;endingCat.userData.footOffset=endingCat.position.y;endingCat.visible=false;}
 for(const [px,pz] of [[-14.5,-11],[-9,-10]]){const tree=new THREE.Group();const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.17,.25,3.2,7),new THREE.MeshStandardMaterial({color:0x615037}));trunk.position.y=1.6;tree.add(trunk);for(let k=0;k<3;k++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1,1),new THREE.MeshStandardMaterial({color:0x334735}));crown.position.set((k%2?1:-1)*.35,2.5+k*.7,0);crown.scale.set(1.45-k*.18,.48,1.1-k*.12);tree.add(crown);}tree.position.set(px,0,pz);tree.visible=false;scene.add(tree);passageTrees.push(tree);}
-endingCamera=await fetch('./assets/blender-ending-camera-v045.json').then(r=>r.json());})();return endingLoad;}
+endingCamera=await fetch('./assets/blender-ending-camera-v045.json').then(r=>r.json());document.body.dataset.endingReady='true';})();return endingLoad;}
 async function showEnding(p){endingProgress=p;await loadEnding();if(p!==endingProgress||document.body.dataset.stage!=='memory')return;if(mode!=='ending'){
  endingBridge={rotation:camera.quaternion.clone(),position:camera.position.clone(),target:camera.position.clone().add(camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(8))};
  endingPath=new THREE.CatmullRomCurve3([endingBridge.position,new THREE.Vector3(-28,5.3,-23),new THREE.Vector3(-28,4,-18),new THREE.Vector3(-34,2,-13),new THREE.Vector3(-43,1.8,-7),new THREE.Vector3(-46,2.7,8),new THREE.Vector3(-50,2.7,20),new THREE.Vector3(-50,2.7,28),new THREE.Vector3(-40,2.7,36),new THREE.Vector3(-28,2.7,32),new THREE.Vector3(-15,2.7,29),new THREE.Vector3(0,2.7,26),new THREE.Vector3(14,2.9,22),new THREE.Vector3(6,2.7,19),new THREE.Vector3(-6,2.7,17),new THREE.Vector3(-6,2.7,12),new THREE.Vector3(-12,2.7,10),new THREE.Vector3(-15,2.7,0),new THREE.Vector3(-16,2.7,-7),endingFixedPosition],false,'centripetal');
@@ -167,7 +167,7 @@ function applyTransfer(data,progress){
 
 if(pendingTransfer)document.dispatchEvent(new CustomEvent('blender-transfer-frame',{detail:pendingTransfer}));else if(lastEvent)update(lastEvent);
 
-if(cameraTest)loadEnding();
+document.addEventListener('ending-preload',()=>loadEnding());
 
 // Full-page prologue: the village is first read as a landscape, then joins the tested route.
 document.addEventListener('blender-establishing-frame',e=>{
@@ -193,3 +193,6 @@ document.addEventListener('blender-entry-frame',e=>{
  }
  mode='route';applyTransfer(entryTransfer,e.detail.progress);host.style.display='block';host.style.opacity='1';transitionHaze(0,0);render();
 });
+
+document.body.dataset.spatialReady='true';document.dispatchEvent(new CustomEvent('spatial-ready'));
+document.addEventListener('archive-open',()=>{host.style.display='none';});

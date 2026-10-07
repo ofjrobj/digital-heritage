@@ -139,25 +139,18 @@ dialog{padding:42px 26px}
 </style>
 <link rel="stylesheet" href="assets/lion-viewer.css?v=weather-5">
 <script type="importmap">{"imports":{"three":"./assets/vendor/three.module.js"}}</script>
-<link rel="stylesheet" href="assets/mobile-mode.css?v=story-flow-69"><link rel="stylesheet" href="assets/refined-ui.css?v=story-flow-69"><link rel="stylesheet" href="assets/editorial-ui.css?v=ui-65"><link rel="stylesheet" href="assets/test-dialogue.css?v=69"></head>
+<link rel="stylesheet" href="assets/mobile-mode.css?v=story-flow-70"><link rel="stylesheet" href="assets/refined-ui.css?v=story-flow-70"><link rel="stylesheet" href="assets/editorial-ui.css?v=ui-65"><link rel="stylesheet" href="assets/test-dialogue.css?v=69"><link rel="stylesheet" href="assets/exhibition.css?v=70"></head>
 <body data-camera-test="village">
 <div id="experienceChoice" role="dialog" aria-modal="true" aria-labelledby="experienceHeading">
-  <div class="experience-card">
-    <header class="landing-masthead"><span>공주 봉황동 석사자</span><span>디지털 헤리티지 · 공주목</span></header>
-    <div class="landing-body"><div class="landing-copy">
-      <p class="experience-eyebrow">돌에 새겨진 시간, 사람으로 잇는 이야기</p>
-      <h2 id="experienceHeading">석사자와<br>공주목 이야기</h2>
-      <p class="landing-description">두 석사자의 무늬를 따라<br>옛 공주의 공간과 그곳을 오가던 사람들을 만납니다.</p>
-      <div class="experience-options"><button data-experience="desktop"><span>데스크톱으로 시작</span><span aria-hidden="true">↗</span></button><button data-experience="mobile"><span>모바일로 시작</span><span aria-hidden="true">↗</span></button></div>
-      <p class="landing-hint">화면에 맞는 감상 방식을 선택해 주세요.</p>
-    </div><div class="landing-art" aria-hidden="true"><span class="landing-hanja">石<br>獅<br>子</span><span class="landing-art-caption">형태를 살피고<br>기억을 거닐다</span></div></div>
-    <footer class="landing-footer"><span>형태 관찰 ─ 무늬 속 마을 ─ 시간을 지나</span><span>인물의 이야기는 장소와 생활상을 바탕으로 구성한 가상 증언입니다.</span></footer>
+  <div class="exhibition-cover">
+    <div class="cover-top"><span>公州 · 鳳凰洞</span><span>STONE LION ARCHIVE</span></div>
+    <div class="cover-copy"><span class="cover-number">01 — 형태에서 풍경으로</span><h2 id="experienceHeading">돌에 새긴 선,<br>풍경이 되다.</h2><div class="cover-actions"><button data-experience="desktop">이야기 시작 <span aria-hidden="true">↗</span></button><button data-experience="mobile">모바일로 시작 <span aria-hidden="true">↗</span></button></div></div>
+    <svg class="cover-ridges" viewBox="0 0 1000 500" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1"><path d="M-100 460Q80 350 160 370T340 240T540 210T730 110T1100 10"/><path d="M-100 480Q80 370 160 390T340 260T540 230T730 130T1100 30"/><path d="M-100 500Q80 390 160 410T340 280T540 250T730 150T1100 50"/><path d="M-100 520Q80 410 160 430T340 300T540 270T730 170T1100 70"/><path d="M-100 540Q80 430 160 450T340 320T540 290T730 190T1100 90"/><path d="M-100 560Q80 450 160 470T340 340T540 310T730 210T1100 110"/><path d="M-100 580Q80 470 160 490T340 360T540 330T730 230T1100 130"/></g></svg>
+    <div class="cover-bottom"><span>석사자 · 풍경 · 사람 · 시간</span><button id="coverIndex">석사자 살펴보기 <span aria-hidden="true">→</span></button></div>
   </div>
 </div>
-
-
 <section class="prologue" id="intro" aria-label="석사자 인트로">
-  <video id="introBackdrop" playsinline muted preload="auto" aria-hidden="true"><source src="assets/seasons-memory.mp4" type="video/mp4"></video>
+  <video id="introBackdrop" playsinline muted preload="none" aria-hidden="true"></video>
   
   <p id="introStoryLine" aria-live="polite"></p>
   <div class="intro-title"><h1>석사자와 공주목 이야기</h1><p>공주목 마을, 석사자를 기억하는 이들이 전하는 이야기</p></div>
@@ -187,7 +180,7 @@ dialog{padding:42px 26px}
 
 <main class="journey" id="journey" aria-label="스크롤로 이동하는 봉황동 석사자 풍경">
  <div class="scene" id="scene">
-  <video id="film" playsinline muted preload="auto" poster="https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5623f931-61c7-4708-9ead-669925bffc6f.png" aria-label="산지의 전경에서 석사자 두 점으로 다가가는 영상"><source src="https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20260929_093356_9f20fb86-f313-4468-8939-3b5ab878b1a3.mp4" type="video/mp4"></video>
+  <video id="film" playsinline muted preload="none" poster="https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5623f931-61c7-4708-9ead-669925bffc6f.png" aria-label="산지의 전경에서 석사자 두 점으로 다가가는 영상"></video>
   <div class="veil" aria-hidden="true"></div>
   <header><a href="./#intro" class="identity">봉황동 석사자</a><div class="header-actions"><a href="chapters.html" class="text-button">목차</a><button id="aboutOpen" class="text-button">이 공간에 대하여</button></div></header>
   <section class="opening" id="opening" aria-labelledby="title"><p>공주 · 봉황동</p><h1 id="title">석사자,<br>풍경의 안으로</h1></section>
@@ -223,6 +216,6 @@ settings.addEventListener('click',e=>{if(e.target===settings){const r=settings.g
 about.addEventListener('click',e=>{if(e.target===about){const r=about.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)about.close()}});
 readScroll();
 </script>
-<script type="module" src="assets/lion-viewer.js?v=story-flow-69"></script>
-<script type="module" src="assets/story-journey.js?v=story-flow-69"></script>
+<script type="module" src="assets/lion-viewer.js?v=story-flow-70"></script>
+<script type="module" src="assets/exhibition-runtime.js?v=70"></script>
 </body></html>

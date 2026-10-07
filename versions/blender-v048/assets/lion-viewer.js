@@ -1,4 +1,4 @@
-import {storyStops} from './story-sequence.js?v=story-flow-69';
+import {storyStops} from './story-sequence.js?v=story-flow-70';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
@@ -24,7 +24,7 @@ let pairHalfSpacing=.64;
 document.addEventListener('story-pose',e=>guidedPose=e.detail);
 document.addEventListener('story-home',()=>guidedPose=null);
 try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});}catch(error){status.textContent='이 기기에서는 3D 화면을 표시할 수 없습니다.';throw error;}
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setClearColor(0x000000,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;host.append(renderer.domElement);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setClearColor(0x000000,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;host.append(renderer.domElement);
 const camera=new THREE.OrthographicCamera(-2,2,2,-2,.01,100),controls=new OrbitControls(camera,renderer.domElement);
 controls.enableDamping=true;controls.dampingFactor=.09;controls.enablePan=false;controls.enabled=false;controls.minPolarAngle=.12;controls.maxPolarAngle=Math.PI-.12;
 scene.add(new THREE.HemisphereLight(0xe7e6e0,0x302821,.65));
@@ -58,7 +58,7 @@ const textureLoader=new THREE.TextureLoader();
 function loadHeight(name){return textureLoader.loadAsync(new URL(`./${name}-height.jpg`,import.meta.url).href).then(t=>{t.flipY=false;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());return t;});}
 function surface(original){for(const item of surfaceMaterials)item.mesh.material=original?item.original:item.height;}
 
-function load(name,url){return Promise.all([loadHeight(name),loader.loadAsync(new URL(url,import.meta.url).href)]).then(([heightMap,gltf])=>{
+function load(name,url){return loader.loadAsync(new URL(url,import.meta.url).href).then(gltf=>{
  const root=gltf.scene,box=new THREE.Box3().setFromObject(root);root.position.sub(box.getCenter(new THREE.Vector3()));
  root.traverse(mesh=>{if(!mesh.isMesh)return;const original=mesh.material;
   const makeHeight=m=>{const gray=m.clone();gray.map=null;gray.color.set(0xc4c3b5);gray.roughness=.82;gray.metalness=0;return gray;};
@@ -67,10 +67,16 @@ function load(name,url){return Promise.all([loadHeight(name),loader.loadAsync(ne
  });
  const pivot=new THREE.Group();pivot.add(root);const extent=box.getSize(new THREE.Vector3());pivot.userData.turnRadius=Math.hypot(extent.x,extent.z)/2;pivot.userData.turnHalfHeight=extent.y/2;pivot.rotation.y=-Math.PI/4;scene.add(pivot);subjects.set(name,pivot);
 });}
-Promise.all([load('male','./stone-lion.glb'),load('female','./stone-lion-female.glb')]).then(()=>{
+let resolveModels, rejectModels;
+const modelReady=new Promise((resolve,reject)=>{resolveModels=resolve;rejectModels=reject;});
+modelReady.catch(()=>{});
+let loadStarted=false;
+function startModels(){if(loadStarted)return;loadStarted=true;status.textContent='석사자를 불러오는 중';Promise.all([load('male','./stone-lion.glb'),load('female','./stone-lion-female.glb')]).then(()=>{
  loaded=true;intro.dataset.lionReady='true';pairHalfSpacing=(subjects.get('female').userData.turnRadius+subjects.get('male').userData.turnRadius+.20)/2;subjects.get('female').position.set(-pairHalfSpacing,0,0);subjects.get('male').position.set(pairHalfSpacing,0,0);home();readyAt=performance.now()+3000;
- status.textContent='';document.dispatchEvent(new CustomEvent('lion-ready'));
-}).catch(e=>{console.error(e);status.textContent='석사자를 불러오지 못했습니다. 새로고침해 주세요.';});
+ status.textContent='';resolveModels();document.dispatchEvent(new CustomEvent('lion-ready'));
+}).catch(e=>{console.error(e);status.textContent='석사자를 불러오지 못했습니다. 새로고침해 주세요.';rejectModels(e);});}
+document.addEventListener('experience-selected',startModels);
+export async function archiveModels(){startModels();await modelReady;return [...subjects].map(([name,pivot])=>({name,model:pivot.children[0].clone(true)}));}
 function selectSubject(name){const unchanged=active===name;active=name;clearPointer();
  for(const [key,o] of subjects){o.visible=name==='both'||key===name;o.position.x=name==='both'?(key==='female'?-pairHalfSpacing:pairHalfSpacing):0;o.position.z=0;}
  // Keep a full turn within the frame, including the broad side silhouette.
@@ -264,13 +270,13 @@ function renderLensWithRakingLight(item){
  studioLights.forEach((l,i)=>{l.position.copy(saved[i].position);l.intensity=saved[i].intensity;});
 }
 const lensCamera=camera.clone();
-function tick(now){requestAnimationFrame(tick);const delta=Math.min((now-last)/1000,.05);last=now;updateFilm();if(!visible||document.hidden)return;host.classList.toggle('motif-focus',!!regionHover);
+function tick(now){requestAnimationFrame(tick);const delta=Math.min((now-last)/1000,.05);last=now;if(!visible||document.hidden||!experience||document.body.classList.contains('archive-active')||!['intro','observe'].includes(document.body.dataset.stage))return;updateFilm();host.classList.toggle('motif-focus',!!regionHover);
  if(guidedPose&&loaded){camera.zoom+=(guidedPose.zoom-camera.zoom)*.07;camera.updateProjectionMatrix();const nextY=baseFocus.y+(guidedPose.height||0);const dy=(nextY-controls.target.y)*.07;controls.target.y+=dy;camera.position.y+=dy;for(const o of subjects.values())o.rotation.y+=(guidedPose.yaw-o.rotation.y)*.07;}
  if(document.body.dataset.cameraTest!=='village'&&!cinemaDriven&&document.body.dataset.stage==='intro'&&!filmPlaying&&!guidedPose&&loaded&&experience&&!intro.classList.contains('story-playing')&&intro.dataset.observationPhase!=='magnifier'&&!reduced.matches&&!document.body.classList.contains('choosing-experience')&&now>=readyAt){for(const o of subjects.values())if(o.visible)o.rotation.y-=delta*.075;}
  weather(now);cinematicLight();controls.update();scene.updateMatrixWorld(true);renderer.render(scene,camera);drawSurfaceTrace(now);updateEntry(now);updateHotspots();
  if(pointer&&loaded&&!down&&!filmPlaying){if(now-lastHit>90){lastHit=now;hovered=(inspecting&&document.body.dataset.stage==='intro')?regionHover:hit(pointer.x,pointer.y);host.style.cursor=hovered?(inspecting?'none':'pointer'):'default';lens.classList.toggle('visible',inspecting&&hovered);hint.classList.toggle('visible',!inspecting&&Boolean(hovered));}
   if(inspecting&&hovered&&now-lastLens>50){lastLens=now;
-   if(!lensRenderer){lensRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});lensRenderer.setPixelRatio(Math.min(devicePixelRatio,2));lensRenderer.setSize(264,264);lensRenderer.outputColorSpace=renderer.outputColorSpace;lensRenderer.toneMapping=renderer.toneMapping;lensRenderer.toneMappingExposure=renderer.toneMappingExposure;lensRenderer.setClearColor(0x000000);lens.prepend(lensRenderer.domElement);}
+   if(!lensRenderer){lensRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});lensRenderer.setPixelRatio(Math.min(devicePixelRatio,1.5));lensRenderer.setSize(264,264);lensRenderer.outputColorSpace=renderer.outputColorSpace;lensRenderer.toneMapping=renderer.toneMapping;lensRenderer.toneMappingExposure=renderer.toneMappingExposure;lensRenderer.setClearColor(0x000000);lens.prepend(lensRenderer.domElement);}
    const size=lens.clientWidth,item=regionButtons.find(r=>r.id===hovered);if(item?.world){
    const r=lens.parentElement.getBoundingClientRect(),h=host.getBoundingClientRect();const px=Math.max(size/2+8,Math.min(width-size/2-8,pointer.x)),py=Math.max(size/2+8,Math.min(height-size/2-95,pointer.y));lens.style.transform=`translate(${h.left-r.left+px-size/2}px,${h.top-r.top+py-size/2}px)`;
    frameLens(item);
@@ -312,10 +318,10 @@ document.addEventListener('cinema-lion-frame',e=>{
   home();
   if(['pair-reveal','head-push','crown-zoom','relief-trace'].includes(d.kind)){
    const smooth=v=>{v=Math.max(0,Math.min(1,v));return v*v*v*(10+v*(-15+6*v));};
-   scene.updateMatrixWorld(true);frameLens({subject:'male',region:'head'});
-   const pivot=subjects.get('male'),bounds=pivot.userData.anchorBounds,size=bounds.getSize(new THREE.Vector3());
+   scene.updateMatrixWorld(true);frameLens({subject:'female',region:'back'});
+   const pivot=subjects.get('female'),bounds=pivot.userData.anchorBounds,size=bounds.getSize(new THREE.Vector3());
    const face=bounds.getCenter(new THREE.Vector3()).add(new THREE.Vector3(.4,.18,0).multiply(size)).applyMatrix4(pivot.matrixWorld);
-   const crown=bounds.getCenter(new THREE.Vector3()).add(new THREE.Vector3(.32,.43,0).multiply(size)).applyMatrix4(pivot.matrixWorld);
+   const crown=bounds.getCenter(new THREE.Vector3()).add(new THREE.Vector3(-.12,.32,0).multiply(size)).applyMatrix4(pivot.matrixWorld);
    const origin=controls.target.clone(),offset=camera.position.clone().sub(origin),u=smooth(d.progress);
    let focus=origin,zoom=1,tilt=0;
    if(d.kind==='head-push'){focus=origin.clone().lerp(face,u);zoom=1+u*1.8;}
@@ -377,15 +383,16 @@ document.addEventListener('relief-landscape-frame',e=>{
 
 function addReliefContours(pivot){
  const bounds=pivot.userData.anchorBounds,size=bounds.getSize(new THREE.Vector3()),points=[],meshes=[];
- pivot.updateWorldMatrix(true,true);pivot.traverse(o=>{if(o.isMesh)meshes.push(o);});
+ pivot.updateWorldMatrix(true,true);const inverse=pivot.matrixWorld.clone().invert();
+ pivot.traverse(o=>{if(!o.isMesh)return;const attr=o.geometry.attributes.position,matrix=inverse.clone().multiply(o.matrixWorld),v=new THREE.Vector3(),positions=new Float32Array(attr.count*3);for(let i=0;i<attr.count;i++){v.fromBufferAttribute(attr,i).applyMatrix4(matrix);v.toArray(positions,i*3);}meshes.push({positions,index:o.geometry.index,count:o.geometry.index?.count??attr.count});});
  for(let level=0;level<8;level++){
-  const h=bounds.min.y+size.y*(.84+level*.019);
-  for(const mesh of meshes){const attr=mesh.geometry.attributes.position,idx=mesh.geometry.index,matrix=pivot.matrixWorld.clone().invert().multiply(mesh.matrixWorld),count=idx?idx.count:attr.count;
-   for(let i=0;i<count;i+=3){const vertices=[0,1,2].map(k=>new THREE.Vector3().fromBufferAttribute(attr,idx?idx.getX(i+k):i+k).applyMatrix4(matrix));if(vertices.every(v=>v.x<bounds.min.x+size.x*.60))continue;const intersections=[];
-    for(const [a,b]of [[0,1],[1,2],[2,0]]){const va=vertices[a],vb=vertices[b];if((va.y<h&&vb.y>=h)||(vb.y<h&&va.y>=h))intersections.push(va.clone().lerp(vb,(h-va.y)/(vb.y-va.y)));}
-    if(intersections.length===2)for(const v of intersections){v.y+=.001;points.push(v.x,v.y,v.z);}
+  const h=bounds.min.y+size.y*(.65+level*.029);
+  for(const {positions:p,index,count} of meshes){
+   for(let i=0;i<count;i+=3){const ids=[0,1,2].map(k=>(index?index.getX(i+k):i+k)*3);if(ids.every(k=>p[k]>bounds.min.x+size.x*.65))continue;const hits=[];
+    for(const [a,b]of [[0,1],[1,2],[2,0]]){const x=ids[a],y=ids[b];if((p[x+1]<h&&p[y+1]>=h)||(p[y+1]<h&&p[x+1]>=h)){const t=(h-p[x+1])/(p[y+1]-p[x+1]);hits.push(p[x]+(p[y]-p[x])*t,h+.001,p[x+2]+(p[y+2]-p[x+2])*t);}}
+    if(hits.length===6)points.push(...hits);
    }
   }
  }
- const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(points,3));const line=new THREE.LineSegments(geometry,new THREE.LineBasicMaterial({color:0xfff6d9,transparent:true,opacity:.9,depthWrite:false,depthTest:false}));line.userData.relief=true;line.name='Crown surface height contours';pivot.add(line);scanTraces.push(line);
+ const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(points,3));const line=new THREE.LineSegments(geometry,new THREE.LineBasicMaterial({color:0xfff6d9,transparent:true,opacity:.9,depthWrite:false,depthTest:false}));line.userData.relief=true;line.name='Back surface height contours';pivot.add(line);scanTraces.push(line);
 }
