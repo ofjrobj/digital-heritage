@@ -53,3 +53,18 @@ body .intro-controls .intro-control svg{color:inherit!important}
 #valueArchive[data-step="2"] .archive-guide{display:none}
 #valueArchive[data-step="2"] .archive-grid{inset:48% 8% 22%}
 }
+
+/* Revision 71: spatial scrubbing and a restrained woven-line dialogue card. */
+body:not(.archive-active),body:not(.archive-active) canvas{touch-action:none}
+body:not(.archive-active) #intro,body:not(.archive-active) #blenderSpatialView,.exhibition-cover{cursor:grab}
+body.journey-dragging,body.journey-dragging *{cursor:grabbing!important;user-select:none!important}
+body[data-full-story="true"] #cinemaControls{display:none!important}
+#journeyDragHint{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:65;color:#edf1e8;background:#253b32b3;border:1px solid #d8e2d52b;border-radius:30px;padding:10px 20px;font:12px 'Gowun Batang',serif;pointer-events:none;backdrop-filter:blur(10px);white-space:nowrap}
+#journeyDragHint span{margin-right:10px;font-size:20px;vertical-align:middle}
+.choosing-experience #journeyDragHint,.archive-active #journeyDragHint,body:not([data-full-story="true"]) #journeyDragHint{display:none}
+body[data-camera-test] #cinemaDialogue{padding:28px 30px 27px!important;border:1px solid #8f9c8466!important;background:rgba(237,239,229,.91)!important;box-shadow:none!important;backdrop-filter:blur(12px);color:#3e5546!important}
+body[data-camera-test] #cinemaDialogue:before{content:''!important;display:block!important;height:27px!important;margin:0 0 23px!important;padding:0!important;background:url('./dialogue-knot.svg') center/100% 27px no-repeat!important}
+body[data-camera-test] #cinemaDialogue h2{font-size:21px!important;font-weight:400!important;line-height:1.5!important;margin:0 0 15px!important;color:#354f3e!important}
+body[data-camera-test] #cinemaDialogue p{font-size:15px!important;line-height:1.85!important;letter-spacing:-.01em!important;color:#435c4b!important}
+.cover-drag{font:13px 'Gowun Batang',serif;letter-spacing:.08em;color:#4d6757;margin:0 0 20px}
+@media(max-width:700px){body[data-camera-test] #cinemaDialogue{padding:20px 22px!important}body[data-camera-test] #cinemaDialogue:before{margin-bottom:15px!important}body[data-camera-test] #cinemaDialogue h2{font-size:19px!important}body[data-camera-test] #cinemaDialogue p{font-size:14px!important}#journeyDragHint{bottom:24px;font-size:11px}}

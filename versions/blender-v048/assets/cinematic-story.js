@@ -23,23 +23,34 @@ const panel=document.createElement('aside');panel.id='cinemaDialogue';panel.hidd
 const style=document.createElement('style');style.textContent=`#cinemaControls{position:fixed;right:24px;bottom:24px;z-index:60;display:flex;gap:8px}#cinemaControls button{background:#18231e;color:#e8e5dc;border:1px solid #829184;border-radius:20px;padding:9px 16px;font:14px 'KoPub World Batang',serif;cursor:pointer}.choosing-experience #cinemaControls{display:none}body.cinema-running #episode,body.cinema-running #stageCue,body.cinema-running .scroll-cue,body.cinema-running #spotList,body.cinema-running #lionObservationFilm{visibility:hidden!important}#cinemaDialogue{position:fixed;left:28px;bottom:48px;width:350px;height:278px;box-sizing:border-box;padding:24px;background:#eeece4;color:#6a826e;z-index:20;font-family:'KoPub World Batang',serif}#cinemaDialogue h2{font-size:21px;line-height:1.5;margin:8px 0 22px;word-break:keep-all}#cinemaDialogue p{font-size:15px;line-height:1.8;word-break:keep-all;margin:0}#cinemaDialogue small{font-size:12px}body.cinema-running #introVideoSlot{inset:0!important}`;document.head.append(style);
 const titles=['장사꾼 · 제금루','농민 · 동헌 · 혜의당','찬모 · 객사','주민 삼총사 · 민가','나무꾼 · 뒷산'];
 
-let running=false,active=false,elapsed=0,last=0,previous=null;
+let running=false,active=false,elapsed=0,dragTarget=0,last=0,previous=null;
 const seek=control.querySelector('#cinemaSeek'),play=control.querySelector('#cinemaPlay'),stop=control.querySelector('#cinemaStop');
-seek.oninput=()=>{elapsed=Number(seek.value);previous=null;renderStory();};
-play.onclick=()=>{if(!active||elapsed>=duration){active=true;elapsed=0;previous=null;document.body.classList.add('cinema-running');stop.hidden=false;seek.hidden=false;emit('story-restart');}running=!running;play.textContent=running?'일시 정지':'이어서 재생';renderStory();};
+seek.oninput=()=>{elapsed=dragTarget=Number(seek.value);previous=null;renderStory();};
+play.onclick=()=>{if(!active||elapsed>=duration){active=true;elapsed=dragTarget=0;previous=null;document.body.classList.add('cinema-running');stop.hidden=false;seek.hidden=false;emit('story-restart');}running=!running;play.textContent=running?'일시 정지':'이어서 재생';renderStory();};
 stop.onclick=()=>{active=running=false;previous=null;panel.hidden=true;testFade.style.opacity='0';stop.hidden=true;seek.hidden=true;play.textContent='스토리 재생';document.body.classList.remove('cinema-running','surface-morph');emit('cinema-release');emit('story-home');emit('stage-navigate','intro');};
 
 if(cameraTest&&!fullStory){
  const jump=document.createElement('select');jump.setAttribute('aria-label','카메라 테스트 장면');jump.style.cssText='max-width:190px;background:#18231e;color:#e8e5dc;border:1px solid #829184;padding:8px';
  const labels={'pair-reveal':'유물 · 두 석사자','head-push':'머리로 접근','crown-zoom':'등 무늬 클로즈업','relief-trace':'무늬의 선','relief-landscape':'유물 → 마을','landscape-expand':'마을 진입',pair:'유물 · 반측면 고정','back-zoom':'등 무늬로 접근',entry:'유물 등장',rotate:'유물 회전',motif:'유물 → 마을',travel:'마을 → 인물 1',guesthouse:'객사터 석사자로 이동',settle:'석사자 앞 정지',seasons:'시대·계절 변화',fade:'가치해석으로',archive:'가치해석 · 석사자의 결'};
  shots.forEach((q,i)=>{const option=document.createElement('option');option.value=i;option.textContent=q.kind==='dialogue'?`인물 ${q.stop.route+1} · ${titles[q.stop.route]}`:q.kind==='transfer'?(q.from===4?'마을 귀환':`인물 ${q.from+1} → 인물 ${q.to+1}`):labels[q.kind];jump.append(option);});control.prepend(jump);
- jump.onchange=()=>{const choice=Number(jump.value);if(!active){play.click();running=false;play.textContent='이어서 재생';}elapsed=shots[choice].start;seek.value=elapsed;previous=null;renderStory();};
+ jump.onchange=()=>{const choice=Number(jump.value);if(!active){play.click();running=false;play.textContent='이어서 재생';}elapsed=dragTarget=shots[choice].start;seek.value=elapsed;previous=null;renderStory();};
 }
 // The reference's quiet vertical index remains usable, rather than decorative.
 const chapterIndex=document.createElement('nav');chapterIndex.id='storySectionIndex';chapterIndex.setAttribute('aria-label','이야기 구간');
 const sections=[['형태','pair-reveal'],['무늬','crown-zoom'],['마을','travel'],['시간','settle'],['가치해석','archive']];
-sections.forEach(([label,kind],i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+'  '+label;b.onclick=()=>{const q=shots.find(s=>s.kind===kind);if(!q)return;if(!active)play.click();elapsed=q.start;seek.value=elapsed;previous=null;renderStory();};chapterIndex.append(b);});if(cameraTest)document.body.append(chapterIndex);
-window.addEventListener('wheel',e=>{if(active&&!document.body.classList.contains('archive-active')){e.preventDefault();e.stopImmediatePropagation();}},{capture:true,passive:false});
+sections.forEach(([label,kind],i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+'  '+label;b.onclick=()=>{const q=shots.find(s=>s.kind===kind);if(!q)return;if(!active)play.click();elapsed=dragTarget=q.start;seek.value=elapsed;previous=null;renderStory();};chapterIndex.append(b);});if(cameraTest)document.body.append(chapterIndex);
+const dragHint=document.createElement('div');dragHint.id='journeyDragHint';dragHint.innerHTML='<span aria-hidden="true">↔</span> 드래그하여 공간을 따라가세요';document.body.append(dragHint);
+let drag=null;
+const blocked=()=>document.body.classList.contains('archive-active');
+const isControl=target=>target.closest('button,a,input,select,textarea,nav,dialog,[role="dialog"]:not(#experienceChoice)');
+function beginJourney(){if(document.body.classList.contains('choosing-experience'))document.querySelector('[data-experience="desktop"]').click();if(!active){active=true;elapsed=dragTarget=1.2;previous=null;document.body.classList.add('cinema-running');seek.hidden=false;stop.hidden=false;emit('story-restart');}running=false;play.textContent='이어서 재생';}
+function advance(amount){beginJourney();dragTarget=Math.max(0,Math.min(duration,dragTarget+amount));}
+window.addEventListener('pointerdown',e=>{if(blocked()||isControl(e.target)||e.button!==0)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,axis:null};document.documentElement.setPointerCapture(e.pointerId);e.preventDefault();e.stopImmediatePropagation();},{capture:true});
+window.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.axis){if(Math.hypot(dx,dy)<6)return;drag.axis=Math.abs(dx)>Math.abs(dy)?'x':'y';}advance(-(drag.axis==='x'?dx:dy)*.065);drag.x=e.clientX;drag.y=e.clientY;document.body.classList.add('journey-dragging');e.preventDefault();e.stopImmediatePropagation();},{capture:true});
+function releaseDrag(e){if(drag?.id!==e.pointerId)return;drag=null;document.body.classList.remove('journey-dragging');if(document.documentElement.hasPointerCapture(e.pointerId))document.documentElement.releasePointerCapture(e.pointerId);e.stopImmediatePropagation();}
+window.addEventListener('pointerup',releaseDrag,{capture:true});window.addEventListener('pointercancel',releaseDrag,{capture:true});
+window.addEventListener('wheel',e=>{if(blocked()||isControl(e.target))return;e.preventDefault();e.stopImmediatePropagation();const unit=e.deltaMode===1?16:e.deltaMode===2?innerHeight:1;advance(Math.max(-160,Math.min(160,(Math.abs(e.deltaY)>Math.abs(e.deltaX)?e.deltaY:e.deltaX)*unit))*.045);},{capture:true,passive:false});
+window.addEventListener('keydown',e=>{if(blocked()||isControl(e.target))return;if(['ArrowDown','ArrowRight','ArrowUp','ArrowLeft'].includes(e.key)){e.preventDefault();advance(['ArrowDown','ArrowRight'].includes(e.key)?4:-4);}});
 function renderStory(){
  const q=shots.find(s=>elapsed<s.end)||shots.at(-1),u=Math.min(1,(elapsed-q.start)/(q.end-q.start)),t=elapsed-q.start;const changed=previous!==q;previous=q;
  chapterIndex.querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-current',String(i===(elapsed<13?0:elapsed<36?1:elapsed<shots.find(s=>s.kind==='settle')?.start?2:q.kind==='archive'?4:3))));testFade.style.opacity='0';emit('relief-landscape-frame',{progress:1});if(cameraTest&&!fullStory)control.querySelector('select').value=String(shots.indexOf(q));document.body.dataset.storyShot=q.kind;panel.hidden=true;emit('cinema-closing',{visible:false,book:false});
@@ -68,8 +79,13 @@ function renderStory(){
  }
  if(elapsed>=duration){running=false;play.textContent='다시 재생';}
 }
-function tick(now){requestAnimationFrame(tick);const dt=last?Math.min(.1,(now-last)/1000):0;last=now;if(!running||document.hidden||document.querySelector('#intro').dataset.lionReady!=='true')return;if(elapsed>=12)emit('village-preload');if(elapsed>=28&&document.body.dataset.spatialReady!=='true')return;const memoryStart=shots.find(s=>s.kind==='settle')?.start??Infinity;if(elapsed>=memoryStart-85)emit('ending-preload');if(elapsed>=memoryStart&&document.body.dataset.endingReady!=='true')return;elapsed=Math.min(duration,elapsed+dt);seek.value=elapsed;renderStory();}requestAnimationFrame(tick);
+function tick(now){requestAnimationFrame(tick);const dt=last?Math.min(.1,(now-last)/1000):0;last=now;if(!active||blocked()||document.hidden||document.querySelector('#intro').dataset.lionReady!=='true')return;
+const requested=running?elapsed+dt:dragTarget;if(Math.max(elapsed,requested)>=10)emit('village-preload');const memoryStart=shots.find(s=>s.kind==='settle')?.start??Infinity;if(Math.max(elapsed,requested)>=memoryStart-100)emit('ending-preload');
+let limit=duration;if(document.body.dataset.spatialReady!=='true')limit=27.95;else if(document.body.dataset.endingReady!=='true')limit=memoryStart-.05;
+const destination=Math.min(Math.max(elapsed,limit),requested);if(Math.abs(destination-elapsed)<.002){if(elapsed!==destination){elapsed=destination;seek.value=elapsed;renderStory();}return;}
+elapsed=running?destination:elapsed+(destination-elapsed)*(1-Math.exp(-dt*7));elapsed=Math.max(0,Math.min(duration,elapsed));if(running)dragTarget=elapsed;seek.value=elapsed;renderStory();}requestAnimationFrame(tick);
 
 document.addEventListener('archive-open',()=>{running=false;panel.hidden=true;});
-document.addEventListener('archive-story',()=>{active=true;running=false;elapsed=0;previous=null;seek.hidden=false;stop.hidden=false;seek.value=0;play.textContent='이어서 재생';document.body.classList.add('cinema-running');renderStory();});
-document.addEventListener('exhibition-start',()=>{if(!running)play.click();});
+document.addEventListener('archive-story',()=>{active=true;running=false;elapsed=dragTarget=0;previous=null;seek.hidden=false;stop.hidden=false;seek.value=0;play.textContent='이어서 재생';document.body.classList.add('cinema-running');renderStory();});
+document.addEventListener('exhibition-start',()=>{beginJourney();renderStory();});
+for(const readyEvent of ['lion-ready','spatial-ready'])document.addEventListener(readyEvent,()=>{if(active&&!blocked()){previous=null;renderStory();}});

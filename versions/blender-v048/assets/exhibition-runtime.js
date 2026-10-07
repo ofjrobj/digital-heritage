@@ -12,7 +12,7 @@ function preloadArchive(){return archivePromise??=import('./value-archive.js?v=7
 document.addEventListener('archive-preload',preloadArchive);
 document.addEventListener('archive-open',()=>{document.body.classList.add('archive-active');preloadArchive().then(m=>m.openArchive()).catch(error=>{console.error(error);document.body.classList.remove('archive-active');});});
 document.addEventListener('archive-story',()=>document.body.classList.remove('archive-active'));
-await import('./cinematic-story.js?v=story-flow-70');
+await import('./cinematic-story.js?v=story-flow-71');
 document.addEventListener('experience-selected',()=>{document.body.dataset.stage='intro';emit('exhibition-start');});
 document.querySelector('#coverIndex').onclick=()=>{document.querySelector('[data-experience="desktop"]').click();emit('archive-open');};
 // Keep first-visit cost small: no 3D village, ending model or unused videos before entry.
