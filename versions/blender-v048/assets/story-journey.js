@@ -10,7 +10,7 @@ const episodes=[
 ['뒷산','나무꾼','male','mane','wood',9,-12,'산에 올라 마을을 내려다보면 관아도 집도 길도 한눈에 들어옵니다. 떨어져 보이던 곳들이 하나로 이어지지요.','목 뒤부터 등에 새겨진 털 무늬가 나무 결이나 산등성이 굽이처럼 보였습니다.']];
 episodes.forEach((e,i)=>{e[7]=dialogueCopy[i].intro;e[8]=dialogueCopy[i].testimony;});
 document.querySelector('#intro').dataset.storyState='ended';document.querySelector('#introBackdrop').pause();
-setTimeout(()=>import('./experience-flow.js?v=story-flow-67'),0);
+setTimeout(()=>import('./experience-flow.js?v=story-flow-68'),0);
 const style=document.createElement('style');style.textContent=`#journey{display:none!important}.story-section{min-height:100vh;position:relative;background:#080b09;color:#d4d8c9;padding:7vh 7vw;box-sizing:border-box;font-family:'Gowun Batang',serif}.story-section h2{font-weight:400;font-size:clamp(23px,3vw,42px);margin:0 0 18px}.story-section small{color:#8e9b87}.terrain-section{height:150vh}.terrain-stage{position:sticky;top:15vh;height:60vh}.terrain-stage svg{width:100%;height:100%}.terrain-stage path{stroke:#a7b6a2;fill:none;stroke-width:1;stroke-dasharray:1400;stroke-dashoffset:1400;transition:stroke-dashoffset 2s}.terrain-section.in-view path{stroke-dashoffset:0}#villageCanvas{height:66vh;width:100%;touch-action:none}#spotList{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}.story-section button{border:1px solid #8e9b8744;background:#101811;color:#d4d8c9;padding:10px 18px;border-radius:25px;font:inherit;cursor:pointer}.story-section button:hover{border-color:#a7b6a2}.episode-panel{position:absolute;inset:12% 8% auto auto;width:min(390px,78vw);padding:30px;background:#11170feb;backdrop-filter:blur(12px);border:1px solid #7b8b7055;z-index:2}.episode-panel p{line-height:1.9}.epilogue video{width:100%;max-height:70vh;background:black}.story-section [hidden]{display:none!important}#scanReturn{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);z-index:30;background:#0d160e;color:#d4d8c9;border:1px solid #a7b6a2;padding:12px 22px;border-radius:30px;cursor:pointer}#intro .intro-title p{display:none}@media(max-width:650px){.story-section{padding:9vh 6vw}.episode-panel{inset:17% 5% auto;width:80vw;padding:20px}#villageCanvas{height:60vh}}`;document.head.append(style);
 const main=document.createElement('div');main.innerHTML=`<section class="story-section terrain-section" id="terrain"><div class="terrain-stage"><small>02 — 03</small><h2>돌의 선을 따라</h2></div></section><section class="story-section" id="village"><small>04 · 공간과 인물 대역</small><h2>마을의 사람들</h2><div id="villageCanvas" aria-label="드래그로 둘러보는 3D 마을 초안"></div><nav id="spotList" aria-label="인물 만나기"></nav><aside class="episode-panel" hidden id="episode"><small>가상 증언</small><h2 id="epRole"></h2><p id="epText"></p><button id="epNext">돌짐승 이야기</button><button id="epClose">마을로</button></aside></section><section class="story-section" id="overview"><small>05</small><h2>다시, 마을 전체로</h2><p id="visitedCount">0 / 5</p><button id="overviewButton">마을 내려다보기</button><button id="memoryButton">시간의 풍경으로</button></section><section class="story-section epilogue" id="memory"><small>마지막 장면 · Blender 연출 대역</small><h2>돌이 지나온 계절</h2><video id="endingFilm" src="assets/ending-cinematic-v002.mp4" controls playsinline muted preload="metadata"></video><p><small>기존 72초 영상 대역. 최종은 9장면·66초로 교체합니다.</small></p><button id="endingPlay">재생</button><button id="restartStory">처음으로</button></section>`;document.querySelector('#journey').after(main);
 main.inert=!document.body.dataset.experience;document.addEventListener('experience-selected',()=>main.inert=false);document.querySelector('#experienceSwitch').addEventListener('click',()=>main.inert=true);
@@ -55,9 +55,9 @@ const mobileDialogue=document.createElement('style');mobileDialogue.textContent=
 
 import("./story-sound.js?v=observation-6");
 
-import("./prototype-media.js?v=story-flow-67");
+import("./prototype-media.js?v=story-flow-68");
 
-import("./refined-ui.js?v=story-flow-67");
+import("./refined-ui.js?v=story-flow-68");
 
 document.addEventListener('episode-open',e=>openEpisode(e.detail));
 

@@ -1,4 +1,4 @@
-import {storyStops} from './story-sequence.js?v=story-flow-67';
+import {storyStops} from './story-sequence.js?v=story-flow-68';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
@@ -145,7 +145,7 @@ function updateFilm(){if(!filmPlaying||!loaded)return;if(!cinemaDriven)filmClock
  const seam=Math.max(0,1-Math.abs(filmClock-132)/1.7);host.style.opacity=String(1-seam*.95);
  if(!cinemaDriven&&filmTarget>=filmDuration-.01&&filmClock>=filmDuration-.06){host.style.opacity='1';finishObservation();}
 }
-function cinematicLight(){if(blenderScans&&filmPlaying)return;if(!filmPlaying){for(const item of scanTraces)item.visible=false;return;}const side=camera.position.clone().sub(controls.target).normalize(),right=new THREE.Vector3().crossVectors(side,camera.up).normalize(),up=new THREE.Vector3().crossVectors(right,side).normalize();studioLights[0].position.copy(controls.target).addScaledVector(side,.65).addScaledVector(right,3.2).addScaledVector(up,1.8);studioLights[0].intensity=2.35;studioLights[1].position.copy(camera.position);studioLights[1].intensity=.85;studioLights[2].position.copy(controls.target).addScaledVector(side,-2.5).addScaledVector(right,-1.4).addScaledVector(up,2);studioLights[2].intensity=2.2;for(const item of scanTraces){item.visible=true;item.material.uniforms.scanFocus.value.copy(controls.target);item.material.uniforms.scanAxis.value.copy(right);item.material.uniforms.scanTime.value=filmClock+performance.now()*.00035;}}
+function cinematicLight(){if(cinemaDriven&&cinemaShot==='relief-trace')return;if(blenderScans&&filmPlaying)return;if(!filmPlaying){for(const item of scanTraces)item.visible=false;return;}const side=camera.position.clone().sub(controls.target).normalize(),right=new THREE.Vector3().crossVectors(side,camera.up).normalize(),up=new THREE.Vector3().crossVectors(right,side).normalize();studioLights[0].position.copy(controls.target).addScaledVector(side,.65).addScaledVector(right,3.2).addScaledVector(up,1.8);studioLights[0].intensity=2.35;studioLights[1].position.copy(camera.position);studioLights[1].intensity=.85;studioLights[2].position.copy(controls.target).addScaledVector(side,-2.5).addScaledVector(right,-1.4).addScaledVector(up,2);studioLights[2].intensity=2.2;for(const item of scanTraces){if(item.userData.relief){item.visible=false;continue;}item.visible=true;item.material.uniforms.scanFocus.value.copy(controls.target);item.material.uniforms.scanAxis.value.copy(right);item.material.uniforms.scanTime.value=filmClock+performance.now()*.00035;}}
 
 film.addEventListener('error',()=>{filmPart.textContent='영상을 불러오지 못했습니다. 뒤로가기로 다시 시도해 주세요.';});
 filmLayer.querySelector('.film-back').addEventListener('click',returnToPair);
@@ -310,6 +310,23 @@ document.addEventListener('cinema-lion-frame',e=>{
   filmPlaying=false;surface(true);intro.dataset.observationPhase='cinema';
   for(const o of subjects.values())o.rotation.y=d.kind==='rotate'?-Math.PI/4-d.progress*Math.PI*2:-Math.PI/4;
   home();
+  if(['pair-reveal','head-push','crown-zoom','relief-trace'].includes(d.kind)){
+   const smooth=v=>{v=Math.max(0,Math.min(1,v));return v*v*v*(10+v*(-15+6*v));};
+   scene.updateMatrixWorld(true);frameLens({subject:'male',region:'head'});
+   const pivot=subjects.get('male'),bounds=pivot.userData.anchorBounds,size=bounds.getSize(new THREE.Vector3());
+   const face=bounds.getCenter(new THREE.Vector3()).add(new THREE.Vector3(.4,.18,0).multiply(size)).applyMatrix4(pivot.matrixWorld);
+   const crown=bounds.getCenter(new THREE.Vector3()).add(new THREE.Vector3(.32,.43,0).multiply(size)).applyMatrix4(pivot.matrixWorld);
+   const origin=controls.target.clone(),offset=camera.position.clone().sub(origin),u=smooth(d.progress);
+   let focus=origin,zoom=1,tilt=0;
+   if(d.kind==='head-push'){focus=origin.clone().lerp(face,u);zoom=1+u*1.8;}
+   if(d.kind==='crown-zoom'||d.kind==='relief-trace'){const k=d.kind==='relief-trace'?1:u;focus=face.clone().lerp(crown,k);zoom=2.8+k*1.4;tilt=k;}
+   offset.lerp(new THREE.Vector3(5.4,1.6,5.7),d.kind==='head-push'?u:d.kind==='pair-reveal'?0:1);offset.lerp(new THREE.Vector3(3.4,6.4,3.6),tilt);camera.position.copy(focus).add(offset);controls.target.copy(focus);camera.zoom=zoom;controls.maxZoom=8;camera.updateProjectionMatrix();camera.lookAt(focus);
+   host.style.opacity=d.kind==='pair-reveal'?String(smooth(d.progress/.65)):'1';
+   if(d.kind==='relief-trace'){
+    if(!pivot.userData.reliefReady){addReliefContours(pivot);pivot.userData.reliefReady=true;}
+    for(const line of scanTraces){line.visible=Boolean(line.userData.relief);if(line.userData.relief){line.material.opacity=.9;const count=line.geometry.attributes.position.count;line.geometry.setDrawRange(0,Math.floor(count*Math.min(1,d.progress*1.4)/2)*2);}}
+   }
+  }
   if(d.kind==='back-zoom'){
    scene.updateMatrixWorld(true);frameLens({subject:'male',region:'back'});
    const pivot=subjects.get('male'),bounds=pivot.userData.anchorBounds;
@@ -346,4 +363,31 @@ function isolatedMotif(source){
   for(const a of group){const r=Math.hypot((a%n-n/2)/(n*.43),(Math.floor(a/n)-n/2)/(n*.43));out.data.set([235,233,223,Math.round(140*Math.min(1,(1-r)*5))],a*4);}
  }
  x.putImageData(out,0,0);const soft=document.createElement('canvas');soft.width=soft.height=1024;const sx=soft.getContext('2d');sx.filter='blur(3px)';sx.drawImage(c,0,0,1024,1024);return soft.toDataURL('image/png');
+}
+
+// The transition uses lines from the scanned geometry over the actual Blender village.
+const reliefLayer=document.createElement('div');reliefLayer.style.cssText='position:fixed;inset:0;z-index:12;pointer-events:none;display:none;background:#080a08';
+const reliefImage=document.createElement('img');reliefImage.style.cssText='width:100%;height:100%;object-fit:cover';reliefLayer.append(reliefImage);document.body.append(reliefLayer);
+document.addEventListener('capture-relief-lines',()=>{
+ const materials=new Map();scene.traverse(o=>{if(o.isMesh){for(const material of (Array.isArray(o.material)?o.material:[o.material])){if(!materials.has(material))materials.set(material,material.visible);material.visible=false;}}});
+ renderer.render(scene,camera);reliefImage.src=renderer.domElement.toDataURL('image/png');for(const [material,visible]of materials)material.visible=visible;
+ renderer.render(scene,camera);
+});
+document.addEventListener('relief-landscape-frame',e=>{
+ const p=e.detail.progress;reliefLayer.style.display=p<1?'block':'none';reliefLayer.style.background=`rgba(8,10,8,${Math.max(0,1-p*2)})`;reliefImage.style.opacity=String(1-Math.max(0,(p-.35)/.65));reliefImage.style.transform=`scale(${1+p*.4})`;
+});
+
+function addReliefContours(pivot){
+ const bounds=pivot.userData.anchorBounds,size=bounds.getSize(new THREE.Vector3()),points=[],meshes=[];
+ pivot.updateWorldMatrix(true,true);pivot.traverse(o=>{if(o.isMesh)meshes.push(o);});
+ for(let level=0;level<8;level++){
+  const h=bounds.min.y+size.y*(.84+level*.019);
+  for(const mesh of meshes){const attr=mesh.geometry.attributes.position,idx=mesh.geometry.index,matrix=pivot.matrixWorld.clone().invert().multiply(mesh.matrixWorld),count=idx?idx.count:attr.count;
+   for(let i=0;i<count;i+=3){const vertices=[0,1,2].map(k=>new THREE.Vector3().fromBufferAttribute(attr,idx?idx.getX(i+k):i+k).applyMatrix4(matrix));if(vertices.every(v=>v.x<bounds.min.x+size.x*.60))continue;const intersections=[];
+    for(const [a,b]of [[0,1],[1,2],[2,0]]){const va=vertices[a],vb=vertices[b];if((va.y<h&&vb.y>=h)||(vb.y<h&&va.y>=h))intersections.push(va.clone().lerp(vb,(h-va.y)/(vb.y-va.y)));}
+    if(intersections.length===2)for(const v of intersections){v.y+=.001;points.push(v.x,v.y,v.z);}
+   }
+  }
+ }
+ const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(points,3));const line=new THREE.LineSegments(geometry,new THREE.LineBasicMaterial({color:0xfff6d9,transparent:true,opacity:.9,depthWrite:false,depthTest:false}));line.userData.relief=true;line.name='Crown surface height contours';pivot.add(line);scanTraces.push(line);
 }

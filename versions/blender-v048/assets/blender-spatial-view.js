@@ -139,3 +139,12 @@ function applyTransfer(data,progress){
 if(pendingTransfer)document.dispatchEvent(new CustomEvent('blender-transfer-frame',{detail:pendingTransfer}));else if(lastEvent)update(lastEvent);
 
 if(cameraTest)loadEnding();
+
+// Full-page prologue: the village is first read as a landscape, then joins the tested route.
+document.addEventListener('blender-establishing-frame',e=>{
+ if(!village||document.body.dataset.fullStory!=='true')return;
+ const data=buildTransfer(-1,0),u=easeMotion(e.detail.progress);
+ const origin=new THREE.Vector3(80,62,104),look=new THREE.Vector3(0,1,0);
+ camera.position.copy(origin).lerp(data.start,u);const aim=new THREE.PerspectiveCamera();aim.position.copy(origin);aim.lookAt(look);
+ camera.quaternion.copy(aim.quaternion).slerp(data.startRotation,u);host.style.display='block';host.style.opacity='1';render();
+});

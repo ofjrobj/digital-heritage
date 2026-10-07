@@ -1,12 +1,15 @@
 import {dialogueCopy,dialoguePages} from './dialogue-copy.js?v=dialogue-66';
-import {storyStops} from './story-sequence.js?v=story-flow-67';
+import {storyStops} from './story-sequence.js?v=story-flow-68';
 const emit=(name,detail)=>document.dispatchEvent(new CustomEvent(name,{detail}));
 const shots=[];let duration=0;
 function shot(kind,seconds,extra={}){shots.push({kind,start:duration,end:duration+seconds,...extra});duration+=seconds;}
 const cameraTest=document.body.dataset.cameraTest==='village';
+const fullStory=document.body.dataset.fullStory==='true';
 const dialogueSeconds=index=>dialoguePages(index).reduce((total,page)=>total+page.seconds,0);
 if(cameraTest){
- shot('pair',4);shot('back-zoom',14);shot('motif',7,{stop:{subject:'male',region:'back',route:0}});shot('travel',50,{stop:{route:0}});
+ if(fullStory){shot('pair-reveal',5);shot('head-push',8);shot('crown-zoom',8);shot('relief-trace',7);shot('relief-landscape',8);shot('landscape-expand',18);}
+ else{shot('pair',4);shot('back-zoom',14);shot('motif',7,{stop:{subject:'male',region:'back',route:0}});}
+ shot('travel',50,{stop:{route:0}});
  for(let index=0;index<5;index++){if(index)shot('transfer',90,{from:index-1,to:index});shot('dialogue',dialogueSeconds(index),{stop:{route:index}});}
  shot('transfer',100,{from:4,to:5});shot('settle',3);shot('seasons',60);shot('fade',5);
 }else{
@@ -26,7 +29,7 @@ seek.oninput=()=>{elapsed=Number(seek.value);previous=null;renderStory();};
 play.onclick=()=>{if(!active||elapsed>=duration){active=true;elapsed=0;previous=null;document.body.classList.add('cinema-running');stop.hidden=false;seek.hidden=false;emit('story-restart');}running=!running;play.textContent=running?'일시 정지':'이어서 재생';renderStory();};
 stop.onclick=()=>{active=running=false;previous=null;panel.hidden=true;testFade.style.opacity='0';stop.hidden=true;seek.hidden=true;play.textContent='스토리 재생';document.body.classList.remove('cinema-running','surface-morph');emit('cinema-release');emit('story-home');emit('stage-navigate','intro');};
 
-if(cameraTest){
+if(cameraTest&&!fullStory){
  const jump=document.createElement('select');jump.setAttribute('aria-label','카메라 테스트 장면');jump.style.cssText='max-width:190px;background:#18231e;color:#e8e5dc;border:1px solid #829184;padding:8px';
  const labels={pair:'유물 · 반측면 고정','back-zoom':'등 무늬로 접근',entry:'유물 등장',rotate:'유물 회전',motif:'유물 → 마을',travel:'마을 → 인물 1',guesthouse:'객사터 석사자로 이동',settle:'석사자 앞 정지',seasons:'시대·계절 변화',fade:'페이드아웃'};
  shots.forEach((q,i)=>{const option=document.createElement('option');option.value=i;option.textContent=q.kind==='dialogue'?`인물 ${q.stop.route+1} · ${titles[q.stop.route]}`:q.kind==='transfer'?(q.from===4?'마을 귀환':`인물 ${q.from+1} → 인물 ${q.to+1}`):labels[q.kind];jump.append(option);});control.prepend(jump);
@@ -35,11 +38,14 @@ if(cameraTest){
 window.addEventListener('wheel',e=>{if(active){e.preventDefault();e.stopImmediatePropagation();}},{capture:true,passive:false});
 function renderStory(){
  const q=shots.find(s=>elapsed<s.end)||shots.at(-1),u=Math.min(1,(elapsed-q.start)/(q.end-q.start)),t=elapsed-q.start;const changed=previous!==q;previous=q;
- testFade.style.opacity='0';if(cameraTest)control.querySelector('select').value=String(shots.indexOf(q));document.body.dataset.storyShot=q.kind;panel.hidden=true;emit('cinema-closing',{visible:false,book:false});
- if(['back-zoom','entry','rotate','female-click','female-scan','male-transition','male-scan','pair','lens'].includes(q.kind)){
+ testFade.style.opacity='0';emit('relief-landscape-frame',{progress:1});if(cameraTest&&!fullStory)control.querySelector('select').value=String(shots.indexOf(q));document.body.dataset.storyShot=q.kind;panel.hidden=true;emit('cinema-closing',{visible:false,book:false});
+ if(['pair-reveal','head-push','crown-zoom','relief-trace','back-zoom','entry','rotate','female-click','female-scan','male-transition','male-scan','pair','lens'].includes(q.kind)){
   if(changed){emit('stage-navigate','intro');emit('ink-landscape-frame',{progress:1,index:0});}
-  let kind=q.kind==='back-zoom'?'back-zoom':q.kind==='entry'?'entry':q.kind==='rotate'?'rotate':q.kind==='lens'?'lens':q.kind.endsWith('scan')?'scan':'pair';
+  let kind=['pair-reveal','head-push','crown-zoom','relief-trace'].includes(q.kind)?q.kind:q.kind==='back-zoom'?'back-zoom':q.kind==='entry'?'entry':q.kind==='rotate'?'rotate':q.kind==='lens'?'lens':q.kind.endsWith('scan')?'scan':'pair';
   emit('cinema-lion-frame',{kind,time:kind==='scan'?(q.kind==='female-scan'?u*131.9:132+u*131.9):t,progress:u,...q.stop});
+ }else if(['relief-landscape','landscape-expand'].includes(q.kind)){
+ if(changed){if(q.kind==='relief-landscape'){emit('cinema-lion-frame',{kind:'relief-trace',time:7,progress:1});emit('capture-relief-lines');}emit('stage-navigate','terrain');emit('ink-landscape-frame',{index:0,progress:1});}
+ emit('blender-route-frame',{index:0,time:0,opacity:1});emit('blender-establishing-frame',{progress:q.kind==='landscape-expand'?u:0});if(q.kind==='relief-landscape')emit('relief-landscape-frame',{progress:u});
  }else if(q.kind==='transfer'){
  if(changed){emit('stage-navigate','terrain');emit('ink-landscape-frame',{index:0,progress:1});}
  emit('blender-transfer-frame',{from:q.from,to:q.to,progress:u});
@@ -47,7 +53,7 @@ function renderStory(){
   if(changed){emit('stage-navigate','terrain');if(q.stop)emit('capture-story-motif',q.stop);}
   const index=q.stop.route;
   if(q.kind==='motif'){emit('ink-landscape-frame',{index,progress:u*.235});emit('blender-route-frame',{index,time:0,opacity:u<.8?0:(u-.8)/.2});}
-  else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1});if(q.kind==='dialogue'){panel.hidden=false;const copy=dialogueCopy[index];const names=['장사꾼 / 공주목을 오가며 물건을 팖','농민 / 토지 문제로 관아에 찾아옴','찬모 / 객사의 손님 음식을 마련함','주민 삼총사 / 공주 마을에 사는 이웃들','나무꾼 / 산을 오가며 나무를 구함'];let remaining=u*(q.end-q.start);const pages=dialoguePages(index);let current=pages.at(-1);for(const page of pages){if(remaining<page.seconds){current=page;break;}remaining-=page.seconds;}const content='<h2>'+names[index]+'</h2><p>'+current.text+'</p>';if(panel.innerHTML!==content)panel.innerHTML=content;}}
+  else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1});if(q.kind==='dialogue'){panel.hidden=false;const copy=dialogueCopy[index];const names=['장사꾼','농민','찬모','주민 삼총사','나무꾼'];let remaining=u*(q.end-q.start);const pages=dialoguePages(index);let current=pages.at(-1);for(const page of pages){if(remaining<page.seconds){current=page;break;}remaining-=page.seconds;}const content='<h2>'+names[index]+'</h2><p>'+current.text+'</p>';if(panel.innerHTML!==content)panel.innerHTML=content;}}
  }else{
   if(changed){emit('stage-navigate','memory');emit('ink-landscape-frame',{index:0,progress:1});}
   const source=q.kind==='guesthouse'?u*70:q.kind==='settle'?70:q.kind==='seasons'?70+u*70:140;
