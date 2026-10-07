@@ -1,3 +1,4 @@
+import {planTransfer} from './camera-transfer.js?v=64';
 import {prepareTimelapse} from './ending-timelapse.js?v=63';
 import {bytes,json as loadJSON} from './asset-transport.js';
 import * as THREE from 'three';
@@ -88,3 +89,25 @@ let endStart=0;document.addEventListener('story-ending-autoplay',()=>{endStart=p
 function endingTick(now){if(!endStart||document.body.dataset.stage!=='memory')return;const t=(now-endStart)/1000;const source=t<195?t/195*70:t<198?70:70+Math.min(1,(t-198)/60)*74;showEnding(source/144);closing.style.display=t>=258?'flex':'none';closing.querySelector('a').style.visibility=t>=264?'visible':'hidden';if(t<264)requestAnimationFrame(endingTick);else endStart=0;}
 closing.style.background='#000';closing.querySelector('a').textContent='서책 보기';
 document.addEventListener('cinema-closing',e=>{closing.style.display=e.detail.visible?'flex':'none';closing.querySelector('a').style.visibility=e.detail.book?'visible':'hidden';});
+
+// Only the separate camera-test page emits these inter-person connections.
+const transferCache=new Map();
+const transferGround=[];village.traverse(o=>{if(o.isMesh&&/continuous.ridges|courtyard|connecting.lane|Main.village.street|approach.stairs/.test(o.name))transferGround.push(o);});
+document.addEventListener('blender-transfer-frame',e=>{
+ const {from,to,progress}=e.detail;if(!village)return;
+ const key=from+':'+to;let data=transferCache.get(key);
+ if(!data){
+  sampleRoute(from,150);const start=camera.position.clone(),startRotation=camera.quaternion.clone();
+  sampleRoute(to,150);const end=camera.position.clone(),endRotation=camera.quaternion.clone();
+  village.updateMatrixWorld(true);const boxes=[];village.traverse(o=>{if(o.isMesh&&/wall|pillar/.test(o.name.replaceAll('_',' ')))boxes.push(new THREE.Box3().setFromObject(o));});
+  const points=planTransfer([start.x,start.z],[end.x,end.z],boxes).map(([x,z])=>new THREE.Vector3(x,0,z));
+  const curve=new THREE.CurvePath();for(let i=1;i<points.length;i++)curve.add(new THREE.LineCurve3(points[i-1],points[i]));
+  data={start,end,startRotation,endRotation,curve};transferCache.set(key,data);
+ }
+ mode='route';village.visible=true;if(ending)ending.visible=false;for(const person of endingWalkers)person.visible=false;if(endingCat)endingCat.visible=false;for(const tree of passageTrees)tree.visible=false;closing.style.display='none';host.style.display='block';host.style.opacity='1';
+ const u=easeMotion(progress),point=data.curve.getPoint(u);camera.position.copy(point);floorRay.set(new THREE.Vector3(point.x,60,point.z),new THREE.Vector3(0,-1,0));const ground=floorRay.intersectObjects(transferGround,false)[0]?.point.y??0;
+ camera.position.y=ground+1.65;camera.position.y=THREE.MathUtils.lerp(data.start.y,camera.position.y,easeMotion(progress/.12));camera.position.y=THREE.MathUtils.lerp(camera.position.y,data.end.y,easeMotion((progress-.88)/.12));
+ const ahead=data.curve.getPoint(Math.min(1,u+.035));ahead.y=camera.position.y;const aim=new THREE.PerspectiveCamera();aim.position.copy(camera.position);aim.lookAt(ahead);
+ camera.quaternion.copy(data.startRotation).slerp(aim.quaternion,easeMotion(progress/.18));camera.quaternion.slerp(data.endRotation,easeMotion((progress-.8)/.2));
+ transitionHaze(0,0);render();
+});
