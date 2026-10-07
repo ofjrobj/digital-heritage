@@ -1,4 +1,4 @@
-import {storyStops} from './story-sequence.js?v=story-flow-68';
+import {storyStops} from './story-sequence.js?v=story-flow-69';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
@@ -369,12 +369,10 @@ function isolatedMotif(source){
 const reliefLayer=document.createElement('div');reliefLayer.style.cssText='position:fixed;inset:0;z-index:12;pointer-events:none;display:none;background:#080a08';
 const reliefImage=document.createElement('img');reliefImage.style.cssText='width:100%;height:100%;object-fit:cover';reliefLayer.append(reliefImage);document.body.append(reliefLayer);
 document.addEventListener('capture-relief-lines',()=>{
- const materials=new Map();scene.traverse(o=>{if(o.isMesh){for(const material of (Array.isArray(o.material)?o.material:[o.material])){if(!materials.has(material))materials.set(material,material.visible);material.visible=false;}}});
- renderer.render(scene,camera);reliefImage.src=renderer.domElement.toDataURL('image/png');for(const [material,visible]of materials)material.visible=visible;
- renderer.render(scene,camera);
+ renderer.render(scene,camera);reliefImage.src=renderer.domElement.toDataURL('image/png');
 });
 document.addEventListener('relief-landscape-frame',e=>{
- const p=e.detail.progress;reliefLayer.style.display=p<1?'block':'none';reliefLayer.style.background=`rgba(8,10,8,${Math.max(0,1-p*2)})`;reliefImage.style.opacity=String(1-Math.max(0,(p-.35)/.65));reliefImage.style.transform=`scale(${1+p*.4})`;
+ const p=e.detail.progress;reliefLayer.style.display=p<1?'block':'none';reliefLayer.style.background=`rgba(8,10,8,${Math.max(0,1-p*2)})`;reliefImage.style.opacity=String(1-p*p*(3-2*p));reliefImage.style.transform=`scale(${1+p*.65})`;
 });
 
 function addReliefContours(pivot){

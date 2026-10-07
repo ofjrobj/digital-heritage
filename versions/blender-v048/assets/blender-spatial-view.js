@@ -1,3 +1,4 @@
+import {addVillageLife} from './village-life.js?v=69';
 import {extendVillage} from './test-village-layout.js?v=66';
 const cameraTest=document.body.dataset.cameraTest==='village';
 const authoredTour=cameraTest?await fetch('./downloads/space-atlas/camera-tour-65.json?v=66').then(r=>r.json()):null;
@@ -42,13 +43,13 @@ function update(detail){pendingTransfer=null;lastEvent=detail;if(!village)return
 document.addEventListener('blender-route-frame',e=>update(e.detail));
 document.addEventListener('prototype-episode',e=>{if(e.detail.active&&!document.body.classList.contains('cinema-running'))update({index:e.detail.index,time:150+Math.min(1,e.detail.progress/2.5)*24});});
 document.addEventListener('story-home',()=>{host.style.display='none';closing.style.display='none';});
-const gltf=await loader.loadAsync('./assets/blender-village-v046.glb?v=46');village=gltf.scene;scene.add(village);if(cameraTest){extendVillage(village,THREE);village.traverse(o=>{if(/Original.unchanged|Forecourt/.test(o.name))o.visible=false;});}size();
+const gltf=await loader.loadAsync('./assets/blender-village-v046.glb?v=46');village=gltf.scene;scene.add(village);if(cameraTest){extendVillage(village,THREE);addVillageLife(village,THREE,authoredTour);village.traverse(o=>{if(/Original.unchanged|Forecourt/.test(o.name))o.visible=false;});}size();
 // Formation animation and closing camera are authored in the v043 Blender file.
 let endingBridge=null,endingPath=null;
 const endingFixedPosition=new THREE.Vector3(-18.8,2.7,-9.3),endingFixedTarget=new THREE.Vector3(-22.275,.62,-15.5);
 let animateTimelapse;
 let endingLoad,endingMixer,endingCamera,endingDuration=144,endingProgress=0;
-async function loadEnding(){if(endingLoad)return endingLoad;endingLoad=(async()=>{const g=await bytes('./assets/blender-ending-v046.glb').then(b=>loader.parseAsync(b,'./assets/'));ending=g.scene;scene.add(ending);if(cameraTest)extendVillage(ending,THREE);
+async function loadEnding(){if(endingLoad)return endingLoad;endingLoad=(async()=>{const g=await bytes('./assets/blender-ending-v046.glb').then(b=>loader.parseAsync(b,'./assets/'));ending=g.scene;scene.add(ending);if(cameraTest){extendVillage(ending,THREE);addVillageLife(ending,THREE,authoredTour);}
  ending.traverse(o=>{if(o.isMesh){if(/continuous ridges|Forecourt sand|courtyard|connecting lane|Main village street|approach stairs/.test(o.name.replaceAll('_',' '))&&!o.name.startsWith('Present'))endingGround.push(o);o.material=Array.isArray(o.material)?o.material.map(m=>m.clone()):o.material.clone();}});
  animateTimelapse=prepareTimelapse(ending,THREE);
  const people=[];village.traverse(o=>{if(o.userData.ambient_kind==='resident')people.push(o);});
@@ -124,16 +125,44 @@ document.addEventListener('blender-transfer-frame',e=>{
  transitionHaze(0,0);render();
 });
 
-function applyTransfer(data,progress){
- const clock=easeMotion(progress);let lo=0,hi=1200;while(lo+1<hi){const m=(lo+hi)>>1;if(data.pace[m]<clock)lo=m;else hi=m;}const u=(lo+(clock-data.pace[lo])/(data.pace[hi]-data.pace[lo]))/1200,point=data.curve.getPointAt(u);camera.position.copy(point);
+function applyTransferRaw(data,progress){
+ const clock=THREE.MathUtils.clamp(easeMotion(progress),0,1);let lo=0,hi=1200;while(lo+1<hi){const m=(lo+hi)>>1;if(data.pace[m]<clock)lo=m;else hi=m;}const u=(lo+(clock-data.pace[lo])/(data.pace[hi]-data.pace[lo]))/1200,point=data.curve.getPointAt(u);camera.position.copy(point);
  const sample=u*1200,i=Math.min(1199,Math.floor(sample));camera.position.y=THREE.MathUtils.lerp(data.heights[i],data.heights[i+1],sample-i);
  camera.position.y=THREE.MathUtils.lerp(data.start.y,camera.position.y,easeMotion(progress/.14));camera.position.y=THREE.MathUtils.lerp(camera.position.y,data.end.y,easeMotion((progress-.86)/.14));
- const ahead=data.curve.getPointAt(Math.min(1,u+Math.min(data.from===2?.045:.025,(data.from===2?8:5)/data.curve.getLength())));ahead.y=camera.position.y;
- const aim=new THREE.PerspectiveCamera();aim.position.copy(camera.position);if(ahead.distanceTo(camera.position)>.001)aim.lookAt(ahead);else aim.quaternion.copy(data.endRotation);
- const forward=aim.quaternion.clone();aim.lookAt(data.startFocus);camera.quaternion.copy(aim.quaternion).slerp(forward,easeMotion(data.from===1?(progress-.02)/.10:(progress-.2)/.2));
- // Leave the residents by turning through the open southern lane, not across their house front.
- if(data.from===3&&progress<.4){const a=data.startFocus.clone().sub(camera.position),b=ahead.clone().sub(camera.position);const first=Math.atan2(a.x,a.z);let delta=Math.atan2(b.x,b.z)-first;while(delta<0)delta+=Math.PI*2;while(delta>Math.PI*2)delta-=Math.PI*2;const blend=easeMotion((progress-.2)/.08),heading=first+delta*blend;camera.lookAt(camera.position.clone().add(new THREE.Vector3(Math.sin(heading),a.y/Math.max(1,Math.hypot(a.x,a.z))*(1-blend),Math.cos(heading))));}
- aim.lookAt(data.endFocus);camera.quaternion.slerp(aim.quaternion,easeMotion((progress-.78)/.22));
+ // Follow the open route immediately; never keep looking back through the terrain at a departed speaker.
+ const aheadU=Math.min(1,u+Math.min(.045,8/data.curve.getLength())),ahead=data.curve.getPointAt(aheadU);ahead.y=data.heights[Math.min(1200,Math.round(aheadU*1200))];
+ const aim=new THREE.PerspectiveCamera();aim.position.copy(camera.position);
+ if(ahead.distanceTo(camera.position)>.001)aim.lookAt(ahead);else aim.quaternion.copy(data.endRotation);
+ camera.quaternion.copy(data.startRotation).slerp(aim.quaternion,easeMotion(progress/.18));
+ if(data.from===3&&progress<.28){
+  const a=data.startFocus.clone().sub(camera.position),b=ahead.clone().sub(camera.position);
+  const first=Math.atan2(a.x,a.z);let delta=Math.atan2(b.x,b.z)-first;while(delta<0)delta+=Math.PI*2;
+  const blend=easeMotion((progress-.20)/.08),heading=first+delta*blend;
+  camera.lookAt(camera.position.clone().add(new THREE.Vector3(Math.sin(heading),a.y/Math.max(1,Math.hypot(a.x,a.z))*(1-blend),Math.cos(heading))));
+ }
+ camera.quaternion.slerp(data.endRotation,easeMotion((progress-.80)/.20));
+
+}
+
+function applyTransfer(data,progress){
+ if(!data.rotations){
+  const rotations=[];for(let i=0;i<=1000;i++){applyTransferRaw(data,i/1000);rotations.push(camera.quaternion.clone());}
+  // A symmetric orientation filter is deterministic when scrubbing and removes fast waypoint yaw changes.
+  for(let pass=0;pass<3;pass++){
+   const source=rotations.map(q=>q.clone());
+   for(let i=1;i<1000;i++){const center=source[i],sum=new THREE.Vector4(0,0,0,0);let weight=0;
+    for(let j=Math.max(0,i-16);j<=Math.min(1000,i+16);j++){const w=17-Math.abs(i-j),q=source[j],sign=center.dot(q)<0?-1:1;sum.add(new THREE.Vector4(q.x,q.y,q.z,q.w).multiplyScalar(w*sign));weight+=w;}
+    rotations[i].set(sum.x/weight,sum.y/weight,sum.z/weight,sum.w/weight).normalize();
+   }
+  }
+  data.rotations=rotations;
+  const viewPace=[0];for(let i=1;i<=1000;i++)viewPace.push(viewPace[i-1]+1+rotations[i-1].angleTo(rotations[i])*200);
+  const total=viewPace[1000];data.viewPace=viewPace.map(v=>v/total);
+ }
+ const clock=THREE.MathUtils.clamp(easeMotion(progress),0,1);let lo=0,hi=1000;while(lo+1<hi){const mid=(lo+hi)>>1;if(data.viewPace[mid]<clock)lo=mid;else hi=mid;}
+ const mapped=THREE.MathUtils.clamp((lo+(clock-data.viewPace[lo])/(data.viewPace[hi]-data.viewPace[lo]))/1000,0,1);
+ applyTransferRaw(data,mapped);
+ const p=THREE.MathUtils.clamp(mapped,0,1)*1000,i=Math.min(999,Math.floor(p));camera.quaternion.copy(data.rotations[i]).slerp(data.rotations[i+1],p-i);
 }
 
 if(pendingTransfer)document.dispatchEvent(new CustomEvent('blender-transfer-frame',{detail:pendingTransfer}));else if(lastEvent)update(lastEvent);
@@ -147,4 +176,20 @@ document.addEventListener('blender-establishing-frame',e=>{
  const origin=new THREE.Vector3(80,62,104),look=new THREE.Vector3(0,1,0);
  camera.position.copy(origin).lerp(data.start,u);const aim=new THREE.PerspectiveCamera();aim.position.copy(origin);aim.lookAt(look);
  camera.quaternion.copy(aim.quaternion).slerp(data.startRotation,u);host.style.display='block';host.style.opacity='1';render();
+});
+
+// One continuous village camera trajectory across reveal, entry and the first speaker.
+let entryTransfer;
+document.addEventListener('blender-entry-frame',e=>{
+ if(!village)return;
+ if(!entryTransfer){
+  const base=buildTransfer(-1,0),origin=new THREE.Vector3(12,18,80);
+  const points=[origin.clone(),new THREE.Vector3(12,0,62),...base.curve.getSpacedPoints(400)];
+  const curve=new THREE.CatmullRomCurve3(points,false,'centripetal');
+  const heights=curve.getSpacedPoints(1200).map((p,i)=>THREE.MathUtils.lerp(18,groundAt(p.x,p.z)+1.75,easeMotion(i/1200/.40)));
+  for(let pass=0;pass<8;pass++){const a=heights.slice();for(let i=2;i<1199;i++)heights[i]=(a[i-2]+a[i-1]+2*a[i]+a[i+1]+a[i+2])/6;}
+  const aim=new THREE.PerspectiveCamera();aim.position.copy(origin);aim.lookAt(15,1.75,36);
+  entryTransfer={...base,curve,heights,start:origin,startRotation:aim.quaternion.clone(),pace:Array.from({length:1201},(_,i)=>i/1200)};
+ }
+ mode='route';applyTransfer(entryTransfer,e.detail.progress);host.style.display='block';host.style.opacity='1';transitionHaze(0,0);render();
 });
