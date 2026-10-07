@@ -1,16 +1,17 @@
-import {dialogueCopy} from './dialogue-copy.js?v=ui-56';
-import {storyStops} from './story-sequence.js?v=story-flow-64';
+import {dialogueCopy} from './dialogue-copy.js?v=dialogue-65';
+import {storyStops} from './story-sequence.js?v=story-flow-65';
 const emit=(name,detail)=>document.dispatchEvent(new CustomEvent(name,{detail}));
 const shots=[];let duration=0;
 function shot(kind,seconds,extra={}){shots.push({kind,start:duration,end:duration+seconds,...extra});duration+=seconds;}
 const cameraTest=document.body.dataset.cameraTest==='village';
+const dialogueSeconds=index=>Math.max(20,Math.ceil(Math.max(dialogueCopy[index].intro.length,dialogueCopy[index].testimony.length)/7)*2);
 if(cameraTest){
- shot('entry',4);shot('rotate',6);shot('motif',10,{stop:{subject:'female',region:'eyes',route:0}});shot('travel',50,{stop:{route:0}});
- for(let index=0;index<5;index++){if(index)shot('transfer',45,{from:index-1,to:index});shot('dialogue',14,{stop:{route:index}});}
- shot('transfer',65,{from:4,to:2});shot('guesthouse',195);shot('settle',3);shot('seasons',60);shot('fade',5);
+ shot('pair',4);shot('back-zoom',14);shot('motif',7,{stop:{subject:'male',region:'back',route:0}});shot('travel',50,{stop:{route:0}});
+ for(let index=0;index<5;index++){if(index)shot('transfer',90,{from:index-1,to:index});shot('dialogue',dialogueSeconds(index),{stop:{route:index}});}
+ shot('transfer',100,{from:4,to:5});shot('settle',3);shot('seasons',60);shot('fade',5);
 }else{
  shot('entry',4);shot('rotate',8);shot('female-click',2);shot('female-scan',28);shot('male-transition',2);shot('male-scan',28);shot('pair',3);
- for(let i=0;i<storyStops.length;i++){const stop=storyStops[i];shot('lens',4,{stop});shot('motif',10,{stop});shot('travel',50,{stop});shot('dialogue',14,{stop});if(i<storyStops.length-1){shot('retreat',12,{stop});shot('pair',3);}}
+ for(let i=0;i<storyStops.length;i++){const stop=storyStops[i];shot('lens',4,{stop});shot('motif',10,{stop});shot('travel',50,{stop});shot('dialogue',dialogueSeconds(stop.route),{stop});if(i<storyStops.length-1){shot('retreat',12,{stop});shot('pair',3);}}
  shot('guesthouse',195);shot('settle',3);shot('seasons',60);shot('closing',6);shot('book',3);
 }
 const control=document.createElement('div');control.id='cinemaControls';control.innerHTML=`<button id="cinemaPlay">스토리 재생</button><input id="cinemaSeek" aria-label="스토리 시간" type="range" min="0" max="${duration}" step=".1" value="0" hidden><button id="cinemaStop" hidden>스토리 닫기</button>`;document.body.append(control);
@@ -18,8 +19,6 @@ const testFade=document.createElement('div');testFade.style.cssText='position:fi
 const panel=document.createElement('aside');panel.id='cinemaDialogue';panel.hidden=true;document.body.append(panel);
 const style=document.createElement('style');style.textContent=`#cinemaControls{position:fixed;right:24px;bottom:24px;z-index:60;display:flex;gap:8px}#cinemaControls button{background:#18231e;color:#e8e5dc;border:1px solid #829184;border-radius:20px;padding:9px 16px;font:14px 'KoPub World Batang',serif;cursor:pointer}.choosing-experience #cinemaControls{display:none}body.cinema-running #episode,body.cinema-running #stageCue,body.cinema-running .scroll-cue,body.cinema-running #spotList,body.cinema-running #lionObservationFilm{visibility:hidden!important}#cinemaDialogue{position:fixed;left:28px;bottom:48px;width:350px;height:278px;box-sizing:border-box;padding:24px;background:#eeece4;color:#6a826e;z-index:20;font-family:'KoPub World Batang',serif}#cinemaDialogue h2{font-size:21px;line-height:1.5;margin:8px 0 22px;word-break:keep-all}#cinemaDialogue p{font-size:15px;line-height:1.8;word-break:keep-all;margin:0}#cinemaDialogue small{font-size:12px}body.cinema-running #introVideoSlot{inset:0!important}`;document.head.append(style);
 const titles=['장사꾼 · 제금루','농민 · 동헌 · 혜의당','찬모 · 객사','주민 삼총사 · 민가','나무꾼 · 뒷산'];
-const lines=['그 근처에서 이상한 돌짐승 두 마리를 보았습니다. 얼굴의 크기며 눈꼬리가 서로 다르게 생겼더라고요.','자세히 살필수록 돌짐승의 얼굴 윤곽과 눈, 입이 하나하나 또렷해지더군요.','객사 가까이 돌짐승 둘이 있었습니다. 머리의 말려 올라간 털과 솟아오르고 파인 굴곡이 참 신통했지요.','입꼬리가 살짝 올라간 게 꼭 사람이 씩 웃는 것 같았습니다. 돌로 만든 건데도 표정이 생생했지요.','목 뒤부터 등에 새겨진 털 무늬가 나무 결이나 산등성이 굽이처럼 보였습니다.'];
-const introductions=['이 문을 지나면 관아입니다. 나는 장에 물건을 내다 팔러 올 때면 이 앞을 지나곤 하지요.','나는 이곳에 논밭 일로 왔습니다. 내 땅이라고 생각했던 곳의 경계가 달라졌으니, 여기까지 와서 사정을 이야기해야 합니다.','객사에는 왕을 상징하는 궐패를 모시고, 먼 곳에서 온 관리들이 머무릅니다. 손님들 먹을거리를 마련하러 나는 이 앞을 오가지요.','우리에게 하루는 늘 비슷했습니다. 서로 투닥거리며 하루를 보내고 집으로 돌아가지요.','산에 올라 마을을 내려다보면 관아도 집도 길도 한눈에 들어옵니다. 떨어져 보이던 곳들이 하나로 이어지지요.'];
 
 let running=false,active=false,elapsed=0,last=0,previous=null;
 const seek=control.querySelector('#cinemaSeek'),play=control.querySelector('#cinemaPlay'),stop=control.querySelector('#cinemaStop');
@@ -29,17 +28,17 @@ stop.onclick=()=>{active=running=false;previous=null;panel.hidden=true;testFade.
 
 if(cameraTest){
  const jump=document.createElement('select');jump.setAttribute('aria-label','카메라 테스트 장면');jump.style.cssText='max-width:190px;background:#18231e;color:#e8e5dc;border:1px solid #829184;padding:8px';
- const labels={entry:'유물 등장',rotate:'유물 회전',motif:'유물 → 마을',travel:'마을 → 인물 1',guesthouse:'객사터 석사자로 이동',settle:'석사자 앞 정지',seasons:'시대·계절 변화',fade:'페이드아웃'};
+ const labels={pair:'유물 · 반측면 고정','back-zoom':'등 무늬로 접근',entry:'유물 등장',rotate:'유물 회전',motif:'유물 → 마을',travel:'마을 → 인물 1',guesthouse:'객사터 석사자로 이동',settle:'석사자 앞 정지',seasons:'시대·계절 변화',fade:'페이드아웃'};
  shots.forEach((q,i)=>{const option=document.createElement('option');option.value=i;option.textContent=q.kind==='dialogue'?`인물 ${q.stop.route+1} · ${titles[q.stop.route]}`:q.kind==='transfer'?(q.from===4?'마을 귀환':`인물 ${q.from+1} → 인물 ${q.to+1}`):labels[q.kind];jump.append(option);});control.prepend(jump);
- jump.onchange=()=>{if(!active){play.click();running=false;play.textContent='이어서 재생';}elapsed=shots[Number(jump.value)].start;seek.value=elapsed;previous=null;renderStory();};
+ jump.onchange=()=>{const choice=Number(jump.value);if(!active){play.click();running=false;play.textContent='이어서 재생';}elapsed=shots[choice].start;seek.value=elapsed;previous=null;renderStory();};
 }
 window.addEventListener('wheel',e=>{if(active){e.preventDefault();e.stopImmediatePropagation();}},{capture:true,passive:false});
 function renderStory(){
  const q=shots.find(s=>elapsed<s.end)||shots.at(-1),u=Math.min(1,(elapsed-q.start)/(q.end-q.start)),t=elapsed-q.start;const changed=previous!==q;previous=q;
- testFade.style.opacity='0';document.body.dataset.storyShot=q.kind;panel.hidden=true;emit('cinema-closing',{visible:false,book:false});
- if(['entry','rotate','female-click','female-scan','male-transition','male-scan','pair','lens'].includes(q.kind)){
+ testFade.style.opacity='0';if(cameraTest)control.querySelector('select').value=String(shots.indexOf(q));document.body.dataset.storyShot=q.kind;panel.hidden=true;emit('cinema-closing',{visible:false,book:false});
+ if(['back-zoom','entry','rotate','female-click','female-scan','male-transition','male-scan','pair','lens'].includes(q.kind)){
   if(changed){emit('stage-navigate','intro');emit('ink-landscape-frame',{progress:1,index:0});}
-  let kind=q.kind==='entry'?'entry':q.kind==='rotate'?'rotate':q.kind==='lens'?'lens':q.kind.endsWith('scan')?'scan':'pair';
+  let kind=q.kind==='back-zoom'?'back-zoom':q.kind==='entry'?'entry':q.kind==='rotate'?'rotate':q.kind==='lens'?'lens':q.kind.endsWith('scan')?'scan':'pair';
   emit('cinema-lion-frame',{kind,time:kind==='scan'?(q.kind==='female-scan'?u*131.9:132+u*131.9):t,progress:u,...q.stop});
  }else if(q.kind==='transfer'){
  if(changed){emit('stage-navigate','terrain');emit('ink-landscape-frame',{index:0,progress:1});}
@@ -48,13 +47,13 @@ function renderStory(){
   if(changed){emit('stage-navigate','terrain');if(q.stop)emit('capture-story-motif',q.stop);}
   const index=q.stop.route;
   if(q.kind==='motif'){emit('ink-landscape-frame',{index,progress:u*.235});emit('blender-route-frame',{index,time:0,opacity:u<.8?0:(u-.8)/.2});}
-  else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1});if(q.kind==='dialogue'){panel.hidden=false;const copy=dialogueCopy[index];panel.innerHTML='<small>가상 증언 · '+(u<.5?'인물 이야기':'돌짐승의 기억')+'</small><h2>'+copy.place+'</h2><div class=dialogue-role>'+copy.role+'</div><p>“'+(u<.5?copy.intro:copy.testimony)+'”</p><div class=dialogue-folio>'+(u<.5?'01':'02')+' / 02 <span>'+copy.context+'</span></div>';}}
+  else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1});if(q.kind==='dialogue'){panel.hidden=false;const copy=dialogueCopy[index];const names=['장사꾼 / 공주목을 오가며 물건을 팖','농민 / 토지 문제로 관아에 찾아옴','찬모 / 객사의 손님 음식을 마련함','주민 삼총사 / 공주 마을에 사는 이웃들','나무꾼 / 산을 오가며 나무를 구함'];panel.innerHTML='<h2>'+names[index]+'</h2><p>'+(u<.5?copy.intro:copy.testimony)+'</p>';}}
  }else{
   if(changed){emit('stage-navigate','memory');emit('ink-landscape-frame',{index:0,progress:1});}
-  const source=q.kind==='guesthouse'?u*70:q.kind==='settle'?70:q.kind==='seasons'?70+u*74:144;
+  const source=q.kind==='guesthouse'?u*70:q.kind==='settle'?70:q.kind==='seasons'?70+u*70:140;
   emit('blender-ending-frame',source/144);
   emit('cinema-closing',{visible:q.kind==='closing'||q.kind==='book',book:q.kind==='book'});
- if(q.kind==='fade'){emit('blender-ending-frame',.974);testFade.style.opacity=String(u);}
+ if(q.kind==='fade'){testFade.style.opacity=String(u);}
  }
  if(elapsed>=duration){running=false;play.textContent='다시 재생';}
 }

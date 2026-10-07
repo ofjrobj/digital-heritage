@@ -1,4 +1,4 @@
-import {storyStops} from './story-sequence.js?v=story-flow-64';
+import {storyStops} from './story-sequence.js?v=story-flow-65';
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
@@ -266,7 +266,7 @@ function renderLensWithRakingLight(item){
 const lensCamera=camera.clone();
 function tick(now){requestAnimationFrame(tick);const delta=Math.min((now-last)/1000,.05);last=now;updateFilm();if(!visible||document.hidden)return;host.classList.toggle('motif-focus',!!regionHover);
  if(guidedPose&&loaded){camera.zoom+=(guidedPose.zoom-camera.zoom)*.07;camera.updateProjectionMatrix();const nextY=baseFocus.y+(guidedPose.height||0);const dy=(nextY-controls.target.y)*.07;controls.target.y+=dy;camera.position.y+=dy;for(const o of subjects.values())o.rotation.y+=(guidedPose.yaw-o.rotation.y)*.07;}
- if(!cinemaDriven&&document.body.dataset.stage==='intro'&&!filmPlaying&&!guidedPose&&loaded&&experience&&!intro.classList.contains('story-playing')&&intro.dataset.observationPhase!=='magnifier'&&!reduced.matches&&!document.body.classList.contains('choosing-experience')&&now>=readyAt){for(const o of subjects.values())if(o.visible)o.rotation.y-=delta*.075;}
+ if(document.body.dataset.cameraTest!=='village'&&!cinemaDriven&&document.body.dataset.stage==='intro'&&!filmPlaying&&!guidedPose&&loaded&&experience&&!intro.classList.contains('story-playing')&&intro.dataset.observationPhase!=='magnifier'&&!reduced.matches&&!document.body.classList.contains('choosing-experience')&&now>=readyAt){for(const o of subjects.values())if(o.visible)o.rotation.y-=delta*.075;}
  weather(now);cinematicLight();controls.update();scene.updateMatrixWorld(true);renderer.render(scene,camera);drawSurfaceTrace(now);updateEntry(now);updateHotspots();
  if(pointer&&loaded&&!down&&!filmPlaying){if(now-lastHit>90){lastHit=now;hovered=(inspecting&&document.body.dataset.stage==='intro')?regionHover:hit(pointer.x,pointer.y);host.style.cursor=hovered?(inspecting?'none':'pointer'):'default';lens.classList.toggle('visible',inspecting&&hovered);hint.classList.toggle('visible',!inspecting&&Boolean(hovered));}
   if(inspecting&&hovered&&now-lastLens>50){lastLens=now;
@@ -295,7 +295,7 @@ intro.addEventListener('touchmove',e=>{if(loaded&&document.body.dataset.stage===
 document.addEventListener('lion-return-progress',e=>{const p=Math.max(0,Math.min(1,(e.detail-.80)/.20));for(const o of subjects.values())o.rotation.y=-Math.PI/4+(1-p)*1.22;camera.zoom=.78;camera.updateProjectionMatrix();});
 
 const motifFocusStyle=document.createElement('style');motifFocusStyle.textContent='#lionViewport>canvas{transition:filter 700ms ease}#lionViewport.motif-focus>canvas{filter:brightness(.60) saturate(.72)}#lionLens>canvas:not(.lens-trace){filter:contrast(1.10);transition:filter 900ms ease}';document.head.append(motifFocusStyle);
-document.addEventListener('capture-story-motif',e=>{const item=e.detail;if(!subjects.has(item.subject))return;if(!lensRenderer){lensRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});lensRenderer.setSize(768,768);lensRenderer.outputColorSpace=renderer.outputColorSpace;lensRenderer.toneMapping=renderer.toneMapping;lensRenderer.toneMappingExposure=renderer.toneMappingExposure;}const state=[...subjects].map(([name,o])=>[o,o.visible]);for(const [name,o] of subjects)o.visible=name===item.subject;scene.updateMatrixWorld(true);frameLens(item);surface(true);renderLensWithRakingLight(item);document.dispatchEvent(new CustomEvent('motif-capture',{detail:isolatedMotif(lensRenderer.domElement)}));surface(false);for(const [o,v] of state)o.visible=v;});
+document.addEventListener('capture-story-motif',e=>{const item=e.detail;if(document.body.dataset.cameraTest==='village'){renderer.render(scene,camera);document.dispatchEvent(new CustomEvent('motif-capture',{detail:isolatedMotif(renderer.domElement)}));return;}if(!subjects.has(item.subject))return;if(!lensRenderer){lensRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});lensRenderer.setSize(768,768);lensRenderer.outputColorSpace=renderer.outputColorSpace;lensRenderer.toneMapping=renderer.toneMapping;lensRenderer.toneMappingExposure=renderer.toneMappingExposure;}const state=[...subjects].map(([name,o])=>[o,o.visible]);for(const [name,o] of subjects)o.visible=name===item.subject;scene.updateMatrixWorld(true);frameLens(item);surface(true);renderLensWithRakingLight(item);document.dispatchEvent(new CustomEvent('motif-capture',{detail:isolatedMotif(lensRenderer.domElement)}));surface(false);for(const [o,v] of state)o.visible=v;});
 
 // Deterministic presentation reuses the same scans, lights and particle layer.
 const cinemaFocus=document.createElement('div');cinemaFocus.style.cssText='position:absolute;width:66px;height:66px;border:2px solid #ddd;border-radius:50%;pointer-events:none;display:none;z-index:7;box-shadow:0 0 0 5px #0005';cinemaFocus.innerHTML='<span style="position:absolute;right:-17px;bottom:-10px;width:25px;height:3px;background:#ddd;transform:rotate(45deg)"></span>';host.append(cinemaFocus);
@@ -310,6 +310,14 @@ document.addEventListener('cinema-lion-frame',e=>{
   filmPlaying=false;surface(true);intro.dataset.observationPhase='cinema';
   for(const o of subjects.values())o.rotation.y=d.kind==='rotate'?-Math.PI/4-d.progress*Math.PI*2:-Math.PI/4;
   home();
+  if(d.kind==='back-zoom'){
+   scene.updateMatrixWorld(true);frameLens({subject:'male',region:'back'});
+   const pivot=subjects.get('male'),bounds=pivot.userData.anchorBounds;
+   const focus=bounds.getCenter(new THREE.Vector3()).add(new THREE.Vector3(-.12,.3,0).multiply(bounds.getSize(new THREE.Vector3()))).applyMatrix4(pivot.matrixWorld);
+   const u=d.progress*d.progress*d.progress*(10+d.progress*(-15+6*d.progress));
+   const offset=camera.position.clone().sub(controls.target);
+   camera.position.lerp(focus.clone().add(offset),u);controls.target.lerp(focus,u);camera.zoom=1+u*5.5;controls.maxZoom=8;camera.updateProjectionMatrix();camera.lookAt(controls.target);
+  }
   if(d.kind==='lens'){const item=regionButtons.find(x=>x.subject===d.subject&&x.region===d.region);scene.updateMatrixWorld(true);if(item){frameLens(item);const p=controls.target.clone();const pivot=subjects.get(item.subject),bounds=pivot.userData.anchorBounds;if(bounds){p.copy(bounds.getCenter(new THREE.Vector3())).add(new THREE.Vector3(...item.anchor).multiply(bounds.getSize(new THREE.Vector3()))).applyMatrix4(pivot.matrixWorld);}p.project(camera);cinemaFocus.style.left=((p.x+1)*width/2-33)+'px';cinemaFocus.style.top=((-p.y+1)*height/2-33)+'px';cinemaFocus.style.display='block';cinemaFocus.style.transform=`scale(${d.progress>.8?.88:1})`;}}
  }
 });

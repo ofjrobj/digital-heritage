@@ -1,5 +1,7 @@
-import {planTransfer} from './camera-transfer.js?v=64';
-import {prepareTimelapse} from './ending-timelapse.js?v=63';
+import {extendVillage} from './test-village-layout.js?v=65';
+const cameraTest=document.body.dataset.cameraTest==='village';
+const authoredTour=cameraTest?await fetch('./downloads/space-atlas/camera-tour-65.json').then(r=>r.json()):null;
+import {prepareTimelapse} from './ending-timelapse.js?v=65';
 import {bytes,json as loadJSON} from './asset-transport.js';
 import * as THREE from 'three';
 import {GLTFLoader} from './vendor/GLTFLoader.js';
@@ -35,17 +37,18 @@ function sampleRoute(index,seconds){const storySeconds=seconds;seconds=seconds>1
  }
  if(storySeconds>174){const retreat=easeMotion((storySeconds-174)/30);const axis=camera.position.clone().sub(target);axis.y=0;axis.normalize();camera.position.addScaledVector(axis,retreat*24);camera.position.y+=retreat*10;}
  camera.lookAt(target);}
-function update(detail){lastEvent=detail;if(!village)return;route=detail.index??route;time=detail.time??time;mode='route';for(const person of endingWalkers)person.visible=false;if(endingCat)endingCat.visible=false;for(const tree of passageTrees)tree.visible=false;scene.background.set('#b6bcb5');sun.color.set(0xfff1dc);host.style.filter='none';village.visible=true;if(ending)ending.visible=false;host.style.display='block';host.style.opacity=String(detail.opacity??1);sampleRoute(route,time);transitionHaze((1-THREE.MathUtils.smoothstep(time,0,22))*.75+THREE.MathUtils.smoothstep(time,192,204)*.45,time);host.dataset.route=String(route);host.dataset.time=time.toFixed(3);closing.style.display='none';render();}
+let pendingTransfer=null;document.addEventListener('blender-transfer-frame',e=>{pendingTransfer=e.detail;});
+function update(detail){pendingTransfer=null;lastEvent=detail;if(!village)return;route=detail.index??route;time=detail.time??time;mode='route';for(const person of endingWalkers)person.visible=false;if(endingCat)endingCat.visible=false;for(const tree of passageTrees)tree.visible=false;scene.background.set('#b6bcb5');sun.color.set(0xfff1dc);host.style.filter='none';village.visible=true;if(ending)ending.visible=false;host.style.display='block';host.style.opacity=String(detail.opacity??1);if(cameraTest&&time<150){applyTransfer(buildTransfer(-1,0),time/150);}else sampleRoute(route,time);transitionHaze((1-THREE.MathUtils.smoothstep(time,0,22))*.75+THREE.MathUtils.smoothstep(time,192,204)*.45,time);host.dataset.route=String(route);host.dataset.time=time.toFixed(3);closing.style.display='none';render();}
 document.addEventListener('blender-route-frame',e=>update(e.detail));
-document.addEventListener('prototype-episode',e=>{if(e.detail.active)update({index:e.detail.index,time:150+Math.min(1,e.detail.progress/2.5)*24});});
+document.addEventListener('prototype-episode',e=>{if(e.detail.active&&!document.body.classList.contains('cinema-running'))update({index:e.detail.index,time:150+Math.min(1,e.detail.progress/2.5)*24});});
 document.addEventListener('story-home',()=>{host.style.display='none';closing.style.display='none';});
-const gltf=await loader.loadAsync('./assets/blender-village-v046.glb?v=46');village=gltf.scene;scene.add(village);size();if(lastEvent)update(lastEvent);
+const gltf=await loader.loadAsync('./assets/blender-village-v046.glb?v=46');village=gltf.scene;scene.add(village);if(cameraTest){extendVillage(village,THREE);village.traverse(o=>{if(/Original.unchanged|Forecourt/.test(o.name))o.visible=false;});}size();
 // Formation animation and closing camera are authored in the v043 Blender file.
 let endingBridge=null,endingPath=null;
 const endingFixedPosition=new THREE.Vector3(-18.8,2.7,-9.3),endingFixedTarget=new THREE.Vector3(-22.275,.62,-15.5);
 let animateTimelapse;
 let endingLoad,endingMixer,endingCamera,endingDuration=144,endingProgress=0;
-async function loadEnding(){if(endingLoad)return endingLoad;endingLoad=(async()=>{const g=await bytes('./assets/blender-ending-v046.glb').then(b=>loader.parseAsync(b,'./assets/'));ending=g.scene;scene.add(ending);
+async function loadEnding(){if(endingLoad)return endingLoad;endingLoad=(async()=>{const g=await bytes('./assets/blender-ending-v046.glb').then(b=>loader.parseAsync(b,'./assets/'));ending=g.scene;scene.add(ending);if(cameraTest)extendVillage(ending,THREE);
  ending.traverse(o=>{if(o.isMesh){if(/continuous ridges|Forecourt sand|courtyard|connecting lane|Main village street|approach stairs/.test(o.name.replaceAll('_',' '))&&!o.name.startsWith('Present'))endingGround.push(o);o.material=Array.isArray(o.material)?o.material.map(m=>m.clone()):o.material.clone();}});
  animateTimelapse=prepareTimelapse(ending,THREE);
  const people=[];village.traverse(o=>{if(o.userData.ambient_kind==='resident')people.push(o);});
@@ -64,9 +67,13 @@ sun.color.set(seasonColors[season]).lerp(new THREE.Color(seasonColors[season+1])
 const winter=THREE.MathUtils.smoothstep(f,98,105)*(1-THREE.MathUtils.smoothstep(f,114,125));
 scene.background.set('#b6bcb5').lerp(new THREE.Color('#ccd5d8'),winter);
 transitionHaze(0,f);host.style.filter='none';
+// Cut the old terrain beneath the completed gravel bed instead of overlapping coplanar surfaces.
+const bedBuild=easeMotion((f-122)/7);for(const ground of endingGround){if(/Forecourt/.test(ground.name))continue;for(const material of (Array.isArray(ground.material)?ground.material:[ground.material])){material.clipIntersection=true;material.clippingPlanes=bedBuild>0?[
+ new THREE.Plane(new THREE.Vector3(-1,0,0),-22.275-1.66*bedBuild),new THREE.Plane(new THREE.Vector3(1,0,0),22.275-1.66*bedBuild),new THREE.Plane(new THREE.Vector3(0,0,-1),-15.5-1.31*bedBuild),new THREE.Plane(new THREE.Vector3(0,0,1),15.5-1.31*bedBuild)]:[];}}
+
 ending.updateMatrixWorld(true);if(endingCat){endingCat.visible=f<114;endingCat.position.y=floorHeight(endingCat.position.x,endingCat.position.z)+endingCat.userData.footOffset;}for(const tree of passageTrees){tree.visible=f<114;tree.position.y=floorHeight(tree.position.x,tree.position.z);}
-for(let k=0;k<endingWalkers.length;k++){const person=endingWalkers[k];person.visible=f<114;const phase=((f/18+k*.36)%1+1)%1;person.position.x=f<70?-10+k*1.1:-38+phase*30;person.position.z=f<70?-24-k*2:-18-k*.7;person.position.y=floorHeight(person.position.x,person.position.z)+person.userData.footOffset;}
-if(f<70&&endingPath){const k=f/70,e=k*k*k*(10+k*(-15+6*k));camera.position.copy(endingPath.getPointAt(e));const groundClearance=floorHeight(camera.position.x,camera.position.z)+1.65;camera.position.y=Math.max(camera.position.y,groundClearance);const ahead=endingPath.getPointAt(Math.min(1,e+.035));ahead.y=camera.position.y-.12;const aim=new THREE.PerspectiveCamera();aim.position.copy(camera.position);aim.lookAt(ahead);const pathRotation=aim.quaternion.clone();aim.lookAt(endingFixedTarget);pathRotation.slerp(aim.quaternion,easeMotion((k-.88)/.12));camera.quaternion.copy(endingBridge.rotation).slerp(pathRotation,easeMotion(k/.08));}else{camera.position.copy(endingFixedPosition);camera.lookAt(endingFixedTarget);}const fade=THREE.MathUtils.smoothstep(p,.975,1);host.style.opacity=String(1-fade);closing.style.display=p>=.999?'flex':'none';host.dataset.ending=p.toFixed(4);render();}
+for(let k=0;k<endingWalkers.length;k++){const person=endingWalkers[k];person.visible=f<114;const phase=((f/18+k*.36)%1+1)%1;person.position.x=f<70?-10+k*1.1:-38+phase*30;person.position.z=f<70?-24-k*2:-21-k*.7;person.position.y=floorHeight(person.position.x,person.position.z)+person.userData.footOffset;}
+if(f<70&&endingPath){const k=f/70,e=k*k*k*(10+k*(-15+6*k));camera.position.copy(endingPath.getPointAt(e));const groundClearance=floorHeight(camera.position.x,camera.position.z)+1.65;camera.position.y=Math.max(camera.position.y,groundClearance);const ahead=endingPath.getPointAt(Math.min(1,e+.035));ahead.y=camera.position.y-.12;const aim=new THREE.PerspectiveCamera();aim.position.copy(camera.position);aim.lookAt(ahead);const pathRotation=aim.quaternion.clone();aim.lookAt(endingFixedTarget);pathRotation.slerp(aim.quaternion,easeMotion((k-.88)/.12));camera.quaternion.copy(endingBridge.rotation).slerp(pathRotation,easeMotion(k/.08));}else{camera.position.copy(endingFixedPosition);camera.lookAt(endingFixedTarget);}const fade=cameraTest?0:THREE.MathUtils.smoothstep(p,.975,1);host.style.opacity=String(1-fade);closing.style.display=p>=.999?'flex':'none';host.dataset.ending=p.toFixed(4);render();}
 document.addEventListener('blender-ending-frame',e=>showEnding(e.detail));
 
 // Blender-authored background loops. Narrative heroes deliberately have no ambient_kind.
@@ -85,29 +92,50 @@ requestAnimationFrame(livingFrame);
 const fixedDialogue=document.createElement('style');fixedDialogue.textContent=`body[data-stage=village] #episode.episode-panel{left:28px!important;right:auto!important;top:auto!important;bottom:48px!important;width:350px!important;min-width:350px!important;max-width:350px!important;height:278px!important;min-height:278px!important;max-height:278px!important;padding:24px!important;overflow:hidden!important;transform:none!important;box-sizing:border-box!important}body[data-stage=village] #episode h2{font-size:21px!important;line-height:1.5!important;letter-spacing:0!important;word-break:keep-all!important;margin:8px 0 22px!important}body[data-stage=village] #episode p{font-size:15px!important;line-height:1.8!important;letter-spacing:0!important;word-break:keep-all!important;margin:0!important}body[data-stage=village] #episode small{font-size:12px!important}`;document.head.append(fixedDialogue);
 
 // Shared ending: approach the fixed pair, then 60 seconds of changing background.
-let endStart=0;document.addEventListener('story-ending-autoplay',()=>{endStart=performance.now();requestAnimationFrame(endingTick);});
-function endingTick(now){if(!endStart||document.body.dataset.stage!=='memory')return;const t=(now-endStart)/1000;const source=t<195?t/195*70:t<198?70:70+Math.min(1,(t-198)/60)*74;showEnding(source/144);closing.style.display=t>=258?'flex':'none';closing.querySelector('a').style.visibility=t>=264?'visible':'hidden';if(t<264)requestAnimationFrame(endingTick);else endStart=0;}
+let endStart=0;document.addEventListener('story-ending-autoplay',()=>{if(document.body.classList.contains('cinema-running'))return;endStart=performance.now();requestAnimationFrame(endingTick);});
+function endingTick(now){if(document.body.classList.contains('cinema-running')){endStart=0;return;}if(!endStart||document.body.dataset.stage!=='memory')return;const t=(now-endStart)/1000;const source=t<195?t/195*70:t<198?70:70+Math.min(1,(t-198)/60)*74;showEnding(source/144);closing.style.display=t>=258?'flex':'none';closing.querySelector('a').style.visibility=t>=264?'visible':'hidden';if(t<264)requestAnimationFrame(endingTick);else endStart=0;}
 closing.style.background='#000';closing.querySelector('a').textContent='서책 보기';
 document.addEventListener('cinema-closing',e=>{closing.style.display=e.detail.visible?'flex':'none';closing.querySelector('a').style.visibility=e.detail.book?'visible':'hidden';});
 
 // Only the separate camera-test page emits these inter-person connections.
 const transferCache=new Map();
-const transferGround=[];village.traverse(o=>{if(o.isMesh&&/continuous.ridges|courtyard|connecting.lane|Main.village.street|approach.stairs/.test(o.name))transferGround.push(o);});
+const transferGround=[];village.traverse(o=>{if(o.isMesh&&/continuous.ridges|courtyard|connecting.lane|Main.village.street|approach.stairs|Extension ground/.test(o.name))transferGround.push(o);});
+function groundAt(x,z){floorRay.set(new THREE.Vector3(x,80,z),new THREE.Vector3(0,-1,0));return floorRay.intersectObjects(transferGround,false)[0]?.point.y??0;}
+function buildTransfer(from,to){
+ const key=from+':'+to;if(transferCache.has(key))return transferCache.get(key);
+ if(from<0){camera.position.set(12,2,44);camera.lookAt(20,2,32);}else sampleRoute(from,150);const start=camera.position.clone(),startRotation=camera.quaternion.clone(),startFocus=camera.position.clone().add(camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(3));
+ if(to===5){camera.position.copy(endingFixedPosition);camera.lookAt(endingFixedTarget);}else sampleRoute(to,150);
+ const end=camera.position.clone(),endRotation=camera.quaternion.clone(),endFocus=camera.position.clone().add(camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(to===5?7:3));
+ const routeData=authoredTour.find(r=>r.from===from);const curve=new THREE.CatmullRomCurve3(routeData.points.map(([x,z])=>new THREE.Vector3(x,0,z)),false,'centripetal');
+ // Cache a smooth terrain profile instead of snapping to intersected triangles each frame.
+ const heights=[];for(let i=0;i<=1200;i++){const p=curve.getPointAt(i/1200);heights.push(groundAt(p.x,p.z)+1.75);}
+ const raw=heights.slice();for(let pass=0;pass<5;pass++){const copy=heights.slice();for(let i=2;i<1199;i++)heights[i]=(copy[i-2]+copy[i-1]+copy[i]*2+copy[i+1]+copy[i+2])/6;}for(let i=0;i<heights.length;i++)heights[i]=Math.max(heights[i],raw[i]-.2);
+ const pace=[0];let lastDirection=curve.getTangentAt(0);for(let i=1;i<=1200;i++){const direction=curve.getTangentAt(i/1200);pace.push(pace.at(-1)+1+lastDirection.angleTo(direction)*35);lastDirection=direction;}
+ const total=pace.at(-1);for(let i=0;i<pace.length;i++)pace[i]/=total;
+ const data={from,start,end,startRotation,endRotation,startFocus,endFocus,curve,heights,pace};transferCache.set(key,data);return data;
+}
 document.addEventListener('blender-transfer-frame',e=>{
  const {from,to,progress}=e.detail;if(!village)return;
- const key=from+':'+to;let data=transferCache.get(key);
- if(!data){
-  sampleRoute(from,150);const start=camera.position.clone(),startRotation=camera.quaternion.clone();
-  sampleRoute(to,150);const end=camera.position.clone(),endRotation=camera.quaternion.clone();
-  village.updateMatrixWorld(true);const boxes=[];village.traverse(o=>{if(o.isMesh&&/wall|pillar/.test(o.name.replaceAll('_',' ')))boxes.push(new THREE.Box3().setFromObject(o));});
-  const points=planTransfer([start.x,start.z],[end.x,end.z],boxes).map(([x,z])=>new THREE.Vector3(x,0,z));
-  const curve=new THREE.CurvePath();for(let i=1;i<points.length;i++)curve.add(new THREE.LineCurve3(points[i-1],points[i]));
-  data={start,end,startRotation,endRotation,curve};transferCache.set(key,data);
- }
+ const data=buildTransfer(from,to);
  mode='route';village.visible=true;if(ending)ending.visible=false;for(const person of endingWalkers)person.visible=false;if(endingCat)endingCat.visible=false;for(const tree of passageTrees)tree.visible=false;closing.style.display='none';host.style.display='block';host.style.opacity='1';
- const u=easeMotion(progress),point=data.curve.getPoint(u);camera.position.copy(point);floorRay.set(new THREE.Vector3(point.x,60,point.z),new THREE.Vector3(0,-1,0));const ground=floorRay.intersectObjects(transferGround,false)[0]?.point.y??0;
- camera.position.y=ground+1.65;camera.position.y=THREE.MathUtils.lerp(data.start.y,camera.position.y,easeMotion(progress/.12));camera.position.y=THREE.MathUtils.lerp(camera.position.y,data.end.y,easeMotion((progress-.88)/.12));
- const ahead=data.curve.getPoint(Math.min(1,u+.035));ahead.y=camera.position.y;const aim=new THREE.PerspectiveCamera();aim.position.copy(camera.position);aim.lookAt(ahead);
- camera.quaternion.copy(data.startRotation).slerp(aim.quaternion,easeMotion(progress/.18));camera.quaternion.slerp(data.endRotation,easeMotion((progress-.8)/.2));
+ // Reveal the forecourt only on the last approach, never between the five speakers.
+ village.traverse(o=>{if(/Original.unchanged|Forecourt/.test(o.name))o.visible=to===5;});
+ applyTransfer(data,progress);
  transitionHaze(0,0);render();
 });
+
+function applyTransfer(data,progress){
+ const clock=easeMotion(progress);let lo=0,hi=1200;while(lo+1<hi){const m=(lo+hi)>>1;if(data.pace[m]<clock)lo=m;else hi=m;}const u=(lo+(clock-data.pace[lo])/(data.pace[hi]-data.pace[lo]))/1200,point=data.curve.getPointAt(u);camera.position.copy(point);
+ const sample=u*1200,i=Math.min(1199,Math.floor(sample));camera.position.y=THREE.MathUtils.lerp(data.heights[i],data.heights[i+1],sample-i);
+ camera.position.y=THREE.MathUtils.lerp(data.start.y,camera.position.y,easeMotion(progress/.14));camera.position.y=THREE.MathUtils.lerp(camera.position.y,data.end.y,easeMotion((progress-.86)/.14));
+ const ahead=data.curve.getPointAt(Math.min(1,u+Math.min(.025,5/data.curve.getLength())));ahead.y=camera.position.y;
+ const aim=new THREE.PerspectiveCamera();aim.position.copy(camera.position);if(ahead.distanceTo(camera.position)>.001)aim.lookAt(ahead);else aim.quaternion.copy(data.endRotation);
+ const forward=aim.quaternion.clone();aim.lookAt(data.startFocus);camera.quaternion.copy(aim.quaternion).slerp(forward,easeMotion((progress-.2)/.2));
+ // Leave the residents by turning through the open southern lane, not across their house front.
+ if(data.from===3&&progress<.4){const a=data.startFocus.clone().sub(camera.position),b=ahead.clone().sub(camera.position);const first=Math.atan2(a.x,a.z);let delta=Math.atan2(b.x,b.z)-first;while(delta<0)delta+=Math.PI*2;while(delta>Math.PI*2)delta-=Math.PI*2;const blend=easeMotion((progress-.2)/.2),heading=first+delta*blend;camera.lookAt(camera.position.clone().add(new THREE.Vector3(Math.sin(heading),a.y/Math.max(1,Math.hypot(a.x,a.z))*(1-blend),Math.cos(heading))));}
+ aim.lookAt(data.endFocus);camera.quaternion.slerp(aim.quaternion,easeMotion((progress-.78)/.22));
+}
+
+if(pendingTransfer)document.dispatchEvent(new CustomEvent('blender-transfer-frame',{detail:pendingTransfer}));else if(lastEvent)update(lastEvent);
+
+if(cameraTest)loadEnding();

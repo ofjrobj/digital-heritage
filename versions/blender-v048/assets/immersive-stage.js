@@ -1,5 +1,5 @@
-import {storyStops} from './story-sequence.js?v=story-flow-64';
-import './ink-landscape-transition.js?v=story-flow-64';
+import {storyStops} from './story-sequence.js?v=story-flow-65';
+import './ink-landscape-transition.js?v=story-flow-65';
 const $=s=>document.querySelector(s);
 const layers=['intro','observe','terrain','village','overview','memory'];
 const css=document.createElement('style');css.textContent=`html,body{height:100%;overflow:hidden!important;overscroll-behavior:none}#intro,.story-section,.observation-flow{position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;min-height:0!important;margin:0!important;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 2.2s,visibility 2.2s;padding:0!important;overflow:clip!important}body[data-stage=intro] #intro,body[data-stage=observe] #intro,body[data-stage=terrain] #terrain,body[data-stage=village] #village,body[data-stage=overview] #village,body[data-stage=memory] #memory{opacity:1;visibility:visible;pointer-events:auto}#observe,#overview{display:none!important}#intro .intro-title{display:none}body[data-stage=observe] #introContinue{display:none}.terrain-stage{position:absolute!important;inset:0;top:0!important;height:100%!important;display:grid;place-items:center;background:#07100b}.terrain-stage h2,.terrain-stage small,.terrain-stage button{display:none}.terrain-stage svg{width:100%;height:100%;transform:perspective(1000px) rotateX(var(--map-tilt,0deg)) scale(var(--map-scale,1));transition:transform .15s}.terrain-stage path{stroke-dashoffset:calc(1400 * (1 - var(--map-reveal,0)));transition:none}#villageCanvas{position:absolute;inset:0;height:100%!important;width:100%!important}.story-section>h2,.story-section>small,#visitedCount{position:absolute;left:7vw;top:10vh;z-index:2;pointer-events:none}.story-section>small{top:7vh}.story-section>h2{font-size:26px}#spotList{position:absolute;left:5vw;right:5vw;bottom:5vh;justify-content:center;z-index:3}.episode-panel{top:15vh!important;right:5vw!important;max-width:30vw}#finishEpisodes{position:absolute;bottom:12vh;right:5vw;z-index:3}#memory h2,#memory small{display:none}#endingFilm{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:contain}#endingPlay,#restartStory{position:absolute;bottom:4vh;z-index:4}#endingPlay{left:4vw}#restartStory{right:4vw}.flow-nav{display:none!important}#stageCue{position:fixed;bottom:5vh;left:50%;transform:translateX(-50%);color:#a7b6a2;z-index:5;font:12px 'Gowun Batang';pointer-events:none;letter-spacing:.08em}#stageVeil{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 56%,transparent,#0009);opacity:var(--reveal-veil,.85);transition:opacity .25s}body[data-stage=village] #stageCue,body[data-stage=memory] #stageCue{display:none}@media(max-width:650px){.episode-panel{max-width:none;width:84vw;left:8vw;right:auto!important;top:12vh!important}#spotList{gap:5px}#spotList button{font-size:11px;padding:7px 10px}.flow-nav{max-width:calc(100vw - 120px);flex-wrap:wrap}#village>h2{font-size:20px;top:10vh}}`;document.head.append(css);
@@ -45,7 +45,7 @@ document.querySelectorAll('.flow-nav a').forEach(a=>a.addEventListener('click',e
 $('#introContinue').onclick=()=>{if(explored.size<2)return;storyStarted=true;navigate('observe');};$('#followLine').onclick=()=>navigate('terrain');$('#finishEpisodes').onclick=()=>navigate('overview');$('#overviewButton').onclick=()=>navigate('overview');$('#memoryButton').addEventListener('click',()=>navigate('memory'));
 $('#restartStory').addEventListener('click',()=>{document.dispatchEvent(new CustomEvent('story-restart'));lastPart=-1;navigate('intro');});
 document.addEventListener('story-scan',e=>{if(!e.detail.guided){scanReturnStage=e.detail.episode?'village':'observe';stage='observe';document.body.dataset.stage=stage;veil.style.display='none';cue.textContent='';boundary();document.querySelectorAll('.flow-nav a').forEach(a=>a.setAttribute('aria-current',String(a.hash==='#observe')));}});
-function advance(delta){if(document.body.classList.contains('choosing-experience')||document.querySelector('dialog[open]')||performance.now()<blockedUntil)return;
+function advance(delta){if(document.body.classList.contains('cinema-running'))return;if(document.body.classList.contains('choosing-experience')||document.querySelector('dialog[open]')||performance.now()<blockedUntil)return;
  if(stage==='memory'){progress=Math.max(9,Math.min(10,progress+delta*.00012));document.dispatchEvent(new CustomEvent('blender-ending-frame',{detail:progress-9}));return;}
  if(stage==='intro'&&document.querySelector('#intro').dataset.observationPhase==='magnifier'){if(finishedEpisodes===storyStops.length&&delta>0){navigate('overview');document.dispatchEvent(new CustomEvent('blender-route-frame',{detail:{index:routeIndex,time:134}}));}return;}
  if(stage==='intro'&&!storyStarted)return;
@@ -67,6 +67,7 @@ function pinStage(){for(const id of ['intro','terrain','village','memory']){cons
 // Route timing is entirely scroll-driven; entry and exit are separate Blender paths.
 document.addEventListener('stage-navigate',e=>{if(e.detail!=='terrain')return;const key=$('#intro').dataset.selectedRegion;routeIndex={mane:2,eyes:0,mouth:3,head:1,back:4}[key]??0;returnStarted=0;progress=6;map();drawRoute();});
 function drawRoute(){
+ if(document.body.classList.contains('cinema-running'))return;
  const p=Math.max(0,Math.min(1,progress-6));
  const time=returnStarted?174+p*30:Math.max(0,(p-.20)/.80)*150;
  // Fade through black: never superimpose the scan and the village.
@@ -95,4 +96,4 @@ $('#scanReturn').textContent='돌의 무늬로 돌아가기';
 // No extra click gate between testimony and the return journey.
 document.addEventListener('lion-pair-ready',()=>{cue.textContent=finishedEpisodes===storyStops.length?'스크롤하여 시간의 풍경으로':'';});
 
-import "./cinematic-story.js?v=story-flow-64";
+import "./cinematic-story.js?v=story-flow-65";
