@@ -1,7 +1,7 @@
-import {extendVillage} from './test-village-layout.js?v=65';
+import {extendVillage} from './test-village-layout.js?v=66';
 const cameraTest=document.body.dataset.cameraTest==='village';
-const authoredTour=cameraTest?await fetch('./downloads/space-atlas/camera-tour-65.json').then(r=>r.json()):null;
-import {prepareTimelapse} from './ending-timelapse.js?v=65';
+const authoredTour=cameraTest?await fetch('./downloads/space-atlas/camera-tour-65.json?v=66').then(r=>r.json()):null;
+import {prepareTimelapse} from './ending-timelapse.js?v=66';
 import {bytes,json as loadJSON} from './asset-transport.js';
 import * as THREE from 'three';
 import {GLTFLoader} from './vendor/GLTFLoader.js';

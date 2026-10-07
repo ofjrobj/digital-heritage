@@ -35,3 +35,13 @@ export const dialogueCopy=[
     "testimony": "가까이 보니 등 전체에 새겨진 털 결이 꼭 산등성이 굽이처럼 선명하게 살아있더라고요. 그 입체적인 결을 짚고 있자니, 당장이라도 산을 타넘을 것만 같았습니다."
   }
 ];
+
+// Short timed captions preserve the approved wording without a scrolling text box.
+// Authored phrase boundaries keep each caption readable without truncating the script.
+export function dialoguePages(index){
+ const breaks=['눈꼬리가 위로 팍 올라간 게 눈매가 어찌나 사나운지','암사자의 얼굴이 흐릿하여 눈을 비비고 자세히 살펴보니','닳은 줄 알았던 정수리의 꼬불꼬불한 갈기 굴곡까지','가까이 보니 등 전체에 새겨진 털 결이','입꼬리가 살짝 올라가 사람이 씩 웃는 것 같은 데다,'];
+ return [dialogueCopy[index].intro,dialogueCopy[index].testimony].flatMap(text=>{
+  for(const phrase of breaks)text=text.replace(phrase,phrase+'\n');
+  return (text.match(/[^.!?\n]+[.!?]?/g)||[]).map(text=>text.trim()).filter(Boolean).map(text=>({text,seconds:Math.max(5,text.length/6)}));
+ });
+}
