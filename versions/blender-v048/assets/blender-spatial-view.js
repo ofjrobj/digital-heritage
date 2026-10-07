@@ -128,11 +128,11 @@ function applyTransfer(data,progress){
  const clock=easeMotion(progress);let lo=0,hi=1200;while(lo+1<hi){const m=(lo+hi)>>1;if(data.pace[m]<clock)lo=m;else hi=m;}const u=(lo+(clock-data.pace[lo])/(data.pace[hi]-data.pace[lo]))/1200,point=data.curve.getPointAt(u);camera.position.copy(point);
  const sample=u*1200,i=Math.min(1199,Math.floor(sample));camera.position.y=THREE.MathUtils.lerp(data.heights[i],data.heights[i+1],sample-i);
  camera.position.y=THREE.MathUtils.lerp(data.start.y,camera.position.y,easeMotion(progress/.14));camera.position.y=THREE.MathUtils.lerp(camera.position.y,data.end.y,easeMotion((progress-.86)/.14));
- const ahead=data.curve.getPointAt(Math.min(1,u+Math.min(.025,5/data.curve.getLength())));ahead.y=camera.position.y;
+ const ahead=data.curve.getPointAt(Math.min(1,u+Math.min(data.from===2?.045:.025,(data.from===2?8:5)/data.curve.getLength())));ahead.y=camera.position.y;
  const aim=new THREE.PerspectiveCamera();aim.position.copy(camera.position);if(ahead.distanceTo(camera.position)>.001)aim.lookAt(ahead);else aim.quaternion.copy(data.endRotation);
- const forward=aim.quaternion.clone();aim.lookAt(data.startFocus);camera.quaternion.copy(aim.quaternion).slerp(forward,easeMotion((progress-.2)/.2));
+ const forward=aim.quaternion.clone();aim.lookAt(data.startFocus);camera.quaternion.copy(aim.quaternion).slerp(forward,easeMotion(data.from===1?(progress-.02)/.10:(progress-.2)/.2));
  // Leave the residents by turning through the open southern lane, not across their house front.
- if(data.from===3&&progress<.4){const a=data.startFocus.clone().sub(camera.position),b=ahead.clone().sub(camera.position);const first=Math.atan2(a.x,a.z);let delta=Math.atan2(b.x,b.z)-first;while(delta<0)delta+=Math.PI*2;while(delta>Math.PI*2)delta-=Math.PI*2;const blend=easeMotion((progress-.2)/.2),heading=first+delta*blend;camera.lookAt(camera.position.clone().add(new THREE.Vector3(Math.sin(heading),a.y/Math.max(1,Math.hypot(a.x,a.z))*(1-blend),Math.cos(heading))));}
+ if(data.from===3&&progress<.4){const a=data.startFocus.clone().sub(camera.position),b=ahead.clone().sub(camera.position);const first=Math.atan2(a.x,a.z);let delta=Math.atan2(b.x,b.z)-first;while(delta<0)delta+=Math.PI*2;while(delta>Math.PI*2)delta-=Math.PI*2;const blend=easeMotion((progress-.2)/.08),heading=first+delta*blend;camera.lookAt(camera.position.clone().add(new THREE.Vector3(Math.sin(heading),a.y/Math.max(1,Math.hypot(a.x,a.z))*(1-blend),Math.cos(heading))));}
  aim.lookAt(data.endFocus);camera.quaternion.slerp(aim.quaternion,easeMotion((progress-.78)/.22));
 }
 
