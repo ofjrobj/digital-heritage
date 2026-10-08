@@ -1,0 +1,1 @@
+v048: 150-second location-specific entry routes, fixed 350x278 dialogue, ink/fog stage transitions, continuous story playback. Village geometry remains v046; lion spacing remains v047. New camera Blender files and storyboard are in downloads. Older MP4 downloads are explicitly previous versions.

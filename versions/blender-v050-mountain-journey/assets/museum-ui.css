@@ -1,0 +1,40 @@
+@font-face{font-family:'User KoPubWorld Light';src:url('./KoPubWorld-Batang-Pro-Light.otf') format('opentype');font-weight:300;font-style:normal;font-display:swap}
+body,body button,body a,body input,body select,body p,body h1,body h2,body h3,body small,body span,body dt,body dd,body label{font-family:'User KoPubWorld Light',serif!important;font-weight:300!important;font-synthesis:none}
+body #experienceChoice{background:#eeede5!important;padding:0!important}
+body #experienceChoice .exhibition-cover{position:fixed!important;inset:0!important;border:0!important;border-radius:0!important;background:#eeede5!important;box-shadow:none!important;color:#839d87!important}
+body #experienceChoice .cover-top{position:absolute!important;inset:28px 4.2% auto!important;display:flex!important;justify-content:space-between!important;padding:0!important;font-size:15px!important;letter-spacing:0!important}
+body #experienceChoice .cover-top button{color:#839d87;padding:6px 0;min-height:32px}
+body #experienceChoice .cover-copy{position:absolute!important;left:5%!important;right:5%!important;top:42%!important;bottom:auto!important;width:auto!important;max-width:none!important;padding:0!important;transform:translateY(-50%)!important;text-align:center!important}
+body #experienceChoice .cover-copy #experienceHeading{font-family:'User KoPubWorld Light',serif!important;font-size:clamp(30px,4.15vw,66.67px)!important;line-height:1.5!important;letter-spacing:-.035em!important;color:#839d87!important;margin:0!important;text-wrap:balance}
+body #experienceChoice .cover-description{font-size:clamp(15px,1.6vw,26.67px)!important;line-height:1.7!important;color:#839d87!important;margin:22px 0 0!important}
+body #experienceChoice .cover-actions{position:absolute!important;left:50%!important;bottom:6.5%!important;transform:translateX(-50%)!important;display:block!important;margin:0!important}
+body #experienceChoice .cover-actions button{display:flex!important;flex-direction:column!important;align-items:center!important;gap:16px!important;border:0!important;padding:0 20px!important;width:auto!important;min-width:0!important;font-size:15px!important;line-height:1.5!important;color:#839d87!important;background:transparent!important}
+.scroll-stem{display:block;width:1px;height:80px;background:currentColor;opacity:.6}
+body .intro-controls{display:none!important}
+#storyIndexBar{position:fixed;z-index:160;top:17px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:22px;color:#edf0e6}
+#storyIndexBar button{position:relative;isolation:isolate;font-size:15px;padding:12px 7px;min-height:44px;background:none;color:inherit;border:0}
+#storyIndexBar button[aria-current=page]::before{content:'';position:absolute;z-index:-1;width:38px;height:38px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:#e8f0e016;box-shadow:0 0 0 6px #e8f0e010,0 0 0 12px #e8f0e009}
+#museumHome{position:fixed;z-index:160;right:3.1%;top:22px;padding:5px;display:grid;place-items:center;width:32px;height:32px;color:#edf0e6}
+#museumHome svg{width:20px;height:20px}
+#museumMenu{position:fixed;z-index:160;left:4.2%;top:26px;color:#edf0e6;font-size:15px;padding:5px 0}
+body[data-stage=terrain] #storyIndexBar,body[data-stage=memory] #storyIndexBar,body[data-stage=terrain] #museumHome,body[data-stage=memory] #museumHome,body[data-stage=terrain] #museumMenu,body[data-stage=memory] #museumMenu,body.archive-active #storyIndexBar,body.archive-active #museumHome,body.archive-active #museumMenu{color:#445f4d}
+body.choosing-experience #storyIndexBar,body.choosing-experience #museumHome,body.choosing-experience #museumMenu{display:none}
+#storyIndexBar button:focus-visible,#museumHome:focus-visible,#museumMenu:focus-visible{outline:1px solid currentColor;outline-offset:4px}
+body #journeyDragHint{bottom:6.5%!important;display:flex;flex-direction:column;align-items:center;gap:16px;width:auto!important;height:auto!important;font-size:15px!important;color:#eceee3!important;padding:0!important;background:none!important}
+body #journeyDragHint[hidden]{display:none!important}
+body.archive-active #journeyDragHint{display:none!important}
+body #valueArchive .archive-header nav{visibility:hidden}
+body #valueArchive .archive-header{visibility:hidden}
+#museumMenuDialog{position:fixed;inset:0;margin:auto;width:min(420px,85vw);padding:35px;background:#eeede5;color:#536c57;border:1px solid #9cab9555;box-shadow:0 15px 70px #182a1922}
+#museumMenuDialog::backdrop{background:#13251c66;backdrop-filter:blur(6px)}
+#museumMenuDialog h2{font-size:25px;margin:0 0 25px}
+#museumMenuDialog>button{display:flex;width:100%;padding:16px 0;justify-content:space-between;border-bottom:1px solid #839d872b;font-size:18px;color:inherit}
+#museumMenuDialog>button span{font-size:14px;opacity:.8}
+.museum-close{position:absolute;right:20px;top:15px;font-size:28px}
+@media(max-width:600px){body #experienceChoice .cover-copy{top:40%!important}body #experienceChoice .cover-description{max-width:290px;margin:20px auto 0!important}body #experienceChoice .cover-actions{bottom:8%!important}.scroll-stem{height:65px}#storyIndexBar{gap:12px}#museumMenu{left:20px}#museumHome{right:18px}}
+body #experienceChoice .exhibition-cover::after{display:none!important}
+body #experienceChoice .cover-actions{z-index:3}
+body #journeyDragHint span{margin:0!important;font-size:15px!important}
+body #experienceHeading:focus{outline:none}
+body[data-stage=terrain] #journeyDragHint,body[data-stage=memory] #journeyDragHint{color:#647e68!important}
+body.journey-dragging #journeyDragHint{opacity:.4}
