@@ -41,16 +41,16 @@ if(cameraTest&&!fullStory){
 const chapterIndex=document.createElement('nav');chapterIndex.id='storySectionIndex';chapterIndex.setAttribute('aria-label','이야기 구간');
 const sections=[['형태','pair-reveal'],['무늬','crown-zoom'],['마을','travel'],['시간','settle'],['가치해석','archive']];
 sections.forEach(([label,kind],i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+'  '+label;b.onclick=()=>{const q=shots.find(s=>s.kind===kind);if(!q)return;if(!active)play.click();elapsed=dragTarget=q.start;seek.value=elapsed;previous=null;renderStory();};chapterIndex.append(b);});// Keep chapter bookkeeping off-screen; the story is advanced by dragging.
-const dragHint=document.createElement('div');dragHint.id='journeyDragHint';dragHint.setAttribute('role','img');dragHint.setAttribute('aria-label','좌우로 드래그하여 이야기를 진행합니다');dragHint.innerHTML='<span class="scroll-stem" aria-hidden="true"></span><span>Scroll</span>';document.body.append(dragHint);
-let drag=null;
+const dragHint=document.createElement('div');dragHint.id='journeyDragHint';dragHint.setAttribute('role','img');dragHint.setAttribute('aria-label','위로 드래그하여 앞으로, 아래로 드래그하여 천천히 뒤로 이동합니다');dragHint.innerHTML='<span class="scroll-stem" aria-hidden="true"></span><span>Scroll</span>';document.body.append(dragHint);
+let drag=null,autoRewinding=false;
 const blocked=()=>document.body.classList.contains('archive-active');
 const isControl=target=>target.closest('button,a,input,select,textarea,nav,dialog,[role="dialog"]:not(#experienceChoice)');
 function beginJourney(){if(document.body.classList.contains('choosing-experience'))document.querySelector('[data-experience="desktop"]').click();if(!active){active=true;elapsed=dragTarget=1.2;previous=null;document.body.classList.add('cinema-running');seek.hidden=false;stop.hidden=false;emit('story-restart');}running=false;play.textContent='이어서 재생';}
-function advance(amount){if(active&&currentShot().kind==='dialogue')return;beginJourney();// Bound pending input so repeated wheel events cannot queue seconds of motion.
+function advance(amount){if(active&&currentShot().kind==='dialogue')return;autoRewinding=amount<0;amount*=amount<0?.5:1;beginJourney();// Bound pending input so repeated wheel events cannot queue seconds of motion.
  const base=Math.sign(amount)!==Math.sign(dragTarget-elapsed)?elapsed:dragTarget;
- dragTarget=Math.max(0,Math.min(duration,Math.max(elapsed-1.5,Math.min(elapsed+1.5,base+amount))));}
+ dragTarget=Math.max(0,Math.min(duration,Math.max(elapsed-.75,Math.min(elapsed+1.5,base+amount))));}
 window.addEventListener('pointerdown',e=>{if(blocked()||isControl(e.target)||e.button!==0)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,axis:null};document.documentElement.setPointerCapture(e.pointerId);e.preventDefault();e.stopImmediatePropagation();},{capture:true});
-window.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.axis){if(Math.hypot(dx,dy)<6)return;drag.axis=Math.abs(dx)>Math.abs(dy)?'x':'y';}advance(-(drag.axis==='x'?dx:dy)*.065);drag.x=e.clientX;drag.y=e.clientY;document.body.classList.add('journey-dragging');e.preventDefault();e.stopImmediatePropagation();},{capture:true});
+window.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.axis){if(Math.hypot(dx,dy)<6)return;if(Math.abs(dy)<6)return;drag.axis='y';}advance(-(drag.axis==='x'?dx:dy)*.065);drag.x=e.clientX;drag.y=e.clientY;document.body.classList.add('journey-dragging');e.preventDefault();e.stopImmediatePropagation();},{capture:true});
 function releaseDrag(e){if(drag?.id!==e.pointerId)return;drag=null;document.body.classList.remove('journey-dragging');if(document.documentElement.hasPointerCapture(e.pointerId))document.documentElement.releasePointerCapture(e.pointerId);e.stopImmediatePropagation();}
 window.addEventListener('pointerup',releaseDrag,{capture:true});window.addEventListener('pointercancel',releaseDrag,{capture:true});
 window.addEventListener('wheel',e=>{if(blocked()||isControl(e.target))return;e.preventDefault();e.stopImmediatePropagation();const unit=e.deltaMode===1?16:e.deltaMode===2?innerHeight:1;advance(Math.max(-160,Math.min(160,(Math.abs(e.deltaY)>Math.abs(e.deltaX)?e.deltaY:e.deltaX)*unit))*.045);},{capture:true,passive:false});
@@ -81,12 +81,14 @@ function renderStory(){
   const source=q.kind==='guesthouse'?u*70:q.kind==='settle'?70:q.kind==='seasons'?70+u*70:140;
   emit('blender-ending-frame',source/144);
   emit('cinema-closing',{visible:q.kind==='closing'||q.kind==='book',book:q.kind==='book'});
- if(q.kind==='fade'){testFade.style.background='#e5e9e3';testFade.style.opacity=String(u);if(u>.3)emit('archive-preload');}
+ if(q.kind==='seasons'&&u>.3)emit('archive-preload');
+ if(q.kind==='fade'){testFade.style.background='#eef0ef';testFade.style.opacity=String(u);if(u>.3)emit('archive-preload');}
  }
  if(elapsed>=duration){running=false;play.textContent='다시 재생';}
 }
 function tick(now){requestAnimationFrame(tick);const dt=last?Math.min(.1,(now-last)/1000):0;last=now;if(!active||blocked()||document.hidden||document.body.dataset.spatialReady!=='true')return;
 const q=currentShot();
+if((q.kind==='seasons'||q.kind==='fade')&&!autoRewinding){elapsed=Math.min(q.end,elapsed+dt);dragTarget=elapsed;seek.value=elapsed;renderStory();return;}
 if(q.kind==='dialogue'){
  const next=elapsed+dt;
  if(next>=q.end||characterVoiceFinished()){
