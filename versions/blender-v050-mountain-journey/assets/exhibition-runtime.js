@@ -8,7 +8,7 @@ function preloadVillage(){return spatialPromise??=import('./blender-spatial-view
 document.addEventListener('village-preload',preloadVillage);
 document.addEventListener('stage-navigate',e=>{document.body.dataset.stage=e.detail;if(e.detail==='intro')emit('story-home');if(['terrain','village','memory'].includes(e.detail))preloadVillage();});
 let archivePromise;
-function preloadArchive(){return archivePromise??=import('./value-archive.js?v=87');}
+function preloadArchive(){return archivePromise??=import('./value-archive.js?v=ink-cover-1');}
 document.addEventListener('archive-preload',preloadArchive);
 document.addEventListener('archive-open',()=>{document.body.classList.add('archive-active');preloadArchive().then(m=>m.openArchive()).catch(error=>{console.error(error);document.body.classList.remove('archive-active');});});
 document.addEventListener('archive-story',()=>document.body.classList.remove('archive-active'));

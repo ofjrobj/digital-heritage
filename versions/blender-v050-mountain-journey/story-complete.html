@@ -139,12 +139,12 @@ dialog{padding:42px 26px}
 </style>
 <link rel="stylesheet" href="assets/lion-viewer.css?v=weather-5">
 <script type="importmap">{"imports":{"three":"./assets/vendor/three.module.js"}}</script>
-<link rel="stylesheet" href="assets/mobile-mode.css?v=story-flow-70"><link rel="stylesheet" href="assets/refined-ui.css?v=story-flow-70"><link rel="stylesheet" href="assets/editorial-ui.css?v=ui-65"><link rel="stylesheet" href="assets/test-dialogue.css?v=mountain51-69"><link rel="stylesheet" href="assets/exhibition.css?v=82"><link rel="stylesheet" href="assets/museum-ui.css?v=83"></head>
+<link rel="stylesheet" href="assets/mobile-mode.css?v=story-flow-70"><link rel="stylesheet" href="assets/refined-ui.css?v=story-flow-70"><link rel="stylesheet" href="assets/editorial-ui.css?v=ui-65"><link rel="stylesheet" href="assets/test-dialogue.css?v=mountain51-69"><link rel="stylesheet" href="assets/exhibition.css?v=82"><link rel="stylesheet" href="assets/museum-ui.css?v=83"><link rel="stylesheet" href="assets/ink-cover.css?v=1"></head>
 <body data-camera-test="village" data-full-story="true">
 <div id="experienceChoice" role="dialog" aria-modal="true" aria-labelledby="experienceHeading">
   <div class="exhibition-cover">
-    <div class="cover-top"></div>
-    <div class="cover-copy"><h2 id="experienceHeading">돌에 새긴 선, 풍경이 되다.</h2><p class="cover-description">공주목 마을, 석사자를 기억하는 이들이 전하는 이야기</p></div>
+    <div class="cover-art" aria-hidden="true"></div><div class="cover-top"><span>GONGJU MOK</span></div>
+    <div class="cover-copy"><h2 id="experienceHeading">돌에 새긴 선, 풍경이 되다.</h2><p class="cover-description">FROM STONE CARVINGS TO LANDSCAPES</p></div>
     <div class="cover-actions"><button data-experience="desktop" aria-label="스크롤 또는 드래그로 이야기 시작"><span class="scroll-stem" aria-hidden="true"></span><span>Scroll</span></button></div>
     <div class="cover-bottom" style="display:none" hidden><button hidden id="coverIndex">석사자 살펴보기 <span aria-hidden="true">→</span></button></div>
   </div>
@@ -153,7 +153,7 @@ dialog{padding:42px 26px}
   <video id="introBackdrop" playsinline muted preload="none" aria-hidden="true"></video>
   
   <p id="introStoryLine" aria-live="polite"></p>
-  <div class="intro-title"><h1>석사자와 공주목 이야기</h1><p>공주목 마을, 석사자를 기억하는 이들이 전하는 이야기</p></div>
+  <div class="intro-title"><h1>석사자와 공주목 이야기</h1><p>FROM STONE CARVINGS TO LANDSCAPES</p></div>
   <div class="intro-video-slot" id="introVideoSlot">
     <div id="lionViewport" tabindex="0" role="region" aria-label="드래그하여 석사자와 마을 공간을 이동합니다."></div>
     <div id="lionHoverHint" aria-hidden="true">클릭해보세요</div>
@@ -215,6 +215,6 @@ settings.addEventListener('click',e=>{if(e.target===settings){const r=settings.g
 about.addEventListener('click',e=>{if(e.target===about){const r=about.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)about.close()}});
 readScroll();
 </script>
-<script type="module" src="assets/lion-viewer.js?v=story-flow-87"></script>
-<script type="module" src="assets/exhibition-runtime.js?v=mountain-51"></script>
+<script type="module" src="assets/lion-viewer.js?v=ink-cover-1"></script>
+<script type="module" src="assets/exhibition-runtime.js?v=ink-cover-1"></script>
 </body></html>
