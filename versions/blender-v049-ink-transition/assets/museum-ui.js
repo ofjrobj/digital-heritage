@@ -12,5 +12,5 @@ function selected(archive){nav.querySelector('#navStory').setAttribute('aria-cur
 nav.querySelector('#navStory').onclick=story;nav.querySelector('#navIndex').onclick=index;
 document.addEventListener('archive-open',()=>selected(true));document.addEventListener('archive-story',()=>selected(false));
 function showMenu(){menu.querySelector('#menuSoundState').textContent=document.querySelector('#soundState').textContent;menu.showModal();}
-menuButton.onclick=showMenu;document.querySelector('#coverMenu').onclick=showMenu;document.querySelector('#coverAbout').onclick=()=>document.querySelector('#about').showModal();
+menuButton.onclick=showMenu;
 menu.querySelectorAll('[data-menu]').forEach(b=>b.onclick=()=>{const action=b.dataset.menu;if(action==='sound'){document.querySelector('#soundToggle').click();menu.querySelector('#menuSoundState').textContent=document.querySelector('#soundState').textContent;return;}menu.close();if(action==='story')story();else if(action==='index')index();else if(action==='settings')document.querySelector('#settings').showModal();else document.querySelector('#about').showModal();});

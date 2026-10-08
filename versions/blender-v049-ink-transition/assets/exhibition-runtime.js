@@ -17,4 +17,4 @@ document.addEventListener('experience-selected',()=>{document.body.dataset.stage
 document.querySelector('#coverIndex').onclick=()=>{document.querySelector('[data-experience="desktop"]').click();emit('archive-open');};
 // Keep first-visit cost small: no 3D village, ending model or unused videos before entry.
 
-await import('./museum-ui.js?v=83');
+await import('./museum-ui.js?v=86');
