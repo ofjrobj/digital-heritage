@@ -45,7 +45,9 @@ let drag=null;
 const blocked=()=>document.body.classList.contains('archive-active');
 const isControl=target=>target.closest('button,a,input,select,textarea,nav,dialog,[role="dialog"]:not(#experienceChoice)');
 function beginJourney(){if(document.body.classList.contains('choosing-experience'))document.querySelector('[data-experience="desktop"]').click();if(!active){active=true;elapsed=dragTarget=1.2;previous=null;document.body.classList.add('cinema-running');seek.hidden=false;stop.hidden=false;emit('story-restart');}running=false;play.textContent='이어서 재생';}
-function advance(amount){beginJourney();dragTarget=Math.max(0,Math.min(duration,dragTarget+amount));}
+function advance(amount){beginJourney();// Bound pending input so repeated wheel events cannot queue seconds of motion.
+ const base=Math.sign(amount)!==Math.sign(dragTarget-elapsed)?elapsed:dragTarget;
+ dragTarget=Math.max(0,Math.min(duration,Math.max(elapsed-1.5,Math.min(elapsed+1.5,base+amount))));}
 window.addEventListener('pointerdown',e=>{if(blocked()||isControl(e.target)||e.button!==0)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,axis:null};document.documentElement.setPointerCapture(e.pointerId);e.preventDefault();e.stopImmediatePropagation();},{capture:true});
 window.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.axis){if(Math.hypot(dx,dy)<6)return;drag.axis=Math.abs(dx)>Math.abs(dy)?'x':'y';}advance(-(drag.axis==='x'?dx:dy)*.065);drag.x=e.clientX;drag.y=e.clientY;document.body.classList.add('journey-dragging');e.preventDefault();e.stopImmediatePropagation();},{capture:true});
 function releaseDrag(e){if(drag?.id!==e.pointerId)return;drag=null;document.body.classList.remove('journey-dragging');if(document.documentElement.hasPointerCapture(e.pointerId))document.documentElement.releasePointerCapture(e.pointerId);e.stopImmediatePropagation();}
@@ -85,7 +87,7 @@ function tick(now){requestAnimationFrame(tick);const dt=last?Math.min(.1,(now-la
 const requested=running?elapsed+dt:dragTarget;if(Math.max(elapsed,requested)>=10)emit('village-preload');const memoryStart=shots.find(s=>s.kind==='settle')?.start??Infinity;if(Math.max(elapsed,requested)>=memoryStart-100)emit('ending-preload');
 let limit=duration;if(document.body.dataset.spatialReady!=='true')limit=27.95;else if(document.body.dataset.endingReady!=='true')limit=memoryStart-.05;
 const destination=Math.min(Math.max(elapsed,limit),requested);if(Math.abs(destination-elapsed)<.002){if(elapsed!==destination){elapsed=destination;seek.value=elapsed;renderStory();}return;}
-elapsed=running?destination:elapsed+Math.max(-dt*4,Math.min(dt*4,(destination-elapsed)*(1-Math.exp(-dt*4))));elapsed=Math.max(0,Math.min(duration,elapsed));if(running)dragTarget=elapsed;seek.value=elapsed;renderStory();}requestAnimationFrame(tick);
+elapsed=running?destination:elapsed+(destination-elapsed)*(1-Math.exp(-dt*12));elapsed=Math.max(0,Math.min(duration,elapsed));if(running)dragTarget=elapsed;seek.value=elapsed;renderStory();}requestAnimationFrame(tick);
 
 let resumeStoryAt=0;document.addEventListener('archive-open',()=>{resumeStoryAt=elapsed<shots.find(s=>s.kind==='archive').start?elapsed:0;running=false;panel.hidden=true;});
 document.addEventListener('archive-story',()=>{active=true;running=false;elapsed=dragTarget=resumeStoryAt;previous=null;seek.hidden=false;stop.hidden=false;seek.value=elapsed;play.textContent='이어서 재생';document.body.classList.add('cinema-running');renderStory();});
