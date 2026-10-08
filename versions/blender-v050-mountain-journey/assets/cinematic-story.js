@@ -75,7 +75,7 @@ function renderStory(){
   if(changed){emit('stage-navigate','terrain');if(q.stop)emit('capture-story-motif',q.stop);}
   const index=q.stop.route;
   if(q.kind==='motif'){emit('ink-landscape-frame',{index,progress:u*.235});emit('blender-route-frame',{index,time:0,opacity:u<.8?0:(u-.8)/.2});}
-  else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1,dialogue:q.kind==='dialogue'});if(cameraTest&&q.kind==='travel')emit('blender-entry-frame',{progress:(elapsed-entryStart)/(entryEnd-entryStart)});if(q.kind==='dialogue'){panel.hidden=false;const copy=dialogueCopy[index];const names=['장사꾼','농민','찬모','주민 삼총사','나무꾼'];setCharacterVoice(index);const content='<h2>'+names[index]+'</h2><p>'+copy.testimony+'</p><small class="fiction-label">장소와 생활상을 바탕으로 구성한 가상 증언</small>';if(panel.innerHTML!==content)panel.innerHTML=content;}}
+  else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1,dialogue:q.kind==='dialogue'});if(cameraTest&&q.kind==='travel')emit('blender-entry-frame',{progress:(elapsed-entryStart)/(entryEnd-entryStart)});if(q.kind==='dialogue'){panel.hidden=false;const copy=dialogueCopy[index];const names=['장사꾼','농민','찬모','주민 삼총사','나무꾼'];setCharacterVoice(index);const content='<h2>'+names[index]+'</h2><p>'+copy.testimony+'</p>';if(panel.innerHTML!==content)panel.innerHTML=content;}}
  }else{
   if(changed){emit('stage-navigate','memory');emit('ink-landscape-frame',{index:0,progress:1});}
   const source=q.kind==='guesthouse'?u*70:q.kind==='settle'?70:q.kind==='seasons'?70+u*70:140;
