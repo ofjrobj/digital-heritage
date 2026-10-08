@@ -322,7 +322,7 @@ document.addEventListener('cinema-lion-frame',e=>{
    home();scene.updateMatrixWorld(true);frameLens({subject:'female',region:'head'});
    const pivot=subjects.get('female'),bounds=pivot.userData.anchorBounds,size=bounds.getSize(new THREE.Vector3());
    const face=bounds.getCenter(new THREE.Vector3()).add(new THREE.Vector3(.4,.18,0).multiply(size)).applyMatrix4(pivot.matrixWorld);
-   const crown=bounds.getCenter(new THREE.Vector3()).add(new THREE.Vector3(.28,.37,0).multiply(size)).applyMatrix4(pivot.matrixWorld);
+   const crown=bounds.getCenter(new THREE.Vector3()).add(new THREE.Vector3(-.06,.34,0).multiply(size)).applyMatrix4(pivot.matrixWorld);
    const origin=controls.target.clone(),offset=camera.position.clone().sub(origin),u=smooth(d.progress);
    let focus=origin,zoom=1,tilt=0;
    if(d.kind==='head-push'){focus=origin.clone().lerp(face,u);zoom=1+u*1.8;}
@@ -374,12 +374,25 @@ function isolatedMotif(source){
 
 // The transition uses lines from the scanned geometry over the actual Blender village.
 const reliefLayer=document.createElement('div');reliefLayer.style.cssText='position:fixed;inset:0;z-index:12;pointer-events:none;display:none;background:#080a08';
-const reliefImage=document.createElement('img');reliefImage.style.cssText='width:100%;height:100%;object-fit:cover';reliefLayer.append(reliefImage);document.body.append(reliefLayer);
+const reliefImage=document.createElement('img');reliefImage.style.cssText='width:100%;height:100%;object-fit:cover';const inkLandscape=document.createElement('div');inkLandscape.style.cssText='position:absolute;inset:0;background:url(./assets/cover-landscape.png) center top / cover no-repeat;filter:grayscale(.8) saturate(.3);opacity:0';
+reliefImage.style.position='absolute';reliefImage.style.inset='0';reliefLayer.append(inkLandscape,reliefImage);document.body.append(reliefLayer);
 document.addEventListener('capture-relief-lines',()=>{
  renderer.render(scene,camera);reliefImage.src=renderer.domElement.toDataURL('image/png');
 });
 document.addEventListener('relief-landscape-frame',e=>{
- const p=e.detail.progress;reliefLayer.style.display=p<1?'block':'none';reliefLayer.style.background=`rgba(8,10,8,${Math.max(0,1-p*2)})`;reliefImage.style.opacity=String(1-p*p*(3-2*p));reliefImage.style.transform=`scale(${1+p*.65})`;
+ const p=Math.max(0,Math.min(1,e.detail.progress));
+ const smooth=(a,b)=>{const t=Math.max(0,Math.min(1,(p-a)/(b-a)));return t*t*(3-2*t);};
+ const ink=smooth(0,.35),reveal=smooth(.15,.62);
+ const landscapeOut=smooth(.65,1);
+ inkLandscape.style.opacity=String(smooth(.05,.35)*(1-landscapeOut));
+ inkLandscape.style.transform=`scale(${1.3-p*.3})`;
+ reliefLayer.style.display=p<1?'block':'none';
+ reliefLayer.style.background=`rgba(226,226,210,${(1-landscapeOut)*ink*.72})`;
+ reliefImage.style.opacity=String(1-reveal);
+ reliefImage.style.transform=`scale(${1+p*.35})`;
+ reliefImage.style.filter=`grayscale(${ink}) sepia(${ink*.2}) contrast(${1-ink*.4}) brightness(${1+ink*.18}) blur(${ink*2.5}px)`;
+ reliefImage.style.maskImage=`radial-gradient(ellipse at 52% 45%,black ${100-reveal*90}%,transparent ${145-reveal*45}%)`;
+
 });
 
 function addReliefContours(pivot){
@@ -389,7 +402,7 @@ function addReliefContours(pivot){
  for(let level=0;level<8;level++){
   const h=bounds.min.y+size.y*(.75+level*.025);
   for(const {positions:p,index,count} of meshes){
-   for(let i=0;i<count;i+=3){const ids=[0,1,2].map(k=>(index?index.getX(i+k):i+k)*3);if(ids.every(k=>p[k]<bounds.min.x+size.x*.55))continue;const hits=[];
+   for(let i=0;i<count;i+=3){const ids=[0,1,2].map(k=>(index?index.getX(i+k):i+k)*3);if(ids.every(k=>p[k]<bounds.min.x+size.x*.18))continue;const hits=[];
     for(const [a,b]of [[0,1],[1,2],[2,0]]){const x=ids[a],y=ids[b];if((p[x+1]<h&&p[y+1]>=h)||(p[y+1]<h&&p[x+1]>=h)){const t=(h-p[x+1])/(p[y+1]-p[x+1]);hits.push(p[x]+(p[y]-p[x])*t,h+.001,p[x+2]+(p[y+2]-p[x+2])*t);}}
     if(hits.length===6)points.push(...hits);
    }
