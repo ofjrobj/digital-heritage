@@ -29,7 +29,7 @@ document.querySelector('#coverIndex').onclick=()=>{document.querySelector('[data
 // Keep first-visit cost small: no 3D village, ending model or unused videos before entry.
 
 await import('./museum-ui.js?v=88');
-await import('./ink-entry.js?v=3');
+await import('./ink-entry.js?v=4');
 await import('./background-music.js?v=1');
 
 // Prepare the village while the title is visible; no scan model in the opening.

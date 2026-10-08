@@ -13,6 +13,7 @@ const svg=`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria
 art.style.backgroundImage='radial-gradient(ellipse at 50% 25%,#faf7ed88,transparent 70%)';art.insertAdjacentHTML('beforeend',svg);
 const layer=document.createElement('div');layer.id='inkEntryBridge';layer.hidden=true;layer.innerHTML='<div class="ink-paper"></div>'+svg;document.body.append(layer);
 const paths=[...layer.querySelectorAll('path:not(.nose)')];
+const washes=[4,5,6,7].map((i)=>{const shape=document.createElementNS('http://www.w3.org/2000/svg','path');shape.setAttribute('fill',i%2?'#748a78':'#b0b7a5');shape.setAttribute('stroke','none');shape.setAttribute('opacity','0');layer.querySelector('svg').prepend(shape);return {shape,i};});
 const clamp=x=>Math.max(0,Math.min(1,x));const smooth=x=>{x=clamp(x);return x*x*(3-2*x)};
 let entered=false;
 document.addEventListener('experience-selected',()=>{entered=true;layer.hidden=false;});
@@ -23,6 +24,7 @@ document.addEventListener('blender-entry-frame',e=>{
  layer.querySelector('.ink-paper').style.opacity=String(1-smooth((p-.14)/.16));
  layer.querySelector('.nose').style.opacity=String(1-smooth(t*2));
  paths.forEach((el,i)=>{el.setAttribute('d',path(lion[i].map((v,j)=>v+(ridge[i][j]-v)*t)));el.style.opacity=i<4?String(1-smooth(t*1.7)):'1';});
+ washes.forEach(({shape,i})=>{const a=lion[i].map((v,j)=>v+(ridge[i][j]-v)*t);shape.setAttribute('d',path(a)+` L${a[6]} 900 L${a[0]} 900 Z`);shape.setAttribute('opacity',String(t*.22));});
  layer.querySelector('svg').style.transform=`scale(${1+t*.08})`;
 });
 document.addEventListener('archive-open',()=>layer.hidden=true);
