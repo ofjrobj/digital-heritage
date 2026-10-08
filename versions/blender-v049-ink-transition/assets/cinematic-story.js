@@ -40,12 +40,12 @@ if(cameraTest&&!fullStory){
 const chapterIndex=document.createElement('nav');chapterIndex.id='storySectionIndex';chapterIndex.setAttribute('aria-label','이야기 구간');
 const sections=[['형태','pair-reveal'],['무늬','crown-zoom'],['마을','travel'],['시간','settle'],['가치해석','archive']];
 sections.forEach(([label,kind],i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+'  '+label;b.onclick=()=>{const q=shots.find(s=>s.kind===kind);if(!q)return;if(!active)play.click();elapsed=dragTarget=q.start;seek.value=elapsed;previous=null;renderStory();};chapterIndex.append(b);});// Keep chapter bookkeeping off-screen; the story is advanced by dragging.
-const dragHint=document.createElement('div');dragHint.id='journeyDragHint';dragHint.setAttribute('role','img');dragHint.setAttribute('aria-label','좌우로 드래그하여 이야기를 진행합니다');dragHint.innerHTML='<svg viewBox="0 0 100 28" width="100" height="28" aria-hidden="true"><path d="M7 14h30m26 0h30M13 9l-6 5 6 5m74-10 6 5-6 5M50 7l7 7-7 7-7-7Z" fill="none" stroke="currentColor" stroke-width="1"/></svg>';document.body.append(dragHint);
+const dragHint=document.createElement('div');dragHint.id='journeyDragHint';dragHint.setAttribute('role','img');dragHint.setAttribute('aria-label','좌우로 드래그하여 이야기를 진행합니다');dragHint.innerHTML='<span class="scroll-stem" aria-hidden="true"></span><span>Scroll</span>';document.body.append(dragHint);
 let drag=null;
 const blocked=()=>document.body.classList.contains('archive-active');
 const isControl=target=>target.closest('button,a,input,select,textarea,nav,dialog,[role="dialog"]:not(#experienceChoice)');
 function beginJourney(){if(document.body.classList.contains('choosing-experience'))document.querySelector('[data-experience="desktop"]').click();if(!active){active=true;elapsed=dragTarget=1.2;previous=null;document.body.classList.add('cinema-running');seek.hidden=false;stop.hidden=false;emit('story-restart');}running=false;play.textContent='이어서 재생';}
-function advance(amount){dragHint.hidden=true;beginJourney();dragTarget=Math.max(0,Math.min(duration,dragTarget+amount));}
+function advance(amount){beginJourney();dragTarget=Math.max(0,Math.min(duration,dragTarget+amount));}
 window.addEventListener('pointerdown',e=>{if(blocked()||isControl(e.target)||e.button!==0)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,axis:null};document.documentElement.setPointerCapture(e.pointerId);e.preventDefault();e.stopImmediatePropagation();},{capture:true});
 window.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.axis){if(Math.hypot(dx,dy)<6)return;drag.axis=Math.abs(dx)>Math.abs(dy)?'x':'y';}advance(-(drag.axis==='x'?dx:dy)*.065);drag.x=e.clientX;drag.y=e.clientY;document.body.classList.add('journey-dragging');e.preventDefault();e.stopImmediatePropagation();},{capture:true});
 function releaseDrag(e){if(drag?.id!==e.pointerId)return;drag=null;document.body.classList.remove('journey-dragging');if(document.documentElement.hasPointerCapture(e.pointerId))document.documentElement.releasePointerCapture(e.pointerId);e.stopImmediatePropagation();}
@@ -87,8 +87,8 @@ let limit=duration;if(document.body.dataset.spatialReady!=='true')limit=27.95;el
 const destination=Math.min(Math.max(elapsed,limit),requested);if(Math.abs(destination-elapsed)<.002){if(elapsed!==destination){elapsed=destination;seek.value=elapsed;renderStory();}return;}
 elapsed=running?destination:elapsed+(destination-elapsed)*(1-Math.exp(-dt*7));elapsed=Math.max(0,Math.min(duration,elapsed));if(running)dragTarget=elapsed;seek.value=elapsed;renderStory();}requestAnimationFrame(tick);
 
-document.addEventListener('archive-open',()=>{running=false;panel.hidden=true;});
-document.addEventListener('archive-story',()=>{active=true;running=false;elapsed=dragTarget=0;previous=null;seek.hidden=false;stop.hidden=false;seek.value=0;play.textContent='이어서 재생';document.body.classList.add('cinema-running');renderStory();});
+let resumeStoryAt=0;document.addEventListener('archive-open',()=>{resumeStoryAt=elapsed<shots.find(s=>s.kind==='archive').start?elapsed:0;running=false;panel.hidden=true;});
+document.addEventListener('archive-story',()=>{active=true;running=false;elapsed=dragTarget=resumeStoryAt;previous=null;seek.hidden=false;stop.hidden=false;seek.value=elapsed;play.textContent='이어서 재생';document.body.classList.add('cinema-running');renderStory();});
 document.addEventListener('exhibition-start',()=>{beginJourney();renderStory();});
 for(const readyEvent of ['lion-ready','spatial-ready'])document.addEventListener(readyEvent,()=>{if(active&&!blocked()){previous=null;renderStory();}});
 

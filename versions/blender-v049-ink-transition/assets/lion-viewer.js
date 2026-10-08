@@ -12,7 +12,7 @@ const backgroundUI=[intro,document.querySelector('#journey'),document.querySelec
 function blockBackground(block){backgroundUI.forEach(el=>{if(el)el.inert=block;});}
 blockBackground(true);
 choice.addEventListener('keydown',e=>{if(e.key!=='Tab')return;const buttons=[...choice.querySelectorAll('button')];if(e.shiftKey&&document.activeElement===buttons[0]){e.preventDefault();buttons.at(-1).focus();}else if(!e.shiftKey&&document.activeElement===buttons.at(-1)){e.preventDefault();buttons[0].focus();}});
-choice.querySelector('button').focus();
+choice.querySelector('#experienceHeading').tabIndex=-1;choice.querySelector('#experienceHeading').focus();
 document.body.classList.add('choosing-experience');
 document.querySelectorAll('[data-experience]').forEach(b=>b.addEventListener('click',()=>{experience=b.dataset.experience;document.body.dataset.experience=experience;document.body.classList.remove('choosing-experience');choice.hidden=true;blockBackground(false);readyAt=performance.now()+3000;document.dispatchEvent(new CustomEvent('experience-selected',{detail:experience}));requestAnimationFrame(resize);host.focus({preventScroll:true});}));
 document.querySelector('#experienceSwitch').addEventListener('click',()=>{choice.hidden=false;blockBackground(true);document.body.classList.add('choosing-experience');clearPointer();choice.querySelector('button').focus();});
