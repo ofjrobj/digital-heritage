@@ -27,3 +27,6 @@ document.addEventListener('blender-entry-frame',e=>{
 });
 document.addEventListener('archive-open',()=>layer.hidden=true);
 document.addEventListener('story-home',()=>layer.hidden=true);
+
+document.addEventListener('blender-route-frame',e=>{if(e.detail.dialogue||e.detail.index>0)layer.hidden=true;});
+document.addEventListener('blender-transfer-frame',()=>layer.hidden=true);
