@@ -18,3 +18,9 @@ body #experienceChoice.is-entering .cover-copy{transform:translateY(calc(-50% - 
 body #experienceChoice.is-entering .cover-art{opacity:0;transform:scale(1.035)}
 @media(max-width:600px){.cover-art{background-size:auto 100%}body #experienceChoice .cover-copy{top:74%!important;left:7%!important;right:7%!important}body #experienceChoice .cover-description{font-size:8px!important;letter-spacing:.12em!important}}
 @media(prefers-reduced-motion:reduce){.cover-art,body #experienceChoice .cover-copy{transform:none!important;transition-duration:.15s!important;transition-delay:0s!important}}
+
+.cover-art svg,#inkEntryBridge svg{position:absolute;inset:0;width:100%;height:100%}
+#inkEntryBridge{position:fixed;inset:0;z-index:145;pointer-events:none;overflow:hidden}
+#inkEntryBridge[hidden]{display:none}
+.ink-paper{position:absolute;inset:0;background:var(--cover-paper)}
+body #experienceChoice.is-entering .cover-art{opacity:0;transform:none;transition:opacity .5s ease .4s}

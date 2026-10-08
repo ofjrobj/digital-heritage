@@ -4,7 +4,7 @@ const shell=document.createElement('main');shell.id='exhibitionStages';shell.inn
 document.body.dataset.stage='intro';
 document.body.append(document.querySelector('.intro-controls'));
 let spatialPromise;
-function preloadVillage(){return spatialPromise??=import('./blender-spatial-view.js?v=mountain-50').catch(error=>{spatialPromise=null;document.querySelector('#lionStatus').textContent='마을을 불러오지 못했습니다. 연결을 확인해 주세요.';console.error(error);});}
+function preloadVillage(){return spatialPromise??=import('./blender-spatial-view.js?v=ink-entry-1').catch(error=>{spatialPromise=null;document.querySelector('#lionStatus').textContent='마을을 불러오지 못했습니다. 연결을 확인해 주세요.';console.error(error);});}
 document.addEventListener('village-preload',preloadVillage);
 document.addEventListener('stage-navigate',e=>{document.body.dataset.stage=e.detail;if(e.detail==='intro')emit('story-home');if(['terrain','village','memory'].includes(e.detail))preloadVillage();});
 let archivePromise;
@@ -18,6 +18,7 @@ document.querySelector('#coverIndex').onclick=()=>{document.querySelector('[data
 // Keep first-visit cost small: no 3D village, ending model or unused videos before entry.
 
 await import('./museum-ui.js?v=88');
+await import('./ink-entry.js?v=1');
 
 // Prepare the village while the title is visible; no scan model in the opening.
 preloadVillage();

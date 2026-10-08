@@ -183,14 +183,14 @@ document.addEventListener('blender-entry-frame',e=>{
  if(!village)return;
  const base=buildTransfer(-1,0),p=THREE.MathUtils.clamp(e.detail.progress,0,1);
  if(!entryTransfer){
-  const points=[new THREE.Vector3(105,32,-5),new THREE.Vector3(100,38,20),new THREE.Vector3(60,36,70),new THREE.Vector3(12,15,76),new THREE.Vector3(12,5,52),new THREE.Vector3(base.start.x,3,48),base.start.clone()];
+  const points=[new THREE.Vector3(105,65,150),new THREE.Vector3(90,57,130),new THREE.Vector3(60,42,105),new THREE.Vector3(12,15,76),new THREE.Vector3(12,5,52),new THREE.Vector3(base.start.x,3,48),base.start.clone()];
   entryTransfer=new THREE.CatmullRomCurve3(points,false,'centripetal');
  }
  mode='route';clearanceStrength=easeMotion(p/.05)*(1-easeMotion((p-.96)/.04));
  if(p<.7){
   const u=easeMotion(p/.7);camera.position.copy(entryTransfer.getPoint(u));
   camera.position.y=Math.max(camera.position.y,THREE.MathUtils.lerp(groundAt(camera.position.x,camera.position.z)+2,base.start.y,easeMotion((u-.85)/.15)));
-  const target=new THREE.Vector3(78,20,-74).lerp(new THREE.Vector3(20,2,32),easeMotion(Math.min(1,u/.75)));camera.lookAt(target);
+  const target=new THREE.Vector3(25,10,-20).lerp(new THREE.Vector3(20,2,32),easeMotion(Math.min(1,u/.75)));camera.lookAt(target);
   camera.quaternion.slerp(base.startRotation,easeMotion((u-.9)/.1));
  }else applyTransfer(base,(p-.7)/.3);
  host.style.display='block';host.style.opacity='1';transitionHaze(0,0);render();
