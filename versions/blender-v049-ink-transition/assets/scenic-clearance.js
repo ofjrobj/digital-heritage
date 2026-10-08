@@ -1,17 +1,12 @@
-// Cinematic staging: move whole foreground buildings, never individual roof pieces.
+// Foreground clearance for natural objects only. Buildings never move.
 export function scenicClearance(root,T){
- root.updateMatrixWorld(true);const meshes=[];root.traverse(o=>{if(o.isMesh)meshes.push(o);});
- const groups=[],used=new Set();
- for(const wall of meshes){const name=wall.name.replaceAll('_',' ');const wallMatch=/ wall(?:[ .]?\d+)?$/.exec(name);if(!wallMatch||/Compound|Domestic/.test(name))continue;
-  const prefix=name.slice(0,wallMatch.index);if(used.has(prefix))continue;used.add(prefix);
-  const parts=meshes.filter(o=>o.name.replaceAll('_',' ').startsWith(prefix+' '));
-  const box=new T.Box3();for(const o of parts)box.union(new T.Box3().setFromObject(o));
-  groups.push({parts:parts.map(o=>({o,base:o.position.clone(),inverse:new T.Matrix3().setFromMatrix4(o.parent.matrixWorld.clone().invert())})),box,center:box.getCenter(new T.Vector3())});
- }
+ root.updateMatrixWorld(true);
+ const groups=[];
+ // Architecture is permanently fixed; only explicitly tagged trees can move.
  // Keep each added tree intact, including its trunk and every crown.
  root.traverse(o=>{if(!/^Extension tree /.test(o.name))return;const box=new T.Box3().setFromObject(o);groups.push({parts:[{o,base:o.position.clone(),inverse:new T.Matrix3().setFromMatrix4(o.parent.matrixWorld.clone().invert())}],box,center:box.getCenter(new T.Vector3())});});
  // Screen-space coverage is measured against the original placement, not the
- // displaced object, so a building cannot oscillate between hidden and visible.
+ // displaced object, so a tree cannot oscillate between hidden and visible.
  const right=new T.Vector3(),forward=new T.Vector3(),local=new T.Vector3(),offset=new T.Vector3();
  const ray=new T.Raycaster(),hit=new T.Vector3();let last=0;
  for(const g of groups){g.offset=new T.Vector3();g.direction=null;}

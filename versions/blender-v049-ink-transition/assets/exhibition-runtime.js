@@ -4,7 +4,7 @@ const shell=document.createElement('main');shell.id='exhibitionStages';shell.inn
 document.body.dataset.stage='intro';
 document.body.append(document.querySelector('.intro-controls'));
 let spatialPromise;
-function preloadVillage(){return spatialPromise??=import('./blender-spatial-view.js?v=story-flow-85').catch(error=>{spatialPromise=null;document.querySelector('#lionStatus').textContent='마을을 불러오지 못했습니다. 연결을 확인해 주세요.';console.error(error);});}
+function preloadVillage(){return spatialPromise??=import('./blender-spatial-view.js?v=story-flow-89').catch(error=>{spatialPromise=null;document.querySelector('#lionStatus').textContent='마을을 불러오지 못했습니다. 연결을 확인해 주세요.';console.error(error);});}
 document.addEventListener('village-preload',preloadVillage);
 document.addEventListener('stage-navigate',e=>{document.body.dataset.stage=e.detail;if(e.detail==='intro')emit('story-home');if(['terrain','village','memory'].includes(e.detail))preloadVillage();});
 let archivePromise;

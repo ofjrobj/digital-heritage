@@ -1,5 +1,5 @@
 import {addJourneyPaths} from './journey-paths.js?v=85';
-import {scenicClearance} from './scenic-clearance.js?v=85';
+import {scenicClearance} from './scenic-clearance.js?v=89';
 import {addVillageLife} from './village-life.js?v=69';
 import {extendVillage} from './test-village-layout.js?v=66';
 const cameraTest=document.body.dataset.cameraTest==='village';
