@@ -39,7 +39,7 @@ if(cameraTest&&!fullStory){
 // The reference's quiet vertical index remains usable, rather than decorative.
 const chapterIndex=document.createElement('nav');chapterIndex.id='storySectionIndex';chapterIndex.setAttribute('aria-label','이야기 구간');
 const sections=[['형태','pair-reveal'],['무늬','crown-zoom'],['마을','travel'],['시간','settle'],['가치해석','archive']];
-sections.forEach(([label,kind],i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+'  '+label;b.onclick=()=>{const q=shots.find(s=>s.kind===kind);if(!q)return;if(!active)play.click();elapsed=dragTarget=q.start;seek.value=elapsed;previous=null;renderStory();};chapterIndex.append(b);});if(cameraTest)document.body.append(chapterIndex);
+sections.forEach(([label,kind],i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+'  '+label;b.onclick=()=>{const q=shots.find(s=>s.kind===kind);if(!q)return;if(!active)play.click();elapsed=dragTarget=q.start;seek.value=elapsed;previous=null;renderStory();};chapterIndex.append(b);});// Keep chapter bookkeeping off-screen; the story is advanced by dragging.
 const dragHint=document.createElement('div');dragHint.id='journeyDragHint';dragHint.innerHTML='<span aria-hidden="true">↔</span> 드래그하여 공간을 따라가세요';document.body.append(dragHint);
 let drag=null;
 const blocked=()=>document.body.classList.contains('archive-active');

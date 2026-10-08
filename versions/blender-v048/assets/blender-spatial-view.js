@@ -199,7 +199,7 @@ document.addEventListener('blender-entry-frame',e=>{
 });
 
 // The opening reveals the same two scans in their courtyard before meeting people.
-const {archiveModels}=await import('./lion-viewer.js?v=story-flow-74');
+const {archiveModels}=await import('./lion-viewer.js?v=story-flow-75');
 const openingLions=new THREE.Group();openingLions.name='Opening courtyard stone lions';
 for(const [i,{model}] of (await archiveModels()).entries()){
  const group=new THREE.Group();group.add(model);model.rotation.set(0,0,0);model.position.set(0,0,0);

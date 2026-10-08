@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {OrbitControls} from './vendor/OrbitControls.js';
-import {archiveModels} from './lion-viewer.js?v=story-flow-74';
+import {archiveModels} from './lion-viewer.js?v=story-flow-75';
 const emit=(name,detail)=>document.dispatchEvent(new CustomEvent(name,{detail}));
 const el=document.createElement('section');el.id='valueArchive';el.hidden=true;el.setAttribute('aria-label','석사자의 결 · 가치해석');
 el.innerHTML=`<header class="archive-header"><button class="archive-wordmark" id="archiveHome" aria-label="처음 화면으로"><span>結</span> 석사자의 결</button><nav aria-label="전시 탐색"><button id="archiveStory">Story</button><button aria-current="true" id="archiveIndex">Index</button></nav><small>PAIR / 3D OBJECT ARCHIVE</small></header>

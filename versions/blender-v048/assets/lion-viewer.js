@@ -65,14 +65,14 @@ function load(name,url){return loader.loadAsync(new URL(url,import.meta.url).hre
   (Array.isArray(original)?original:[original]).forEach(snowMaterial);
   surfaceMaterials.push({mesh,original,height:Array.isArray(original)?original.map(makeHeight):makeHeight(original)});
  });
- const pivot=new THREE.Group();pivot.add(root);const extent=box.getSize(new THREE.Vector3());pivot.userData.turnRadius=Math.hypot(extent.x,extent.z)/2;pivot.userData.turnHalfHeight=extent.y/2;pivot.rotation.y=-Math.PI/4;scene.add(pivot);subjects.set(name,pivot);
+ const pivot=new THREE.Group();pivot.add(root);const extent=box.getSize(new THREE.Vector3());pivot.userData.turnRadius=Math.hypot(extent.x,extent.z)/2;pivot.userData.frontHalfWidth=extent.z/2;pivot.userData.turnHalfHeight=extent.y/2;pivot.rotation.y=-Math.PI/4;scene.add(pivot);subjects.set(name,pivot);
 });}
 let resolveModels, rejectModels;
 const modelReady=new Promise((resolve,reject)=>{resolveModels=resolve;rejectModels=reject;});
 modelReady.catch(()=>{});
 let loadStarted=false;
 function startModels(){if(loadStarted)return;loadStarted=true;status.textContent='석사자를 불러오는 중';Promise.all([load('male','./stone-lion.glb'),load('female','./stone-lion-female.glb')]).then(()=>{
- loaded=true;intro.dataset.lionReady='true';pairHalfSpacing=(subjects.get('female').userData.turnRadius+subjects.get('male').userData.turnRadius+.20)/2;subjects.get('female').position.set(-pairHalfSpacing,0,0);subjects.get('male').position.set(pairHalfSpacing,0,0);home();readyAt=performance.now()+3000;
+ loaded=true;intro.dataset.lionReady='true';pairHalfSpacing=(subjects.get('female').userData.frontHalfWidth+subjects.get('male').userData.frontHalfWidth+.16)/2;subjects.get('female').position.set(-pairHalfSpacing,0,0);subjects.get('male').position.set(pairHalfSpacing,0,0);home();readyAt=performance.now()+3000;
  status.textContent='';resolveModels();document.dispatchEvent(new CustomEvent('lion-ready'));
 }).catch(e=>{console.error(e);status.textContent='석사자를 불러오지 못했습니다. 새로고침해 주세요.';rejectModels(e);});}
 document.addEventListener('experience-selected',startModels);
