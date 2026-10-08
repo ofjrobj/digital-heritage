@@ -306,7 +306,7 @@ document.addEventListener('capture-story-motif',e=>{const item=e.detail;if(docum
 // Deterministic presentation reuses the same scans, lights and particle layer.
 const cinemaFocus=document.createElement('div');cinemaFocus.style.cssText='position:absolute;width:66px;height:66px;border:2px solid #ddd;border-radius:50%;pointer-events:none;display:none;z-index:7;box-shadow:0 0 0 5px #0005';cinemaFocus.innerHTML='<span style="position:absolute;right:-17px;bottom:-10px;width:25px;height:3px;background:#ddd;transform:rotate(45deg)"></span>';host.append(cinemaFocus);
 document.addEventListener('cinema-lion-frame',e=>{
- if(!loaded)return;const d=e.detail;cinemaDriven=true;
+ if(!loaded)return;const d=e.detail;cinemaDriven=true;renderer.toneMappingExposure=['pair-reveal','head-push','crown-zoom','relief-trace'].includes(d.kind)?.78:1.15;
  if(cinemaShot!==d.kind){finishEntry();cancelFilm();guidedPose=null;cinemaShot=d.kind;setMode(false);selectSubject('both');for(const o of subjects.values())o.rotation.y=-Math.PI/4;home();if(d.kind==='entry')beginEntry();}
  cinemaFocus.style.display='none';
  if(d.kind==='entry'){if(entryStart)entryStart=performance.now()-d.time*1000;}
@@ -318,15 +318,16 @@ document.addEventListener('cinema-lion-frame',e=>{
   home();
   if(['pair-reveal','head-push','crown-zoom','relief-trace'].includes(d.kind)){
    const smooth=v=>{v=Math.max(0,Math.min(1,v));return v*v*v*(10+v*(-15+6*v));};
-   scene.updateMatrixWorld(true);frameLens({subject:'female',region:'back'});
+   for(const o of subjects.values())o.rotation.y=-Math.PI/2;
+   home();scene.updateMatrixWorld(true);frameLens({subject:'female',region:'head'});
    const pivot=subjects.get('female'),bounds=pivot.userData.anchorBounds,size=bounds.getSize(new THREE.Vector3());
    const face=bounds.getCenter(new THREE.Vector3()).add(new THREE.Vector3(.4,.18,0).multiply(size)).applyMatrix4(pivot.matrixWorld);
-   const crown=bounds.getCenter(new THREE.Vector3()).add(new THREE.Vector3(-.12,.32,0).multiply(size)).applyMatrix4(pivot.matrixWorld);
+   const crown=bounds.getCenter(new THREE.Vector3()).add(new THREE.Vector3(.28,.37,0).multiply(size)).applyMatrix4(pivot.matrixWorld);
    const origin=controls.target.clone(),offset=camera.position.clone().sub(origin),u=smooth(d.progress);
    let focus=origin,zoom=1,tilt=0;
    if(d.kind==='head-push'){focus=origin.clone().lerp(face,u);zoom=1+u*1.8;}
-   if(d.kind==='crown-zoom'||d.kind==='relief-trace'){const k=d.kind==='relief-trace'?1:u;focus=face.clone().lerp(crown,k);zoom=2.8+k*1.4;tilt=k;}
-   offset.lerp(new THREE.Vector3(5.4,1.6,5.7),d.kind==='head-push'?u:d.kind==='pair-reveal'?0:1);offset.lerp(new THREE.Vector3(3.4,6.4,3.6),tilt);camera.position.copy(focus).add(offset);controls.target.copy(focus);camera.zoom=zoom;controls.maxZoom=8;camera.updateProjectionMatrix();camera.lookAt(focus);
+   if(d.kind==='crown-zoom'||d.kind==='relief-trace'){const k=d.kind==='relief-trace'?1:u;focus=face.clone().lerp(crown,k);zoom=2.8+k*2.2;tilt=k;}
+   offset.lerp(new THREE.Vector3(0,1.8,8),d.kind==='head-push'?u:d.kind==='pair-reveal'?0:1);offset.lerp(new THREE.Vector3(0,6.4,4.8),tilt);camera.position.copy(focus).add(offset);controls.target.copy(focus);camera.zoom=zoom;controls.maxZoom=8;camera.updateProjectionMatrix();camera.lookAt(focus);
    host.style.opacity=d.kind==='pair-reveal'?String(smooth(d.progress/.65)):'1';
    if(d.kind==='relief-trace'){
     if(!pivot.userData.reliefReady){addReliefContours(pivot);pivot.userData.reliefReady=true;}
@@ -386,9 +387,9 @@ function addReliefContours(pivot){
  pivot.updateWorldMatrix(true,true);const inverse=pivot.matrixWorld.clone().invert();
  pivot.traverse(o=>{if(!o.isMesh)return;const attr=o.geometry.attributes.position,matrix=inverse.clone().multiply(o.matrixWorld),v=new THREE.Vector3(),positions=new Float32Array(attr.count*3);for(let i=0;i<attr.count;i++){v.fromBufferAttribute(attr,i).applyMatrix4(matrix);v.toArray(positions,i*3);}meshes.push({positions,index:o.geometry.index,count:o.geometry.index?.count??attr.count});});
  for(let level=0;level<8;level++){
-  const h=bounds.min.y+size.y*(.65+level*.029);
+  const h=bounds.min.y+size.y*(.75+level*.025);
   for(const {positions:p,index,count} of meshes){
-   for(let i=0;i<count;i+=3){const ids=[0,1,2].map(k=>(index?index.getX(i+k):i+k)*3);if(ids.every(k=>p[k]>bounds.min.x+size.x*.65))continue;const hits=[];
+   for(let i=0;i<count;i+=3){const ids=[0,1,2].map(k=>(index?index.getX(i+k):i+k)*3);if(ids.every(k=>p[k]<bounds.min.x+size.x*.55))continue;const hits=[];
     for(const [a,b]of [[0,1],[1,2],[2,0]]){const x=ids[a],y=ids[b];if((p[x+1]<h&&p[y+1]>=h)||(p[y+1]<h&&p[x+1]>=h)){const t=(h-p[x+1])/(p[y+1]-p[x+1]);hits.push(p[x]+(p[y]-p[x])*t,h+.001,p[x+2]+(p[y+2]-p[x+2])*t);}}
     if(hits.length===6)points.push(...hits);
    }

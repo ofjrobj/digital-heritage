@@ -32,7 +32,7 @@ stop.onclick=()=>{active=running=false;stopCharacterVoice();previous=null;panel.
 
 if(cameraTest&&!fullStory){
  const jump=document.createElement('select');jump.setAttribute('aria-label','카메라 테스트 장면');jump.style.cssText='max-width:190px;background:#18231e;color:#e8e5dc;border:1px solid #829184;padding:8px';
- const labels={'pair-reveal':'유물 · 두 석사자','head-push':'머리로 접근','crown-zoom':'등 무늬 클로즈업','relief-trace':'무늬의 선','relief-landscape':'유물 → 마을','landscape-expand':'마을 진입',pair:'유물 · 반측면 고정','back-zoom':'등 무늬로 접근',entry:'유물 등장',rotate:'유물 회전',motif:'유물 → 마을',travel:'마을 → 인물 1',guesthouse:'객사터 석사자로 이동',settle:'석사자 앞 정지',seasons:'시대·계절 변화',fade:'가치해석으로',archive:'가치해석 · 석사자의 결'};
+ const labels={'pair-reveal':'유물 · 두 석사자','head-push':'머리로 접근','crown-zoom':'정수리 갈기 클로즈업','relief-trace':'갈기 굴곡의 선','relief-landscape':'유물 → 마을','landscape-expand':'마을 진입',pair:'유물 · 반측면 고정','back-zoom':'등 무늬로 접근',entry:'유물 등장',rotate:'유물 회전',motif:'유물 → 마을',travel:'마을 → 인물 1',guesthouse:'객사터 석사자로 이동',settle:'석사자 앞 정지',seasons:'시대·계절 변화',fade:'가치해석으로',archive:'가치해석 · 석사자의 결'};
  shots.forEach((q,i)=>{const option=document.createElement('option');option.value=i;option.textContent=q.kind==='dialogue'?`인물 ${q.stop.route+1} · ${titles[q.stop.route]}`:q.kind==='transfer'?(q.from===4?'마을 귀환':`인물 ${q.from+1} → 인물 ${q.to+1}`):labels[q.kind];jump.append(option);});control.prepend(jump);
  jump.onchange=()=>{const choice=Number(jump.value);if(!active){play.click();running=false;play.textContent='이어서 재생';}elapsed=dragTarget=shots[choice].start;seek.value=elapsed;previous=null;renderStory();};
 }

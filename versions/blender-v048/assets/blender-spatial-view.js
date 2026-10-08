@@ -182,17 +182,29 @@ document.addEventListener('blender-establishing-frame',e=>{
 let entryTransfer;
 document.addEventListener('blender-entry-frame',e=>{
  if(!village)return;
+ const base=buildTransfer(-1,0),p=THREE.MathUtils.clamp(e.detail.progress,0,1);
  if(!entryTransfer){
-  const base=buildTransfer(-1,0),origin=new THREE.Vector3(12,18,80);
-  const points=[origin.clone(),new THREE.Vector3(12,0,62),...base.curve.getSpacedPoints(400)];
-  const curve=new THREE.CatmullRomCurve3(points,false,'centripetal');
-  const heights=curve.getSpacedPoints(1200).map((p,i)=>THREE.MathUtils.lerp(18,groundAt(p.x,p.z)+1.75,easeMotion(i/1200/.40)));
-  for(let pass=0;pass<8;pass++){const a=heights.slice();for(let i=2;i<1199;i++)heights[i]=(a[i-2]+a[i-1]+2*a[i]+a[i+1]+a[i+2])/6;}
-  const aim=new THREE.PerspectiveCamera();aim.position.copy(origin);aim.lookAt(15,1.75,36);
-  entryTransfer={...base,curve,heights,start:origin,startRotation:aim.quaternion.clone(),pace:Array.from({length:1201},(_,i)=>i/1200)};
+  const points=[new THREE.Vector3(12,52,110),new THREE.Vector3(-18,28,35),new THREE.Vector3(-18.8,2.7,-7),new THREE.Vector3(-8,20,20),new THREE.Vector3(base.start.x,20,base.start.z),base.start.clone()];
+  entryTransfer=new THREE.CatmullRomCurve3(points,false,'centripetal');
  }
- mode='route';applyTransfer(entryTransfer,e.detail.progress);host.style.display='block';host.style.opacity='1';transitionHaze(0,0);render();
+ mode='route';
+ if(p<.7){
+  const u=easeMotion(p/.7);camera.position.copy(entryTransfer.getPoint(u));
+  camera.position.y=Math.max(camera.position.y,groundAt(camera.position.x,camera.position.z)+2);
+  const target=new THREE.Vector3(15,1.75,36).lerp(new THREE.Vector3(-22.275,1,-15.5),easeMotion(u/.32));
+  target.lerp(new THREE.Vector3(12,1.75,36),easeMotion((u-.58)/.32));camera.lookAt(target);
+  camera.quaternion.slerp(base.startRotation,easeMotion((u-.9)/.1));
+ }else applyTransfer(base,(p-.7)/.3);
+ host.style.display='block';host.style.opacity='1';transitionHaze(0,0);render();
 });
 
+// The opening reveals the same two scans in their courtyard before meeting people.
+const {archiveModels}=await import('./lion-viewer.js?v=story-flow-74');
+const openingLions=new THREE.Group();openingLions.name='Opening courtyard stone lions';
+for(const [i,{model}] of (await archiveModels()).entries()){
+ const group=new THREE.Group();group.add(model);model.rotation.set(0,0,0);model.position.set(0,0,0);
+ let box=new THREE.Box3().setFromObject(group);const scale=1.3/box.getSize(new THREE.Vector3()).y;group.scale.setScalar(scale);box=new THREE.Box3().setFromObject(group);const center=box.getCenter(new THREE.Vector3());model.position.x-=center.x/scale;model.position.y-=box.min.y/scale;model.position.z-=center.z/scale;group.position.set(-22.275+(i-.5)*1.8,.18,-15.5);group.rotation.y=-Math.PI/2;openingLions.add(group);
+}
+const stoneBase=new THREE.Mesh(new THREE.BoxGeometry(5,.18,3.8),new THREE.MeshStandardMaterial({color:0x8c8978,roughness:1}));stoneBase.position.set(-22.275,.09,-15.5);openingLions.add(stoneBase);village.add(openingLions);
 document.body.dataset.spatialReady='true';document.dispatchEvent(new CustomEvent('spatial-ready'));
 document.addEventListener('archive-open',()=>{host.style.display='none';});

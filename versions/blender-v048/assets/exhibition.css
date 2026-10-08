@@ -68,3 +68,7 @@ body[data-camera-test] #cinemaDialogue h2{font-size:21px!important;font-weight:4
 body[data-camera-test] #cinemaDialogue p{font-size:15px!important;line-height:1.85!important;letter-spacing:-.01em!important;color:#435c4b!important}
 .cover-drag{font:13px 'Gowun Batang',serif;letter-spacing:.08em;color:#4d6757;margin:0 0 20px}
 @media(max-width:700px){body[data-camera-test] #cinemaDialogue{padding:20px 22px!important}body[data-camera-test] #cinemaDialogue:before{margin-bottom:15px!important}body[data-camera-test] #cinemaDialogue h2{font-size:19px!important}body[data-camera-test] #cinemaDialogue p{font-size:14px!important}#journeyDragHint{bottom:24px;font-size:11px}}
+
+/* Storyboard opening: illuminated scans on a quiet dark stage. */
+body[data-story-shot="pair-reveal"] #intro,body[data-story-shot="head-push"] #intro,body[data-story-shot="crown-zoom"] #intro,body[data-story-shot="relief-trace"] #intro{background:radial-gradient(ellipse at 55% 70%,#444940 0%,#1c221f 48%,#080d0c 100%)!important}
+body.cinema-running #lionHoverHint,body.cinema-running #lionStatus{display:none!important}
