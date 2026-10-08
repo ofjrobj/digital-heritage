@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ece7dc">
+<title>목차 — 봉황동 석사자</title>
+<meta name="description" content="봉황동 석사자 디지털 헤리티지 프로젝트의 서책형 목차 페이지.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Song+Myung&display=swap" rel="stylesheet">
+<style>
+:root{
+ --ink:#241f18;
+ --muted:#716653;
+ --paper:#eee5cf;
+ --paper-light:#f5ecd8;
+ --rule:#30291f;
+ --seal:#8b3329;
+ --thread:#8a493a;
+ font-family:'Gowun Batang',Batang,serif;
+ color:var(--ink);
+ background:#efede8;
+ color-scheme:light
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+ min-height:100svh;
+ background:
+ radial-gradient(circle at 50% 18%,#fff 0,#f4f2ed 44%,#e8e5df 100%);
+}
+a{color:inherit;text-decoration:none}
+a:focus-visible{outline:1px solid var(--ink);outline-offset:5px}
+
+.page{
+ min-height:100svh;
+ display:grid;
+ place-items:center;
+ padding:82px 4vw 46px;
+ position:relative;
+ overflow:hidden;
+}
+
+/* main-page return tab */
+.back{
+ position:fixed;
+ left:28px;
+ top:25px;
+ z-index:30;
+ display:inline-flex;
+ align-items:center;
+ gap:9px;
+ padding:11px 16px 10px;
+ background:#efe4c9;
+ border:1px solid #8b795b;
+ color:#30291f;
+ box-shadow:0 5px 14px #00000018;
+ font-family:'Song Myung','Gowun Batang',Batang,serif;
+ font-size:13px;
+ letter-spacing:.06em;
+}
+.back:before{
+ content:'';
+ position:absolute;
+ inset:4px;
+ border:1px solid #493f302d;
+ pointer-events:none;
+}
+.back:hover{background:#f7edd6}
+
+.page-caption{
+ position:fixed;
+ right:30px;
+ top:30px;
+ z-index:20;
+ color:#756956;
+ font-size:11px;
+ letter-spacing:.14em;
+}
+
+/* open traditional book */
+.book{
+ width:min(1220px,92vw);
+ min-height:min(760px,82svh);
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ position:relative;
+ filter:drop-shadow(0 26px 28px #4d463a32) drop-shadow(0 7px 8px #4d463a22);
+ transform:perspective(1800px) rotateX(.7deg);
+}
+.book:before{
+ content:'';
+ position:absolute;
+ left:50%;
+ top:1.8%;
+ bottom:1.8%;
+ width:28px;
+ transform:translateX(-50%);
+ z-index:9;
+ pointer-events:none;
+ background:
+ linear-gradient(90deg,transparent 0,#4c3e2d18 23%,#2d24193a 49%,#fff6df58 55%,transparent 100%);
+}
+.book:after{
+ content:'';
+ position:absolute;
+ left:calc(50% - 4px);
+ top:8%;
+ bottom:8%;
+ width:8px;
+ z-index:10;
+ pointer-events:none;
+ background:
+ repeating-linear-gradient(
+  to bottom,
+  transparent 0 45px,
+  var(--thread) 45px 51px,
+  transparent 51px 84px
+ );
+ opacity:.42;
+}
+
+.leaf{
+ position:relative;
+ min-height:min(760px,82svh);
+ padding:58px 62px;
+ overflow:hidden;
+ background:
+ radial-gradient(circle at 22% 16%,#735e3c08 0 1px,transparent 1.6px),
+ radial-gradient(circle at 76% 70%,#735e3c07 0 1px,transparent 1.6px),
+ linear-gradient(90deg,#e4d9bf 0,#f4ead3 7%,#f6edd9 88%,#e4d8bd 100%);
+ background-size:23px 27px,31px 29px,100% 100%;
+}
+.leaf:before{
+ content:'';
+ position:absolute;
+ inset:24px;
+ border:2px solid #332c21;
+ pointer-events:none;
+ opacity:.86;
+}
+.leaf:after{
+ content:'';
+ position:absolute;
+ inset:31px;
+ border:1px solid #332c2146;
+ pointer-events:none;
+}
+
+.left-leaf{
+ border-right:1px solid #5e4f391f;
+ box-shadow:inset -18px 0 30px #3d302018;
+}
+.right-leaf{
+ border-left:1px solid #fff8e45f;
+ box-shadow:inset 18px 0 30px #3d302014;
+}
+
+/* left page */
+.left-content{
+ height:100%;
+ position:relative;
+ z-index:3;
+ display:grid;
+ grid-template-columns:auto 1fr;
+ gap:38px;
+ padding:14px 12px;
+}
+.side-note{
+ writing-mode:vertical-rl;
+ text-orientation:mixed;
+ font-size:11px;
+ letter-spacing:.17em;
+ color:#766a56;
+ padding-top:8px;
+}
+.title-area{
+ display:flex;
+ align-items:flex-start;
+ justify-content:space-between;
+ gap:34px;
+}
+.project-title{
+ writing-mode:vertical-rl;
+ text-orientation:mixed;
+ margin:18px 0 0;
+ font-family:'Song Myung','Gowun Batang',Batang,serif;
+ font-size:clamp(35px,3.7vw,57px);
+ font-weight:400;
+ letter-spacing:.1em;
+ line-height:1.25;
+}
+.project-sub{
+ writing-mode:vertical-rl;
+ margin:24px 0 0;
+ font-size:13px;
+ line-height:1.9;
+ letter-spacing:.09em;
+ color:#655a48;
+}
+.label{
+ position:absolute;
+ left:44px;
+ bottom:46px;
+ border:1px solid #42392c;
+ background:#f3e8cd;
+ padding:8px 10px;
+ font-family:'Song Myung','Gowun Batang',Batang,serif;
+ font-size:13px;
+ letter-spacing:.08em;
+ box-shadow:0 2px 0 #7e6a4b19;
+}
+.seal{
+ position:absolute;
+ right:54px;
+ bottom:50px;
+ width:48px;
+ height:48px;
+ display:grid;
+ place-items:center;
+ border:2px solid var(--seal);
+ color:var(--seal);
+ font-family:'Song Myung',serif;
+ font-size:19px;
+ line-height:1;
+ transform:rotate(-3deg);
+ opacity:.82;
+}
+
+/* right page */
+.right-content{
+ height:100%;
+ position:relative;
+ z-index:3;
+ padding:14px 12px 6px;
+ display:flex;
+ flex-direction:column;
+}
+.index-head{
+ display:flex;
+ flex-direction:row-reverse;
+ justify-content:space-between;
+ align-items:flex-start;
+ padding:0 6px 20px;
+ border-bottom:1px solid #30291f;
+}
+.index-title{
+ writing-mode:vertical-rl;
+ margin:0;
+ font-family:'Song Myung','Gowun Batang',Batang,serif;
+ font-size:28px;
+ font-weight:400;
+ letter-spacing:.16em;
+}
+.index-small{
+ writing-mode:vertical-rl;
+ font-size:10px;
+ letter-spacing:.14em;
+ color:#776b57;
+ margin-top:4px;
+}
+
+.chapters{
+ flex:1;
+ list-style:none;
+ margin:26px 0 6px;
+ padding:0 8px;
+ display:flex;
+ flex-direction:row-reverse;
+ justify-content:space-between;
+ gap:0;
+ min-height:470px;
+ border-top:1px solid #443a2d33;
+ border-bottom:1px solid #443a2d33;
+}
+.chapter{
+ flex:1 1 0;
+ min-width:0;
+ position:relative;
+ border-left:1px solid #443a2d58;
+}
+.chapter:first-child{border-right:1px solid #443a2d58}
+.chapter a,.chapter .disabled{
+ height:100%;
+ min-height:470px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:flex-start;
+ gap:22px;
+ padding:24px 8px 18px;
+ transition:background .22s ease;
+}
+.chapter a:hover{background:#7f6a4620}
+.num{
+ writing-mode:vertical-rl;
+ font-family:'Song Myung','Gowun Batang',Batang,serif;
+ font-size:13px;
+ letter-spacing:.08em;
+ color:#7b6a51;
+}
+.name{
+ writing-mode:vertical-rl;
+ text-orientation:mixed;
+ font-family:'Song Myung','Gowun Batang',Batang,serif;
+ font-size:clamp(18px,1.55vw,24px);
+ line-height:1.5;
+ letter-spacing:.08em;
+}
+.state{
+ margin-top:auto;
+ writing-mode:vertical-rl;
+ font-size:9px;
+ letter-spacing:.14em;
+ color:#84745b;
+}
+.chapter a .state{color:#744137}
+.disabled{opacity:.48}
+.bottom-note{
+ display:flex;
+ justify-content:space-between;
+ align-items:flex-end;
+ gap:20px;
+ padding:16px 5px 0;
+ color:#756956;
+ font-size:11px;
+ line-height:1.75;
+}
+.bottom-note .folio{
+ font-family:'Song Myung','Gowun Batang',Batang,serif;
+ color:#4a4032;
+ white-space:nowrap;
+}
+
+@media(max-width:900px){
+ .page{padding:76px 16px 28px;align-items:start}
+ .back{left:16px;top:16px}
+ .page-caption{display:none}
+ .book{grid-template-columns:1fr;width:100%;min-height:auto;transform:none}
+ .book:before,.book:after{display:none}
+ .leaf{min-height:auto;padding:44px 38px}
+ .leaf:before{inset:15px}
+ .leaf:after{inset:21px}
+ .left-leaf{min-height:340px;border-right:0;border-bottom:1px solid #55472f35;box-shadow:none}
+ .right-leaf{border-left:0;box-shadow:none}
+ .left-content{min-height:250px}
+ .project-title{font-size:40px}
+ .chapters{
+  display:block;
+  min-height:auto;
+  margin-top:22px;
+  border-top:1px solid #443a2d55;
+ }
+ .chapter{border-left:0!important;border-right:0!important;border-bottom:1px solid #443a2d55}
+ .chapter a,.chapter .disabled{
+  min-height:0;height:auto;
+  display:grid;
+  grid-template-columns:72px 1fr auto;
+  gap:14px;
+  padding:20px 8px;
+ }
+ .num,.name,.state{writing-mode:horizontal-tb}
+ .name{font-size:19px;letter-spacing:.03em}
+ .state{margin-top:0}
+ .index-head{flex-direction:row}
+ .index-title,.index-small{writing-mode:horizontal-tb}
+}
+@media(max-width:560px){
+ .leaf{padding:38px 28px}
+ .left-content{gap:22px}
+ .project-title{font-size:34px}
+ .project-sub{font-size:11px}
+ .chapter a,.chapter .disabled{grid-template-columns:58px 1fr;gap:10px}
+ .state{grid-column:2}
+ .bottom-note{display:block}
+}
+</style>
+<style>.page{display:block}.book{margin:auto}.scan-book{max-width:1220px;margin:60px auto 0;padding:50px;background:#eee5cf;border:1px solid #8b795b;line-height:1.9}.scan-tabs{display:flex;gap:12px;flex-wrap:wrap}.scan-tabs button{font:inherit;background:transparent;border:1px solid #716653;padding:9px 15px;cursor:pointer}.scan-tabs button[aria-pressed=true]{background:#728171;color:#fff}.scan-spread{display:grid;grid-template-columns:1.4fr 1fr;gap:35px;margin:30px 0}#indexScan{height:390px;background:#080b09}.scan-book table{border-collapse:collapse;width:100%;max-width:650px}.scan-book td,.scan-book th{padding:9px 20px;border-bottom:1px solid #71665355;text-align:left}.source-note,caption{font-size:12px;color:#716653}.scan-book a{text-decoration:underline;text-underline-offset:5px}.scan-book details{margin:28px 0}@media(max-width:650px){.scan-book{padding:24px}.scan-spread{grid-template-columns:1fr}#indexScan{height:300px}}</style><script type="importmap">{"imports":{"three":"./assets/vendor/three.module.js"}}</script><link rel="stylesheet" href="assets/refined-ui.css?v=full-12"></head>
+<body>
+<div class="page">
+  <a class="back" href="./#intro" aria-label="메인 페이지로 돌아가기">← 메인으로 돌아가기</a>
+  <span class="page-caption">공주 봉황동 석사자 · 서책 목차</span>
+
+  <main class="book" aria-label="봉황동 석사자 프로젝트 서책형 목차">
+    <section class="leaf left-leaf" aria-labelledby="bookTitle">
+      <div class="left-content">
+        <div class="side-note">公州 · 鳳凰洞 · 石獅子</div>
+        <div class="title-area">
+          <h1 class="project-title" id="bookTitle">봉황동<br>석사자</h1>
+          <p class="project-sub">돌의 표면에서<br>공주의 풍경으로</p>
+        </div>
+        <span class="label">디지털 헤리티지 프로젝트</span>
+        <span class="seal" aria-hidden="true">石</span>
+      </div>
+    </section>
+
+    <section class="leaf right-leaf" aria-label="차례">
+      <div class="right-content">
+        <div class="index-head">
+          <h2 class="index-title">目次</h2>
+          <span class="index-small">차례 · 五章</span>
+        </div>
+
+        <ol class="chapters">
+          <li class="chapter">
+            <a href="./#intro">
+              <span class="num">第一章</span>
+              <span class="name">석사자와의 첫 만남</span>
+              <span class="state">들어가기</span>
+            </a>
+          </li>
+          <li class="chapter">
+            <a href="./#observe">
+              <span class="num">第二章</span>
+              <span class="name">석사자의 형태를 가까이 관찰</span>
+              <span class="state">들어가기</span>
+            </a>
+          </li>
+          <li class="chapter">
+            <a href="./#terrain">
+              <span class="num">第三章</span>
+              <span class="name">석사자의 형태에서 공주의 마을로</span>
+              <span class="state">들어가기</span>
+            </a>
+          </li>
+          <li class="chapter">
+            <a href="./#village">
+              <span class="num">第四章</span>
+              <span class="name">마을에서 만나는 사람들</span>
+              <span class="state">들어가기</span>
+            </a>
+          </li>
+          <li class="chapter">
+            <a href="./#overview">
+              <span class="num">第五章</span>
+              <span class="name">다시 바라본 마을</span>
+              <span class="state">들어가기</span>
+            </a>
+          </li>
+        </ol>
+
+        <div class="bottom-note">
+          <span>석사자의 형태와 공주의 공간, 마을 사람들의 이야기를 따라 이어지는 다섯 장.</span>
+          <span class="folio">一 · 目次</span>
+        </div>
+      </div>
+    </section>
+  </main>
+<section class="scan-book" aria-labelledby="scanTitle"><h2 id="scanTitle">돌의 기록</h2><nav class="scan-tabs"><button data-point="head">머리의 털</button><button data-point="face">입 옆 수염</button><button data-point="mane">등의 털무늬</button><button data-point="female">암사자의 얼굴</button></nav><div class="scan-spread"><div id="indexScan" aria-label="원본 스캔 데이터 관찰"></div><article><h3 id="pointTitle">머리의 털</h3><p id="pointText">정수리의 말린 털과 미세하게 파이고 솟은 표면을 입체적으로 살펴봅니다.</p><a id="pointLink" href="./#observe">메인에서 관찰하기 →</a></article></div><h3>치수</h3><table><caption>기획안 치수 원자료 · cm</caption><thead><tr><th>구분</th><th>수사자</th><th>암사자</th></tr></thead><tbody><tr><th>높이</th><td>71.7</td><td>61.4</td></tr><tr><th>몸 길이</th><td>104.6</td><td>120.1</td></tr><tr><th>얼굴 길이</th><td>36.8</td><td>34.1</td></tr><tr><th>얼굴 너비</th><td>37.6</td><td>34.5</td></tr></tbody></table><p class="source-note">눈·귀 치수는 원자료의 단위 확인 후 추가합니다. 암수 명칭은 프로젝트의 관찰 구분입니다.</p><details><summary>자료와 해석</summary><p>인물의 대사는 장소와 생활상을 바탕으로 구성한 가상 증언입니다. 고려·조선 풍경은 시대를 표현한 상상 연출이며 석사자의 최초 설치 장소와 객사 이동 경로를 확정한 복원이 아닙니다.</p><p><a href="https://docs.google.com/document/d/1-WvPN1o6a6hMarPbKBHr16bS9_PpiPxxNahiorXqePs/edit" target="_blank" rel="noopener">프로젝트 기획안 · 10.01</a> · <a href="https://sejong.grandculture.net/sejong/multimedia/GC077P54952" target="_blank" rel="noopener">1872년 공주목지도 · 규장각 제공 자료</a></p><p>3D 스캔은 표면과 형태를 기록합니다. 조명과 시점에 따라 관찰 결과가 달라지며, 스캔만으로 제작 목적이나 역사적 위치가 확정되지는 않습니다.</p></details><a href="./#memory">시간의 풍경 →</a></section>
+</div>
+<script type="module" src="assets/index-scan.js?v=full-12"></script></body>
+</html>
