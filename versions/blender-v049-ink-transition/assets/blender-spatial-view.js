@@ -1,4 +1,4 @@
-import {addJourneyPaths} from './journey-paths.js?v=85';
+
 import {scenicClearance} from './scenic-clearance.js?v=89';
 import {addVillageLife} from './village-life.js?v=69';
 import {extendVillage} from './test-village-layout.js?v=66';
@@ -15,6 +15,7 @@ const scene=new THREE.Scene();scene.background=new THREE.Color('#b6bcb5');scene.
 const camera=new THREE.PerspectiveCamera(35,1,.05,900),loader=new GLTFLoader();const endingWalkers=[],endingGround=[],passageTrees=[];let endingCat;
 const floorRay=new THREE.Raycaster();
 function floorHeight(x,z){floorRay.set(new THREE.Vector3(x,60,z),new THREE.Vector3(0,-1,0));return floorRay.intersectObjects(endingGround,false).find(hit=>hit.object.visible&&(Array.isArray(hit.object.material)?hit.object.material:[hit.object.material]).every(m=>(m.clippingPlanes??[]).every(plane=>plane.distanceToPoint(hit.point)>=0)))?.point.y??0;}let village,ending,route=0,time=0,mode='route',lastEvent=null;
+const [bakedCamera,bakedPaths]=await Promise.all(['camera-precomputed.json','paths-precomputed.json'].map(n=>fetch('./assets/'+n).then(r=>{if(!r.ok)throw Error(n);return r.json();})));
 const routes=await fetch('./assets/blender-routes-v048.json').then(r=>r.json());
 const css=document.createElement('style');css.textContent=`body[data-stage=terrain] #terrain,body[data-stage=terrain] .terrain-stage{background:transparent!important}body[data-stage=terrain] #terrain svg,#villageCanvas,#episodeFilm,#villageInkBackdrop,#terrainTransitionFilm{display:none!important}body[data-stage=village] #village,body[data-stage=overview] #village,body[data-stage=memory] #memory{background:transparent!important;z-index:3}body[data-stage=terrain] #terrain{z-index:3}body[data-stage=village] .episode-panel{left:3vw!important;right:auto!important;top:auto!important;bottom:7vh!important;width:28vw!important;max-width:350px!important;max-height:55vh;overflow:auto;box-sizing:border-box;padding:20px!important}body[data-stage=village] .episode-panel h2{font-size:21px!important}body[data-stage=village] .episode-panel p{font-size:15px!important;line-height:1.8!important}body[data-stage=memory] #endingFilm,body[data-stage=memory] #endingPlay,body[data-stage=memory] #restartStory{display:none!important}#spatialClosing{position:fixed;inset:0;background:#090c09;color:#d4d8c9;z-index:12;display:none;align-items:center;justify-content:center;text-align:center;font-family:'Gowun Batang',serif}#spatialClosing p{line-height:2;font-size:clamp(20px,3vw,34px)}#spatialClosing a{display:inline-block;color:inherit;border-bottom:1px solid #8e9b87;padding:12px;text-decoration:none;font-size:16px}@media(max-width:700px){body[data-stage=village] .episode-panel{left:5vw!important;bottom:5vh!important;width:90vw!important;max-width:none!important;max-height:25vh!important;padding:12px!important}body[data-stage=village] .episode-panel h2{font-size:16px!important}body[data-stage=village] .episode-panel p{font-size:12px!important;margin:6px 0!important}}`;document.head.append(css);
 const closing=document.createElement('div');closing.id='spatialClosing';closing.innerHTML='<div><p>사람은 지나가고, 풍경은 달라져도<br>돌에 새겨진 시간은 남아 있습니다.</p><a href="./chapters.html">서책에서 이야기를 이어 읽기 →</a></div>';document.body.append(closing);
@@ -105,7 +106,7 @@ document.addEventListener('cinema-closing',e=>{closing.style.display=e.detail.vi
 // Only the separate camera-test page emits these inter-person connections.
 const transferCache=new Map();
 const transferGround=[];village.traverse(o=>{if(o.isMesh&&/continuous.ridges|courtyard|connecting.lane|Main.village.street|approach.stairs|Extension ground/.test(o.name))transferGround.push(o);});
-if(authoredTour)addJourneyPaths(village,THREE,authoredTour,transferGround);
+if(authoredTour){const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(bakedPaths.positions,3));geometry.setAttribute('color',new THREE.Float32BufferAttribute(bakedPaths.colors,3));geometry.computeVertexNormals();const paths=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1}));paths.name='Bare terrain connecting paths';village.add(paths);}
 function groundAt(x,z){floorRay.set(new THREE.Vector3(x,80,z),new THREE.Vector3(0,-1,0));return floorRay.intersectObjects(transferGround,false)[0]?.point.y??0;}
 function buildTransfer(from,to){
  const key=from+':'+to;if(transferCache.has(key))return transferCache.get(key);
@@ -113,16 +114,9 @@ function buildTransfer(from,to){
  if(to===5){camera.position.copy(endingFixedPosition);camera.lookAt(endingFixedTarget);}else sampleRoute(to,150);
  const end=camera.position.clone(),endRotation=camera.quaternion.clone(),endFocus=camera.position.clone().add(camera.getWorldDirection(new THREE.Vector3()).multiplyScalar(to===5?7:3));
  const routeData=authoredTour.find(r=>r.from===from);const curve=new THREE.CatmullRomCurve3(routeData.points.map(([x,z])=>new THREE.Vector3(x,0,z)),false,'centripetal');
- // Cache a smooth terrain profile instead of snapping to intersected triangles each frame.
- const heights=[];for(let i=0;i<=1200;i++){const p=curve.getPointAt(i/1200);heights.push(groundAt(p.x,p.z)+1.75);}
- const raw=heights.slice();// Anticipate rises over a few metres, then smooth the envelope. This avoids
- // abrupt height corrections at terrace and terrain triangle boundaries.
- const span=Math.max(4,Math.round(1200*3/curve.getLength()));
- for(let i=0;i<heights.length;i++)for(let k=Math.max(0,i-span);k<=Math.min(1200,i+span);k++)heights[i]=Math.max(heights[i],raw[k]-.2*Math.abs(k-i)/span);
- for(let pass=0;pass<8;pass++){const copy=heights.slice();for(let i=2;i<1199;i++)heights[i]=(copy[i-2]+copy[i-1]+copy[i]*2+copy[i+1]+copy[i+2])/6;}
- const pace=[0];let lastDirection=curve.getTangentAt(0);for(let i=1;i<=1200;i++){const direction=curve.getTangentAt(i/1200);pace.push(pace.at(-1)+1+lastDirection.angleTo(direction)*35);lastDirection=direction;}
- const total=pace.at(-1);for(let i=0;i<pace.length;i++)pace[i]/=total;
- const data={from,start,end,startRotation,endRotation,startFocus,endFocus,curve,heights,pace};transferCache.set(key,data);return data;
+
+ const baked=bakedCamera.find(r=>r.from===from);const {heights,pace,viewPace}=baked;const rotations=baked.rotations.map(q=>new THREE.Quaternion().fromArray(q));
+ const data={from,start,end,startRotation,endRotation,startFocus,endFocus,curve,heights,pace,rotations,viewPace};transferCache.set(key,data);return data;
 }
 document.addEventListener('blender-transfer-frame',e=>{
  const {from,to,progress}=e.detail;if(!village)return;

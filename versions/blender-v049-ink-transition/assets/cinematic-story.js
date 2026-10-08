@@ -1,4 +1,4 @@
-import {setCharacterVoice,stopCharacterVoice,voiceCaption} from './character-voices.js?v=72';
+import {setCharacterVoice,stopCharacterVoice,voiceCaption} from './character-voices.js?v=90';
 import {dialogueCopy,dialoguePages} from './dialogue-copy.js?v=dialogue-66';
 import {storyStops} from './story-sequence.js?v=story-flow-70';
 const emit=(name,detail)=>document.dispatchEvent(new CustomEvent(name,{detail}));
@@ -11,7 +11,7 @@ if(cameraTest){
  if(cameraTest){shot('pair-reveal',5);shot('head-push',8);shot('crown-zoom',8);shot('relief-trace',7);shot('relief-landscape',8);shot('landscape-expand',18);}
  else{shot('pair',4);shot('back-zoom',14);shot('motif',7,{stop:{subject:'male',region:'back',route:0}});}
  shot('travel',50,{stop:{route:0}});
- for(let index=0;index<5;index++){if(index)shot('transfer',90,{from:index-1,to:index});shot('dialogue',dialogueSeconds(index),{stop:{route:index}});}
+ for(let index=0;index<5;index++){if(index)shot('transfer',45,{from:index-1,to:index});shot('dialogue',dialogueSeconds(index),{stop:{route:index}});}
  shot('transfer',100,{from:4,to:5});shot('settle',3);shot('seasons',60);shot('fade',3);shot('archive',1);
 }else{
  shot('entry',4);shot('rotate',8);shot('female-click',2);shot('female-scan',28);shot('male-transition',2);shot('male-scan',28);shot('pair',3);
