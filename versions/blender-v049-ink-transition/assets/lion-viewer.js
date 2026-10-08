@@ -24,7 +24,8 @@ let pairHalfSpacing=.64;
 document.addEventListener('story-pose',e=>guidedPose=e.detail);
 document.addEventListener('story-home',()=>guidedPose=null);
 try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});}catch(error){status.textContent='이 기기에서는 3D 화면을 표시할 수 없습니다.';throw error;}
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setClearColor(0x000000,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;host.append(renderer.domElement);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setClearColor(0x000000,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;if(document.body.dataset.cameraTest==='village'){renderer.domElement.style.opacity='0';renderer.domElement.style.visibility='hidden';}
+host.append(renderer.domElement);
 const camera=new THREE.OrthographicCamera(-2,2,2,-2,.01,100),controls=new OrbitControls(camera,renderer.domElement);
 controls.enableDamping=true;controls.dampingFactor=.09;controls.enablePan=false;controls.enabled=false;controls.minPolarAngle=.12;controls.maxPolarAngle=Math.PI-.12;
 scene.add(new THREE.HemisphereLight(0xe7e6e0,0x302821,.65));
@@ -225,7 +226,7 @@ function beginEntry(driven=false){if(experience!=='desktop')return;entryPending=
  for(const pivot of subjects.values()){pivot.traverse(mesh=>{if(!mesh.isMesh)return;const a=mesh.geometry.getAttribute('position');if(!a)return;const n=Math.min(14000,a.count),positions=new Float32Array(n*3),scatter=new Float32Array(n*3),v=new THREE.Vector3();
  for(let i=0;i<n;i++){const j=Math.floor(i*a.count/n);v.fromBufferAttribute(a,j).applyMatrix4(mesh.matrixWorld);positions.set([v.x,v.y,v.z],i*3);const angle=i*2.399963,rad=1.2+(i%97)/97*2.8;scatter.set([Math.cos(angle)*rad,Math.sin(i*1.73)*1.7,Math.sin(angle)*rad],i*3);}
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(positions,3));g.setAttribute('scatter',new THREE.BufferAttribute(scatter,3));const m=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{gather:{value:0},fade:{value:1}},vertexShader:'attribute vec3 scatter; uniform float gather; void main(){vec3 p=position+scatter*(1.0-gather);gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);gl_PointSize=2.2;}',fragmentShader:'uniform float fade; void main(){float d=length(gl_PointCoord-vec2(.5));if(d>.5)discard;gl_FragColor=vec4(vec3(.79,.79,.74),fade*(1.0-smoothstep(.2,.5,d)));}'});const c=new THREE.Points(g,m);entryScene.add(c);entryClouds.push(c);
- });}entryStart=performance.now();entryProgress=driven?0:null;entryPending=false;intro.dataset.entryPhase='gathering';renderer.domElement.style.opacity='0';clearPointer();readyAt=entryStart+4300;
+ });}entryStart=performance.now();entryProgress=driven===true?0:null;entryPending=false;intro.dataset.entryPhase='gathering';renderer.domElement.style.opacity='0';clearPointer();readyAt=entryStart+4300;
 }
 function updateEntry(now){
  if(!entryStart)return;
@@ -237,7 +238,13 @@ function updateEntry(now){
  entryRenderer.setSize(width,height,false);entryRenderer.render(entryScene,camera);
  if(!driven&&t>=4.6)finishEntry();
 }
-document.addEventListener('experience-selected',beginEntry);document.addEventListener('lion-ready',()=>{if(entryPending)beginEntry();});document.querySelector('#experienceSwitch').addEventListener('click',finishEntry);
+document.addEventListener('experience-selected',()=>{
+ if(document.body.dataset.cameraTest==='village'){
+  finishEntry();entryPending=false;cinemaShot='';
+  renderer.domElement.style.opacity='0';renderer.domElement.style.visibility='hidden';
+ }else beginEntry(false);
+});
+document.addEventListener('lion-ready',()=>{if(entryPending&&document.body.dataset.cameraTest!=='village')beginEntry(false);});document.querySelector('#experienceSwitch').addEventListener('click',finishEntry);
 const scanOverlay=document.createElement('canvas');scanOverlay.className='surface-scan-trace';scanOverlay.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2';host.append(scanOverlay);const scanOverlayCtx=scanOverlay.getContext('2d'),scanSample=document.createElement('canvas'),scanSampleCtx=scanSample.getContext('2d',{willReadFrequently:true});let scanLastDraw=0;
 function drawSurfaceTrace(now){scanOverlay.hidden=!filmPlaying;if(!filmPlaying||now-scanLastDraw<65)return;scanLastDraw=now;const w=384,h=Math.max(1,Math.round(384*height/width));scanSample.width=w;scanSample.height=h;scanOverlay.width=w;scanOverlay.height=h;
  surface(false);renderer.render(scene,camera);scanSampleCtx.filter='blur(1.6px)';scanSampleCtx.drawImage(renderer.domElement,0,0,w,h);scanSampleCtx.filter='none';surface(true);renderer.render(scene,camera);
@@ -340,6 +347,8 @@ document.addEventListener('cinema-lion-frame',e=>{
    host.style.filter=d.kind==='relief-trace'?`grayscale(${d.progress*.75}) saturate(${1-d.progress*.55}) contrast(${1-d.progress*.12})`:'none';
    host.style.opacity='1';
    if(d.kind==='pair-reveal'&&!reduced.matches){if(!entryRenderer)beginEntry(true);entryProgress=Math.max(0,Math.min(1,d.progress));updateEntry(performance.now());}
+   // Present only after the camera, particle pose and mesh opacity agree.
+   renderer.render(scene,camera);renderer.domElement.style.visibility='visible';
    if(d.kind==='relief-trace'){
     if(!pivot.userData.reliefReady){addReliefContours(pivot);pivot.userData.reliefReady=true;}
     for(const line of scanTraces){line.visible=Boolean(line.userData.relief);if(line.userData.relief){line.material.opacity=.9;const count=line.geometry.attributes.position.count;line.geometry.setDrawRange(0,Math.floor(count*Math.min(1,d.progress*1.4)/2)*2);}}
