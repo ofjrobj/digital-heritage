@@ -72,3 +72,22 @@ body[data-camera-test] #cinemaDialogue p{font-size:15px!important;line-height:1.
 /* Storyboard opening: illuminated scans on a quiet dark stage. */
 body[data-story-shot="pair-reveal"] #intro,body[data-story-shot="head-push"] #intro,body[data-story-shot="crown-zoom"] #intro,body[data-story-shot="relief-trace"] #intro{background:radial-gradient(ellipse at 55% 70%,#444940 0%,#1c221f 48%,#080d0c 100%)!important}
 body.cinema-running #lionHoverHint,body.cinema-running #lionStatus{display:none!important}
+
+/* Quiet ink-landscape entrance; the title sits in the painting's mist margin. */
+#experienceChoice{background:#e8ebe5!important}
+.exhibition-cover{inset:20px;background:#eeeee6;border-color:#61726328;isolation:isolate}
+.cover-landscape{position:absolute;inset:-4% -5% -8% 20%;z-index:0;background:url('./cover-landscape.png') 64% 58%/cover no-repeat;filter:grayscale(.45) saturate(.38) contrast(.82);opacity:.62;mask-image:linear-gradient(90deg,transparent 0%,#000 32%,#000 100%);pointer-events:none}
+.exhibition-cover:after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,#eeeee6 0%,#eeeee6e8 23%,#eeeee6a0 39%,#eeeee600 64%),linear-gradient(180deg,#eeeee68f,transparent 25%,transparent 74%,#e0e6dc80)}
+.cover-ridges{display:none}
+.cover-top{top:30px;left:4%;right:4%;color:#526658;font-size:9px;letter-spacing:.19em}
+.cover-copy{left:7.5%;top:31%;max-width:58%;z-index:3}
+#experienceChoice .cover-copy #experienceHeading{font-size:clamp(40px,4.5vw,72px)!important;line-height:1.42!important;letter-spacing:-.045em!important;margin:0 0 38px!important;color:#2c4036!important;text-shadow:0 1px 18px #eeeee680}
+.cover-actions button{min-width:110px;padding:10px 0;font-size:13px;border-color:#60756270;transition:color .25s,border-color .25s}
+.cover-actions button:hover{color:#182d22;border-color:#29443b}
+.cover-actions button:focus-visible{outline:none;border-bottom:2px solid #46604e;background:#7185730d}
+@media(max-width:700px){.exhibition-cover{inset:12px}.cover-landscape{inset:18% -48% -5% -10%;opacity:.47;mask-image:linear-gradient(180deg,transparent,#000 28%)}.exhibition-cover:after{background:linear-gradient(180deg,#eeeee6 0%,#eeeee6b8 30%,#eeeee622 65%)}.cover-copy{top:25%;left:8%;max-width:88%}#experienceChoice .cover-copy #experienceHeading{font-size:clamp(35px,8vw,50px)!important}.cover-top{top:22px;font-size:8px}.cover-top span:last-child{font-size:7px;letter-spacing:.08em}}
+
+/* A light gesture mark, dismissed after the first navigation gesture. */
+#journeyDragHint{bottom:30px;background:none;border:0;border-radius:0;padding:8px;color:#dce2d2;backdrop-filter:none;opacity:.72;filter:drop-shadow(0 1px 3px #13231d80);line-height:0}
+#journeyDragHint[hidden]{display:none!important}
+body[data-stage=terrain] #journeyDragHint,body[data-stage=village] #journeyDragHint{color:#345043;filter:drop-shadow(0 1px 4px #f3f1e7)}
