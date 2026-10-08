@@ -1,8 +1,9 @@
-import {scenicClearance} from './scenic-clearance.js?v=76';
+import {addJourneyPaths} from './journey-paths.js?v=85';
+import {scenicClearance} from './scenic-clearance.js?v=85';
 import {addVillageLife} from './village-life.js?v=69';
 import {extendVillage} from './test-village-layout.js?v=66';
 const cameraTest=document.body.dataset.cameraTest==='village';
-const authoredTour=cameraTest?await fetch('./downloads/space-atlas/camera-tour-65.json?v=66').then(r=>r.json()):null;
+const authoredTour=cameraTest?await fetch('./downloads/space-atlas/camera-tour-65.json?v=85').then(r=>r.json()):null;
 import {prepareTimelapse} from './ending-timelapse.js?v=66';
 import {bytes,json as loadJSON} from './asset-transport.js';
 import * as THREE from 'three';
@@ -104,6 +105,7 @@ document.addEventListener('cinema-closing',e=>{closing.style.display=e.detail.vi
 // Only the separate camera-test page emits these inter-person connections.
 const transferCache=new Map();
 const transferGround=[];village.traverse(o=>{if(o.isMesh&&/continuous.ridges|courtyard|connecting.lane|Main.village.street|approach.stairs|Extension ground/.test(o.name))transferGround.push(o);});
+if(authoredTour)addJourneyPaths(village,THREE,authoredTour,transferGround);
 function groundAt(x,z){floorRay.set(new THREE.Vector3(x,80,z),new THREE.Vector3(0,-1,0));return floorRay.intersectObjects(transferGround,false)[0]?.point.y??0;}
 function buildTransfer(from,to){
  const key=from+':'+to;if(transferCache.has(key))return transferCache.get(key);
@@ -113,7 +115,11 @@ function buildTransfer(from,to){
  const routeData=authoredTour.find(r=>r.from===from);const curve=new THREE.CatmullRomCurve3(routeData.points.map(([x,z])=>new THREE.Vector3(x,0,z)),false,'centripetal');
  // Cache a smooth terrain profile instead of snapping to intersected triangles each frame.
  const heights=[];for(let i=0;i<=1200;i++){const p=curve.getPointAt(i/1200);heights.push(groundAt(p.x,p.z)+1.75);}
- const raw=heights.slice();for(let pass=0;pass<5;pass++){const copy=heights.slice();for(let i=2;i<1199;i++)heights[i]=(copy[i-2]+copy[i-1]+copy[i]*2+copy[i+1]+copy[i+2])/6;}for(let i=0;i<heights.length;i++)heights[i]=Math.max(heights[i],raw[i]-.2);
+ const raw=heights.slice();// Anticipate rises over a few metres, then smooth the envelope. This avoids
+ // abrupt height corrections at terrace and terrain triangle boundaries.
+ const span=Math.max(4,Math.round(1200*3/curve.getLength()));
+ for(let i=0;i<heights.length;i++)for(let k=Math.max(0,i-span);k<=Math.min(1200,i+span);k++)heights[i]=Math.max(heights[i],raw[k]-.2*Math.abs(k-i)/span);
+ for(let pass=0;pass<8;pass++){const copy=heights.slice();for(let i=2;i<1199;i++)heights[i]=(copy[i-2]+copy[i-1]+copy[i]*2+copy[i+1]+copy[i+2])/6;}
  const pace=[0];let lastDirection=curve.getTangentAt(0);for(let i=1;i<=1200;i++){const direction=curve.getTangentAt(i/1200);pace.push(pace.at(-1)+1+lastDirection.angleTo(direction)*35);lastDirection=direction;}
  const total=pace.at(-1);for(let i=0;i<pace.length;i++)pace[i]/=total;
  const data={from,start,end,startRotation,endRotation,startFocus,endFocus,curve,heights,pace};transferCache.set(key,data);return data;
@@ -134,7 +140,7 @@ function applyTransferRaw(data,progress){
  const sample=u*1200,i=Math.min(1199,Math.floor(sample));camera.position.y=THREE.MathUtils.lerp(data.heights[i],data.heights[i+1],sample-i);
  camera.position.y=THREE.MathUtils.lerp(data.start.y,camera.position.y,easeMotion(progress/.14));camera.position.y=THREE.MathUtils.lerp(camera.position.y,data.end.y,easeMotion((progress-.86)/.14));
  // Follow the open route immediately; never keep looking back through the terrain at a departed speaker.
- const aheadU=Math.min(1,u+Math.min(.045,8/data.curve.getLength())),ahead=data.curve.getPointAt(aheadU);ahead.y=data.heights[Math.min(1200,Math.round(aheadU*1200))];
+ const aheadU=Math.min(1,u+Math.min(.07,11/data.curve.getLength())),ahead=data.curve.getPointAt(aheadU);ahead.y=data.heights[Math.min(1200,Math.round(aheadU*1200))];
  const aim=new THREE.PerspectiveCamera();aim.position.copy(camera.position);
  if(ahead.distanceTo(camera.position)>.001)aim.lookAt(ahead);else aim.quaternion.copy(data.endRotation);
  camera.quaternion.copy(data.startRotation).slerp(aim.quaternion,easeMotion(progress/.18));

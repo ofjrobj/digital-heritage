@@ -1,6 +1,6 @@
 // Grid routing keeps the test camera outside building footprints.
 export function planTransfer(start,end,boxes){
- const pad=.9,blocked=(x,z)=>boxes.some(b=>x>b.min.x-pad&&x<b.max.x+pad&&z>b.min.z-pad&&z<b.max.z+pad);
+ const blocked=(x,z)=>{const distance=Math.min(Math.hypot(x-start[0],z-start[1]),Math.hypot(x-end[0],z-end[1]));const pad=.9+Math.min(1,distance/12)*.8;return boxes.some(b=>x>b.min.x-pad&&x<b.max.x+pad&&z>b.min.z-pad&&z<b.max.z+pad);};
  const clear=(a,b)=>{const n=Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])*4);for(let i=0;i<=n;i++){const u=n?i/n:0;if(blocked(a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u))return false;}return true;};
  const nearest=p=>{for(let r=0;r<8;r++)for(let x=-r;x<=r;x++)for(let z=-r;z<=r;z++){const q=[Math.round(p[0])+x,Math.round(p[1])+z];if(!blocked(...q)&&clear(p,q))return q;}throw Error('Camera endpoint has no clear exit '+JSON.stringify(p)+' '+boxes.filter(b=>p[0]>b.min.x-pad&&p[0]<b.max.x+pad&&p[1]>b.min.z-pad&&p[1]<b.max.z+pad).map(b=>b.name).join(','));};
  const a=nearest(start),b=nearest(end),key=p=>p.join(','),goal=key(b),open=[a],cost=new Map([[key(a),0]]),parent=new Map(),closed=new Set();

@@ -85,7 +85,7 @@ function tick(now){requestAnimationFrame(tick);const dt=last?Math.min(.1,(now-la
 const requested=running?elapsed+dt:dragTarget;if(Math.max(elapsed,requested)>=10)emit('village-preload');const memoryStart=shots.find(s=>s.kind==='settle')?.start??Infinity;if(Math.max(elapsed,requested)>=memoryStart-100)emit('ending-preload');
 let limit=duration;if(document.body.dataset.spatialReady!=='true')limit=27.95;else if(document.body.dataset.endingReady!=='true')limit=memoryStart-.05;
 const destination=Math.min(Math.max(elapsed,limit),requested);if(Math.abs(destination-elapsed)<.002){if(elapsed!==destination){elapsed=destination;seek.value=elapsed;renderStory();}return;}
-elapsed=running?destination:elapsed+(destination-elapsed)*(1-Math.exp(-dt*7));elapsed=Math.max(0,Math.min(duration,elapsed));if(running)dragTarget=elapsed;seek.value=elapsed;renderStory();}requestAnimationFrame(tick);
+elapsed=running?destination:elapsed+Math.max(-dt*4,Math.min(dt*4,(destination-elapsed)*(1-Math.exp(-dt*4))));elapsed=Math.max(0,Math.min(duration,elapsed));if(running)dragTarget=elapsed;seek.value=elapsed;renderStory();}requestAnimationFrame(tick);
 
 let resumeStoryAt=0;document.addEventListener('archive-open',()=>{resumeStoryAt=elapsed<shots.find(s=>s.kind==='archive').start?elapsed:0;running=false;panel.hidden=true;});
 document.addEventListener('archive-story',()=>{active=true;running=false;elapsed=dragTarget=resumeStoryAt;previous=null;seek.hidden=false;stop.hidden=false;seek.value=elapsed;play.textContent='이어서 재생';document.body.classList.add('cinema-running');renderStory();});
