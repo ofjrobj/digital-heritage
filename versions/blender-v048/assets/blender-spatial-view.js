@@ -1,3 +1,4 @@
+import {scenicClearance} from './scenic-clearance.js?v=76';
 import {addVillageLife} from './village-life.js?v=69';
 import {extendVillage} from './test-village-layout.js?v=66';
 const cameraTest=document.body.dataset.cameraTest==='village';
@@ -21,7 +22,8 @@ function size(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidt
 // Soft depth haze plus a feathered veil, confined to transitions.
 const mist=document.createElement('div');mist.id='transitionMist';mist.setAttribute('aria-hidden','true');mist.style.cssText='position:absolute;inset:-10%;pointer-events:none;opacity:0;background:radial-gradient(ellipse at 18% 62%,rgba(222,226,213,.66),transparent 66%),radial-gradient(ellipse at 84% 35%,rgba(222,226,213,.48),transparent 72%);filter:blur(28px)';host.append(mist);
 function transitionHaze(strength,phase){const q=THREE.MathUtils.clamp(strength,0,1);mist.style.opacity=String(q*.62);mist.style.transform=`translateX(${Math.sin(phase*.12)*2}%)`;scene.fog.near=90-60*q;scene.fog.far=230-100*q;}
-let renderPending=false;function render(){if(renderPending)return;renderPending=true;requestAnimationFrame(()=>{renderPending=false;if(host.style.display!=='none'&&!document.hidden&&!document.body.classList.contains('archive-active'))renderer.render(scene,camera);});}
+let stageClearance=null,clearanceStrength=0;
+let renderPending=false;function render(){if(renderPending)return;renderPending=true;requestAnimationFrame(()=>{renderPending=false;if(host.style.display!=='none'&&!document.hidden&&!document.body.classList.contains('archive-active')){if(stageClearance)stageClearance(camera,clearanceStrength);renderer.render(scene,camera);}});}
 const easeMotion=v=>{v=THREE.MathUtils.clamp(v,0,1);return v*v*v*(10+v*(-15+6*v));};
 // Keep dialogue on its arrival axis; retreat opens distance on that same axis.
 function sampleRoute(index,seconds){const storySeconds=seconds;seconds=seconds>150?150:150*easeMotion(seconds/150);const r=routes[index],samples=r.samples,frame=seconds*24+1;let lo=0,hi=samples.length-1;while(lo+1<hi){const mid=(lo+hi)>>1;if(samples[mid].frame<=frame)lo=mid;else hi=mid;}const i=Math.min(samples.length-2,lo);const a=samples[i],b=samples[i+1],t=THREE.MathUtils.clamp((frame-a.frame)/(b.frame-a.frame),0,1);camera.position.copy(cv(a.position).lerp(cv(b.position),t));const target=cv(a.target).lerp(cv(b.target),t);
@@ -39,11 +41,12 @@ function sampleRoute(index,seconds){const storySeconds=seconds;seconds=seconds>1
  if(storySeconds>174){const retreat=easeMotion((storySeconds-174)/30);const axis=camera.position.clone().sub(target);axis.y=0;axis.normalize();camera.position.addScaledVector(axis,retreat*24);camera.position.y+=retreat*10;}
  camera.lookAt(target);}
 let pendingTransfer=null;document.addEventListener('blender-transfer-frame',e=>{pendingTransfer=e.detail;});
-function update(detail){pendingTransfer=null;lastEvent=detail;if(!village)return;route=detail.index??route;time=detail.time??time;mode='route';for(const person of endingWalkers)person.visible=false;if(endingCat)endingCat.visible=false;for(const tree of passageTrees)tree.visible=false;scene.background.set('#b6bcb5');sun.color.set(0xfff1dc);host.style.filter='none';village.visible=true;if(ending)ending.visible=false;host.style.display='block';host.style.opacity=String(detail.opacity??1);if(cameraTest&&time<150){applyTransfer(buildTransfer(-1,0),time/150);}else sampleRoute(route,time);transitionHaze((1-THREE.MathUtils.smoothstep(time,0,22))*.75+THREE.MathUtils.smoothstep(time,192,204)*.45,time);host.dataset.route=String(route);host.dataset.time=time.toFixed(3);closing.style.display='none';render();}
+function update(detail){clearanceStrength=0;pendingTransfer=null;lastEvent=detail;if(!village)return;route=detail.index??route;time=detail.time??time;mode='route';for(const person of endingWalkers)person.visible=false;if(endingCat)endingCat.visible=false;for(const tree of passageTrees)tree.visible=false;scene.background.set('#b6bcb5');sun.color.set(0xfff1dc);host.style.filter='none';village.visible=true;if(ending)ending.visible=false;host.style.display='block';host.style.opacity=String(detail.opacity??1);if(cameraTest&&time<150){applyTransfer(buildTransfer(-1,0),time/150);}else sampleRoute(route,time);transitionHaze((1-THREE.MathUtils.smoothstep(time,0,22))*.75+THREE.MathUtils.smoothstep(time,192,204)*.45,time);host.dataset.route=String(route);host.dataset.time=time.toFixed(3);closing.style.display='none';render();}
 document.addEventListener('blender-route-frame',e=>update(e.detail));
 document.addEventListener('prototype-episode',e=>{if(e.detail.active&&!document.body.classList.contains('cinema-running'))update({index:e.detail.index,time:150+Math.min(1,e.detail.progress/2.5)*24});});
 document.addEventListener('story-home',()=>{host.style.display='none';closing.style.display='none';});
 const gltf=await loader.loadAsync('./assets/blender-village-v046.glb?v=46');village=gltf.scene;scene.add(village);if(cameraTest){extendVillage(village,THREE);addVillageLife(village,THREE,authoredTour);village.traverse(o=>{if(/Original.unchanged|Forecourt/.test(o.name))o.visible=false;});}size();
+stageClearance=scenicClearance(village,THREE);
 // Formation animation and closing camera are authored in the v043 Blender file.
 let endingBridge=null,endingPath=null;
 const endingFixedPosition=new THREE.Vector3(-18.8,2.7,-9.3),endingFixedTarget=new THREE.Vector3(-22.275,.62,-15.5);
@@ -121,6 +124,7 @@ document.addEventListener('blender-transfer-frame',e=>{
  mode='route';village.visible=true;if(ending)ending.visible=false;for(const person of endingWalkers)person.visible=false;if(endingCat)endingCat.visible=false;for(const tree of passageTrees)tree.visible=false;closing.style.display='none';host.style.display='block';host.style.opacity='1';
  // Reveal the forecourt only on the last approach, never between the five speakers.
  village.traverse(o=>{if(/Original.unchanged|Forecourt/.test(o.name))o.visible=to===5;});
+ clearanceStrength=easeMotion(progress/.08)*(1-easeMotion((progress-.92)/.08));
  applyTransfer(data,progress);
  transitionHaze(0,0);render();
 });
@@ -134,12 +138,7 @@ function applyTransferRaw(data,progress){
  const aim=new THREE.PerspectiveCamera();aim.position.copy(camera.position);
  if(ahead.distanceTo(camera.position)>.001)aim.lookAt(ahead);else aim.quaternion.copy(data.endRotation);
  camera.quaternion.copy(data.startRotation).slerp(aim.quaternion,easeMotion(progress/.18));
- if(data.from===3&&progress<.28){
-  const a=data.startFocus.clone().sub(camera.position),b=ahead.clone().sub(camera.position);
-  const first=Math.atan2(a.x,a.z);let delta=Math.atan2(b.x,b.z)-first;while(delta<0)delta+=Math.PI*2;
-  const blend=easeMotion((progress-.20)/.08),heading=first+delta*blend;
-  camera.lookAt(camera.position.clone().add(new THREE.Vector3(Math.sin(heading),a.y/Math.max(1,Math.hypot(a.x,a.z))*(1-blend),Math.cos(heading))));
- }
+
  camera.quaternion.slerp(data.endRotation,easeMotion((progress-.80)/.20));
 
 }
@@ -187,10 +186,10 @@ document.addEventListener('blender-entry-frame',e=>{
   const points=[new THREE.Vector3(12,52,110),new THREE.Vector3(-18,28,35),new THREE.Vector3(-18.8,2.7,-7),new THREE.Vector3(-8,20,20),new THREE.Vector3(base.start.x,20,base.start.z),base.start.clone()];
   entryTransfer=new THREE.CatmullRomCurve3(points,false,'centripetal');
  }
- mode='route';
+ mode='route';clearanceStrength=easeMotion(p/.05)*(1-easeMotion((p-.96)/.04));
  if(p<.7){
   const u=easeMotion(p/.7);camera.position.copy(entryTransfer.getPoint(u));
-  camera.position.y=Math.max(camera.position.y,groundAt(camera.position.x,camera.position.z)+2);
+  camera.position.y=Math.max(camera.position.y,THREE.MathUtils.lerp(groundAt(camera.position.x,camera.position.z)+2,base.start.y,easeMotion((u-.85)/.15)));
   const target=new THREE.Vector3(15,1.75,36).lerp(new THREE.Vector3(-22.275,1,-15.5),easeMotion(u/.32));
   target.lerp(new THREE.Vector3(12,1.75,36),easeMotion((u-.58)/.32));camera.lookAt(target);
   camera.quaternion.slerp(base.startRotation,easeMotion((u-.9)/.1));
@@ -199,7 +198,7 @@ document.addEventListener('blender-entry-frame',e=>{
 });
 
 // The opening reveals the same two scans in their courtyard before meeting people.
-const {archiveModels}=await import('./lion-viewer.js?v=story-flow-75');
+const {archiveModels}=await import('./lion-viewer.js?v=story-flow-76');
 const openingLions=new THREE.Group();openingLions.name='Opening courtyard stone lions';
 for(const [i,{model}] of (await archiveModels()).entries()){
  const group=new THREE.Group();group.add(model);model.rotation.set(0,0,0);model.position.set(0,0,0);

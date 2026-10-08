@@ -16,10 +16,21 @@ const buildings=[];scene.traverse(o=>{if(o.isMesh&&/wall|paper.door|roof/i.test(
 const routes=JSON.parse(fs.readFileSync(root+'downloads/space-atlas/camera-tour-65.json'));
 const runtime=fs.readFileSync(root+'assets/blender-spatial-view.js','utf8');const startFn=runtime.indexOf('function applyTransferRaw'),endFn=runtime.indexOf('\nif(pendingTransfer)',startFn);
 const applyTransfer=new Function('THREE','camera','easeMotion',runtime.slice(startFn,endFn)+';return applyTransfer')(T,camera,easeMotion);
-const report=[];
+const narrativeRoutes=JSON.parse(fs.readFileSync(root+'assets/blender-routes-v048.json'));
+const sampleRoute=new Function('THREE','camera','routes','cv','easeMotion',runtime.slice(runtime.indexOf('function sampleRoute('),runtime.indexOf('let pendingTransfer='))+';return sampleRoute')(T,camera,narrativeRoutes,v=>new T.Vector3(v[0],v[2],-v[1]),easeMotion);
+const report=[], cameraTracks=[];
 for(const r of routes){
-const from=r.from,start=from<0?new T.Vector3(12,2,44):positions[from],end=positions[from+1];camera.position.copy(start);camera.lookAt(from<0?new T.Vector3(20,2,32):heroes[from]);const startRotation=camera.quaternion.clone(),startFocus=start.clone().add(camera.getWorldDirection(new T.Vector3()).multiplyScalar(3));camera.position.copy(end);camera.lookAt(heroes[from+1]);const endRotation=camera.quaternion.clone(),endFocus=end.clone().add(camera.getWorldDirection(new T.Vector3()).multiplyScalar(from===4?7:3));
+const from=r.from;
+if(from<0){camera.position.set(12,2,44);camera.lookAt(20,2,32);}else sampleRoute(from,150);
+const start=camera.position.clone(),startRotation=camera.quaternion.clone(),startFocus=start.clone().add(camera.getWorldDirection(new T.Vector3()).multiplyScalar(3));
+if(from===4){camera.position.copy(positions[5]);camera.lookAt(heroes[5]);}else sampleRoute(from+1,150);
+const end=camera.position.clone(),endRotation=camera.quaternion.clone(),endFocus=end.clone().add(camera.getWorldDirection(new T.Vector3()).multiplyScalar(from===4?7:3));
+
 const curve=new T.CatmullRomCurve3(r.points.map(([x,z])=>new T.Vector3(x,0,z)),false,'centripetal');let heights=curve.getSpacedPoints(1200).map(p=>groundAt(p)+1.75),raw=heights.slice();for(let pass=0;pass<5;pass++){const c=heights.slice();for(let i=2;i<1199;i++)heights[i]=(c[i-2]+c[i-1]+c[i]*2+c[i+1]+c[i+2])/6;}heights=heights.map((h,i)=>Math.max(h,raw[i]-.2));const pace=[0];let last=curve.getTangentAt(0);for(let i=1;i<=1200;i++){const d=curve.getTangentAt(i/1200);pace.push(pace.at(-1)+1+last.angleTo(d)*35);last=d;}const total=pace.at(-1);for(let i=0;i<pace.length;i++)pace[i]/=total;const data={from,start,end,startRotation,endRotation,startFocus,endFocus,curve,heights,pace};
+
+const samples=[];const seconds=from<0?50:from===4?100:90;
+for(let f=0;f<=seconds*24;f+=3){applyTransfer(data,f/(seconds*24));const target=camera.position.clone().add(camera.getWorldDirection(new T.Vector3()).multiplyScalar(8));samples.push({frame:f+1,position:[camera.position.x,-camera.position.z,camera.position.y],target:[target.x,-target.z,target.y]});}
+cameraTracks.push({from,seconds,samples});
 
 const bad=[];for(let step=10;step<=90;step+=.5){applyTransfer(data,step/100);camera.updateMatrixWorld(true);let hits=0;const names={};for(let y=0;y<12;y++)for(let x=0;x<21;x++){ray.setFromCamera(new T.Vector2((x+.5)/21*2-1,(y+.5)/12*2-1),camera);let best=Infinity,name='';for(const b of buildings){const hit=ray.ray.intersectBox(b.box,new T.Vector3());if(hit){const distance=hit.distanceTo(camera.position);if(distance<best){best=distance;name=b.name;}}}if(best<12){hits++;names[name]=(names[name]||0)+1;}}
 if(hits/252>1/3&&camera.position.distanceTo(start)>4&&camera.position.distanceTo(end)>4)bad.push({p:step/100,position:camera.position.toArray(),coverage:Math.round(hits/252*100),name:Object.entries(names).sort((a,b)=>b[1]-a[1])[0]?.[0]});}
@@ -27,3 +38,5 @@ let maxStep=0,previous;for(let step=0;step<=1000;step++){applyTransfer(data,step
 const terrainBlocked=[];for(const p of [.1,.2,.3,.4,.5,.6,.7,.8,.9]){applyTransfer(data,p);camera.updateMatrixWorld(true);let hits=0;for(let y=0;y<5;y++)for(let x=0;x<10;x++){ray.setFromCamera(new T.Vector2((x+.5)/10*2-1,(y+.5)/5),camera);const hit=ray.intersectObjects(floors,false)[0];if(hit&&hit.distance<14)hits++;}if(hits/50>1/3&&camera.position.distanceTo(start)>4&&camera.position.distanceTo(end)>4)terrainBlocked.push({progress:p,position:camera.position.toArray(),upperHalfCoverage:hits/50});}
 report.push({from,bad,terrainBlocked,maxRotationStepDegrees:maxStep});console.log(JSON.stringify(report.at(-1)));}
 fs.writeFileSync('/tmp/camera-visibility.json',JSON.stringify(report,null,2));
+
+fs.writeFileSync('/tmp/gongju-camera-tracks.json',JSON.stringify(cameraTracks));
