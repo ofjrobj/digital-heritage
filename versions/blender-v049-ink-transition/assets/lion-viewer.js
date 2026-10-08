@@ -217,17 +217,26 @@ function weather(now){
 }
 function snowMaterial(m){m.onBeforeCompile=shader=>{shader.uniforms.snowAmount=snowUniform;shader.vertexShader='varying float vSnowUp; varying vec3 vSnowPosition;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <beginnormal_vertex>','#include <beginnormal_vertex>\nvSnowUp = normalize(mat3(modelMatrix)*objectNormal).y;');shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvSnowPosition=(modelMatrix*vec4(transformed,1.0)).xyz;');shader.fragmentShader='uniform float snowAmount; varying float vSnowUp; varying vec3 vSnowPosition;\n'+shader.fragmentShader;shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\nfloat grain=fract(sin(dot(floor(vSnowPosition.xz*65.0),vec2(12.9898,78.233)))*43758.5453);float coat=smoothstep(0.24,0.7,vSnowUp)*snowAmount*(0.8+grain*0.2);diffuseColor.rgb=mix(diffuseColor.rgb,vec3(0.9,0.94,0.96),coat);');};m.customProgramCacheKey=()=> 'heritage-snow';m.needsUpdate=true;}
 // Temporary point-cloud layer: samples the scan without modifying its geometry or material.
-let entryStart=0,entryPending=false,entryRenderer=null,entryClouds=[];
+let entryStart=0,entryPending=false,entryRenderer=null,entryClouds=[],entryProgress=null;
 const entryScene=new THREE.Scene();
-function finishEntry(){entryStart=0;renderer.domElement.style.opacity='1';for(const c of entryClouds){entryScene.remove(c);c.geometry.dispose();c.material.dispose();}entryClouds=[];if(entryRenderer){entryRenderer.domElement.remove();entryRenderer.dispose();entryRenderer=null;}delete intro.dataset.entryPhase;}
-function beginEntry(){if(experience!=='desktop')return;entryPending=!loaded;if(!loaded)return;finishEntry();if(reduced.matches)return;
+function finishEntry(){entryStart=0;entryProgress=null;renderer.domElement.style.opacity='1';for(const c of entryClouds){entryScene.remove(c);c.geometry.dispose();c.material.dispose();}entryClouds=[];if(entryRenderer){entryRenderer.domElement.remove();entryRenderer.dispose();entryRenderer=null;}delete intro.dataset.entryPhase;}
+function beginEntry(driven=false){if(experience!=='desktop')return;entryPending=!loaded;if(!loaded)return;finishEntry();if(reduced.matches)return;
  scene.updateMatrixWorld(true);entryRenderer=new THREE.WebGLRenderer({alpha:true,antialias:true});entryRenderer.setPixelRatio(Math.min(devicePixelRatio,1.5));entryRenderer.setClearColor(0x000000,0);entryRenderer.domElement.style.cssText='position:absolute;inset:0;pointer-events:none;z-index:3';host.append(entryRenderer.domElement);
  for(const pivot of subjects.values()){pivot.traverse(mesh=>{if(!mesh.isMesh)return;const a=mesh.geometry.getAttribute('position');if(!a)return;const n=Math.min(14000,a.count),positions=new Float32Array(n*3),scatter=new Float32Array(n*3),v=new THREE.Vector3();
  for(let i=0;i<n;i++){const j=Math.floor(i*a.count/n);v.fromBufferAttribute(a,j).applyMatrix4(mesh.matrixWorld);positions.set([v.x,v.y,v.z],i*3);const angle=i*2.399963,rad=1.2+(i%97)/97*2.8;scatter.set([Math.cos(angle)*rad,Math.sin(i*1.73)*1.7,Math.sin(angle)*rad],i*3);}
- const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(positions,3));g.setAttribute('scatter',new THREE.BufferAttribute(scatter,3));const m=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{gather:{value:0},fade:{value:1}},vertexShader:'attribute vec3 scatter; uniform float gather; void main(){vec3 p=position+scatter*(1.0-gather);gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);gl_PointSize=1.7;}',fragmentShader:'uniform float fade; void main(){float d=length(gl_PointCoord-vec2(.5));if(d>.5)discard;gl_FragColor=vec4(vec3(.79,.79,.74),fade*(1.0-smoothstep(.2,.5,d)));}'});const c=new THREE.Points(g,m);entryScene.add(c);entryClouds.push(c);
- });}entryStart=performance.now();entryPending=false;intro.dataset.entryPhase='gathering';renderer.domElement.style.opacity='0';clearPointer();readyAt=entryStart+4300;
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(positions,3));g.setAttribute('scatter',new THREE.BufferAttribute(scatter,3));const m=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{gather:{value:0},fade:{value:1}},vertexShader:'attribute vec3 scatter; uniform float gather; void main(){vec3 p=position+scatter*(1.0-gather);gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);gl_PointSize=2.2;}',fragmentShader:'uniform float fade; void main(){float d=length(gl_PointCoord-vec2(.5));if(d>.5)discard;gl_FragColor=vec4(vec3(.79,.79,.74),fade*(1.0-smoothstep(.2,.5,d)));}'});const c=new THREE.Points(g,m);entryScene.add(c);entryClouds.push(c);
+ });}entryStart=performance.now();entryProgress=driven?0:null;entryPending=false;intro.dataset.entryPhase='gathering';renderer.domElement.style.opacity='0';clearPointer();readyAt=entryStart+4300;
 }
-function updateEntry(now){if(!entryStart)return;const t=(now-entryStart)/1000,p=Math.min(1,t/2.8),ease=1-Math.pow(1-p,3),reveal=Math.max(0,Math.min(1,(t-2.2)/1.4));for(const c of entryClouds){c.material.uniforms.gather.value=ease;c.material.uniforms.fade.value=1-reveal;}renderer.domElement.style.opacity=String(reveal*reveal*(3-2*reveal));entryRenderer.setSize(width,height,false);entryRenderer.render(entryScene,camera);if(t>=3.6)finishEntry();}
+function updateEntry(now){
+ if(!entryStart)return;
+ const driven=entryProgress!==null,t=driven?entryProgress*4.6:(now-entryStart)/1000;
+ const p=Math.min(1,t/3.1),ease=p*p*p*(10+p*(-15+6*p));
+ const reveal=Math.max(0,Math.min(1,(t-2.8)/1.4));
+ for(const c of entryClouds){c.material.uniforms.gather.value=ease;c.material.uniforms.fade.value=1-reveal;}
+ renderer.domElement.style.opacity=String(reveal*reveal*(3-2*reveal));
+ entryRenderer.setSize(width,height,false);entryRenderer.render(entryScene,camera);
+ if(!driven&&t>=4.6)finishEntry();
+}
 document.addEventListener('experience-selected',beginEntry);document.addEventListener('lion-ready',()=>{if(entryPending)beginEntry();});document.querySelector('#experienceSwitch').addEventListener('click',finishEntry);
 const scanOverlay=document.createElement('canvas');scanOverlay.className='surface-scan-trace';scanOverlay.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2';host.append(scanOverlay);const scanOverlayCtx=scanOverlay.getContext('2d'),scanSample=document.createElement('canvas'),scanSampleCtx=scanSample.getContext('2d',{willReadFrequently:true});let scanLastDraw=0;
 function drawSurfaceTrace(now){scanOverlay.hidden=!filmPlaying;if(!filmPlaying||now-scanLastDraw<65)return;scanLastDraw=now;const w=384,h=Math.max(1,Math.round(384*height/width));scanSample.width=w;scanSample.height=h;scanOverlay.width=w;scanOverlay.height=h;
@@ -329,7 +338,8 @@ document.addEventListener('cinema-lion-frame',e=>{
    if(d.kind==='crown-zoom'||d.kind==='relief-trace'){const k=d.kind==='relief-trace'?1:u;focus=face.clone().lerp(crown,k);zoom=2.0+k*.2;tilt=k;}
    offset.lerp(new THREE.Vector3(0,1.8,8),d.kind==='head-push'?u:d.kind==='pair-reveal'?0:1);offset.lerp(new THREE.Vector3(8,3.2,2.5),tilt);camera.position.copy(focus).add(offset);controls.target.copy(focus);camera.zoom=zoom;controls.maxZoom=8;camera.updateProjectionMatrix();camera.lookAt(focus);
    host.style.filter=d.kind==='relief-trace'?`grayscale(${d.progress*.75}) saturate(${1-d.progress*.55}) contrast(${1-d.progress*.12})`:'none';
-   host.style.opacity=d.kind==='pair-reveal'?String(smooth(d.progress/.65)):'1';
+   host.style.opacity='1';
+   if(d.kind==='pair-reveal'&&!reduced.matches){if(!entryRenderer)beginEntry(true);entryProgress=Math.max(0,Math.min(1,d.progress));updateEntry(performance.now());}
    if(d.kind==='relief-trace'){
     if(!pivot.userData.reliefReady){addReliefContours(pivot);pivot.userData.reliefReady=true;}
     for(const line of scanTraces){line.visible=Boolean(line.userData.relief);if(line.userData.relief){line.material.opacity=.9;const count=line.geometry.attributes.position.count;line.geometry.setDrawRange(0,Math.floor(count*Math.min(1,d.progress*1.4)/2)*2);}}
