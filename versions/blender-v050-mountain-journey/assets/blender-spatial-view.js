@@ -10,7 +10,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from './vendor/GLTFLoader.js';
 // Geometry and every route sample originate in the saved Blender files.
 const host=document.createElement('div');host.id='blenderSpatialView';host.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:2;display:none';document.body.append(host);
-const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.localClippingEnabled=true;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;host.append(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1));renderer.localClippingEnabled=true;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;host.append(renderer.domElement);
 const scene=new THREE.Scene();scene.background=new THREE.Color('#b6bcb5');scene.fog=new THREE.Fog('#b6bcb5',90,230);scene.add(new THREE.HemisphereLight(0xf5f1df,0x64715b,1.1));const sun=new THREE.DirectionalLight(0xfff1dc,2.3);sun.position.set(-30,70,30);scene.add(sun);
 const camera=new THREE.PerspectiveCamera(35,1,.05,900),loader=new GLTFLoader();const endingWalkers=[],endingGround=[],passageTrees=[];let endingCat;
 const floorRay=new THREE.Raycaster();
@@ -47,7 +47,15 @@ function update(detail){clearanceStrength=0;pendingTransfer=null;lastEvent=detai
 document.addEventListener('blender-route-frame',e=>update(e.detail));
 document.addEventListener('prototype-episode',e=>{if(e.detail.active&&!document.body.classList.contains('cinema-running'))update({index:e.detail.index,time:150+Math.min(1,e.detail.progress/2.5)*24});});
 document.addEventListener('story-home',()=>{host.style.display='none';closing.style.display='none';});
-const gltf=await loader.loadAsync('./assets/blender-village-v046.glb?v=46');village=gltf.scene;scene.add(village);if(cameraTest){extendVillage(village,THREE);addVillageLife(village,THREE,authoredTour);village.traverse(o=>{if(/Original.unchanged|Forecourt/.test(o.name))o.visible=false;});}size();
+// Compressed transport preserves the original geometry and halves cold-download size.
+let gltf;
+if('DecompressionStream' in window){
+ const response=await fetch('./assets/blender-village-v046.glb.gz',{signal:AbortSignal.timeout(90000)});
+ if(!response.ok)throw Error('마을 다운로드 실패: '+response.status);
+ const buffer=await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+ gltf=await loader.parseAsync(buffer,'./assets/');
+}else gltf=await loader.loadAsync('./assets/blender-village-v046.glb?v=46');
+village=gltf.scene;scene.add(village);if(cameraTest){extendVillage(village,THREE);addVillageLife(village,THREE,authoredTour);village.traverse(o=>{if(/Original.unchanged|Forecourt/.test(o.name))o.visible=false;});}size();
 stageClearance=scenicClearance(village,THREE);
 // Formation animation and closing camera are authored in the v043 Blender file.
 let endingBridge=null,endingPath=null;
