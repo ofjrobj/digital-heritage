@@ -1,0 +1,35 @@
+{
+  "source": "Gongju_Guesthouse_Ending_v046.blend",
+  "scene": "Spatial atlas documentation",
+  "views": [
+    [
+      "guesthouse-plan",
+      70
+    ],
+    [
+      "spring",
+      80
+    ],
+    [
+      "summer",
+      90
+    ],
+    [
+      "autumn",
+      97
+    ],
+    [
+      "winter",
+      105
+    ],
+    [
+      "present-plan",
+      130
+    ],
+    [
+      "present-view",
+      130
+    ]
+  ],
+  "note": "Seasonal views share the historic spatial arrangement. Present setting is a photo-informed approximation."
+}

@@ -1,0 +1,30 @@
+{
+  "status": "in_progress",
+  "characters": [
+    "merchant",
+    "farmer",
+    "cook",
+    "residents",
+    "woodcutter"
+  ],
+  "sources": [
+    "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261008_140940_77ea1900-c4c5-47a8-973b-6e3c20679f13.png",
+    "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261008_141141_bc12691e-aa13-4cbb-99b1-7a639fae83dc.png",
+    "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261008_141146_9cc20ff6-c811-4097-be64-24920b33c4f5.png",
+    "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261008_141151_4e1a165a-7733-435b-b1bb-a9d7e3baea47.png",
+    "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261008_141155_b24b486c-ea62-49c6-bbc8-4a5302ed9aab.png"
+  ],
+  "basis": "Blender v052 dialogue frames, user genre-painting reference",
+  "dialogue": "static, no lip movement",
+  "route_test": {
+    "job": "b26dadbc-fe0e-4bce-b206-eba700d2bd83",
+    "accepted": false,
+    "reason": "Original low-poly appearance retained; not appropriate ink style"
+  },
+  "remaining": [
+    "motion style conversion",
+    "mountain introduction continuity",
+    "all Story motion clips including ending",
+    "full browser validation"
+  ]
+}

@@ -1,0 +1,580 @@
+<!--
+출처: 사용자 제공 참고 이미지 2장 기반의 독자 제작 시안.
+외부 라이브러리/이미지/OBJ 파일 없이 동작합니다.
+-->
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Two Stone Lions</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=DM+Mono&family=Noto+Serif+KR:wght@400;500;600&family=Playfair+Display:wght@400;600&display=swap");
+
+    :root {
+      --ink: #272a2b;
+      --line: rgba(35, 40, 42, .14);
+      --blue: #0878d1;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Noto Serif KR", serif;
+      background: #e9ebeb;
+    }
+
+    .archive {
+      min-height: 100vh;
+      padding: 18px;
+      background: radial-gradient(circle at 50% 15%, #fff 0, #f0f1f1 55%, #e2e4e4 100%);
+    }
+
+    .stage {
+      position: relative;
+      height: calc(100vh - 36px);
+      min-height: 620px;
+      overflow: hidden;
+      border: 1px solid #d2d4d4;
+      box-shadow: inset 0 0 70px rgba(70, 80, 80, .08);
+    }
+
+    nav {
+      position: relative;
+      z-index: 5;
+      height: 68px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    nav a {
+      padding: 0 20px;
+      border-right: 1px solid #aaa;
+      color: #505456;
+      text-decoration: none;
+      font: 15px "Playfair Display", serif;
+    }
+
+    nav a:last-child { border: 0; }
+
+    .title {
+      position: absolute;
+      z-index: 5;
+      top: 100px;
+      left: 4.7%;
+      width: 170px;
+    }
+
+    .title h1 {
+      margin: 0 0 10px;
+      font: 600 28px/1.05 "Playfair Display", serif;
+    }
+
+    .title small {
+      color: #888;
+      font: 10px "DM Mono", monospace;
+      letter-spacing: 1px;
+    }
+
+    .title p {
+      color: #666;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .grid {
+      position: absolute;
+      inset: 50px 13% 35px;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg,
+          transparent 16.5%, var(--line) 16.6%, transparent 16.8%,
+          transparent 33.1%, var(--line) 33.2%, transparent 33.4%,
+          transparent 50%, var(--line) 50.1%, transparent 50.3%,
+          transparent 66.5%, var(--line) 66.6%, transparent 66.8%,
+          transparent 83.1%, var(--line) 83.2%, transparent 83.4%),
+        linear-gradient(transparent 47%, var(--line) 47.1%, transparent 47.3%);
+    }
+
+    .floor {
+      position: absolute;
+      right: 13%;
+      bottom: 55px;
+      left: 13%;
+      height: 115px;
+      border-top: 1px solid var(--line);
+      transform: perspective(450px) rotateX(65deg);
+      background: repeating-linear-gradient(
+        90deg,
+        transparent 0 72px,
+        rgba(55, 65, 65, .08) 73px 74px
+      );
+    }
+
+    .side {
+      position: absolute;
+      z-index: 6;
+      top: 60px;
+      bottom: 39px;
+      display: grid;
+      width: 31px;
+      place-items: center;
+      background: rgba(180, 184, 184, .25);
+      color: #929697;
+      font: 10px "DM Mono", monospace;
+      letter-spacing: 1.5px;
+      writing-mode: vertical-rl;
+    }
+
+    .side.left { left: 13px; }
+    .side.right { right: 13px; transform: rotate(180deg); }
+
+    .model-area {
+      position: absolute;
+      bottom: 35px;
+      width: 40%;
+      height: 76%;
+      perspective: 1000px;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    .model-area:active { cursor: grabbing; }
+    .female { left: 13.5%; }
+    .male { right: 13.5%; }
+
+    .model-label {
+      position: absolute;
+      top: 30px;
+      color: #555;
+      font: 10px "DM Mono", monospace;
+      letter-spacing: 1px;
+    }
+
+    .female .model-label { right: 24%; }
+    .male .model-label { left: 24%; }
+
+    .model-label::after {
+      display: block;
+      width: 44px;
+      height: 1px;
+      margin-top: 5px;
+      background: #989a9b;
+      content: "";
+    }
+
+    .statue {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 300px;
+      height: 405px;
+      transform: translateX(-50%) rotateY(var(--rotation, -16deg));
+      transform-style: preserve-3d;
+      transition: transform .15s ease-out;
+      filter: drop-shadow(0 27px 14px rgba(34, 35, 33, .24));
+    }
+
+    .male .statue {
+      --rotation: 16deg;
+    }
+
+    .female .statue {
+      transform: translateX(-50%) rotateY(var(--rotation, -16deg)) scaleX(-1);
+    }
+
+    .piece {
+      position: absolute;
+      border: 1px solid rgba(60, 53, 44, .3);
+      background: radial-gradient(circle at 35% 25%, #dfd6c7 0, #a89d8e 45%, #665f56 100%);
+      box-shadow:
+        inset 12px 0 20px rgba(255, 255, 255, .16),
+        inset -14px -12px 20px rgba(55, 48, 42, .25);
+    }
+
+    .body {
+      bottom: 10px;
+      left: 20px;
+      width: 250px;
+      height: 190px;
+      border-radius: 48% 52% 30% 30% / 60% 61% 36% 36%;
+      transform: rotate(-5deg);
+    }
+
+    .head {
+      z-index: 4;
+      top: 50px;
+      left: 105px;
+      width: 150px;
+      height: 170px;
+      border-radius: 48%;
+    }
+
+    .mane {
+      z-index: 3;
+      top: 24px;
+      left: 80px;
+      width: 200px;
+      height: 210px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 35%,
+          #d4c8b7 0 4%, #817466 5% 9%, #d0c2b0 10% 14%,
+          #786d60 15% 20%, #c1b19d 21% 27%, #70665a 28% 34%,
+          #baaa97 35% 42%, #685f55 43% 50%, #b8a894 51% 100%);
+    }
+
+    .paw {
+      z-index: 5;
+      bottom: 0;
+      left: 142px;
+      width: 82px;
+      height: 102px;
+      border-radius: 45% 43% 22% 25%;
+    }
+
+    .snout {
+      position: absolute;
+      z-index: 6;
+      top: 117px;
+      left: 162px;
+      width: 70px;
+      height: 46px;
+      border: 1px solid #655b50;
+      border-radius: 40% 48%;
+      background: #8a7e6f;
+    }
+
+    .eye {
+      position: absolute;
+      z-index: 7;
+      top: 104px;
+      left: 185px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #2f2a24;
+      box-shadow: 0 0 0 5px rgba(225, 217, 200, .25);
+    }
+
+    .hotspot {
+      position: absolute;
+      z-index: 20;
+      width: 43px;
+      height: 43px;
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, .9);
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff 0 4px, rgba(255,255,255,.22) 5px 9px, transparent 10px);
+      box-shadow: 0 0 0 1px rgba(40, 40, 40, .4), 0 0 0 7px rgba(255, 255, 255, .15);
+      cursor: pointer;
+    }
+
+    .hotspot:hover {
+      transform: scale(1.14);
+      background: radial-gradient(circle, #fff 0 5px, rgba(8, 120, 209, .55) 6px 12px, transparent 13px);
+    }
+
+    .hotspot.crown { top: 91px; left: 152px; }
+    .hotspot.shoulder { top: 210px; left: 64px; }
+    .hotspot.pawspot { top: 310px; left: 165px; }
+
+    .male .hotspot.crown { left: 108px; }
+    .male .hotspot.shoulder { left: 215px; }
+
+    .hint {
+      position: absolute;
+      z-index: 5;
+      bottom: 110px;
+      left: 50%;
+      color: #74797a;
+      text-align: center;
+      font: 10px/1.8 "DM Mono", monospace;
+      letter-spacing: 1px;
+      transform: translateX(-50%);
+    }
+
+    .hint-circle {
+      display: grid;
+      width: 82px;
+      height: 82px;
+      margin: auto auto 9px;
+      border: 1px solid #adb1b2;
+      border-radius: 50%;
+      place-items: center;
+      color: #555;
+      font: 30px Arial;
+    }
+
+    .overlay {
+      position: absolute;
+      z-index: 50;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      background: rgba(220, 225, 225, .25);
+      transition: opacity .35s;
+    }
+
+    .overlay.open {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    .panel {
+      position: absolute;
+      top: 50%;
+      right: 12%;
+      width: 315px;
+      min-height: 365px;
+      padding: 24px 26px;
+      border-radius: 10px;
+      background: rgba(250, 251, 250, .93);
+      box-shadow: 0 20px 65px rgba(43, 48, 49, .22);
+      transform: translateY(-45%) translateX(140%);
+      transition: transform .45s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .overlay.open .panel {
+      transform: translateY(-45%) translateX(0);
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      border: 0;
+      background: transparent;
+      color: #777;
+      font-size: 23px;
+      cursor: pointer;
+    }
+
+    .counter {
+      color: #666;
+      font: 10px "DM Mono", monospace;
+      letter-spacing: 1.5px;
+    }
+
+    .panel h2 {
+      margin: 12px 0 4px;
+      font-size: 27px;
+      line-height: 1.1;
+    }
+
+    .panel h2 span {
+      display: block;
+      margin-top: 5px;
+      font: 15px "Playfair Display", serif;
+    }
+
+    .panel p {
+      padding-bottom: 14px;
+      border-bottom: 1px solid #d8dbda;
+      color: #666;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .stats {
+      color: #777;
+      font: 11px/1.8 "DM Mono", monospace;
+    }
+
+    .stats div {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .thumbs {
+      display: flex;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    .thumb {
+      width: 63px;
+      height: 62px;
+      background: radial-gradient(circle at 40% 30%, #ddd1bf 0 11%, #796d60 12% 18%, #b8aa96 19% 35%, #706559 36% 100%);
+    }
+
+    @media (max-width: 850px) {
+      .side, .title { display: none; }
+      .grid, .floor { right: 4%; left: 4%; }
+      .model-area { width: 48%; }
+      .female { left: 1%; }
+      .male { right: 1%; }
+      .statue { scale: .76; }
+      .panel { right: 6%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="archive">
+    <section class="stage">
+      <nav>
+        <a href="#story">Story</a>
+        <a href="#index">Index</a>
+      </nav>
+
+      <section class="title">
+        <h1>Two Stone<br>Lions</h1>
+        <small>DIGITAL HERITAGE ARCHIVE</small>
+        <p>시간을 넘어 이어지는<br>기억의 조각들</p>
+      </section>
+
+      <aside class="side left">3D DATA ANALYZE</aside>
+      <aside class="side right">DIGITAL ARCHIVE</aside>
+
+      <div class="grid"></div>
+      <div class="floor"></div>
+
+      <section class="model-area female" data-base="-16">
+        <div class="model-label">Female</div>
+
+        <div class="statue">
+          <div class="piece body"></div>
+          <div class="piece mane"></div>
+          <div class="piece head"></div>
+          <div class="piece paw"></div>
+          <div class="snout"></div>
+          <div class="eye"></div>
+
+          <button class="hotspot crown"
+            data-index="01 / 04"
+            data-title="갈기"
+            data-en="Mane"
+            data-desc="풍성하게 흐르는 곡선의 갈기는 생동감 있는 조형미를 보여주며, 석재의 조각 기법이 잘 드러나는 부분입니다."></button>
+
+          <button class="hotspot shoulder"
+            data-index="02 / 04"
+            data-title="어깨 문양"
+            data-en="Shoulder Pattern"
+            data-desc="표면의 반복 문양은 사자를 보호하는 상징성과 정교한 장식성을 함께 보여줍니다."></button>
+
+          <button class="hotspot pawspot"
+            data-index="03 / 04"
+            data-title="앞발"
+            data-en="Paw"
+            data-desc="안정적으로 땅을 짚은 앞발은 조각상 전체의 균형을 완성합니다."></button>
+        </div>
+      </section>
+
+      <div class="hint">
+        <div class="hint-circle">+</div>
+        DRAG TO ROTATE<br />
+        360° VIEW
+      </div>
+
+      <section class="model-area male" data-base="16">
+        <div class="model-label">Male</div>
+
+        <div class="statue">
+          <div class="piece body"></div>
+          <div class="piece mane"></div>
+          <div class="piece head"></div>
+          <div class="piece paw"></div>
+          <div class="snout"></div>
+          <div class="eye"></div>
+
+          <button class="hotspot crown"
+            data-index="01 / 04"
+            data-title="갈기"
+            data-en="Mane"
+            data-desc="층층이 겹친 곡선 장식은 사자의 위엄과 섬세한 조각 기법을 보여줍니다."></button>
+
+          <button class="hotspot shoulder"
+            data-index="02 / 04"
+            data-title="어깨 문양"
+            data-en="Shoulder Pattern"
+            data-desc="사자 몸체를 따라 흐르는 장식 문양을 가까이에서 살펴볼 수 있습니다."></button>
+        </div>
+      </section>
+
+      <div class="overlay" id="overlay">
+        <article class="panel">
+          <button class="close" aria-label="닫기">×</button>
+          <div class="counter">01 / 04</div>
+          <h2 id="detailTitle">갈기<span id="detailEnglish">Mane</span></h2>
+          <p id="detailDescription"></p>
+
+          <div class="stats">
+            <div><span>길이 (Length)</span><span>28.4 cm</span></div>
+            <div><span>폭 (Width)</span><span>12.7 cm</span></div>
+            <div><span>개수 (Amount)</span><span>약 18개</span></div>
+          </div>
+
+          <div class="thumbs">
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+            <div class="thumb"></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.querySelectorAll(".model-area").forEach((area) => {
+      const statue = area.querySelector(".statue");
+      let dragging = false;
+      let startX = 0;
+      let startAngle = Number(area.dataset.base);
+      let angle = startAngle;
+
+      area.addEventListener("pointerdown", (event) => {
+        if (event.target.closest(".hotspot")) return;
+
+        dragging = true;
+        startX = event.clientX;
+        startAngle = angle;
+        area.setPointerCapture(event.pointerId);
+      });
+
+      area.addEventListener("pointermove", (event) => {
+        if (!dragging) return;
+
+        angle = startAngle + (event.clientX - startX) * 0.55;
+        statue.style.setProperty("--rotation", `${angle}deg`);
+      });
+
+      area.addEventListener("pointerup", () => {
+        dragging = false;
+      });
+
+      area.addEventListener("pointercancel", () => {
+        dragging = false;
+      });
+    });
+
+    const overlay = document.querySelector("#overlay");
+    const counter = document.querySelector(".counter");
+    const title = document.querySelector("#detailTitle");
+    const english = document.querySelector("#detailEnglish");
+    const description = document.querySelector("#detailDescription");
+
+    document.querySelectorAll(".hotspot").forEach((hotspot) => {
+      hotspot.addEventListener("click", () => {
+        counter.textContent = hotspot.dataset.index;
+        title.childNodes[0].nodeValue = hotspot.dataset.title;
+        english.textContent = hotspot.dataset.en;
+        description.textContent = hotspot.dataset.desc;
+        overlay.classList.add("open");
+      });
+    });
+
+    document.querySelector(".close").addEventListener("click", () => {
+      overlay.classList.remove("open");
+    });
+
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) overlay.classList.remove("open");
+    });
+  </script>
+</body>
+</html>
