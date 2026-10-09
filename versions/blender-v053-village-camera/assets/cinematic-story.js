@@ -8,7 +8,7 @@ const cameraTest=document.body.dataset.cameraTest==='village';
 const fullStory=document.body.dataset.fullStory==='true';
 const dialogueSeconds=index=>Math.max(10,dialogueCopy[index].testimony.length/5);
 if(cameraTest){
- shot('landscape-expand',3);shot('travel',5,{stop:{route:0}});
+ shot('landscape-expand',12);shot('travel',8,{stop:{route:0}});
  for(let index=0;index<5;index++){if(index)shot('transfer',8,{from:index-1,to:index});shot('dialogue',dialogueSeconds(index),{stop:{route:index}});}
  shot('transfer',8,{from:4,to:5});shot('settle',3);shot('seasons',60);shot('fade',3);shot('archive',1);
 }else{
@@ -46,7 +46,7 @@ let drag=null,autoRewinding=false;
 const blocked=()=>document.body.classList.contains('archive-active');
 const isControl=target=>target.closest('button,a,input,select,textarea,nav,dialog,[role="dialog"]:not(#experienceChoice)');
 function beginJourney(){if(document.body.classList.contains('choosing-experience'))document.querySelector('[data-experience="desktop"]').click();if(!active){active=true;elapsed=dragTarget=0;previous=null;document.body.classList.add('cinema-running');seek.hidden=false;stop.hidden=false;emit('story-restart');}running=false;play.textContent='이어서 재생';}
-function advance(amount){if(active&&['dialogue','settle','seasons','fade'].includes(currentShot().kind))return;autoRewinding=amount<0;amount*=amount<0?.5:1;beginJourney();// Bound pending input so repeated wheel events cannot queue seconds of motion.
+function advance(amount){if(active&&['landscape-expand','dialogue','settle','seasons','fade'].includes(currentShot().kind))return;autoRewinding=amount<0;amount*=amount<0?.5:1;beginJourney();if(currentShot().kind==='landscape-expand')return;// Bound pending input so repeated wheel events cannot queue seconds of motion.
  const base=Math.sign(amount)!==Math.sign(dragTarget-elapsed)?elapsed:dragTarget;
  dragTarget=Math.max(0,Math.min(duration,Math.max(elapsed-.75,Math.min(elapsed+1.5,base+amount))));}
 window.addEventListener('pointerdown',e=>{if(blocked()||isControl(e.target)||e.button!==0)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,axis:null};document.documentElement.setPointerCapture(e.pointerId);e.preventDefault();e.stopImmediatePropagation();},{capture:true});
@@ -57,7 +57,7 @@ window.addEventListener('wheel',e=>{if(blocked()||isControl(e.target))return;e.p
 window.addEventListener('keydown',e=>{if(blocked()||isControl(e.target))return;if(['ArrowDown','ArrowRight','ArrowUp','ArrowLeft'].includes(e.key)){e.preventDefault();advance(['ArrowDown','ArrowRight'].includes(e.key)?4:-4);}});
 function renderStory(){
  const q=shots.find(s=>elapsed<s.end)||shots.at(-1),u=Math.min(1,(elapsed-q.start)/(q.end-q.start)),t=elapsed-q.start;const changed=previous!==q;previous=q;emit('higgsfield-frame',{kind:q.kind,index:q.stop?.route??-1,time:t,progress:u,elapsed});
- dragHint.style.visibility=['dialogue','settle','seasons','fade','archive'].includes(q.kind)?'hidden':'visible';
+ dragHint.style.visibility=['landscape-expand','dialogue','settle','seasons','fade','archive'].includes(q.kind)?'hidden':'visible';
  if(q.kind==='dialogue'){running=false;dragTarget=elapsed;}else stopCharacterVoice();
  chapterIndex.querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-current',String(i===(elapsed<13?0:elapsed<36?1:elapsed<shots.find(s=>s.kind==='settle')?.start?2:q.kind==='archive'?4:3))));testFade.style.opacity='0';emit('relief-landscape-frame',{progress:1});if(cameraTest&&!fullStory)control.querySelector('select').value=String(shots.indexOf(q));document.body.dataset.storyShot=q.kind;panel.hidden=true;emit('cinema-closing',{visible:false,book:false});
  if(q.kind==='archive'){running=false;emit('archive-open');return;}
@@ -67,7 +67,7 @@ function renderStory(){
   emit('cinema-lion-frame',{kind,time:kind==='scan'?(q.kind==='female-scan'?u*131.9:132+u*131.9):t,progress:u,...q.stop});
  }else if(['relief-landscape','landscape-expand'].includes(q.kind)){
  if(changed){if(q.kind==='relief-landscape'){emit('cinema-lion-frame',{kind:'relief-trace',time:7,progress:1});emit('capture-relief-lines');}emit('stage-navigate','terrain');emit('ink-landscape-frame',{index:0,progress:1});}
- emit('blender-route-frame',{index:0,time:0,opacity:1});emit('blender-entry-frame',{progress:(elapsed-entryStart)/(entryEnd-entryStart)});if(q.kind==='relief-landscape')emit('relief-landscape-frame',{progress:u});
+ emit('blender-entry-frame',{progress:u});if(q.kind==='relief-landscape')emit('relief-landscape-frame',{progress:u});
  }else if(q.kind==='transfer'){
  if(changed){emit('stage-navigate','terrain');emit('ink-landscape-frame',{index:0,progress:1});}
  emit('blender-transfer-frame',{from:q.from,to:q.to,progress:u});if(q.to===5){testFade.style.background='#eef0ef';testFade.style.opacity=String(Math.max(0,(u-.94)/.06));}
@@ -75,7 +75,7 @@ function renderStory(){
   if(changed){emit('stage-navigate','terrain');if(q.stop)emit('capture-story-motif',q.stop);}
   const index=q.stop.route;
   if(q.kind==='motif'){emit('ink-landscape-frame',{index,progress:u*.235});emit('blender-route-frame',{index,time:0,opacity:u<.8?0:(u-.8)/.2});}
-  else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1,dialogue:q.kind==='dialogue'});if(cameraTest&&q.kind==='travel')emit('blender-entry-frame',{progress:(elapsed-entryStart)/(entryEnd-entryStart)});if(q.kind==='dialogue'){panel.hidden=false;const copy=dialogueCopy[index];const names=['장사꾼','농민','찬모','주민 삼총사','나무꾼'];setCharacterVoice(index);const content='<h2>'+names[index]+'</h2><p>'+copy.testimony+'</p>';if(panel.innerHTML!==content)panel.innerHTML=content;}}
+  else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1,dialogue:q.kind==='dialogue'});if(q.kind==='dialogue'){panel.hidden=false;const copy=dialogueCopy[index];const names=['장사꾼','농민','찬모','주민 삼총사','나무꾼'];setCharacterVoice(index);const content='<h2>'+names[index]+'</h2><p>'+copy.testimony+'</p>';if(panel.innerHTML!==content)panel.innerHTML=content;}}
  }else{
   if(changed){emit('stage-navigate','memory');emit('ink-landscape-frame',{index:0,progress:1});}
   const source=q.kind==='guesthouse'?u*70:q.kind==='settle'?70:q.kind==='seasons'?70+u*70:140;
@@ -89,6 +89,7 @@ function renderStory(){
 }
 function tick(now){requestAnimationFrame(tick);const dt=last?Math.min(.1,(now-last)/1000):0;last=now;if(!active||blocked()||document.hidden||(elapsed>=shots.find(s=>s.kind==='dialogue').end&&document.body.dataset.spatialReady!=='true'))return;
 const q=currentShot();
+if(q.kind==='landscape-expand'){if(document.body.dataset.spatialReady!=='true')return;elapsed=Math.min(q.end,elapsed+dt);dragTarget=elapsed;running=false;seek.value=elapsed;renderStory();return;}
 if(['settle','seasons','fade'].includes(q.kind)){elapsed=Math.min(q.end,elapsed+dt);dragTarget=elapsed;seek.value=elapsed;renderStory();return;}
 if(q.kind==='dialogue'){
  emit('village-preload');

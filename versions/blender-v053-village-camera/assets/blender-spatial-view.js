@@ -17,6 +17,7 @@ const floorRay=new THREE.Raycaster();
 function floorHeight(x,z){floorRay.set(new THREE.Vector3(x,60,z),new THREE.Vector3(0,-1,0));return floorRay.intersectObjects(endingGround,false).find(hit=>hit.object.visible&&(Array.isArray(hit.object.material)?hit.object.material:[hit.object.material]).every(m=>(m.clippingPlanes??[]).every(plane=>plane.distanceToPoint(hit.point)>=0)))?.point.y??0;}let village,ending,route=0,time=0,mode='route',lastEvent=null;
 const [bakedCamera,bakedPaths]=await Promise.all(['camera-precomputed.json','paths-precomputed.json'].map(n=>fetch('./assets/'+n).then(r=>{if(!r.ok)throw Error(n);return r.json();})));
 const nativeCamera=await fetch('./assets/camera-v053.json').then(r=>r.json());
+const mountainEntry=await fetch('./assets/mountain-entry.json?v=1').then(r=>r.json());
 const routes=await fetch('./assets/blender-routes-v048.json').then(r=>r.json());
 const css=document.createElement('style');css.textContent=`body[data-stage=terrain] #terrain,body[data-stage=terrain] .terrain-stage{background:transparent!important}body[data-stage=terrain] #terrain svg,#villageCanvas,#episodeFilm,#villageInkBackdrop,#terrainTransitionFilm{display:none!important}body[data-stage=village] #village,body[data-stage=overview] #village,body[data-stage=memory] #memory{background:transparent!important;z-index:3}body[data-stage=terrain] #terrain{z-index:3}body[data-stage=village] .episode-panel{left:3vw!important;right:auto!important;top:auto!important;bottom:7vh!important;width:28vw!important;max-width:350px!important;max-height:55vh;overflow:auto;box-sizing:border-box;padding:20px!important}body[data-stage=village] .episode-panel h2{font-size:21px!important}body[data-stage=village] .episode-panel p{font-size:15px!important;line-height:1.8!important}body[data-stage=memory] #endingFilm,body[data-stage=memory] #endingPlay,body[data-stage=memory] #restartStory{display:none!important}#spatialClosing{position:fixed;inset:0;background:#090c09;color:#d4d8c9;z-index:12;display:none;align-items:center;justify-content:center;text-align:center;font-family:'Gowun Batang',serif}#spatialClosing p{line-height:2;font-size:clamp(20px,3vw,34px)}#spatialClosing a{display:inline-block;color:inherit;border-bottom:1px solid #8e9b87;padding:12px;text-decoration:none;font-size:16px}@media(max-width:700px){body[data-stage=village] .episode-panel{left:5vw!important;bottom:5vh!important;width:90vw!important;max-width:none!important;max-height:25vh!important;padding:12px!important}body[data-stage=village] .episode-panel h2{font-size:16px!important}body[data-stage=village] .episode-panel p{font-size:12px!important;margin:6px 0!important}}`;document.head.append(css);
 const closing=document.createElement('div');closing.id='spatialClosing';closing.innerHTML='<div><p>사람은 지나가고, 풍경은 달라져도<br>돌에 새겨진 시간은 남아 있습니다.</p><a href="./chapters.html">서책에서 이야기를 이어 읽기 →</a></div>';document.body.append(closing);
@@ -44,7 +45,7 @@ function sampleRoute(index,seconds){if(cameraTest){nativePose(index,seconds/150,
  if(storySeconds>174){const retreat=easeMotion((storySeconds-174)/30);const axis=camera.position.clone().sub(target);axis.y=0;axis.normalize();camera.position.addScaledVector(axis,retreat*24);camera.position.y+=retreat*10;}
  camera.lookAt(target);}
 let pendingTransfer=null;document.addEventListener('blender-transfer-frame',e=>{pendingTransfer=e.detail;});
-function update(detail){clearanceStrength=0;pendingTransfer=null;lastEvent=detail;if(!village)return;route=detail.index??route;time=detail.time??time;mode='route';for(const person of endingWalkers)person.visible=false;if(endingCat)endingCat.visible=false;for(const tree of passageTrees)tree.visible=false;scene.background.set('#b6bcb5');sun.color.set(0xfff1dc);host.style.filter='none';village.visible=true;if(ending)ending.visible=false;host.style.display='block';host.style.opacity=String(detail.opacity??1);if(cameraTest&&time<150){applyTransfer(buildTransfer(-1,0),time/150);}else sampleRoute(route,time);if(detail.dialogue&&!cameraTest){const forward=new THREE.Vector3();camera.getWorldDirection(forward);const distance=[.75,.35,.75,.45,.35][route]??.5;camera.position.addScaledVector(forward,distance);camera.position.y+=route===1?.25:route===4?.12:0;if(route===3)camera.position.add(new THREE.Vector3(.55,0,0).applyQuaternion(camera.quaternion));camera.updateMatrixWorld(true);}transitionHaze((1-THREE.MathUtils.smoothstep(time,0,22))*.75+THREE.MathUtils.smoothstep(time,192,204)*.45,time);host.dataset.route=String(route);host.dataset.time=time.toFixed(3);closing.style.display='none';render();}
+function update(detail){clearanceStrength=0;pendingTransfer=null;lastEvent=detail;if(!village)return;route=detail.index??route;time=detail.time??time;mode='route';for(const person of endingWalkers)person.visible=false;if(endingCat)endingCat.visible=false;for(const tree of passageTrees)tree.visible=false;scene.background.set('#b6bcb5');sun.color.set(0xfff1dc);host.style.filter='none';village.visible=true;if(ending)ending.visible=false;host.style.display='block';host.style.opacity=String(detail.opacity??1);sampleRoute(route,time);if(detail.dialogue&&!cameraTest){const forward=new THREE.Vector3();camera.getWorldDirection(forward);const distance=[.75,.35,.75,.45,.35][route]??.5;camera.position.addScaledVector(forward,distance);camera.position.y+=route===1?.25:route===4?.12:0;if(route===3)camera.position.add(new THREE.Vector3(.55,0,0).applyQuaternion(camera.quaternion));camera.updateMatrixWorld(true);}transitionHaze(cameraTest&&route===0?0:(1-THREE.MathUtils.smoothstep(time,0,22))*.75+THREE.MathUtils.smoothstep(time,192,204)*.45,time);host.dataset.route=String(route);host.dataset.time=time.toFixed(3);closing.style.display='none';render();}
 document.addEventListener('blender-route-frame',e=>update(e.detail));
 document.addEventListener('prototype-episode',e=>{if(e.detail.active&&!document.body.classList.contains('cinema-running'))update({index:e.detail.index,time:150+Math.min(1,e.detail.progress/2.5)*24});});
 document.addEventListener('story-home',()=>{host.style.display='none';closing.style.display='none';});
@@ -199,17 +200,32 @@ function nativePose(index,progress,dialogue=false){
  camera.quaternion.copy(conversion).multiply(q1.slerp(q2,t));
  camera.fov=dialogue?46:54;camera.updateProjectionMatrix();
 }
+// A distant, mountain-framed approach ends at the exact road-camera pose.
+const entryLandscape=new THREE.Group();entryLandscape.name='Mountain entry framing';scene.add(entryLandscape);
+const surround=new THREE.Mesh(new THREE.CircleGeometry(440,64),new THREE.MeshStandardMaterial({color:0xb7b7a0,roughness:1}));surround.rotation.x=-Math.PI/2;surround.position.y=-3.1;entryLandscape.add(surround);
+const entryMountains=[
+ {x:-157,z:124,rx:63,rz:65,h:52,color:0x7d8d82,seed:.3},
+ {x:25,z:136,rx:60,rz:65,h:38,color:0x8d9b8e,seed:1.4},
+ {x:-138,z:216,rx:65,rz:46,h:32,color:0x829083,seed:2.2},
+ {x:88,z:60,rx:48,rz:76,h:34,color:0x9aa698,seed:3.1}
+];
+for(const m of entryMountains){
+ const geo=new THREE.PlaneGeometry(m.rx*2,m.rz*2,38,34);geo.rotateX(-Math.PI/2);
+ const pos=geo.attributes.position;
+ for(let i=0;i<pos.count;i++){const x=pos.getX(i)/m.rx,z=pos.getZ(i)/m.rz,r=Math.min(1,Math.hypot(x,z));const envelope=Math.pow(Math.max(0,1-r*r),1.65);const detail=1+.16*Math.sin(x*5.7+m.seed)*Math.cos(z*4.8)+.065*Math.sin(x*13+z*7+m.seed);pos.setY(i,m.h*envelope*detail-3);}
+ geo.computeVertexNormals();const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:m.color,roughness:1}));mesh.position.set(m.x,0,m.z);entryLandscape.add(mesh);
+}
+function resetEntryAtmosphere(){entryLandscape.visible=false;scene.fog.near=90;scene.fog.far=230;}
 document.addEventListener('blender-entry-frame',e=>{
- if(!village)return;const p=THREE.MathUtils.clamp(e.detail.progress,0,1);
- mode='route';clearanceStrength=0;village.visible=true;if(ending)ending.visible=false;
- if(p<.375){
-  const u=easeMotion(p/.375),end=cv(nativeCamera.tracks[0][0].p);
-  camera.position.copy(new THREE.Vector3(105,65,150)).lerp(end,u);
-  const target=new THREE.Vector3(0,3,0).lerp(cv(nativeCamera.tracks[0][0].target),u);
-  camera.lookAt(target);camera.fov=54;camera.updateProjectionMatrix();
- }else nativePose(0,(p-.375)/.625);
- host.style.display='block';host.style.opacity='1';transitionHaze(0,0);render();
+ if(!village)return;const p=THREE.MathUtils.clamp(e.detail.progress,0,1),u=easeMotion(p);
+ mode='route';clearanceStrength=0;entryLandscape.visible=true;village.visible=true;if(ending)ending.visible=false;
+ const frame=p*(mountainEntry.frames.length-1),i=Math.min(mountainEntry.frames.length-2,Math.floor(frame)),f=frame-i,a=mountainEntry.frames[i],b=mountainEntry.frames[i+1];camera.position.fromArray(a.position).lerp(new THREE.Vector3(...b.position),f);camera.lookAt(new THREE.Vector3(...a.target).lerp(new THREE.Vector3(...b.target),f));camera.fov=54;camera.updateProjectionMatrix();
+ const clear=THREE.MathUtils.smoothstep(p,.12,.85);scene.fog.near=THREE.MathUtils.lerp(145,145,clear);scene.fog.far=THREE.MathUtils.lerp(510,440,clear);
+ host.style.display='block';host.style.opacity='1';transitionHaze((1-clear)*.32,p*12);scene.fog.near=145;scene.fog.far=THREE.MathUtils.lerp(510,440,clear);render();
 });
+document.addEventListener('blender-route-frame',resetEntryAtmosphere);
+document.addEventListener('blender-transfer-frame',resetEntryAtmosphere);
+document.addEventListener('blender-ending-frame',resetEntryAtmosphere);
 // Stone lions are revealed only in the ending, after the five village encounters.
 document.body.dataset.spatialReady='true';document.dispatchEvent(new CustomEvent('spatial-ready'));
 document.addEventListener('archive-open',()=>{host.style.display='none';});
