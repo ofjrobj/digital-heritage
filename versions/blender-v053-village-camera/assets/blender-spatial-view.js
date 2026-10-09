@@ -59,6 +59,9 @@ if('DecompressionStream' in window){
 }else gltf=await loader.loadAsync('./assets/blender-village-v046.glb?v=46');
 village=gltf.scene;scene.add(village);if(cameraTest){extendVillage(village,THREE);addVillageLife(village,THREE,authoredTour);village.traverse(o=>{if(/Original.unchanged|Forecourt/.test(o.name))o.visible=false;});}size();
 if(nativeCamera.hillsideTrail){const trail=nativeCamera.hillsideTrail,geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(trail.vertices.flatMap(v=>[v[0],v[2],-v[1]]),3));geo.setIndex(trail.faces.flatMap(f=>[f[0],f[1],f[2],f[0],f[2],f[3]]));geo.computeVertexNormals();const path=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xb8ad8b,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-1}));path.name='v053 hillside footpath';village.add(path);}
+const entranceData=await fetch('./assets/village-entrance.json?v=2').then(r=>r.json());
+const entranceGroup=new THREE.Group();entranceGroup.name='Village entrance';
+for(const part of entranceData.parts){const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(part.vertices.flatMap(v=>[v[0],v[2],-v[1]]),3));geo.setIndex(part.faces.flatMap(f=>f.slice(1,-1).flatMap((_,i)=>[f[0],f[i+1],f[i+2]])));geo.computeVertexNormals();const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:part.color,roughness:1,side:THREE.DoubleSide}));mesh.name=part.name;entranceGroup.add(mesh);}village.add(entranceGroup);
 stageClearance=scenicClearance(village,THREE);
 // Formation animation and closing camera are authored in the v043 Blender file.
 let endingBridge=null,endingPath=null;
