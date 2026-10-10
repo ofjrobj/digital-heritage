@@ -5,3 +5,16 @@ body #experienceChoice .cover-copy #experienceHeading{color:#626e64!important;te
 body #experienceChoice .cover-description,body #experienceChoice .cover-top{color:#626e64!important;text-shadow:none!important}
 body #experienceChoice .exhibition-cover:after{display:none!important}
 #inkEntryBridge{display:none!important}
+#villageOpeningCopy{position:fixed;z-index:154;left:12%;right:12%;top:45%;transform:translateY(-50%);margin:0;padding:38px 24px;text-align:center;white-space:pre-line;word-break:keep-all;font-family:'KoPub World Batang',serif;font-size:clamp(16px,1.7vw,26px);line-height:1.9;letter-spacing:.06em;color:#4f6860;background:radial-gradient(ellipse,#f7f8f1f5 20%,#f7f8f1ce 52%,#f7f8f100 74%);pointer-events:none}
+#villageOpeningCopy[hidden]{display:none}
+body #storyIndexBar{top:3vh;gap:32px;color:#60766c}
+body #storyIndexBar button{font-family:'KoPub World Batang',serif;font-size:clamp(18px,1.8vw,26px);padding:10px 16px}
+body #storyIndexBar button[aria-current=page]:before{display:none}
+body #storyIndexBar button[aria-current=page]:after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:#71877a88}
+body[data-camera-test] #cinemaDialogue{left:4%!important;right:4%!important;bottom:2.5vh!important;min-height:25vh!important;padding:22px 5.5vw 48px!important;background:rgba(248,249,243,.92)!important;border:1px solid #7b918477!important;box-shadow:none!important;color:#465f56!important}
+body[data-camera-test] #cinemaDialogue h2{font-size:clamp(18px,1.8vw,26px)!important;margin:0 0 14px!important;line-height:1.5!important}
+body[data-camera-test] #cinemaDialogue h2:after{content:'';display:inline-block;height:1.2em;width:1px;background:#71877a66;margin-left:20px;vertical-align:middle}
+body[data-camera-test] #cinemaDialogue p{font-size:clamp(16px,1.75vw,25px)!important;line-height:1.75!important;color:#465f56!important}
+body[data-camera-test] #cinemaDialogue:after{content:'';position:absolute;inset:5px;pointer-events:none;background:linear-gradient(#80998b99,#80998b99) left top/28px 1px no-repeat,linear-gradient(#80998b99,#80998b99) left top/1px 28px no-repeat,linear-gradient(#80998b99,#80998b99) right top/28px 1px no-repeat,linear-gradient(#80998b99,#80998b99) right top/1px 28px no-repeat,linear-gradient(#80998b99,#80998b99) left bottom/28px 1px no-repeat,linear-gradient(#80998b99,#80998b99) left bottom/1px 28px no-repeat,linear-gradient(#80998b99,#80998b99) right bottom/28px 1px no-repeat,linear-gradient(#80998b99,#80998b99) right bottom/1px 28px no-repeat}
+body.reference-dialogue #soundToggle{position:fixed!important;right:6%!important;bottom:4.5vh!important;z-index:170!important;color:#617b6e!important;border:0!important;font-size:14px!important;background:none!important}
+@media(max-width:600px){body[data-camera-test] #cinemaDialogue{padding:16px 22px 46px!important;min-height:0!important}body[data-camera-test] #cinemaDialogue p{font-size:15px!important}#villageOpeningCopy{left:4%;right:4%;padding:28px 12px;font-size:16px}body #storyIndexBar{gap:18px}}

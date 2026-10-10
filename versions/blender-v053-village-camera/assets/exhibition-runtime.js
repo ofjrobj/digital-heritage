@@ -24,7 +24,7 @@ document.addEventListener('archive-preload',()=>preloadArchive().then(m=>m.prepa
 document.addEventListener('archive-open',()=>{document.body.classList.add('archive-active');preloadArchive().then(m=>m.openArchive()).catch(error=>{console.error(error);document.body.classList.remove('archive-active');});});
 document.addEventListener('archive-story',()=>document.body.classList.remove('archive-active'));
 // Native Blender view; no generated media loaded.
-await import('./storyboard-opening.js?v=2');
+await import('./storyboard-opening.js?v=3');
 await import('./cinematic-story.js?v=storyboard-camera-2');
 document.addEventListener('experience-selected',()=>{document.body.dataset.stage='intro';emit('exhibition-start');});
 document.querySelector('#coverIndex').onclick=()=>{document.querySelector('[data-experience="desktop"]').click();emit('archive-open');};
