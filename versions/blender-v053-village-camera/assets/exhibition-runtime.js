@@ -24,7 +24,8 @@ document.addEventListener('archive-preload',()=>preloadArchive().then(m=>m.prepa
 document.addEventListener('archive-open',()=>{document.body.classList.add('archive-active');preloadArchive().then(m=>m.openArchive()).catch(error=>{console.error(error);document.body.classList.remove('archive-active');});});
 document.addEventListener('archive-story',()=>document.body.classList.remove('archive-active'));
 // Native Blender view; no generated media loaded.
-await import('./cinematic-story.js?v=village-gate-2');
+await import('./storyboard-opening.js?v=1');
+await import('./cinematic-story.js?v=storyboard-opening-1');
 document.addEventListener('experience-selected',()=>{document.body.dataset.stage='intro';emit('exhibition-start');});
 document.querySelector('#coverIndex').onclick=()=>{document.querySelector('[data-experience="desktop"]').click();emit('archive-open');};
 // Keep first-visit cost small: no 3D village, ending model or unused videos before entry.
