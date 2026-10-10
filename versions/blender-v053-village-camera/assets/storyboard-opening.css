@@ -1,18 +1,7 @@
-/* Approved opening reference includes its title; accessible controls remain live. */
-body #experienceChoice .cover-art{display:block!important;background:#f8f9f5 url('./opening-lion.png') center/contain no-repeat!important;z-index:0;opacity:1;transform:none}
-body #experienceChoice .cover-art:after,body #experienceChoice .exhibition-cover:after{display:none!important}
-body #experienceChoice .cover-copy,body #experienceChoice .cover-top{opacity:0!important;pointer-events:none}
-body #experienceChoice .cover-actions{z-index:2;bottom:3%!important}
-body #experienceChoice .cover-actions button{opacity:0;min-width:120px;min-height:100px}
-body #experienceChoice .cover-actions button:focus-visible{opacity:1;background:#fafbf7}
-body #experienceChoice.is-entering .cover-art{opacity:0!important;transition:opacity 1.4s ease!important}
-#storyboardOpening{position:fixed;inset:0;z-index:150;background:#f8f9f5;pointer-events:none}
-#storyboardOpening[hidden]{display:none}
-#storyboardOpening img{width:100%;height:100%;object-fit:contain}
-body.storyboard-establishing #storyIndexBar{background:#f8f9f5;min-width:190px;padding:12px 25px;top:0!important}
-body.storyboard-establishing #journeyDragHint{visibility:hidden!important}
-.opening-copy{position:absolute;left:20%;right:20%;top:42%;text-align:center;white-space:pre-line;background:#fafbf5dd;padding:30px;color:#52695e;font-size:clamp(14px,1.5vw,23px);line-height:2}
-@media(prefers-reduced-motion:reduce){body #experienceChoice.is-entering .cover-art{transition-duration:.2s!important}}
-/* Cover the baked preview controls; real sound/navigation controls remain usable. */
-#storyboardOpening:after{content:'';position:absolute;left:0;right:0;bottom:0;height:8%;background:linear-gradient(transparent,#f8f9f5 35%);pointer-events:none}
-body.storyboard-establishing #soundToggle{background:#f8f9f5!important;padding:10px 16px!important;z-index:170!important}
+/* Live vector title and native Blender establishing view. */
+body #experienceChoice .cover-art{display:block!important;background:#f5f5ef!important;z-index:-1}
+body #experienceChoice .cover-copy{left:10%!important;right:10%!important;top:76%!important;max-width:none!important;text-align:center!important;transform:translateY(-50%)!important;text-shadow:none!important}
+body #experienceChoice .cover-copy #experienceHeading{color:#626e64!important;text-shadow:none!important;font-size:clamp(25px,2.6vw,42px)!important}
+body #experienceChoice .cover-description,body #experienceChoice .cover-top{color:#626e64!important;text-shadow:none!important}
+body #experienceChoice .exhibition-cover:after{display:none!important}
+#inkEntryBridge{display:none!important}

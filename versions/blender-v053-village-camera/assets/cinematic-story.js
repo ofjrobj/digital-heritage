@@ -8,7 +8,7 @@ const cameraTest=document.body.dataset.cameraTest==='village';
 const fullStory=document.body.dataset.fullStory==='true';
 const dialogueSeconds=index=>Math.max(10,dialogueCopy[index].testimony.length/5);
 if(cameraTest){
- shot('landscape-expand',20);shot('travel',8,{stop:{route:0}});
+ shot('landscape-expand',18);shot('travel',8,{stop:{route:0}});
  for(let index=0;index<5;index++){if(index)shot('transfer',8,{from:index-1,to:index});shot('dialogue',dialogueSeconds(index),{stop:{route:index}});}
  shot('transfer',8,{from:4,to:5});shot('settle',3);shot('seasons',60);shot('fade',3);shot('archive',1);
 }else{
@@ -67,7 +67,7 @@ function renderStory(){
   emit('cinema-lion-frame',{kind,time:kind==='scan'?(q.kind==='female-scan'?u*131.9:132+u*131.9):t,progress:u,...q.stop});
  }else if(['relief-landscape','landscape-expand'].includes(q.kind)){
  if(changed){if(q.kind==='relief-landscape'){emit('cinema-lion-frame',{kind:'relief-trace',time:7,progress:1});emit('capture-relief-lines');}emit('stage-navigate','terrain');emit('ink-landscape-frame',{index:0,progress:1});}
- emit('blender-entry-frame',{progress:Math.max(0,(t-8)/12)});if(q.kind==='relief-landscape')emit('relief-landscape-frame',{progress:u});
+ emit('blender-entry-frame',{progress:.12+.88*Math.max(0,(t-6)/12)});if(q.kind==='relief-landscape')emit('relief-landscape-frame',{progress:u});
  }else if(q.kind==='transfer'){
  if(changed){emit('stage-navigate','terrain');emit('ink-landscape-frame',{index:0,progress:1});}
  emit('blender-transfer-frame',{from:q.from,to:q.to,progress:u});if(q.to===5){testFade.style.background='#eef0ef';testFade.style.opacity=String(Math.max(0,(u-.94)/.06));}
