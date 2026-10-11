@@ -36,7 +36,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0 }) {
   };
   new ResizeObserver(frame).observe(element);frame();
   const loaded = loader.loadAsync(modelUrl, event => {
-    loading.textContent = event.total ? `불러오는 중 ${Math.round(event.loaded/event.total*100)}%` : '스캔 데이터를 불러오는 중…';
+    loading.textContent = event.total ? `불러오는 중 ${Math.min(100,Math.round(event.loaded/event.total*100))}%` : '스캔 데이터를 불러오는 중…';
   }).then(gltf => {
     const model=gltf.scene;
     model.rotation.y=yaw;
@@ -44,7 +44,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0 }) {
     const scale=targetSize/box.getSize(new THREE.Vector3()).x;
     model.scale.setScalar(scale);model.position.sub(center.multiplyScalar(scale));
     model.traverse(n=>{if(n.isMesh){n.material.roughness=.95;n.material.metalness=0;n.material.map && (n.material.map.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy()));}});
-    scene.add(model);ready=true;dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');
+    scene.add(model);ready=true;dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
     element.dataset.loaded='true';
   }).catch(error => {
     console.error(error);loading.textContent='모델을 불러오지 못했습니다. 새로고침해 주세요.';element.dataset.loaded='error';
