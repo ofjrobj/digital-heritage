@@ -17,7 +17,7 @@ const dialogueSeconds=index=>Math.max(10,dialogueCopy[index].testimony.length/5)
 if(cameraTest){
  shot('landscape-expand',18);shot('travel',travelSeconds(0),{stop:{route:0}});
  for(let index=0;index<5;index++){if(index)shot('transfer',travelSeconds(index),{from:index-1,to:index});shot('dialogue-in',2.4,{stop:{route:index}});shot('dialogue',dialogueSeconds(index),{stop:{route:index}});shot('dialogue-out',2.4,{stop:{route:index},from:index,to:index+1});}
- shot('transfer',travelSeconds(5),{from:4,to:5});shot('settle',2.6);shot('seasons',52);shot('fade',2.4);shot('explore',1);shot('archive',1);
+ shot('transfer',travelSeconds(5),{from:4,to:5});shot('settle',2.6);shot('seasons',72);shot('fade',4.5);shot('explore',1);shot('archive',1);
 }else{
  shot('entry',4);shot('rotate',8);shot('female-click',2);shot('female-scan',28);shot('male-transition',2);shot('male-scan',28);shot('pair',3);
  for(let i=0;i<storyStops.length;i++){const stop=storyStops[i];shot('lens',4,{stop});shot('motif',10,{stop});shot('travel',50,{stop});shot('dialogue',dialogueSeconds(stop.route),{stop});if(i<storyStops.length-1){shot('retreat',12,{stop});shot('pair',3);}}

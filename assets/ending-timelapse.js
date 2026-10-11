@@ -1,12 +1,12 @@
 // A quiet initial hold precedes attached blossoms, summer leaves and autumn leaf fall.
 const ease=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);};
 export function constructionAmount(time,kind,rank,offset=0){
- const t=(time-70)/74*52;
+ const t=(time-70)/74*72;
  if(kind==='fixed')return 1;
  if(kind==='actor')return 1-ease((t-4)/3);
- if(kind==='modern')return ease((t-45-Math.min(6,rank)*.65)/1.5);
- if(kind==='sitework')return 1-ease((t-42)/1.5);
- return 1-ease((t-(41-Math.min(6,rank)*.85)-offset)/1.25);
+ if(kind==='modern')return ease((t-43.2-Math.min(6,rank)*.18)/.32);
+ if(kind==='sitework')return 1-ease((t-42.1)/.35);
+ return 1-ease((t-(41.6-Math.min(6,rank)*.18)-offset*.3)/.28);
 }
 export function prepareTimelapse(root,THREE){
  root.updateMatrixWorld(true);const parts=[],children=[];
@@ -25,7 +25,7 @@ export function prepareTimelapse(root,THREE){
   parts.push({bounds,cut,o,d,kind,rank,offset,tree,roof:/roof.*tile|roof.*thatch|heritage.*roof/i.test(name),materials,colors:materials.map(m=>m.color?.clone()),base:o.position.clone(),rotation:o.quaternion.clone()});
  });
  return time=>{
-  const t=(time-70)/74*52,winter=ease((t-34)/3)*(1-ease((t-42)/3));
+  const t=(time-70)/74*72,winter=ease((t-34)/3)*(1-ease((t-42)/3));
   for(const p of parts){
    const a=constructionAmount(time,p.kind,p.rank,p.offset);p.o.visible=a>.001;
    if(p.d.season_effect){
@@ -45,6 +45,8 @@ export function prepareTimelapse(root,THREE){
     p.materials.forEach(m=>{m.opacity=opacity;m.depthWrite=opacity>.5;});continue;
    }
    if(['historic','sitework','modern'].includes(p.kind)){
+    p.o.position.copy(p.base);
+    if(p.kind==='historic'&&a>0&&a<1)p.o.position.y+=(1-a)*.45;
     p.cut.constant=p.bounds.min.y+(p.bounds.max.y-p.bounds.min.y)*a;
     p.materials.forEach(m=>{m.transparent=false;m.opacity=1;m.depthWrite=true;m.clippingPlanes=a<.999?[p.cut]:[];});
    }else if(p.kind==='actor')p.materials.forEach(m=>{m.transparent=a<.999;m.opacity=a;m.depthWrite=a>.5;});
