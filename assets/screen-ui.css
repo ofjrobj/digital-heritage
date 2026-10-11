@@ -1,0 +1,14 @@
+/* Screen ownership: story controls never overlay the archive. */
+body #storyIndexBar{top:16px;gap:22px;background:transparent;padding:0;border:0;border-radius:0;box-shadow:none;color:#52685f}
+body #storyIndexBar button{font-size:16px;padding:8px 7px;min-height:40px;text-shadow:0 1px 8px #f7f8f1}
+body #storyIndexBar button[aria-current=page]:after{left:7px;right:7px;background:#71877a66}
+body.archive-active #storyIndexBar{display:none!important}
+body.archive-active::after{display:none!important}
+body.archive-active #soundToggle,body.archive-active #journeyDragHint,body.archive-active #storySectionIndex,body.archive-active #villageOpeningCopy,body.archive-active #cinemaDialogue,body.archive-active #cinemaControls,body.archive-active #museumHome,body.archive-active #museumMenu{display:none!important}
+body #valueArchive .archive-header{visibility:visible;top:18px;left:5%;right:5%;height:44px;justify-content:flex-end;gap:28px}
+body #valueArchive .archive-header nav{visibility:visible;position:absolute;left:50%;transform:translateX(-50%);gap:22px}
+body #valueArchive .archive-header nav button{font-size:16px;padding:8px 7px;min-height:40px}
+body #valueArchive .archive-wordmark,body #valueArchive .archive-header>small{display:none}
+#archiveSound{position:static!important;font-size:12px!important;min-height:40px;padding:6px 0;color:#718078;background:none;border:0;cursor:pointer;white-space:nowrap}
+body #valueArchive{border:0;box-shadow:none}
+@media(max-width:600px){body #storyIndexBar{top:10px;gap:16px}body #storyIndexBar button,body #valueArchive .archive-header nav button{font-size:15px}body #valueArchive .archive-header{left:6%;right:6%;top:10px}body #valueArchive .archive-header nav{position:static;transform:none;margin-right:auto;gap:16px}#archiveSound{font-size:11px!important}}

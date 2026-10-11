@@ -1,0 +1,56 @@
+/* A stable 16:9 picture, fluid reading width, and a separate review dock. */
+#cinemaMatte{position:fixed;inset:0;background:#202721;pointer-events:none;z-index:1}
+body.choosing-experience #cinemaMatte,body.archive-active #cinemaMatte{display:none}
+body[data-cinema-frame]:not(.archive-active) :is(#blenderSpatialView,#intro,#terrain,#village,#memory,#inkEntryBridge,#storyEndFade,#spatialClosing,#dialogueMist){
+ left:var(--film-x)!important;top:var(--film-y)!important;right:auto!important;bottom:auto!important;width:var(--film-w)!important;height:var(--film-h)!important;min-height:0!important;overflow:hidden!important;
+}
+body[data-cinema-frame] #blenderSpatialView canvas{display:block;width:100%;height:100%}
+body[data-cinema-frame]:not(.archive-active)::after{inset:auto!important;left:var(--film-x)!important;top:var(--film-y)!important;width:var(--film-w);height:var(--film-h);border:0!important}
+body[data-cinema-frame]:not(.archive-active) #storyIndexBar{top:calc(var(--film-y) + 10px)!important;left:50%!important;gap:22px!important;transform:translateX(-50%)}
+body[data-cinema-frame] #storyIndexBar button{font-size:clamp(15px,calc(var(--film-unit)*1.5),20px)!important;min-height:40px}
+body[data-cinema-frame]:not(.archive-active) #cinemaDialogue{
+ left:50%!important;right:auto!important;bottom:calc(var(--review-dock) + 18px)!important;top:auto!important;transform:translateX(-50%);width:min(calc(var(--film-w) - 40px),1100px)!important;
+ min-height:0!important;height:auto!important;max-height:none!important;padding:18px 34px 12px!important;gap:8px;overflow:visible!important;
+}
+body[data-cinema-frame] #cinemaDialogue h2{font-size:clamp(16px,calc(var(--film-unit)*1.6),22px)!important;line-height:1.35!important;margin:0!important}
+body[data-cinema-frame] #cinemaDialogue p{font-size:clamp(14px,calc(var(--film-unit)*1.45),20px)!important;line-height:1.65!important;margin:0!important;overflow:visible}
+body[data-cinema-frame] #cinemaDialogue .dialogue-footer{min-height:24px}
+body[data-cinema-frame] #cinemaDialogue .hanji-corner{width:25px;height:25px}
+body[data-cinema-frame]:not(.archive-active) > #soundToggle{right:calc(var(--film-r) + 22px)!important;bottom:calc(var(--review-dock) + 18px)!important}
+body[data-cinema-frame] #journeyDragHint{bottom:calc(var(--review-dock) + 18px)!important}
+body[data-cinema-frame] #journeyDragHint .scroll-stem{height:clamp(28px,calc(var(--film-h)*.10),65px)}
+body[data-cinema-frame] #villageOpeningCopy{left:50%;right:auto;top:calc(var(--film-y) + var(--film-h)*.48);width:min(calc(var(--film-w) - 40px),1000px);transform:translate(-50%,-50%);font-size:clamp(15px,calc(var(--film-unit)*1.7),24px)}
+body[data-cinema-frame] #exploreStoneLions{top:calc(var(--film-y) + var(--film-h)*.5)}
+body[data-cinema-frame][data-full-story=false]:not(.archive-active) #cinemaControls{left:50%!important;right:auto!important;bottom:8px!important;transform:translateX(-50%);width:max-content;max-width:calc(100vw - 24px);padding:6px 10px!important;gap:6px;justify-content:center;align-items:center;box-sizing:border-box}
+body[data-cinema-frame] #cinemaControls button,body[data-cinema-frame] #cinemaControls select{font-size:13px!important;min-height:36px;padding:6px 10px!important}
+body[data-cinema-frame] #cinemaControls input{width:clamp(80px,14vw,180px)!important}
+@media(max-width:600px){body[data-cinema-frame] #cinemaDialogue{padding:16px 25px 10px!important}body[data-cinema-frame] #cinemaControls select{flex-basis:100%;max-width:none!important}body[data-cinema-frame] #cinemaControls{width:calc(100vw - 24px)!important}body[data-cinema-frame] #cinemaDialogue p{font-size:14px!important}}
+@media(max-height:480px){body[data-cinema-frame] #cinemaDialogue{padding:10px 24px!important;max-height:none!important}body[data-cinema-frame] #cinemaDialogue .dialogue-footer{display:none}}
+body.archive-active #dialogueMist{display:none!important}
+
+body[data-cinema-frame].choosing-experience #cinemaControls{display:none!important}
+
+/* Reading is never a nested scroll interaction. */
+body[data-cinema-frame] #cinemaDialogue p{overflow-wrap:anywhere}
+body[data-cinema-frame] #journeyDragHint{animation:scrollInvitation 2s ease-in-out infinite}
+@keyframes scrollInvitation{0%,100%{opacity:.28}50%{opacity:1}}
+@media(prefers-reduced-motion:reduce){body[data-cinema-frame] #journeyDragHint{animation:none;opacity:1}}
+/* Keep the scene immersive at every aspect ratio. Only reading and controls reflow. */
+body[data-cinema-frame] #cinemaDialogue{box-sizing:border-box;background:rgba(246,245,234,.91)!important}
+@media(max-width:700px){body[data-cinema-frame] #cinemaDialogue{width:calc(100vw - 28px)!important;padding:14px 22px 10px!important}body[data-cinema-frame] #cinemaDialogue p{font-size:15px!important;line-height:1.55!important}}
+@media(max-height:650px){body[data-cinema-frame] #cinemaDialogue{padding:10px 22px 8px!important}body[data-cinema-frame] #cinemaDialogue p{font-size:14px!important;line-height:1.5!important}}
+
+#landscapeNotice{position:fixed;inset:0;z-index:2000;background:#f6f5ef;color:#526d62;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:serif;touch-action:none}
+#landscapeNotice span{font-size:56px}
+#landscapeNotice p{font-size:20px;animation:rotatePromptPulse 1s ease-in-out 3}
+#landscapeNotice small{font-size:14px}
+@keyframes rotatePromptPulse{0%,100%{opacity:1}50%{opacity:.25}}
+@media(prefers-reduced-motion:reduce){#landscapeNotice p{animation:none}}
+body.orientation-intro #experienceChoice{visibility:hidden!important}
+@media(orientation:landscape) and (max-height:500px){
+ body[data-cinema-frame] #storyIndexBar{top:env(safe-area-inset-top,0px)!important}
+ body[data-cinema-frame] #cinemaDialogue{width:calc(100vw - 64px)!important;padding:8px 24px!important}
+ body[data-cinema-frame] #cinemaDialogue h2{font-size:15px!important}
+ body[data-cinema-frame] #cinemaDialogue p{font-size:13px!important;line-height:1.45!important}
+ body[data-cinema-frame]:not(.archive-active)>#soundToggle{right:max(22px,env(safe-area-inset-right))!important}
+}
