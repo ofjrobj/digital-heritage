@@ -57,11 +57,11 @@
       false
     ]
   ],
-  "revision": "two-encounters-closeup",
+  "revision": "opening-and-articulated-residents",
   "limitations": [
-    "Two local approach paths only, connected by an authored courtyard dissolve",
-    "A fixed-radius image plate does not reconstruct all architectural depth",
-    "Opening/aerial and distant extras are not included in this two-encounter proof"
+    "Backgrounds between registered references are fixed painted views connected with transitions, not full reconstructed 3D route geometry.",
+    "Only selected visible extras are articulated; the distant figures in the aerial view remain part of the fixed painting.",
+    "No newly generated Higgsfield video in this revision; existing Higgsfield illustrations are reused."
   ],
   "dialogueCamera": {
     "horizontalLensDegrees": 48,
@@ -85,5 +85,37 @@
     "phoneSpeakerPx": 14,
     "phoneDialoguePx": 12,
     "ornament": "original figma-corner.svg shape preserved"
-  }
+  },
+  "coverage": [
+    "lion cover and ink absorption",
+    "mountains",
+    "moving fog",
+    "4-second village aerial hold",
+    "descent and entrance",
+    "merchant approach and dialogue",
+    "courtyard transition",
+    "farmer approach and dialogue"
+  ],
+  "movement": {
+    "source": "Gongju_v071_Residents.blend / resident-motion.json",
+    "clock": "elapsed real time independent of scroll",
+    "merchantArmLoopSeconds": 4.29,
+    "farmerArmLoopSeconds": 5.07,
+    "technique": "fixed image articulated at local head and hand/forearm regions; feet and root fixed",
+    "lips": "no animation",
+    "mainFaces": "same texture, rigid head region",
+    "extraMotion": "existing entry/street residents only, at their painted positions"
+  },
+  "verification": {
+    "stationaryCameraDelta": 0,
+    "footDisplacementMetres": 0,
+    "merchantBackgroundPixelDifference": 0,
+    "merchantHandPixelDifference": 24.706,
+    "merchantFixedTorsoPixelDifference": 0.001,
+    "firstScrollAutoStopsAt": 0.44,
+    "merchantDialogueProgress": 0.664,
+    "archiveResume": "passed",
+    "runtimeErrors": 0
+  },
+  "additionalCredits": 0
 }

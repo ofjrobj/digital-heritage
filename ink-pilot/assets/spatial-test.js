@@ -1,5 +1,7 @@
 import * as THREE from '../../assets/vendor/three.module.js';
 import {dialogueCopy} from './dialogue-copy.js';
+import {createOpening,openingPhase} from './spatial-opening.js?v=4';
+import {createPuppet} from './spatial-puppet.js?v=4';
 
 const $=id=>document.getElementById(id),base=new URL('./spatial-test/',import.meta.url);
 const panel=$('cinemaDialogue'),loading=$('loading'),stage=$('stage');
@@ -13,9 +15,14 @@ const read=name=>fetch(new URL(name,base)).then(r=>{if(!r.ok)throw Error(name);r
 const vFov=(h,aspect)=>THREE.MathUtils.radToDeg(2*Math.atan(Math.tan(THREE.MathUtils.degToRad(h/2))/aspect));
 const setPose=(camera,pose)=>{camera.position.fromArray(pose.p);camera.quaternion.set(pose.q[1],pose.q[2],pose.q[3],pose.q[0]);camera.updateMatrixWorld();};
 let target=0,progress=0,auto=false,ambient=true,elapsed=0,last=performance.now(),showGuide=false,currentSpeaker=-1;
-const stops=[.40,1],dialogueStarts=[.34,.90];
-const labels=['장사꾼에게 다가가기','장사꾼의 이야기','농민에게 다가가기','농민의 이야기'];
-const chapters=[0,.40,.56,1];
+const openingEnd=.44,storyProgress=p=>clamp((p-openingEnd)/(1-openingEnd),0,1),storyPoint=p=>openingEnd+p*(1-openingEnd);
+const stops=[openingEnd,storyPoint(.40),1];
+const labels=['시작 화면','먹 번짐 · 산과 안개','마을 부감','마을 입구','장사꾼에게 다가가기','장사꾼의 이야기','농민에게 다가가기','농민의 이야기'];
+const chapters=[0,.07,.44*10.7/26,.44*18.2/26,.44,storyPoint(.40),storyPoint(.56),1];
+const opening=createOpening(stage);
+const transitionMist=document.createElement('div');transitionMist.className='spatial-transition-mist';stage.append(transitionMist);
+const music=$('music');let soundOn=false;music.volume=0;
+$('soundToggle').onclick=()=>{soundOn=!soundOn;$('soundToggle').textContent=soundOn?'소리 켜짐':'소리 꺼짐';$('soundToggle').setAttribute('aria-pressed',String(soundOn));if(soundOn)music.play().catch(()=>{});};
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 
 try{
@@ -36,17 +43,14 @@ try{
    fragmentShader:`uniform sampler2D painting;uniform sampler2D guide;uniform float useGuide;varying vec2 imageUV;void main(){gl_FragColor=mix(texture2D(painting,imageUV),texture2D(guide,imageUV),useGuide);gl_FragColor.a=1.;\n#include <colorspace_fragment>\n}`
   }));backdrop.frustumCulled=false;scene.add(backdrop);
   const height=1.86,width=height*portrait.image.width/portrait.image.height;
-  const geo=new THREE.PlaneGeometry(width,height,8,24);geo.translate(0,height/2,0);
-  const material=new THREE.MeshBasicMaterial({map:portrait,transparent:true,alphaTest:.78,side:THREE.DoubleSide});
-  const breathe={value:0};
-  material.onBeforeCompile=shader=>{shader.uniforms.ambientTime=breathe;shader.vertexShader='uniform float ambientTime;\n'+shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>\nfloat torso=smoothstep(.55,1.18,position.y);float breath=sin(ambientTime*1.45);transformed.x+=(sin(ambientTime*.72)*.012+sin(ambientTime*.31)*.004)*torso;transformed.y+=breath*.007*torso;float chest=exp(-pow((position.y-1.15)/.24,2.));transformed.x+=position.x*breath*.009*chest;`);};
-  const hero=new THREE.Mesh(geo,material);hero.position.fromArray(manifest.hero);hero.up.set(0,0,1);hero.lookAt(reference.position.x,reference.position.y,hero.position.z);scene.add(hero);
+  const puppet=createPuppet(THREE,portrait,{kind:index?'farmer':'merchant',height});
+  const hero=puppet.mesh;hero.position.fromArray(manifest.hero);hero.up.set(0,0,1);hero.lookAt(reference.position.x,reference.position.y,hero.position.z);scene.add(hero);
   const shadowCanvas=document.createElement('canvas');shadowCanvas.width=128;shadowCanvas.height=128;
   const ctx=shadowCanvas.getContext('2d'),g=ctx.createRadialGradient(64,64,2,64,64,62);g.addColorStop(0,'rgba(43,49,40,.18)');g.addColorStop(1,'rgba(43,49,40,0)');ctx.fillStyle=g;ctx.fillRect(0,0,128,128);
   const shadow=new THREE.Mesh(new THREE.PlaneGeometry(.9,.6),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(shadowCanvas),transparent:true,depthWrite:false}));shadow.position.copy(hero.position);shadow.position.z+=.008;scene.add(shadow);
   const direction=new THREE.Vector3(reference.position.x-hero.position.x,reference.position.y-hero.position.y,0).normalize();
   const closeCamera=new THREE.PerspectiveCamera();closeCamera.up.set(0,0,1);
-  return {manifest,scene,camera,reference,uniforms,hero,shadow,breathe,direction,closeCamera,index,height};
+  return {manifest,scene,camera,reference,uniforms,hero,shadow,puppet,direction,closeCamera,index,height};
  });
  const renderTargets=[new THREE.WebGLRenderTarget(1,1),new THREE.WebGLRenderTarget(1,1)];
  const blendScene=new THREE.Scene(),blendCamera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
@@ -72,16 +76,17 @@ try{
   c.position.copy(pa.fromArray(A.p).lerp(pb.fromArray(B.p),t));qa.set(A.q[1],A.q[2],A.q[3],A.q[0]);qb.set(B.q[1],B.q[2],B.q[3],B.q[0]);c.quaternion.copy(qa.slerp(qb,t));
   c.position.lerp(e.closeCamera.position,close);c.quaternion.slerp(e.closeCamera.quaternion,close);
   c.setViewOffset(innerWidth,innerHeight,0,innerHeight*.14*close,innerWidth,innerHeight);c.updateMatrixWorld();
-  e.breathe.value=elapsed+(e.index?1.8:0);
+  e.puppet.update(reduced?0:elapsed+(e.index?1.8:0));
  }
  function stopAuto(){auto=false;$('run').textContent='이동 재생';}
  function go(value,play=false){target=clamp(value,0,1);auto=play;$('run').textContent=auto?'이동 멈춤':'이동 재생';}
- const change=delta=>{stopAuto();target=clamp(target+delta,0,1);};
- $('run').onclick=()=>{if(auto){stopAuto();return;}if(target>.998){progress=target=0;}if(target>=.395&&target<.44)target=.441;auto=true;$('run').textContent='이동 멈춤';};
+ let openingGestureUntil=0;
+ const change=delta=>{if(auto&&target<openingEnd&&performance.now()<openingGestureUntil&&delta>0)return;if(target<.002&&delta>0){auto=true;target=.003;openingGestureUntil=performance.now()+650;$('run').textContent='이동 멈춤';return;}stopAuto();target=clamp(target+delta,0,1);};
+ $('run').onclick=()=>{if(auto){stopAuto();return;}if(target>.998){progress=target=0;}if(target>=storyPoint(.395)&&target<storyPoint(.44))target=storyPoint(.441);auto=true;$('run').textContent='이동 멈춤';};
  $('progress').oninput=e=>go(Number(e.target.value));
  $('chapter').onchange=e=>go(chapters[Number(e.target.value)]);
- $('dialogue').onclick=()=>go(progress<.5?.40:1);
- $('next').onclick=()=>{if(currentSpeaker===0){go(.56,true);}else{go(0);}};
+ $('dialogue').onclick=()=>go(storyProgress(progress)<.5?storyPoint(.40):1);
+ $('next').onclick=()=>{if(currentSpeaker===0){go(storyPoint(.56),true);}else{go(0);}};
  $('compare').onclick=()=>{showGuide=!showGuide;encounters.forEach(e=>{e.uniforms.useGuide.value=Number(showGuide);e.hero.visible=e.shadow.visible=!showGuide;});$('compare').setAttribute('aria-pressed',String(showGuide));$('compare').textContent=showGuide?'한국화 보기':'기준 구도 비교';};
  $('ambience').onclick=()=>{ambient=!ambient;$('ambience').textContent=ambient?'인물 움직임 켜짐':'인물 움직임 꺼짐';$('ambience').setAttribute('aria-pressed',String(ambient));};
  stage.addEventListener('wheel',e=>{if(e.target.closest('#testTools,#cinemaDialogue,nav'))return;e.preventDefault();change(clamp(e.deltaY,-140,140)/2500);},{passive:false});
@@ -95,23 +100,32 @@ try{
  $('storyLink').onclick=e=>{e.preventDefault();go(0);};
  $('indexLink').onclick=()=>{sessionStorage.setItem('spatial-test-resume',String(target));sessionStorage.setItem('ink-pilot-return','spatial-test.html');};
  const saved=sessionStorage.getItem('spatial-test-resume');if(saved!==null){progress=target=clamp(Number(saved)||0,0,1);sessionStorage.removeItem('spatial-test-resume');}
+ await opening.ready;
  if(matchMedia('(pointer:coarse) and (orientation:portrait)').matches){$('rotate').hidden=false;setTimeout(()=>$('rotate').hidden=true,3000);}
  loading.hidden=true;document.body.dataset.ready='true';
  function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(ambient)elapsed+=dt;
-  if(auto){const nextStop=target<.40?.40:1;target=Math.min(nextStop,target+dt/30);if(target===nextStop)stopAuto();}
+  if(auto){const nextStop=stops.find(s=>target<s-.00001)??1;target=Math.min(nextStop,target+dt/60);if(target===nextStop)stopAuto();}
   progress=THREE.MathUtils.lerp(progress,target,1-Math.exp(-dt/(reduced?.08:.32)));if(Math.abs(progress-target)<.00001)progress=target;
-  const merchantWalk=clamp(progress/.24,0,1),merchantClose=smooth((progress-.24)/.10)*(1-smooth((progress-.44)/.055));
-  const farmerWalk=clamp((progress-.56)/.24,0,1),farmerClose=smooth((progress-.80)/.10);
+  const journey=storyProgress(progress);
+  const merchantWalk=clamp(journey/.24,0,1),merchantClose=smooth((journey-.24)/.10)*(1-smooth((journey-.44)/.055));
+  const farmerWalk=clamp((journey-.56)/.24,0,1),farmerClose=smooth((journey-.80)/.10);
   poseEncounter(encounters[0],merchantWalk,merchantClose);poseEncounter(encounters[1],farmerWalk,farmerClose);
-  const mix=smooth((progress-.46)/.10);
+  const mix=smooth((journey-.46)/.10);
   if(mix>0&&mix<1){encounters.forEach((e,i)=>{renderer.setRenderTarget(renderTargets[i]);renderer.render(e.scene,e.camera);});renderer.setRenderTarget(null);blendUniforms.amount.value=mix;renderer.render(blendScene,blendCamera);}
   else {renderer.setRenderTarget(null);const e=encounters[mix>=1?1:0];renderer.render(e.scene,e.camera);}
-  showDialogue(progress>=.337&&progress<=.44?0:progress>=.898?1:-1);
-  $('hint').hidden=currentSpeaker>=0;$('hint').textContent=progress>.44&&progress<.56?'마당 너머, 농민에게':'스크롤하거나 드래그하여 다가가세요';
-  $('progress').value=String(progress);const chapter=progress<.337?0:progress<.46?1:progress<.898?2:3;
+  if(progress<openingEnd){opening.update(progress/openingEnd,elapsed,1-smooth((progress-(openingEnd-.018))/.018));}else opening.hide();
+  const entryHaze=Math.sin(smooth((progress-(openingEnd-.035))/.035)*Math.PI)*.64;
+  transitionMist.style.opacity=String(Math.max(entryHaze,Math.sin(mix*Math.PI)*.62));
+  transitionMist.style.transform=`translateX(${Math.sin(elapsed*.13)*2}%)`;
+  document.body.dataset.openingPhase=progress<openingEnd?openingPhase(progress/openingEnd):'encounter';
+  $('storyIndexBar').style.opacity=String(smooth(progress/.018));
+  music.volume=THREE.MathUtils.lerp(music.volume,soundOn&&!document.hidden&&progress>.002&&progress<.998?.09:0,1-Math.exp(-dt/1.3));
+  showDialogue(journey>=.337&&journey<=.44?0:journey>=.898?1:-1);
+  $('hint').hidden=currentSpeaker>=0;$('hint').textContent=progress<.002?'Scroll':progress<openingEnd?'먹선 너머, 공주목으로':journey>.44&&journey<.56?'마당 너머, 농민에게':'스크롤하거나 드래그하여 다가가세요';
+  $('progress').value=String(progress);const chapter=progress<.002?0:progress<.44*9/26?1:progress<.44*13/26?2:progress<.44?3:journey<.337?4:journey<.46?5:journey<.898?6:7;
   $('chapter').value=String(chapter);
   const active=encounters[mix>=.5?1:0],hair=new THREE.Vector3(0,1.81,0);active.hero.localToWorld(hair);hair.project(active.camera);
-  document.body.dataset.proof=JSON.stringify({progress,target,chapter:labels[chapter],speaker:currentSpeaker,ambientSeconds:elapsed,camera:active.camera.matrixWorld.toArray(),actorSeconds:active.breathe.value,headTopScreenY:(1-hair.y)/2,renderMethod:'registered-2.5D-layer',cameraSource:active.manifest.cameraSource,transition:'Two local authored encounters with courtyard dissolve; full 59m traversal not reconstructed',drawCalls:renderer.info.render.calls});
+  document.body.dataset.proof=JSON.stringify({progress,target,journey,opening:progress<openingEnd?openingPhase(progress/openingEnd):null,chapter:labels[chapter],speaker:currentSpeaker,ambientSeconds:elapsed,camera:active.camera.matrixWorld.toArray(),actorSeconds:elapsed,puppet:active.puppet.proof(),headTopScreenY:(1-hair.y)/2,renderMethod:'registered-2.5D-layer',cameraSource:active.manifest.cameraSource,transition:'Lion ink, mountains, fog, aerial hold, village entry, two locally registered encounters; fixed painted views between references',drawCalls:renderer.info.render.calls});
   requestAnimationFrame(frame);
  }
  requestAnimationFrame(frame);

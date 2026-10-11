@@ -446,7 +446,8 @@
   "creditsBefore": 1551.5,
   "creditsAfter": 1425,
   "previousDraftCredits": 32.5,
-  "currentRevisionCredits": 8.25,
-  "qualityStatus": "Separate 2.5D merchant and farmer encounters: source camera approaches, fixed illustrated layers, medium closeup dialogue. Courtyard uses dissolve; no full spatial traversal.",
-  "verifiedRemainingBalance": 1425
+  "currentRevisionCredits": 0,
+  "qualityStatus": "Start-to-farmer 2.5D test: restored ink, mountains, fog and aerial; fixed painted view changes; source-retargeted local arm/head articulation, no whole-body sway. Long routes remain plate transitions, not complete reconstructed geometry.",
+  "verifiedRemainingBalance": 1425,
+  "lastRevision": "spatial-opening-articulation"
 }
