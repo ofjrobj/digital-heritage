@@ -1,7 +1,7 @@
 {
-  "totalCredits": 126.5,
-  "imageCount": 26,
-  "videoCount": 20,
+  "totalCredits": 317,
+  "imageCount": 27,
+  "videoCount": 25,
   "items": [
     {
       "label": "entry",
@@ -438,16 +438,76 @@
       ],
       "revision": "spatial-two-encounters",
       "usedInPublishedProof": true
+    },
+    {
+      "label": "discarded merchant old cutout",
+      "type": "video",
+      "credits": 5,
+      "ids": [
+        "f471b003-cc10-4f35-b282-23797b1afbc6"
+      ],
+      "revision": "continuous-first-character-film",
+      "usedInPublishedProof": false
+    },
+    {
+      "label": "original-card merchant hand and head loop",
+      "type": "video",
+      "credits": 5,
+      "ids": [
+        "29584a7d-e140-45a3-93e1-f3a615731fc5"
+      ],
+      "revision": "continuous-first-character-film",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "independent village workers sheet",
+      "type": "image",
+      "credits": 0.5,
+      "ids": [
+        "8428b73f-fb0c-4009-a13c-3c643adf03a7"
+      ],
+      "revision": "continuous-first-character-film",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "independent village work loops",
+      "type": "video",
+      "credits": 5,
+      "ids": [
+        "1990615e-437e-4607-82b9-8600b6086fdc"
+      ],
+      "revision": "continuous-first-character-film",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "Blender-guided continuous opening",
+      "type": "video",
+      "credits": 128,
+      "ids": [
+        "cfea7c02-53d3-4628-abcb-098473c1e644"
+      ],
+      "revision": "continuous-first-character-film",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "continuous route barrier repair",
+      "type": "video",
+      "credits": 47,
+      "ids": [
+        "72315469-2283-41b1-850a-dd3228c2dd37"
+      ],
+      "revision": "continuous-first-character-film",
+      "usedInPublishedProof": true
     }
   ],
-  "model": "Seedance 2.0 Mini",
-  "resolution": "480p normal play; 720p review candidate",
+  "model": "Seedance 2.5 video edit + Seedance 2.0 Mini character loops",
+  "resolution": "720p continuous travel and independently playing characters",
   "audio": false,
   "creditsBefore": 1551.5,
-  "creditsAfter": 1425,
+  "creditsAfter": 1234.5,
   "previousDraftCredits": 32.5,
-  "currentRevisionCredits": 0,
-  "qualityStatus": "Start-to-farmer 2.5D test: restored ink, mountains, fog and aerial; fixed painted view changes; source-retargeted local arm/head articulation, no whole-body sway. Long routes remain plate transitions, not complete reconstructed geometry.",
-  "verifiedRemainingBalance": 1425,
-  "lastRevision": "spatial-opening-articulation"
+  "currentRevisionCredits": 190.5,
+  "qualityStatus": "Start to merchant: continuous Blender-guided film, masked road-barrier repair, original-card merchant and two independent worker video loops. Distant baked aerial figures and some generated architectural detail variation remain.",
+  "verifiedRemainingBalance": 1234.5,
+  "lastRevision": "continuous-first-character-film"
 }
