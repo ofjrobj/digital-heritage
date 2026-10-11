@@ -1,7 +1,7 @@
 {
-  "totalCredits": 32.5,
-  "imageCount": 10,
-  "videoCount": 8,
+  "totalCredits": 93.5,
+  "imageCount": 14,
+  "videoCount": 20,
   "items": [
     {
       "label": "entry",
@@ -158,13 +158,174 @@
         "ebd25ed5-875c-42fa-bf10-f0a34994a8e1"
       ],
       "revision": "painted-midpoints"
+    },
+    {
+      "label": "720p-image-0",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "f856a3be-e1bc-415b-8147-cecb7c3b0a78"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-image-1",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "6918764f-75ea-4362-84dd-5edb9c8d96f7"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-image-2",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "dbab5d64-5101-45f2-8a67-4c057a070a29"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-image-3",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "d7cc5cea-8677-4dc7-ac14-5d8bfc299ed2"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-0",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "0a266c86-7968-460f-9e91-c6f36b7112bc"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-1",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "024eba05-503d-411e-be2b-02b353b1b461"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-2",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "ffbfd010-9ded-41e2-a368-6091bba8601f"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-3",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "d1642f2d-9d85-4f7b-a400-c2ad42f32965"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-4",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "be8bea22-b0d2-41fe-be81-56e73517a9da"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-5",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "c54267fa-682c-4548-b4d7-137209bda866"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-6",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "9ae6c1c6-6a10-478e-bab2-4456320460aa"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-7",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "cd2e700e-0fa3-4e64-a90b-2b55e5f8966f"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-8",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "47432fc4-51de-4aac-be24-71fae70302e4"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-continuous-0",
+      "type": "video",
+      "credits": 8,
+      "ids": [
+        "fdf4f8ea-3b3c-4b65-85dc-83a9d9c7829c"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-continuous-1",
+      "type": "video",
+      "credits": 8,
+      "ids": [
+        "d328ab9a-9491-4645-9007-eb45fb7214a2"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "farmer-blender-driven",
+      "type": "video",
+      "credits": 8,
+      "ids": [
+        "2dfd7392-549d-47d1-b8b4-12c3da3f076f"
+      ],
+      "revision": "720p-review",
+      "accepted": false
     }
   ],
   "model": "Seedance 2.0 Mini",
-  "resolution": "480p",
+  "resolution": "480p normal play; 720p review candidate",
   "audio": false,
   "creditsBefore": 1551.5,
-  "creditsAfter": 1519,
-  "previousDraftCredits": 11.75,
-  "currentRevisionCredits": 20.75
+  "creditsAfter": 1458,
+  "previousDraftCredits": 32.5,
+  "currentRevisionCredits": 61,
+  "qualityStatus": "720p candidate not approved: architecture and style drift remain"
 }

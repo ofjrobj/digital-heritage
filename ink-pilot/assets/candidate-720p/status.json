@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "status": "review-only",
+  "frameExactLayoutVerified": false,
+  "characterIdentityVerified": false,
+  "styleConsistencyVerified": false,
+  "reason": "Several intermediate frames change roof/column details and retain a 3D-like style, including the Blender-driven attempt. Not a final approved replacement.",
+  "referenceGeometrySHA256": "c5b823f62e435bcae1376c9b81b0791d946b9bcec710b6aa049d196bc4dce687",
+  "routeReferences": [
+    "merchant.mp4",
+    "farmer.mp4"
+  ],
+  "selectedJobs": {
+    "intro": [
+      "0a266c86-7968-460f-9e91-c6f36b7112bc",
+      "024eba05-503d-411e-be2b-02b353b1b461",
+      "ffbfd010-9ded-41e2-a368-6091bba8601f"
+    ],
+    "merchant": "fdf4f8ea-3b3c-4b65-85dc-83a9d9c7829c",
+    "farmer": "2dfd7392-549d-47d1-b8b4-12c3da3f076f"
+  }
+}
