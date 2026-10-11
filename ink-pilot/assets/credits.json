@@ -1,6 +1,6 @@
 {
-  "totalCredits": 93.5,
-  "imageCount": 14,
+  "totalCredits": 118.25,
+  "imageCount": 23,
   "videoCount": 20,
   "items": [
     {
@@ -318,14 +318,105 @@
       ],
       "revision": "720p-review",
       "accepted": false
+    },
+    {
+      "label": "mountains",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "504d6f93-918e-49e6-acb2-46e9cf4e8fbe"
+      ],
+      "revision": "2k-layout-studies",
+      "accepted": false
+    },
+    {
+      "label": "aerial",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "08182526-bdd5-4534-b29a-76b2d1ddf722"
+      ],
+      "revision": "2k-layout-studies",
+      "accepted": false
+    },
+    {
+      "label": "descent",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "13c19a89-3d86-42f1-a795-3ec09508f916"
+      ],
+      "revision": "2k-layout-studies",
+      "accepted": false
+    },
+    {
+      "label": "street",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "324fefd2-0b16-43ae-b838-69f30324a635"
+      ],
+      "revision": "2k-layout-studies",
+      "accepted": false
+    },
+    {
+      "label": "gate",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "74630146-ff69-45e0-9bc9-ae55602fad1e"
+      ],
+      "revision": "2k-layout-studies",
+      "accepted": false
+    },
+    {
+      "label": "courtyard",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "58da65a4-0302-47bd-8f75-45bb3f048995"
+      ],
+      "revision": "2k-layout-studies",
+      "accepted": false
+    },
+    {
+      "label": "spatial merchant cutout",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "a1e59779-65e3-4c7c-ae57-f554d592eb96"
+      ],
+      "revision": "spatial-layer-proof",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "spatial registered painting",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "119fcee1-9534-46ed-ae22-7f82340125ff"
+      ],
+      "revision": "spatial-layer-proof",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "spatial occlusion fill experiment",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "9d29763f-072e-4de2-a293-25bbad9fa29b"
+      ],
+      "revision": "spatial-layer-proof",
+      "usedInPublishedProof": false
     }
   ],
   "model": "Seedance 2.0 Mini",
   "resolution": "480p normal play; 720p review candidate",
   "audio": false,
   "creditsBefore": 1551.5,
-  "creditsAfter": 1458,
+  "creditsAfter": 1441.5,
   "previousDraftCredits": 32.5,
-  "currentRevisionCredits": 61,
-  "qualityStatus": "720p candidate not approved: architecture and style drift remain"
+  "currentRevisionCredits": 16.5,
+  "qualityStatus": "Six 2k fixed composition studies only; not approved for world-locked playback. UI-only deployment costs zero credits.",
+  "verifiedRemainingBalance": 1433.25
 }
