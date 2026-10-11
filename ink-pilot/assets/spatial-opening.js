@@ -68,7 +68,7 @@ export function createOpening(stage,options={}){
  function join(previous,previousZoom,local,seconds=.7,x=.5,y=.5){if(local<seconds){const f=smooth(local/seconds);plate(ctx,previous,previousZoom,x,y,1-f);fog(Math.sin(f*Math.PI)*.25,currentElapsed);}}
  let currentElapsed=0;
  function update(progress,elapsed=0,opacity=1){
-  if(!prepared)return;root.hidden=false;root.style.opacity=String(clamp(opacity));resize();const p=clamp(progress),t=p*openingDuration,phase=openingPhase(p);currentElapsed=elapsed;if(coverStarted===null||p<1e-7&&previousProgress>1e-7)coverStarted=elapsed;previousProgress=p;
+  if(!prepared||!stage.clientWidth||!stage.clientHeight)return;root.hidden=false;root.style.opacity=String(clamp(opacity));resize();const p=clamp(progress),t=p*openingDuration,phase=openingPhase(p);currentElapsed=elapsed;if(coverStarted===null||p<1e-7&&previousProgress>1e-7)coverStarted=elapsed;previousProgress=p;
   root.dataset.phase=phase;root.dataset.progress=p.toFixed(4);root.dataset.ambientTime=elapsed.toFixed(3);
   title.style.opacity=String(1-smooth(t/1.7));title.hidden=t>=1.7;
   const aerialCopy=smooth((t-9.05)/.65)*(1-smooth((t-12.45)/.55));

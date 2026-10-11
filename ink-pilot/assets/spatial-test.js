@@ -1,6 +1,6 @@
 import * as THREE from '../../assets/vendor/three.module.js';
 import {dialogueCopy} from './dialogue-copy.js';
-import {createOpening,openingPhase} from './spatial-opening.js?v=4';
+import {createOpening,openingPhase} from './spatial-opening.js?v=5';
 import {createPuppet} from './spatial-puppet.js?v=4';
 
 const $=id=>document.getElementById(id),base=new URL('./spatial-test/',import.meta.url);
@@ -59,7 +59,7 @@ try{
   vertexShader:'varying vec2 imageUV;void main(){imageUV=uv;gl_Position=vec4(position.xy,0.,1.);}',
   fragmentShader:'uniform sampler2D a;uniform sampler2D b;uniform float amount;varying vec2 imageUV;void main(){gl_FragColor=mix(texture2D(a,imageUV),texture2D(b,imageUV),amount);\n#include <colorspace_fragment>\n}'
  })));
- function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);
+ function resize(){const w=Math.max(1,innerWidth),h=Math.max(1,innerHeight);renderer.setSize(w,h,false);
   for(const e of encounters){e.camera.aspect=w/h;e.camera.fov=vFov(e.manifest.viewHFov,w/h);e.camera.updateProjectionMatrix();
    // Off-axis composition keeps the camera horizontal at face height while placing
    // the whole topknot below navigation. No low-angle upward tilt is introduced.
@@ -103,7 +103,7 @@ try{
  await opening.ready;
  if(matchMedia('(pointer:coarse) and (orientation:portrait)').matches){$('rotate').hidden=false;setTimeout(()=>$('rotate').hidden=true,3000);}
  loading.hidden=true;document.body.dataset.ready='true';
- function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(ambient)elapsed+=dt;
+ function frame(now){if(!innerWidth||!innerHeight||!stage.clientWidth||!stage.clientHeight){last=now;requestAnimationFrame(frame);return;}const dt=Math.min(.05,(now-last)/1000);last=now;if(ambient)elapsed+=dt;
   if(auto){const nextStop=stops.find(s=>target<s-.00001)??1;target=Math.min(nextStop,target+dt/60);if(target===nextStop)stopAuto();}
   progress=THREE.MathUtils.lerp(progress,target,1-Math.exp(-dt/(reduced?.08:.32)));if(Math.abs(progress-target)<.00001)progress=target;
   const journey=storyProgress(progress);
