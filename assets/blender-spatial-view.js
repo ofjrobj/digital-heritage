@@ -1,20 +1,20 @@
-import {prepareEndingDaylight} from './ending-daylight.js?v=71-42';
-import {prepareSummerChildren} from './summer-children.js?v=71-42';
+import {prepareEndingDaylight} from './ending-daylight.js?v=71-43';
+import {prepareSummerChildren} from './summer-children.js?v=71-43';
 let summerWalk=null;
 function animateSummerChildren(t){summerWalk?.update(t);}
-import {syncCinemaFrame,FILM_ASPECT} from './cinema-frame.js?v=71-42';
-import {sampleResident,footPose,clamp,smooth} from './resident-walking.js?v=71-42';
-import {cumulativeDistances,distanceFrame} from './travel-distance.js?v=71-42';
+import {syncCinemaFrame,FILM_ASPECT} from './cinema-frame.js?v=71-43';
+import {sampleResident,footPose,clamp,smooth} from './resident-walking.js?v=71-43';
+import {cumulativeDistances,distanceFrame} from './travel-distance.js?v=71-43';
 
-import {scenicClearance} from './scenic-clearance.js?v=71-42';
-import {addVillageLife} from './village-life.js?v=71-42';
-import {extendVillage} from './test-village-layout.js?v=71-42';
+import {scenicClearance} from './scenic-clearance.js?v=71-43';
+import {addVillageLife} from './village-life.js?v=71-43';
+import {extendVillage} from './test-village-layout.js?v=71-43';
 const cameraTest=document.body.dataset.cameraTest==='village';
-const authoredTour=cameraTest?await fetch('./downloads/space-atlas/camera-tour-65.json?v=71-42').then(r=>r.json()):null;
-import {prepareTimelapse} from './ending-timelapse.js?v=71-42';
-import {bytes,json as loadJSON} from './asset-transport.js?v=71-42';
+const authoredTour=cameraTest?await fetch('./downloads/space-atlas/camera-tour-65.json?v=71-43').then(r=>r.json()):null;
+import {prepareTimelapse} from './ending-timelapse.js?v=71-43';
+import {bytes,json as loadJSON} from './asset-transport.js?v=71-43';
 import * as THREE from 'three';
-import {GLTFLoader} from './vendor/GLTFLoader.js?v=71-42';
+import {GLTFLoader} from './vendor/GLTFLoader.js?v=71-43';
 // Geometry and every route sample originate in the saved Blender files.
 const host=document.createElement('div');host.id='blenderSpatialView';host.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:2;display:none';document.body.append(host);
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1));renderer.localClippingEnabled=true;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;host.append(renderer.domElement);
@@ -23,9 +23,9 @@ const camera=new THREE.PerspectiveCamera(35,1,.05,900),loader=new GLTFLoader();c
 const floorRay=new THREE.Raycaster();
 function floorHeight(x,z){floorRay.set(new THREE.Vector3(x,60,z),new THREE.Vector3(0,-1,0));return floorRay.intersectObjects(endingGround,false).find(hit=>hit.object.visible&&(Array.isArray(hit.object.material)?hit.object.material:[hit.object.material]).every(m=>(m.clippingPlanes??[]).every(plane=>plane.distanceToPoint(hit.point)>=0)))?.point.y??0;}let village,ending,route=0,time=0,mode='route',lastEvent=null;
 const [bakedCamera,bakedPaths]=await Promise.all(['camera-precomputed.json','paths-precomputed.json'].map(n=>fetch('./assets/'+n).then(r=>{if(!r.ok)throw Error(n);return r.json();})));
-const nativeCamera=await fetch('./assets/camera-v058.json?v=71-42').then(r=>r.json());
-const mountainEntry=await fetch('./assets/mountain-entry.json?v=71-42').then(r=>r.json());
-const routes=await fetch('./assets/blender-routes-v048.json?v=71-42').then(r=>r.json());
+const nativeCamera=await fetch('./assets/camera-v058.json?v=71-43').then(r=>r.json());
+const mountainEntry=await fetch('./assets/mountain-entry.json?v=71-43').then(r=>r.json());
+const routes=await fetch('./assets/blender-routes-v048.json?v=71-43').then(r=>r.json());
 const css=document.createElement('style');css.textContent=`body[data-stage=terrain] #terrain,body[data-stage=terrain] .terrain-stage{background:transparent!important}body[data-stage=terrain] #terrain svg,#villageCanvas,#episodeFilm,#villageInkBackdrop,#terrainTransitionFilm{display:none!important}body[data-stage=village] #village,body[data-stage=overview] #village,body[data-stage=memory] #memory{background:transparent!important;z-index:3}body[data-stage=terrain] #terrain{z-index:3}body[data-stage=village] .episode-panel{left:3vw!important;right:auto!important;top:auto!important;bottom:7vh!important;width:28vw!important;max-width:350px!important;max-height:55vh;overflow:auto;box-sizing:border-box;padding:20px!important}body[data-stage=village] .episode-panel h2{font-size:21px!important}body[data-stage=village] .episode-panel p{font-size:15px!important;line-height:1.8!important}body[data-stage=memory] #endingFilm,body[data-stage=memory] #endingPlay,body[data-stage=memory] #restartStory{display:none!important}#spatialClosing{position:fixed;inset:0;background:#090c09;color:#d4d8c9;z-index:12;display:none;align-items:center;justify-content:center;text-align:center;font-family:'Gowun Batang',serif}#spatialClosing p{line-height:2;font-size:clamp(20px,3vw,34px)}#spatialClosing a{display:inline-block;color:inherit;border-bottom:1px solid #8e9b87;padding:12px;text-decoration:none;font-size:16px}@media(max-width:700px){body[data-stage=village] .episode-panel{left:5vw!important;bottom:5vh!important;width:90vw!important;max-width:none!important;max-height:25vh!important;padding:12px!important}body[data-stage=village] .episode-panel h2{font-size:16px!important}body[data-stage=village] .episode-panel p{font-size:12px!important;margin:6px 0!important}}`;document.head.append(css);
 const closing=document.createElement('div');closing.id='spatialClosing';closing.innerHTML='<div><p>사람은 지나가고, 풍경은 달라져도<br>돌에 새겨진 시간은 남아 있습니다.</p><a href="./chapters.html">서책에서 이야기를 이어 읽기 →</a></div>';document.body.append(closing);
 const cv=v=>new THREE.Vector3(v[0],v[2],-v[1]);
@@ -83,17 +83,19 @@ village=gltf.scene;
 village.traverse(root=>{if(root.userData.heritage_reference)root.traverse(o=>{if(!o.isMesh)return;const clean=m=>new THREE.MeshStandardMaterial({map:m.map,color:m.color.clone(),roughness:.9,metalness:0,side:THREE.DoubleSide});o.material=Array.isArray(o.material)?o.material.map(clean):clean(o.material);});});
 scene.add(village);if(cameraTest){village.traverse(o=>{if(/Forecourt|Entry.ridge/.test(o.name))o.visible=false;});}size();
 if(false&&nativeCamera.hillsideTrail){const trail=nativeCamera.hillsideTrail,geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(trail.vertices.flatMap(v=>[v[0],v[2],-v[1]]),3));geo.setIndex(trail.faces.flatMap(f=>[f[0],f[1],f[2],f[0],f[2],f[3]]));geo.computeVertexNormals();const path=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xb8ad8b,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-1}));path.name='v053 hillside footpath';village.add(path);}
-const architecture=await fetch('./assets/people-v060.json?v=71-42').then(r=>r.json());
+const architecture=await fetch('./assets/people-v060.json?v=71-43').then(r=>r.json());
 const canonical=n=>n.replace(/[_ .]+/g,'').trim();
 stageClearance=null;
 // Formation animation and closing camera are authored in the v043 Blender file.
 const approachLions=[];
-const pairTracks=await fetch('./assets/ending-pair.json?v=71-42').then(r=>r.json());const closingPair=pairTracks.map(track=>{let o;village.traverse(a=>{if(canonical(a.name)===canonical(track.name))o=a;});return {o,track};}).filter(x=>x.o);
+const pairTracks=await fetch('./assets/ending-pair.json?v=71-43').then(r=>r.json());const closingPair=pairTracks.map(track=>{let o;village.traverse(a=>{if(canonical(a.name)===canonical(track.name))o=a;});return {o,track};}).filter(x=>x.o);
+// Keep the original scan proportions; calibrate world height to the supplied approximate measurements.
+for(const {o,track} of closingPair){delete o.userData.v069_full_scale;o.updateWorldMatrix(true,true);const bounds=new THREE.Box3().setFromObject(o);o.scale.multiplyScalar(track.targetHeight/bounds.getSize(new THREE.Vector3()).y);}
 approachLions.push(...closingPair.map(x=>x.o));
 function placePair(){for(const {o,track} of closingPair){o.position.copy(cv(track.start));const q=track.q;o.quaternion.set(q[1],q[3],-q[2],q[0]);}}
 let endingBridge=null,endingPath=null;
-summerWalk=prepareSummerChildren(village,THREE,await fetch('./assets/summer-children-paths.json?v=71-42').then(r=>r.json()));
-for(const part of await fetch('./assets/modern-volume.json?v=71-42').then(r=>r.json())){
+summerWalk=prepareSummerChildren(village,THREE,await fetch('./assets/summer-children-paths.json?v=71-43').then(r=>r.json()));
+for(const part of await fetch('./assets/modern-volume.json?v=71-43').then(r=>r.json())){
  if(village.getObjectByName(part.name.replaceAll(' ','_'))||village.getObjectByName(part.name))continue;
  const mesh=new THREE.Mesh(new THREE.BoxGeometry(part.size[0],part.size[2],part.size[1]),new THREE.MeshStandardMaterial({color:part.color,roughness:.9}));
  mesh.name=part.name;mesh.position.copy(cv(part.p));mesh.userData={present_era:true,construction_rank:part.rank};mesh.visible=false;village.add(mesh);
@@ -122,7 +124,9 @@ async function showEnding(p){
  animateSummerChildren(t);
 
  camera.position.copy(cv(nativeCamera.tracks[5].at(-1).p));
- camera.lookAt(cv(nativeCamera.endingFraming.target));
+ const closeFocus=cv([-15.85,9.8,1.67]);const push=THREE.MathUtils.smoothstep(t,0,4);
+ const closePosition=cv([-11.97,3.865,2.32]);camera.position.lerp(closePosition,push);
+ const gaze=cv(nativeCamera.endingFraming.target).lerp(closeFocus,push);camera.lookAt(gaze);
  if(camera.aspect<1.2){const focus=cv(nativeCamera.endingFraming.target);camera.position.sub(focus).multiplyScalar(Math.min(2.2,1.2/camera.aspect)).add(focus);}
  const winter=THREE.MathUtils.smoothstep(t,34,37)*(1-THREE.MathUtils.smoothstep(t,42,45));
  const night=THREE.MathUtils.smoothstep(t,28,30)*(1-THREE.MathUtils.smoothstep(t,33,35));
@@ -141,10 +145,10 @@ document.addEventListener('blender-ending-frame',e=>showEnding(e.detail));
 const ambient=[];village.traverse(o=>{if(o.userData.ambient_kind){o.userData.neutralPosition=o.position.clone();o.userData.neutralQuaternion=o.quaternion.clone();ambient.push(o);}});
 const narrativeActors=[];village.traverse(o=>{if(Number.isInteger(o.userData.narrative_index)){narrativeActors.push({o,base:o.quaternion.clone(),index:o.userData.narrative_index,yaw:o.userData.work_yaw??0,facing:o.userData.dialogue_yaw??0});}});
 const gestures=[];for(const spec of architecture.people){let person;village.traverse(o=>{if(canonical(o.name)===canonical(spec.name))person=o;});if(person&&!['authored','walking'].includes(person.userData.ambient_kind)&&!Number.isInteger(person.userData.narrative_index)){gestures.push({person,spec,base:person.quaternion.clone()});}}
-const residentMotion=await fetch('./assets/resident-motion.json?v=71-42').then(r=>r.json());
+const residentMotion=await fetch('./assets/resident-motion.json?v=71-43').then(r=>r.json());
 const authoredJoints=residentMotion.map(track=>{let joint;village.traverse(o=>{if(canonical(o.name)===canonical(track.name))joint=o;});return {joint,track};}).filter(x=>x.joint);
 const quietMotion=matchMedia('(prefers-reduced-motion: reduce)');let ambientElapsed=0,ambientLast=0;
-const walkingData=await fetch('./assets/walking-residents.json?v=71-42').then(r=>r.json());
+const walkingData=await fetch('./assets/walking-residents.json?v=71-43').then(r=>r.json());
 const byName=new Map();village.traverse(o=>byName.set(canonical(o.name),o));
 const walkers=walkingData.map(d=>({d,o:byName.get(canonical(d.name)),legs:d.legs.map(group=>group.map(n=>byName.get(canonical(n)))),arms:d.arms.map(n=>byName.get(canonical(n))),body:byName.get(canonical(d.body)),head:byName.get(canonical(d.head)),distance:0,velocity:0,side:0,sideIndex:0,previous:null,gaitDistance:0})).filter(w=>w.o);
 for(const w of walkers){w.o.position.copy(cv(w.d.samples[0].p));for(const leg of w.legs)if(leg[0])leg[0].position.y=.72;if(w.body)w.body.position.y=.73;}

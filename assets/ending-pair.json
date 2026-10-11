@@ -1,1 +1,58 @@
-[{"name": "Original unchanged Female.005", "start": [-17.0, 9.800000190734863, 1.9258801937103271], "end": [-17.0, 9.800000190734863, 1.9258801937103271], "q": [0.5735764503479004, -0.0, -0.0, -0.8191520571708679], "endQ": [0.5735764503479004, -0.0, -0.0, -0.8191520571708679], "placement_status": "Interpretive grouping beside the east edge of the guesthouse stair approach; not an original-position claim."}, {"name": "Original unchanged Male.005", "start": [-14.700000762939453, 9.800000190734863, 1.9710965156555176], "end": [-14.700000762939453, 9.800000190734863, 1.9710965156555176], "q": [0.5735764503479004, -0.0, -0.0, -0.8191520571708679], "endQ": [0.5735764503479004, -0.0, -0.0, -0.8191520571708679], "placement_status": "Interpretive grouping beside the east edge of the guesthouse stair approach; not an original-position claim."}]
+[
+  {
+    "name": "Original unchanged Female.005",
+    "start": [
+      -16.549999237060547,
+      9.800000190734863,
+      1.6020323038101196
+    ],
+    "end": [
+      -16.549999237060547,
+      9.800000190734863,
+      1.6020323038101196
+    ],
+    "q": [
+      0.5735764503479004,
+      -0.0,
+      -0.0,
+      -0.8191520571708679
+    ],
+    "endQ": [
+      0.5735764503479004,
+      -0.0,
+      -0.0,
+      -0.8191520571708679
+    ],
+    "placement_status": "Interpretive grouping beside the east edge of the guesthouse stair approach; not an original-position claim.",
+    "targetHeight": 0.614,
+    "groundHeight": 1.295
+  },
+  {
+    "name": "Original unchanged Male.005",
+    "start": [
+      -15.149999618530273,
+      9.800000190734863,
+      1.6534944772720337
+    ],
+    "end": [
+      -15.149999618530273,
+      9.800000190734863,
+      1.6534944772720337
+    ],
+    "q": [
+      0.5735764503479004,
+      -0.0,
+      -0.0,
+      -0.8191520571708679
+    ],
+    "endQ": [
+      0.5735764503479004,
+      -0.0,
+      -0.0,
+      -0.8191520571708679
+    ],
+    "placement_status": "Interpretive grouping beside the east edge of the guesthouse stair approach; not an original-position claim.",
+    "targetHeight": 0.717,
+    "groundHeight": 1.295
+  }
+]
