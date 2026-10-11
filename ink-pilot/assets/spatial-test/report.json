@@ -1,6 +1,6 @@
 {
   "date": "2026-10-11",
-  "scope": "Short 2.5D merchant-approach proof, authored route distance fractions 0.92–0.95",
+  "scope": "Merchant approach/dialogue to farmer approach/dialogue",
   "implemented": [
     "Exact authored camera path segment",
     "One persistent portrait texture from merchant card reference",
@@ -56,5 +56,34 @@
       "9d29763f-072e-4de2-a293-25bbad9fa29b",
       false
     ]
-  ]
+  ],
+  "revision": "two-encounters-closeup",
+  "limitations": [
+    "Two local approach paths only, connected by an authored courtyard dissolve",
+    "A fixed-radius image plate does not reconstruct all architectural depth",
+    "Opening/aerial and distant extras are not included in this two-encounter proof"
+  ],
+  "dialogueCamera": {
+    "horizontalLensDegrees": 48,
+    "eyeLevel": true,
+    "verticalOffAxisOffset": 0.14,
+    "desktopVisibleHeightMetres": 1.36,
+    "landscapePhoneVisibleHeightMetres": 1.48
+  },
+  "motion": {
+    "clock": "real time independent of scroll",
+    "morphOrLipAnimation": false,
+    "bodySwayMetres": 0.016,
+    "breathingMetres": 0.007
+  },
+  "creditsThisRevision": 8.25,
+  "totalCredits": 126.5,
+  "ui": {
+    "navPx": 12,
+    "speakerPx": 17,
+    "dialoguePx": 13,
+    "phoneSpeakerPx": 14,
+    "phoneDialoguePx": 12,
+    "ornament": "original figma-corner.svg shape preserved"
+  }
 }

@@ -1,6 +1,6 @@
 {
-  "totalCredits": 118.25,
-  "imageCount": 23,
+  "totalCredits": 126.5,
+  "imageCount": 26,
   "videoCount": 20,
   "items": [
     {
@@ -408,15 +408,45 @@
       ],
       "revision": "spatial-layer-proof",
       "usedInPublishedProof": false
+    },
+    {
+      "label": "spatial farmer card cutout",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "cdd68004-acfb-4eff-9c11-5b9fcad903de"
+      ],
+      "revision": "spatial-two-encounters",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "spatial farmer background initial",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "8fd0faca-3628-43e8-8137-8b28ea8d168d"
+      ],
+      "revision": "spatial-two-encounters",
+      "usedInPublishedProof": false
+    },
+    {
+      "label": "spatial farmer layout stair correction",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "5109ad9c-0479-406b-99be-d7638b6f6bf7"
+      ],
+      "revision": "spatial-two-encounters",
+      "usedInPublishedProof": true
     }
   ],
   "model": "Seedance 2.0 Mini",
   "resolution": "480p normal play; 720p review candidate",
   "audio": false,
   "creditsBefore": 1551.5,
-  "creditsAfter": 1441.5,
+  "creditsAfter": 1425,
   "previousDraftCredits": 32.5,
-  "currentRevisionCredits": 16.5,
-  "qualityStatus": "Six 2k fixed composition studies only; not approved for world-locked playback. UI-only deployment costs zero credits.",
-  "verifiedRemainingBalance": 1433.25
+  "currentRevisionCredits": 8.25,
+  "qualityStatus": "Separate 2.5D merchant and farmer encounters: source camera approaches, fixed illustrated layers, medium closeup dialogue. Courtyard uses dissolve; no full spatial traversal.",
+  "verifiedRemainingBalance": 1425
 }

@@ -7,8 +7,8 @@ import { measurements } from './measurements.js?v=1';
 const decoder = new DRACOLoader().setDecoderPath('./vendor/draco/').setWorkerLimit(1);
 const loader = new GLTFLoader().setDRACOLoader(decoder);
 const returnLink = document.querySelector('[data-story-return]');
-const returnPage=sessionStorage.getItem('ink-pilot-return');
-returnLink.href='../'+(['review.html','review.html?candidate=720p'].includes(returnPage)?returnPage:'play.html');
+const returnPage=new URLSearchParams(location.search).get('from')==='spatial-test'?'spatial-test.html':sessionStorage.getItem('ink-pilot-return');
+returnLink.href='../'+(['review.html','review.html?candidate=720p','spatial-test.html'].includes(returnPage)?returnPage:'play.html');
 
 function createViewer({ element, loading, modelUrl, targetSize, yaw = 0 }) {
   const scene = new THREE.Scene();
