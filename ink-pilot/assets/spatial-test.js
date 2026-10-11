@@ -1,6 +1,6 @@
 import * as THREE from '../../assets/vendor/three.module.js';
 import {dialogueCopy} from './dialogue-copy.js';
-import {createOpening,openingPhase} from './spatial-opening.js?v=7';
+import {createOpening,openingPhase} from './spatial-opening.js?v=8';
 import {createPuppet} from './spatial-puppet.js?v=4';
 
 const $=id=>document.getElementById(id),base=new URL('./spatial-test/',import.meta.url);
@@ -17,6 +17,29 @@ const vFov=(h,aspect)=>THREE.MathUtils.radToDeg(2*Math.atan(Math.tan(THREE.MathU
 // visible horizontal angle on the registered final plate, including 4:3 panes.
 const coverHFov=(h,aspect)=>THREE.MathUtils.radToDeg(2*Math.atan(Math.tan(THREE.MathUtils.degToRad(h/2))*Math.min(1,aspect/(16/9))));
 const setPose=(camera,pose)=>{camera.position.fromArray(pose.p);camera.quaternion.set(pose.q[1],pose.q[2],pose.q[3],pose.q[0]);camera.updateMatrixWorld();};
+// A registered plate has finite angular coverage. Fit the view to its actual
+// 14m shell instead of exposing blank borders when the source camera turns.
+const plateBoundary=[];for(let n=0;n<=12;n++){const t=-1+n/6;plateBoundary.push([t,-1],[t,1],[-1,t],[1,t]);}
+const plateRay=new THREE.Vector3(),plateOffset=new THREE.Vector3(),plateHit=new THREE.Vector3();
+function fitPlateCoverage(e){
+ const c=e.camera,r=e.reference,halfH=Math.tan(THREE.MathUtils.degToRad(e.manifest.projectionHFov/2)),halfV=halfH/(16/9);
+ plateOffset.copy(c.position).sub(r.position);const offsetSquared=plateOffset.lengthSq();
+ // No FOV change at the film handoff; introduce a subpixel tessellation inset
+ // smoothly as translation/rotation begins, not as a visible framing jump.
+ const moved=Math.min(1,Math.sqrt(offsetSquared)*20+c.quaternion.angleTo(r.quaternion)*20),limit=1-.0008*moved;
+ function coverage(){let extent=0;
+  for(const [x,y] of plateBoundary){
+   plateRay.set(x,y,.5).unproject(c).sub(c.position).normalize();
+   const b=plateOffset.dot(plateRay),disc=b*b+196-offsetSquared;if(disc<=0)return Infinity;
+   plateHit.copy(c.position).addScaledVector(plateRay,-b+Math.sqrt(disc)).applyMatrix4(r.matrixWorldInverse);
+   if(plateHit.z>=0)return Infinity;
+   extent=Math.max(extent,Math.abs(plateHit.x/plateHit.z)/halfH,Math.abs(plateHit.y/plateHit.z)/halfV);
+  }return extent;
+ }
+ c.fov=e.baseVFov;c.updateProjectionMatrix();
+ if(coverage()>limit+1e-9){let lo=2,hi=e.baseVFov;for(let n=0;n<16;n++){c.fov=(lo+hi)/2;c.updateProjectionMatrix();if(coverage()<=limit)lo=c.fov;else hi=c.fov;}c.fov=lo;c.updateProjectionMatrix();}
+ e.plateCoverage=coverage();e.effectiveHFov=THREE.MathUtils.radToDeg(2*Math.atan(Math.tan(THREE.MathUtils.degToRad(c.fov/2))*c.aspect));
+}
 let target=0,progress=0,auto=false,ambient=true,elapsed=0,last=performance.now(),showGuide=false,currentSpeaker=-1;
 const openingEnd=.44,storyProgress=p=>clamp((p-openingEnd)/(1-openingEnd),0,1),storyPoint=p=>openingEnd+p*(1-openingEnd);
 const handoffDuration=.24;let handoffComplete=false,handoffElapsed=0;
@@ -73,7 +96,7 @@ try{
   fragmentShader:'uniform sampler2D a;uniform sampler2D b;uniform float amount;varying vec2 imageUV;void main(){gl_FragColor=mix(texture2D(a,imageUV),texture2D(b,imageUV),amount);\n#include <colorspace_fragment>\n}'
  })));
  function resize(){const w=Math.max(1,innerWidth),h=Math.max(1,innerHeight);renderer.setSize(w,h,false);
-  for(const e of encounters){e.camera.aspect=w/h;e.effectiveHFov=coverHFov(e.manifest.viewHFov,w/h);e.camera.fov=vFov(e.effectiveHFov,w/h);e.camera.updateProjectionMatrix();
+  for(const e of encounters){e.camera.aspect=w/h;e.effectiveHFov=coverHFov(e.manifest.viewHFov,w/h);e.baseVFov=vFov(e.effectiveHFov,w/h);e.camera.fov=e.baseVFov;e.camera.updateProjectionMatrix();
    // Off-axis composition keeps the camera horizontal at face height while placing
    // the whole topknot below navigation. No low-angle upward tilt is introduced.
    const visibleHeight=h<=500?1.48:1.36;
@@ -87,8 +110,10 @@ try{
  const qa=new THREE.Quaternion(),qb=new THREE.Quaternion(),pa=new THREE.Vector3(),pb=new THREE.Vector3();
  function poseEncounter(e,walk,close){const path=e.manifest.path,f=clamp(walk,0,1)*(path.length-1),i=Math.min(path.length-2,Math.floor(f)),t=f-i,A=path[i],B=path[i+1],c=e.camera;
   c.position.copy(pa.fromArray(A.p).lerp(pb.fromArray(B.p),t));qa.set(A.q[1],A.q[2],A.q[3],A.q[0]);qb.set(B.q[1],B.q[2],B.q[3],B.q[0]);c.quaternion.copy(qa.slerp(qb,t));
+  if(e.index===0&&walk===0&&close===0){c.position.copy(e.reference.position);c.quaternion.copy(e.reference.quaternion);}
   c.position.lerp(e.closeCamera.position,close);c.quaternion.slerp(e.closeCamera.quaternion,close);
   c.setViewOffset(innerWidth,innerHeight,0,innerHeight*.14*close,innerWidth,innerHeight);c.updateMatrixWorld();
+  if(e.index===0)fitPlateCoverage(e);
   e.puppet.update(reduced?0:elapsed+(e.index?1.8:0));
  }
  function stopAuto(){auto=false;$('run').textContent='이동 재생';}
@@ -149,7 +174,7 @@ try{
   $('progress').value=String(progress);const chapter=progress<.002?0:progress<.44*9/30?1:progress<.44*13/30?2:progress<.44?3:journey<.337?4:journey<.46?5:journey<.898?6:7;
   $('chapter').value=String(chapter);
   const active=encounters[mix>=.5?1:0],hair=new THREE.Vector3(0,1.81,0);active.hero.localToWorld(hair);hair.project(active.camera);
-  document.body.dataset.proof=JSON.stringify({progress,target,journey,opening:openingVisible?openingPhase(progress/openingEnd):null,handoff:{holdingFilm,complete:handoffComplete,fade:handoffElapsed/handoffDuration},chapter:labels[chapter],speaker:currentSpeaker,ambientSeconds:elapsed,camera:active.camera.matrixWorld.toArray(),effectiveHFov:active.effectiveHFov,actorSeconds:elapsed,puppet:active.puppet.proof(),headTopScreenY:(1-hair.y)/2,renderMethod:'continuous-background-video-and-independent-character-video',film:opening.film.proof(),cameraSource:active.manifest.cameraSource,transition:'Lion ink, mountains, fog, protected aerial hold, continuous Blender-route video, registered merchant with recorded hand/head motion',drawCalls:renderer.info.render.calls});
+  document.body.dataset.proof=JSON.stringify({progress,target,journey,opening:openingVisible?openingPhase(progress/openingEnd):null,handoff:{holdingFilm,complete:handoffComplete,fade:handoffElapsed/handoffDuration},chapter:labels[chapter],speaker:currentSpeaker,ambientSeconds:elapsed,camera:active.camera.matrixWorld.toArray(),effectiveHFov:active.effectiveHFov,plateCoverage:active.plateCoverage,actorSeconds:elapsed,puppet:active.puppet.proof(),headTopScreenY:(1-hair.y)/2,renderMethod:'continuous-background-video-and-independent-character-video',film:opening.film.proof(),cameraSource:active.manifest.cameraSource,transition:'Lion ink, mountains, fog, protected aerial hold, continuous Blender-route video, registered merchant with recorded hand/head motion',drawCalls:renderer.info.render.calls});
   requestAnimationFrame(frame);
  }
  requestAnimationFrame(frame);

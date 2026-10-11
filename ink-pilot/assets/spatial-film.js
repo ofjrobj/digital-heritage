@@ -201,7 +201,7 @@ export function createSpatialFilm(options={}){
   cancelVideoReady=()=>{cleanup();if(!loaded)reject(Error('Background film disposed before loading'));};
   video.addEventListener('loadeddata',success,{once:true});video.addEventListener('error',fail,{once:true});
  });
- video.src=options.url?new URL(options.url,import.meta.url).href:asset('film-first/journey.mp4');video.load();
+ video.src=options.url?new URL(options.url,import.meta.url).href:asset('film-first/journey.mp4?rev=2');video.load();
  const dataReady=(options.cameraData?Promise.resolve(options.cameraData):fetch(options.cameraUrl?new URL(options.cameraUrl,import.meta.url):asset('film-first/camera.json')).then(r=>{if(!r.ok)throw Error(`Camera track ${r.status}`);return r.json();})).then(value=>{data=value;duration=Number(data.duration)||17;actorsReady=setupActors();return data;});
  const ready=Promise.all([videoReady,dataReady]).then(()=>{mode='paused';return api;});
  const api={video,ready,command,draw,cameraAt,play,pause,unlock,setAmbient,actor(kind){return actors.find(row=>row.kind===kind)?.actor??null;},
