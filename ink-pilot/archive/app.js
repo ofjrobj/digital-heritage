@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { measurements } from './measurements.js?v=1';
 
 const decoder = new DRACOLoader().setDecoderPath('./vendor/draco/').setWorkerLimit(1);
 const loader = new GLTFLoader().setDRACOLoader(decoder);
@@ -65,22 +66,31 @@ const viewers = {
  male:createViewer({element:document.querySelector('#male-scene'),loading:document.querySelector('#male-loading'),modelUrl:'models/male.glb',targetSize:1.83,yaw:-3.902609*Math.PI/180}),
  female:createViewer({element:document.querySelector('#female-scene'),loading:document.querySelector('#female-loading'),modelUrl:'models/female.glb',targetSize:2.10,yaw:-140.445485*Math.PI/180})
 };
-const pairViews = [
- {title:'등의 결을 비교하세요',text:'목 뒤에서 등으로 이어지는 털 무늬를 돌려 보세요. 스캔 표면에 남은 선의 깊이와 간격을 서로 비교할 수 있습니다.',male:[-2.5,2.3,2.8],female:[-2.5,2.3,2.8]},
- {title:'머리의 조각을 살펴보세요',text:'정수리의 곱슬거리는 갈기와 귀 주변의 굴곡을 입체적으로 살펴보세요.',male:[2,1.2,1.8],female:[2,1.2,1.8],target:[.45,.2,0]},
- {title:'몸통의 윤곽을 비교하세요',text:'각 개체의 몸 길이와 몸통·다리의 비례, 표면에 새겨진 털 무늬를 함께 살펴보세요.',male:[.5,1,3.5],female:[.5,1,3.5]},
- {title:'얼굴과 눈매를 비교하세요',text:'눈·코·입과 수염 자국을 정면에서 비교하세요. 마우스나 손가락으로 방향을 바꿔 조각의 굴곡을 확인할 수 있습니다.',male:[3.4,.4,0],female:[3.4,.4,0],target:[.35,0,0]},
- {title:'측면과 꼬리를 살펴보세요',text:'옆면으로 돌려 몸통과 다리, 꼬리로 이어지는 형태를 확인하세요.',male:[0,.45,3.6],female:[0,.45,3.6]}
-];
 const detail = document.querySelector(".detail-card");
+const measurementTable=document.createElement('table');
+measurementTable.className='measurement-table';measurementTable.hidden=true;
+detail.querySelector('.detail-status').before(measurementTable);
+detail.tabIndex=0;
+function showMeasurements(note){
+ const caption=document.createElement('caption');caption.textContent=note.label+' 비교';
+ const head=document.createElement('thead'),headRow=document.createElement('tr');
+ for(const label of ['항목','암','수']){const th=document.createElement('th');th.scope='col';th.textContent=label;headRow.append(th);}
+ head.append(headRow);
+ const body=document.createElement('tbody');
+ for(const row of note.rows){const tr=document.createElement('tr');row.forEach((value,i)=>{const cell=document.createElement(i?'td':'th');if(!i)cell.scope='row';cell.textContent=value;tr.append(cell);});body.append(tr);}
+ measurementTable.replaceChildren(caption,head,body);measurementTable.hidden=false;
+ detail.classList.add('is-measurement');detail.scrollTop=0;
+ detail.querySelector('.detail-status').textContent='제공 수치 · 암사자 / 수사자';
+}
 document.querySelectorAll(".hotspot").forEach(button => button.addEventListener("click", () => {
-  const pointIndex = Number(button.dataset.point) - 1, note = pairViews[pointIndex];
+  const pointIndex = Number(button.dataset.point) - 1, note = measurements[pointIndex];
   document.querySelectorAll(".hotspot").forEach(item => item.classList.toggle("is-active", item === button));
-  viewers.male.focus(note.male,note.target);
-  viewers.female.focus(note.female,note.target);
-  detail.querySelector(".detail-kicker").textContent = `${button.dataset.point} · 두 개체 공통 시점`;
+  viewers.male.focus(note.position,note.target);
+  viewers.female.focus(note.position,note.target);
+  detail.querySelector(".detail-kicker").textContent = `${button.dataset.point} ${note.label} · 스캔 비교`;
   detail.querySelector("h3").textContent = note.title;
   detail.querySelector(".detail-copy").textContent = note.text;
+  showMeasurements(note);
 }));
 document.querySelectorAll(".panel-toggle").forEach(button => button.addEventListener("click", () => {
   const panel = button.closest(".info-panel");
