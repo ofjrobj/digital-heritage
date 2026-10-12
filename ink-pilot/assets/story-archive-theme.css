@@ -2,10 +2,13 @@
    The Figma ornament source, path, proportions and corner orientation stay intact. */
 :root{--story-ink:#1e1e1c;--story-secondary:#555550;--story-line:rgba(30,30,28,.2);--story-paper:rgba(250,250,248,.91);--story-serif:'Noto Serif KR','User KoPubWorld Light',serif;--story-sans:'Space Grotesk',sans-serif;--story-nav-size:12px;--story-label-size:17px;--story-copy-size:13px;--story-meta-size:10px}
 body,button,select,input{color:var(--story-ink)}
-body #storyIndexBar{top:max(36px,env(safe-area-inset-top))!important;gap:0!important;align-items:center}
-body #storyIndexBar :is(button,a){position:relative;display:flex;align-items:center;justify-content:center;border:0;background:transparent;text-decoration:none;white-space:nowrap;font-family:var(--story-serif);font-size:var(--story-nav-size)!important;font-weight:400!important;line-height:1.25!important;min-height:32px;padding:4px 18px!important;color:#373734!important;text-shadow:0 0 12px #fafaf8,0 0 4px #fafaf8!important}
+/* Match archive/background.css .masthead nav, including its native underline. */
+body #storyIndexBar{top:36px!important;gap:0!important;align-items:stretch;background:none!important;padding:0!important;letter-spacing:.04em}
+body #storyIndexBar :is(button,a){position:relative;display:block;align-items:normal;justify-content:normal;width:auto;height:auto;min-height:0;min-width:0;margin:0;border:0;border-radius:0;background:transparent;text-decoration:none;white-space:nowrap;font-family:var(--story-serif);font-size:12px!important;font-weight:400!important;line-height:normal!important;letter-spacing:.04em;padding:4px 18px!important;color:#373734!important;text-shadow:none!important;box-shadow:none}
 body #storyIndexBar :is(button,a)+:is(button,a){border-left:1px solid var(--story-line)}
-body #storyIndexBar :is(button,a)[aria-current=page]:after{content:'';position:absolute;height:1px;left:18px!important;right:18px!important;bottom:3px!important;background:#37373488!important}
+body #storyIndexBar :is(button,a)[aria-current=page]{text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:auto}
+body #storyIndexBar :is(button,a)[aria-current=page]:after{content:none!important}
+@media(max-width:950px) and (orientation:landscape){body #storyIndexBar{top:20px!important}}
 body #cinemaDialogue{color:var(--story-ink)!important;background:var(--story-paper) url('./hanji-grain.svg')!important;border-color:var(--story-line)!important;padding:20px clamp(34px,3.6vw,56px) 12px!important;gap:8px;max-height:42vh!important}
 body #cinemaDialogue h2{font-family:var(--story-serif);font-size:var(--story-label-size)!important;font-weight:600!important;color:#292925!important;line-height:1.5!important;letter-spacing:-.035em!important}
 body #cinemaDialogue p{font-family:var(--story-serif);font-size:var(--story-copy-size)!important;font-weight:400!important;line-height:1.85!important;letter-spacing:-.025em!important;color:#373734!important;overflow:auto;scrollbar-width:thin;touch-action:pan-y;overscroll-behavior:contain}
@@ -26,9 +29,6 @@ body #rotate,body #loading{background:#fafaf8;color:#373734;font-family:var(--st
 body #rotate p{font-size:18px}body #rotate small{color:#62625d;font-size:12px}
 body button:focus-visible,body select:focus-visible,body input:focus-visible{outline:2px solid #373734;outline-offset:4px}
 @media(orientation:landscape) and (max-height:500px){
- body #storyIndexBar{top:max(8px,env(safe-area-inset-top))!important;gap:0!important}
- body #storyIndexBar :is(button,a){font-size:12px!important;min-height:32px;padding:4px 18px!important}
- body #storyIndexBar :is(button,a)[aria-current=page]:after{left:18px!important;right:18px!important}
  body #cinemaDialogue{padding:10px 30px 6px!important;gap:4px;max-height:43vh!important}
  body #cinemaDialogue h2{font-size:14px!important;line-height:1.45!important}
  body #cinemaDialogue p{font-size:12px!important;line-height:1.65!important}
@@ -40,8 +40,6 @@ body button:focus-visible,body select:focus-visible,body input:focus-visible{out
  body #openingCopy{font-size:14px}body #cue p{font-size:12px!important}
 }
 @media(orientation:portrait) and (max-width:700px){
- body #storyIndexBar{top:20px!important;gap:0!important}
- body #storyIndexBar :is(button,a){font-size:12px!important}
  body #cinemaDialogue{padding:17px 32px 10px!important;max-height:43vh!important}
  body #cinemaDialogue h2{font-size:16px!important}body #cinemaDialogue p{font-size:13px!important;line-height:1.75!important}
 }

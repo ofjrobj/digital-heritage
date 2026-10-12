@@ -11,10 +11,15 @@ const returnPage=new URLSearchParams(location.search).get('from')==='spatial-tes
 const storyPage=['play.html','review.html','review.html?candidate=720p','spatial-test.html'].includes(returnPage)?returnPage:'spatial-test.html';
 returnLink.href='../'+storyPage+(storyPage==='spatial-test.html'?'?rev=archive-link-1':'');
 
-function createViewer({ element, loading, modelUrl, targetSize, yaw = 0 }) {
+function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, displayZoom = 1 }) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(34, 1, .01, 100);
   camera.position.set(2.7, 1.15, 3.6);
+  // Match subject size in the two viewer panels; this is display magnification only.
+  // Scan vertices, proportions, scene scale and supplied measurements stay unchanged.
+  camera.zoom = displayZoom;
+  camera.updateProjectionMatrix();
+  element.dataset.displayZoom = String(displayZoom);
   const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -65,7 +70,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0 }) {
 }
 const viewers = {
  male:createViewer({element:document.querySelector('#male-scene'),loading:document.querySelector('#male-loading'),modelUrl:'models/male.glb',targetSize:1.83,yaw:-3.902609*Math.PI/180}),
- female:createViewer({element:document.querySelector('#female-scene'),loading:document.querySelector('#female-loading'),modelUrl:'models/female.glb',targetSize:2.10,yaw:-140.445485*Math.PI/180})
+ female:createViewer({element:document.querySelector('#female-scene'),loading:document.querySelector('#female-loading'),modelUrl:'models/female.glb',targetSize:2.10,yaw:-140.445485*Math.PI/180,displayZoom:1.25})
 };
 // The archive's numbered descriptions and side panels use the supplied scan values.
 // Keep the local GLB projection settings above: the remote archive used different OBJ axes.

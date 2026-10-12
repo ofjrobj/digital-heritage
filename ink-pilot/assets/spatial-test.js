@@ -74,6 +74,23 @@ try{
   await actor.ready;return actor;
  }
  const actors=await Promise.all(['merchant','farmer','cook'].map(loadActor));
+ // Dialogue holds the card's frontal first frame. Guard the shared merchant
+ // API too, so opening-film gesture/visibility retries cannot restart it.
+ for(const [index,actor] of actors.entries()){
+  const play=actor.play.bind(actor);
+  const hold=()=>currentSpeaker===index||!ambient||document.hidden;
+  actor.play=()=>{if(hold()){actor.pause();return Promise.resolve(false);}return play();};
+  actor.video.addEventListener('play',()=>{if(hold())actor.pause();});
+ }
+ function syncActorMotion(resetDialogue=false){
+  for(const [index,actor] of actors.entries()){
+   if(index===currentSpeaker){
+    actor.pause();
+    if(resetDialogue){actor.video.currentTime=0;actor.texture.needsUpdate=true;}
+   }else if(ambient&&!document.hidden)void actor.play();
+   else actor.pause();
+  }
+ }
  const endCamera=filmCamera.samples.at(-1);
  const cloneActor=actor=>{const mesh=actor.mesh.clone();mesh.material=actor.mesh.material.clone();mesh.material.onBeforeCompile=actor.mesh.material.onBeforeCompile;mesh.material.customProgramCacheKey=actor.mesh.material.customProgramCacheKey;mesh.material.opacity=1;mesh.visible=true;return mesh;};
  function addActor(scene,actor,anchor,reference){
@@ -160,18 +177,18 @@ try{
  $('dialogue').onclick=()=>go(stops.find(s=>s>=progress-.002)??1);
  $('next').onclick=()=>{if(currentSpeaker===2){rememberStory();location.assign($('indexLink').href);}else if(currentSpeaker>=0){go(stops[currentSpeaker]);resume();}};
  $('compare').onclick=()=>{showGuide=!showGuide;$('compare').setAttribute('aria-pressed',String(showGuide));$('compare').textContent=showGuide?'한국화 보기':'기준 구도 비교';};
- $('ambience').onclick=()=>{ambient=!ambient;for(const actor of actors)ambient?actor.play():actor.pause();opening.film.setAmbient?.(ambient);$('ambience').textContent=ambient?'인물 움직임 켜짐':'인물 움직임 꺼짐';$('ambience').setAttribute('aria-pressed',String(ambient));};
- stage.addEventListener('pointerdown',()=>{if(ambient)for(const actor of actors)void actor.play();},{passive:true});
+ $('ambience').onclick=()=>{ambient=!ambient;opening.film.setAmbient?.(ambient);syncActorMotion();$('ambience').textContent=ambient?'인물 움직임 켜짐':'인물 움직임 꺼짐';$('ambience').setAttribute('aria-pressed',String(ambient));};
+ stage.addEventListener('pointerdown',()=>syncActorMotion(),{passive:true});
  stage.addEventListener('wheel',e=>{if(e.target.closest('#testTools,#cinemaDialogue,nav'))return;e.preventDefault();change(clamp(e.deltaY,-140,140)/2500);},{passive:false});
  let drag=null;$('world').addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};$('world').setPointerCapture(e.pointerId);});
  $('world').addEventListener('pointermove',e=>{if(!drag)return;change(((drag.y-e.clientY)+(e.clientX-drag.x)*.3)/1600);drag={x:e.clientX,y:e.clientY};});
  ['pointerup','pointercancel'].forEach(type=>$('world').addEventListener(type,()=>drag=null));
  addEventListener('keydown',e=>{if(e.target.matches('input,button,a,summary,select'))return;if(['ArrowDown','ArrowRight','PageDown'].includes(e.key)){e.preventDefault();change(.04);}if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();change(-.04);}});
- function showDialogue(index){if(currentSpeaker===index)return;currentSpeaker=index;panel.hidden=index<0;if(index>=0){panel.querySelector('h2').textContent=names[index];panel.querySelector('p').textContent=dialogueCopy[index].testimony;$('next').textContent=index===2?'석사자 아카이브로':names[index+1]+'에게 이동';}}
+ function showDialogue(index){if(currentSpeaker===index)return;currentSpeaker=index;syncActorMotion(index>=0);panel.hidden=index<0;if(index>=0){panel.querySelector('h2').textContent=names[index];panel.querySelector('p').textContent=dialogueCopy[index].testimony;$('next').textContent=index===2?'석사자 아카이브로':names[index+1]+'에게 이동';}}
  function rememberStory(){stopAuto();sessionStorage.setItem('spatial-test-resume-v3',String(target));sessionStorage.setItem('ink-pilot-return','spatial-test.html');}
  $('storyLink').onclick=e=>{e.preventDefault();go(0);};$('indexLink').onclick=rememberStory;
  const saved=sessionStorage.getItem('spatial-test-resume-v3');if(saved!==null){go(clamp(Number(saved)||0,0,1));sessionStorage.removeItem('spatial-test-resume-v3');}
- addEventListener('visibilitychange',()=>{if(document.hidden){for(const actor of actors)actor.pause();}else if(ambient)for(const actor of actors)void actor.play();});
+ addEventListener('visibilitychange',()=>syncActorMotion());
  if(matchMedia('(pointer:coarse) and (orientation:portrait)').matches){$('rotate').hidden=false;setTimeout(()=>$('rotate').hidden=true,3000);}
  loading.hidden=true;document.body.dataset.ready='true';
  function frame(now){
