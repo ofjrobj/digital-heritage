@@ -1,7 +1,7 @@
 {
-  "totalCredits": 317,
-  "imageCount": 27,
-  "videoCount": 25,
+  "totalCredits": 543.25,
+  "imageCount": 34,
+  "videoCount": 32,
   "items": [
     {
       "label": "entry",
@@ -498,16 +498,156 @@
       ],
       "revision": "continuous-first-character-film",
       "usedInPublishedProof": true
+    },
+    {
+      "label": "front-still",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "6919cf6d-e36a-4fc0-9af6-6b2f8de93058"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "front-still",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "3faee317-4bd0-4e26-9e87-439b5084822c"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "front-still",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "57a696b6-97b2-4753-a318-ffc77aff2a76"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "opening-1080-repair",
+      "type": "video",
+      "credits": 48.0,
+      "ids": [
+        "91037549-6a6f-4328-853c-9ae86130c4f5"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": false
+    },
+    {
+      "label": "front-loop",
+      "type": "video",
+      "credits": 5.0,
+      "ids": [
+        "d6580d54-d360-4a4e-be70-ad7ce7bb8213"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "front-loop",
+      "type": "video",
+      "credits": 5.0,
+      "ids": [
+        "16d2738e-9a77-4b79-91a1-eee1d4783073"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "front-loop",
+      "type": "video",
+      "credits": 5.0,
+      "ids": [
+        "f45a3551-d0de-4c3e-bdee-c1d7f483e8fd"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "environment-detail-keyframes",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "289b13f2-cb9f-4575-844d-0242339aa2fc"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "environment-detail-keyframes",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "f5c643fa-3324-42f1-bf62-5ad7be98c9b4"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "environment-detail-keyframes",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "85015ef5-b735-4281-9b40-3b360b51fabd"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "environment-detail-films",
+      "type": "video",
+      "credits": 48.0,
+      "ids": [
+        "21c756fd-3268-410d-82a3-e30605bf17e3"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "environment-detail-films",
+      "type": "video",
+      "credits": 48.0,
+      "ids": [
+        "3eac2696-ef72-4409-b6ff-61a7679fb619"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "environment-detail-films",
+      "type": "video",
+      "credits": 48.0,
+      "ids": [
+        "7eaa4220-5973-4514-9e2b-81602fbf765d"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "merchant-detail-backdrop",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "27eb8bd7-6c52-45ad-b0cc-cd5cd6f8311e"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
     }
   ],
   "model": "Seedance 2.5 video edit + Seedance 2.0 Mini character loops",
-  "resolution": "720p continuous travel and independently playing characters",
+  "resolution": "1080p sparse travel frames; 2k fixed dialogue plates; independent 720p character loops",
   "audio": false,
-  "creditsBefore": 1551.5,
-  "creditsAfter": 1234.5,
+  "creditsBefore": 1234.5,
+  "creditsAfter": 1008.25,
   "previousDraftCredits": 32.5,
-  "currentRevisionCredits": 190.5,
-  "qualityStatus": "Start to merchant: continuous Blender-guided film, masked road-barrier repair, original-card merchant and two independent worker video loops. Distant baked aerial figures and some generated architectural detail variation remain.",
-  "verifiedRemainingBalance": 1234.5,
-  "lastRevision": "continuous-first-character-film"
+  "currentRevisionCredits": 226.25,
+  "qualityStatus": "Start to merchant, farmer and cook. Original camera paths, front-facing original-card cast, foreground occlusion, ramp correction, mountain and dialogue fog. Some distant figures remain baked into background frames and minor generated architectural line variation remains.",
+  "verifiedRemainingBalance": 1008.25,
+  "lastRevision": "film-third-1"
 }

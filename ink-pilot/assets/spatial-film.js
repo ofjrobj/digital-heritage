@@ -1,5 +1,5 @@
 import * as THREE from '../../assets/vendor/three.module.js';
-import {createVideoActor} from './spatial-video-actor.js';
+import {createVideoActor} from './spatial-video-actor.js?v=film-third-1';
 
 const clamp=(v,lo=0,hi=1)=>Math.min(hi,Math.max(lo,v));
 const smooth=v=>{v=clamp(v);return v*v*(3-2*v);};
@@ -32,8 +32,8 @@ const PLATE_ACTOR_REGISTRATION=Object.freeze({
  * Actors are never sought by command(), draw(), or cameraAt(). Their video
  * time continues while the background is paused; setAmbient(false) is explicit.
  * cameraAt() returns native Blender Z-up p and WXYZ quaternion for source time.
- * Visibility windows were inspected against the source and generated plate;
- * this is compositing, with no runtime depth/occlusion reconstruction.
+ * Entry extras are composited behind measured foreground gate silhouettes.
+ * These are decoded-frame masks, not a reconstructed whole-scene depth map.
  */
 export function createSpatialFilm(options={}){
  const video=document.createElement('video');
@@ -45,12 +45,19 @@ export function createSpatialFilm(options={}){
  let seeks=0,forwardSeeks=0,reverseSeeks=0,playCalls=0,ambientEnabled=options.ambient!==false;
  let mode='loading',lastDrawTime=0,lastRect=null;
  const actors=[],actorErrors=[];
- let renderer=null,actorScene=null,actorCamera=null;
+ let renderer=null,actorScene=null,actorCamera=null,actorComposite=null,actorCompositeCtx=null;
+ let occlusionData=null,occlusionFrames=new Map(),occlusionFrame=null,occlusionPolygons=0;
  const timeline=()=>Math.max(.001,duration);
  const mediaDuration=()=>Number.isFinite(video.duration)&&video.duration>0?video.duration:timeline();
  const toMedia=t=>clamp(t,0,timeline())/timeline()*mediaDuration();
  const fromMedia=t=>clamp(t/mediaDuration()*timeline(),0,timeline());
- const sourceTime=()=>fromMedia(hasPresented?presentedMediaTime:video.currentTime||0);
+ const finalFramePresented=()=>{
+  const fps=data?.registration?.mediaFps,frames=data?.registration?.mediaFrames;
+  return video.ended||(hasPresented&&fps>0&&frames>0&&presentedMediaTime>=(frames-1)/fps-.0001);
+ };
+ // A decoded frame denotes its whole display interval. The last frame holds
+ // the exact final source pose, including the final 1/fps before media EOF.
+ const sourceTime=()=>finalFramePresented()?timeline():fromMedia(hasPresented?presentedMediaTime:video.currentTime||0);
  const controllerTime=()=>fromMedia(video.currentTime||0);
 
  function onFrame(_now,metadata){
@@ -98,7 +105,9 @@ export function createSpatialFilm(options={}){
   const velocity=now-lastCommandAt<100?Math.max(0,targetVelocity):0;
   const desired=clamp(remaining*3.8+velocity*.2,.25,options.maxPlaybackRate??2.5);
   rate+=(desired-rate)*(1-Math.exp(-dt/.13));
-  video.playbackRate=clamp(rate,.25,options.maxPlaybackRate??2.5);mode='forward';
+  // Controller rates are source-timeline seconds per second. A short test
+  // render still traverses the full 17-second route, so scale its media rate.
+  video.playbackRate=clamp(rate*mediaDuration()/timeline(),.0625,16);mode='forward';
   if(video.paused)void play();
  }
  function cameraAt(time=sourceTime()){
@@ -120,6 +129,8 @@ export function createSpatialFilm(options={}){
   renderer.setPixelRatio(1);renderer.setSize(1280,720,false);renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.setClearColor(0x000000,0);actorScene=new THREE.Scene();actorCamera=new THREE.PerspectiveCamera(30,16/9,.05,1200);
   actorCamera.up.set(0,0,1);
+  actorComposite=document.createElement('canvas');actorComposite.width=1280;actorComposite.height=720;
+  actorCompositeCtx=actorComposite.getContext('2d');
  }
  function windowOpacity(time,windows){
   let opacity=0;for(const [a,b] of windows){const edge=Math.min(.28,(b-a)/3);opacity=Math.max(opacity,smooth((time-a)/edge)*smooth((b-time)/edge));}return opacity;
@@ -127,7 +138,7 @@ export function createSpatialFilm(options={}){
  async function actorConfigs(){
   if(options.actors!==undefined)return options.actors;
   const read=async path=>{const r=await fetch(asset(path));if(!r.ok)throw Error(`${path}: ${r.status}`);return r.json();};
-  const results=await Promise.allSettled([read('film-first/extras-metadata.json'),read('film-first/merchant-loop.json')]);
+  const results=await Promise.allSettled([read('film-first/extras-metadata.json'),read('film-third/merchant-loop.json')]);
   const configs=[];
   if(results[0].status==='fulfilled')for(const item of results[0].value.actors??[]){
    const id=item.anchor??item.sourceRoot;
@@ -137,7 +148,7 @@ export function createSpatialFilm(options={}){
    configs.push({...item,kind:item.kind??item.id,url:item.url??asset('film-first/'+item.file),anchor,windows:registration?.windows,loop:true});
   }else actorErrors.push({kind:'extras-manifest',error:String(results[0].reason)});
   if(results[1].status==='fulfilled'){
-   const item=results[1].value;configs.push({...item,kind:'merchant',url:asset('film-first/'+item.file),height:1.86,loop:true,
+   const item=results[1].value;configs.push({...item,kind:'merchant',url:asset('film-third/'+item.file),height:1.86,loop:true,
     anchor:{id:'Jegeumru merchant',p:[22,-19,2.0691163539886475],sourceFloorZ:2.0691163539886475},windows:[[13,17.5]]});
   }else actorErrors.push({kind:'merchant-manifest',error:String(results[1].reason)});
   return configs;
@@ -150,8 +161,15 @@ export function createSpatialFilm(options={}){
    if(!anchor||anchor.replaced)throw Error(`Missing or replaced actor anchor: ${config.anchor}`);
    const windows=config.windows??anchor.visibleWindows??SAFE_WINDOWS[anchor.id]??[];
    const actor=createVideoActor(THREE,new URL(config.url??config.src,import.meta.url).href,{...config,autoplay:ambientEnabled,height:config.height??anchor.heightMetres??1.6});
-   const row={actor,anchor,windows,kind:config.kind??anchor.role,loaded:false,opacity:0};actors.push(row);
+   const row={actor,anchor,windows,kind:config.kind??anchor.role,loaded:false,opacity:0,shadow:null};actors.push(row);
    const feet=anchor.p.slice();feet[2]=anchor.sourceFloorZ??feet[2];actor.mesh.position.fromArray(feet);actor.mesh.up.set(0,0,1);actorScene.add(actor.mesh);
+   if(row.kind!=='merchant'){
+    // Ground-plane contact follows the same immutable feet anchor, never the
+    // actor's independently animated hands/head. No whole-sprite bobbing.
+    const shadow=new THREE.Mesh(new THREE.CircleGeometry(.21,24),new THREE.MeshBasicMaterial({color:0x333832,transparent:true,opacity:.15,depthWrite:false,side:THREE.DoubleSide}));
+    shadow.position.fromArray(feet);shadow.position.z+=.004;shadow.scale.set(1,.58,1);shadow.renderOrder=-1;
+    actorScene.add(shadow);row.shadow=shadow;
+   }
    try{await actor.ready;row.loaded=true;if(ambientEnabled)void actor.play();else actor.pause();return row;}
    catch(error){actorErrors.push({kind:row.kind,error:String(error)});actor.mesh.visible=false;throw error;}
   }));
@@ -165,6 +183,7 @@ export function createSpatialFilm(options={}){
   let visible=0;
   for(const row of actors){
    row.opacity=row.loaded?windowOpacity(time,row.windows):0;row.actor.mesh.visible=row.opacity>.001;
+   if(row.shadow){row.shadow.visible=row.actor.mesh.visible;row.shadow.material.opacity=.15*row.opacity;}
    if(!row.actor.mesh.visible)continue;
    row.actor.setOpacity(row.opacity);const mesh=row.actor.mesh;
    // Upright billboard around the fixed source feet. Footage itself contains
@@ -173,7 +192,46 @@ export function createSpatialFilm(options={}){
    visible++;
   }
   if(!visible)return;
-  renderer.render(actorScene,actorCamera);ctx.drawImage(renderer.domElement,dest.x,dest.y,dest.width,dest.height);
+  // Use the displayed frame, not the requested scroll position. The film has
+  // repeated/held frames, so interpolating silhouettes would expose columns.
+  const mediaTime=hasPresented?presentedMediaTime:video.currentTime;
+  occlusionFrame=occlusionData?Math.floor(mediaTime/mediaDuration()*occlusionData.duration*occlusionData.fps+1e-4):null;
+  const foreground=occlusionFrames.get(occlusionFrame);
+  occlusionPolygons=(foreground?.polygons?.length??0)+Object.values(foreground?.actorPolygons??{}).reduce((n,polygons)=>n+polygons.length,0);
+  const merchant=actors.find(row=>row.kind==='merchant');
+  const showMerchant=merchant?.actor.mesh.visible??false;
+  if(foreground&&actorCompositeCtx){
+   const visibility=actors.map(row=>({row,actor:row.actor.mesh.visible,shadow:row.shadow?.visible??false}));
+   const composite=(polygons)=>{
+    renderer.render(actorScene,actorCamera);
+    const layer=actorCompositeCtx;layer.clearRect(0,0,1280,720);layer.drawImage(renderer.domElement,0,0);
+    layer.save();layer.globalCompositeOperation='destination-out';layer.fillStyle='#000';
+    for(const polygon of polygons){
+     layer.beginPath();polygon.forEach(([x,y],i)=>i?layer.lineTo(x,y):layer.moveTo(x,y));layer.closePath();layer.fill();
+    }
+    layer.restore();ctx.drawImage(actorComposite,dest.x,dest.y,dest.width,dest.height);
+   };
+   if(foreground.actorPolygons){
+    // The garden fence is between the cloth folder and the lens, while the
+    // sweeper is on its near side. Keep these depth relationships separate.
+    for(const current of visibility){
+     if(!current.actor||current.row===merchant)continue;
+     for(const state of visibility){const selected=state===current;state.row.actor.mesh.visible=selected&&state.actor;if(state.row.shadow)state.row.shadow.visible=selected&&state.shadow;}
+     composite([...(foreground.polygons??[]),...(foreground.actorPolygons[current.row.anchor.id]??[])]);
+    }
+   }else{
+    if(merchant)merchant.actor.mesh.visible=false;
+    composite(foreground.polygons??[]);
+   }
+   for(const state of visibility){state.row.actor.mesh.visible=state.actor;if(state.row.shadow)state.row.shadow.visible=state.shadow;}
+   if(showMerchant){
+    for(const row of actors)if(row!==merchant){row.actor.mesh.visible=false;if(row.shadow)row.shadow.visible=false;}
+    renderer.render(actorScene,actorCamera);ctx.drawImage(renderer.domElement,dest.x,dest.y,dest.width,dest.height);
+    for(const state of visibility){state.row.actor.mesh.visible=state.actor;if(state.row.shadow)state.row.shadow.visible=state.shadow;}
+   }
+  }else{
+   renderer.render(actorScene,actorCamera);ctx.drawImage(renderer.domElement,dest.x,dest.y,dest.width,dest.height);
+  }
  }
  function draw(ctx,rect,time){
   if(time!==undefined)command(time);
@@ -201,14 +259,15 @@ export function createSpatialFilm(options={}){
   cancelVideoReady=()=>{cleanup();if(!loaded)reject(Error('Background film disposed before loading'));};
   video.addEventListener('loadeddata',success,{once:true});video.addEventListener('error',fail,{once:true});
  });
- video.src=options.url?new URL(options.url,import.meta.url).href:asset('film-first/journey.mp4?rev=2');video.load();
- const dataReady=(options.cameraData?Promise.resolve(options.cameraData):fetch(options.cameraUrl?new URL(options.cameraUrl,import.meta.url):asset('film-first/camera.json')).then(r=>{if(!r.ok)throw Error(`Camera track ${r.status}`);return r.json();})).then(value=>{data=value;duration=Number(data.duration)||17;actorsReady=setupActors();return data;});
- const ready=Promise.all([videoReady,dataReady]).then(()=>{mode='paused';return api;});
+ video.src=options.url?new URL(options.url,import.meta.url).href:asset('film-third/opening-route.mp4');video.load();
+ const occlusionReady=(options.occlusionData?Promise.resolve(options.occlusionData):fetch(options.occlusionUrl?new URL(options.occlusionUrl,import.meta.url):asset('film-third/entry-occlusion.json')).then(r=>{if(!r.ok)throw Error(`Entry occlusion ${r.status}`);return r.json();})).then(value=>{occlusionData=value;occlusionFrames=new Map(value.frames.map(row=>[row.frame,row]));return value;});
+ const dataReady=(options.cameraData?Promise.resolve(options.cameraData):fetch(options.cameraUrl?new URL(options.cameraUrl,import.meta.url):asset('film-third/opening-camera.json')).then(r=>{if(!r.ok)throw Error(`Camera track ${r.status}`);return r.json();})).then(value=>{data=value;duration=Number(data.duration)||17;actorsReady=setupActors();return data;});
+ const ready=Promise.all([videoReady,dataReady,occlusionReady]).then(()=>{mode='paused';return api;});
  const api={video,ready,command,draw,cameraAt,play,pause,unlock,setAmbient,actor(kind){return actors.find(row=>row.kind===kind)?.actor??null;},
-  get sourceTime(){return sourceTime();},get targetTime(){return target;},get duration(){return timeline();},get actorsReady(){return actorsReady;},
+  get sourceTime(){return sourceTime();},get ended(){return finalFramePresented();},get targetTime(){return target;},get duration(){return timeline();},get actorsReady(){return actorsReady;},
   proof(){return {method:'continuous-recorded-background',loaded,mode,targetTime:target,sourceTime:sourceTime(),mediaTime:video.currentTime,mediaDuration:mediaDuration(),sourceDuration:timeline(),presentedMediaTime,decodedFrames,paused:video.paused,seeking:video.seeking,playbackRate:video.playbackRate,seeks,forwardSeeks,reverseSeeks,playCalls,lastDrawTime,rect:lastRect,error:lastError||null,
-   actorOcclusion:'Conservative visibility windows; no reconstructed depth',actors:actors.map(row=>({kind:row.kind,anchor:row.anchor.id,worldPosition:row.anchor.p,sourcePosition:row.anchor.sourcePosition??row.anchor.p,registration:row.anchor.registration??'Source world anchor',opacity:row.opacity,windows:row.windows,...row.actor.proof()})),actorErrors};},
-  dispose(){if(disposed)return;disposed=true;cancelVideoReady();if(frameRequest!==null&&video.cancelVideoFrameCallback)video.cancelVideoFrameCallback(frameRequest);gestures.forEach(type=>document.removeEventListener(type,unlock));document.removeEventListener('visibilitychange',onVisibility);video.removeEventListener('seeked',onSeeked);video.pause();video.removeAttribute('src');video.load();for(const {actor}of actors)actor.dispose();renderer?.dispose();}
+   actorOcclusion:'Decoded-frame gate, plinth and adjacent-wall masks, with actor-specific garden-fence depth; not whole-scene depth',occlusion:{loaded:!!occlusionData,frame:occlusionFrame,polygons:occlusionPolygons,trackedFrames:occlusionFrames.size},actors:actors.map(row=>({kind:row.kind,anchor:row.anchor.id,worldPosition:row.anchor.p,sourcePosition:row.anchor.sourcePosition??row.anchor.p,registration:row.anchor.registration??'Source world anchor',opacity:row.opacity,windows:row.windows,contactShadow:!!row.shadow,...row.actor.proof()})),actorErrors};},
+  dispose(){if(disposed)return;disposed=true;cancelVideoReady();if(frameRequest!==null&&video.cancelVideoFrameCallback)video.cancelVideoFrameCallback(frameRequest);gestures.forEach(type=>document.removeEventListener(type,unlock));document.removeEventListener('visibilitychange',onVisibility);video.removeEventListener('seeked',onSeeked);video.pause();video.removeAttribute('src');video.load();for(const {actor,shadow}of actors){actor.dispose();shadow?.geometry.dispose();shadow?.material.dispose();}renderer?.dispose();}
  };
  return api;
 }

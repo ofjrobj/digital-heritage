@@ -1,4 +1,4 @@
-import {createSpatialFilm} from "./spatial-film.js?v=3";
+import {createSpatialFilm} from "./spatial-film.js?v=film-third-1";
 /* Original opening choreography, followed by a continuous Blender-route film.
  * Sources: v071 ink-entry.js, storyboard-opening.js, blender-spatial-view.js,
  * mountain-entry.json; see spatial-opening-notes.json for the exact mapping.
@@ -33,7 +33,7 @@ export function createOpening(stage,options={}){
  const canvas=root.querySelector('.spatial-opening-art'),ctx=canvas.getContext('2d',{alpha:false}),ambientCanvas=root.querySelector('.spatial-opening-ambient'),ambient=ambientCanvas.getContext('2d'),title=root.querySelector('.spatial-cover-copy'),copy=root.querySelector('.spatial-opening-copy');
  const layer=document.createElement('canvas'),lc=layer.getContext('2d');
  const paths={cover:'cover.png',mountains:'locked-style/mountains.webp'};
- const images={},mask=document.createElement('canvas'),mw=384,mh=216;mask.width=mw;mask.height=mh;
+ const images={},mountainLayers=[],fogSheets=[],mask=document.createElement('canvas'),mw=384,mh=216;mask.width=mw;mask.height=mh;
  const mc=mask.getContext('2d',{willReadFrequently:true}),field=new Float32Array(mw*mh),coverField=new Float32Array(mw*mh);let pixels,prepared=false,lastProgress=-1,lastMist=-1,coverStarted=null,previousProgress=0;
  const film=createSpatialFilm();
  const residentRegions={};
@@ -43,16 +43,81 @@ export function createOpening(stage,options={}){
   for(let y=0;y<mh;y++)for(let x=0;x<mw;x++){const i=y*mw+x;if(x)field[i]=Math.min(field[i],field[i-1]+1);if(y)field[i]=Math.min(field[i],field[i-mw]+1);if(x&&y)field[i]=Math.min(field[i],field[i-mw-1]+1.414);}
   for(let y=mh-1;y>=0;y--)for(let x=mw-1;x>=0;x--){const i=y*mw+x;if(x<mw-1)field[i]=Math.min(field[i],field[i+1]+1);if(y<mh-1)field[i]=Math.min(field[i],field[i+mw]+1);if(x<mw-1&&y<mh-1)field[i]=Math.min(field[i],field[i+mw+1]+1.414);}
   for(let y=0;y<mh;y++)for(let x=0;x<mw;x++){const grain=Math.sin(x*.39+Math.sin(y*.24)*2)*1.2+Math.sin(y*.65+x*.13)*.8+Math.sin(x*.117+y*.17)*2.3;field[y*mw+x]=Math.max(0,field[y*mw+x]+grain);coverField[y*mw+x]=Math.hypot(x-mw*.5,y-mh*(400/900))+grain*1.6;}
-  pixels=mc.createImageData(mw,mh);prepared=true;
+  pixels=mc.createImageData(mw,mh);prepareMountains();prepareFog();prepared=true;
  }
  const ready=Promise.all(Object.entries(paths).map(async([name,path])=>{const im=new Image();im.src=new URL(path,import.meta.url).href;await im.decode();images[name]=im;})).then(async()=>{prepare();await film.ready;return root;});
  function resize(){const scale=Math.min(devicePixelRatio||1,1.6),w=Math.min(2560,Math.round(stage.clientWidth*scale)),h=Math.round(w*stage.clientHeight/Math.max(1,stage.clientWidth));if(canvas.width!==w||canvas.height!==h){canvas.width=layer.width=ambientCanvas.width=w;canvas.height=layer.height=ambientCanvas.height=h;lastProgress=-1;}}
  function plate(context,name,zoom=1,cx=.5,cy=.5,alpha=1){const im=images[name],w=canvas.width,h=canvas.height;if(!im||alpha<=0)return;const ratio=w/h;let sh=im.height/zoom,sw=sh*ratio;if(sw>im.width/zoom){sw=im.width/zoom;sh=sw/ratio;}const x=clamp(im.width*cx-sw/2,0,im.width-sw),y=clamp(im.height*cy-sh/2,0,im.height-sh);context.save();context.filter="url('#spatialOpeningPaperBalance')";context.globalAlpha=alpha;context.drawImage(im,x,y,sw,sh,0,0,w,h);context.restore();}
  function absorption(p,initial=false){const distances=initial?coverField:field,radius=initial?smooth(p)*264:smooth(p)*180-4;for(let i=0;i<field.length;i++){const j=i*4;pixels.data[j]=pixels.data[j+1]=pixels.data[j+2]=255;pixels.data[j+3]=Math.round(smooth((radius-distances[i]+3)/6)*255);}mc.putImageData(pixels,0,0);}
- function fog(amount,clock){if(amount<=.001||options.ambientFog===false)return;const w=canvas.width,h=canvas.height;ambient.save();for(let i=0;i<8;i++){const x=(i/7+.085*Math.sin(i*2.1+clock*.13))*w,y=(.23+(i%3)*.25+.035*Math.sin(clock*.2+i))*h;ambient.save();ambient.translate(x,y);ambient.scale(1,.37);const g=ambient.createRadialGradient(0,0,0,0,0,w*.43);g.addColorStop(0,`rgba(241,241,237,${amount*.65})`);g.addColorStop(.5,`rgba(241,241,237,${amount*.3})`);g.addColorStop(1,'rgba(241,241,237,0)');ambient.fillStyle=g;ambient.fillRect(-w*.5,-h*3,w,h*6);ambient.restore();}ambient.restore();}
+ // Each ridge is a disjoint region of the existing painting, never a mirrored
+ // or repeated mountain. The pale painted mist supplies the feathered edges.
+ // This follows the original four flanking entry masses and forward camera;
+ // it does not alter any village geometry or the subsequent camera film.
+ function prepareMountains(){
+  const source=images.mountains,w=Math.min(1920,source.width),h=Math.round(w*source.height/source.width),work=document.createElement('canvas');work.width=w;work.height=h;
+  const c=work.getContext('2d',{willReadFrequently:true});c.drawImage(source,0,0,w,h);const input=c.getImageData(0,0,w,h).data;
+  const specs=[
+   {id:'distant-valley',depth:.12,side:0,box:[.39,.39,.35,.25]},
+   {id:'left-back',depth:.25,side:-1,box:[0,.17,.62,.57]},
+   {id:'right-back',depth:.30,side:1,box:[.53,.26,.47,.50]},
+   {id:'left-middle',depth:.48,side:-1,box:[0,.40,.62,.59]},
+   {id:'right-middle',depth:.54,side:1,box:[.53,.46,.47,.54]},
+   {id:'left-near',depth:.76,side:-1,box:[0,.58,.62,.42]},
+   {id:'right-near',depth:.81,side:1,box:[.53,.65,.47,.35]}
+  ];
+  for(const [layerIndex,spec] of specs.entries()){
+   const [bx,by,bw,bh]=spec.box,sx=Math.floor(bx*w),sy=Math.floor(by*h),sw=Math.min(w-sx,Math.ceil(bw*w)),sh=Math.min(h-sy,Math.ceil(bh*h));
+   const sheet=document.createElement('canvas');sheet.width=sw;sheet.height=sh;const out=sheet.getContext('2d'),pixels=out.createImageData(sw,sh);
+   for(let y=0;y<sh;y++)for(let x=0;x<sw;x++){
+    const nx=(x+sx)/w,ny=(y+sy)/h,j=((y+sy)*w+x+sx)*4,k=(y*sw+x)*4;
+    const left=1-smooth((nx-.45)/.13),right=smooth((nx-.58)/.10),middle=1-left-right;
+    const irregular=.017*Math.sin(nx*31+.8)+.010*Math.sin(nx*79+1.7)+.004*Math.sin(nx*173);
+    const leftMid=smooth((ny-(.40+.56*nx+irregular))/.085),leftNear=smooth((ny-(.56+.64*nx-irregular))/.10);
+    const rightMid=smooth((ny-(.45+.43*(1-nx)-irregular))/.085),rightNear=smooth((ny-(.62+.58*(1-nx)+irregular))/.10);
+    const weights=[middle,left*(1-leftMid),right*(1-rightMid),left*(leftMid-leftNear),right*(rightMid-rightNear),left*leftNear,right*rightNear];
+    const weight=clamp(weights[layerIndex]),light=(input[j]*.2126+input[j+1]*.7152+input[j+2]*.0722);
+    // Remove only the pale paper behind the ridge. Dark ink and tree details
+    // keep their original RGB; no face, building or image asset is repainted.
+    const ink=smooth((240-light)/20);pixels.data[k]=input[j];pixels.data[k+1]=input[j+1];pixels.data[k+2]=input[j+2];pixels.data[k+3]=Math.round(255*weight*ink);
+   }
+   out.putImageData(pixels,0,0);mountainLayers.push({...spec,sheet,sx:sx/w,sy:sy/h,sw:sw/w,sh:sh/h});
+  }
+ }
+ function prepareFog(){
+  const hash=(x,y,seed)=>{const n=Math.sin(x*127.1+y*311.7+seed*71.3)*43758.5453;return n-Math.floor(n);};
+  const noise=(x,y,seed)=>{const ix=Math.floor(x),iy=Math.floor(y),fx=smooth(x-ix),fy=smooth(y-iy);return (hash(ix,iy,seed)*(1-fx)+hash(ix+1,iy,seed)*fx)*(1-fy)+(hash(ix,iy+1,seed)*(1-fx)+hash(ix+1,iy+1,seed)*fx)*fy;};
+  for(let seed=0;seed<3;seed++){
+   const sheet=document.createElement('canvas');sheet.width=384;sheet.height=192;const c=sheet.getContext('2d'),d=c.createImageData(sheet.width,sheet.height);
+   for(let y=0;y<sheet.height;y++)for(let x=0;x<sheet.width;x++){
+    const u=x/sheet.width,v=y/sheet.height;let n=0,weight=0;
+    for(let octave=0;octave<4;octave++){const f=2**octave,a=.5**octave;n+=noise(u*5*f,v*3*f,seed)*a;weight+=a;}
+    const edge=smooth(u/.11)*smooth((1-u)/.11)*smooth(v/.18)*smooth((1-v)/.18),a=smooth((n/weight-.18)/.64)*edge,j=(y*sheet.width+x)*4;
+    d.data[j]=241;d.data[j+1]=241;d.data[j+2]=237;d.data[j+3]=Math.round(a*255);
+   }
+   c.putImageData(d,0,0);fogSheets.push(sheet);
+  }
+ }
+ function fog(amount,clock,part=0){
+  if(amount<=.001||options.ambientFog===false)return;const w=canvas.width,h=canvas.height;
+  ambient.save();
+  // Different depths, speeds and vertical scales create passing fog banks.
+  // Clock is independent of route progress, so stopped travel retains drift.
+  for(let i=0;i<7;i++){
+   const depth=i/6,side=i%2?-1:1,drift=Math.sin(clock*(.065+depth*.035)+i*1.71)*(.065+depth*.025),width=w*(1.35+depth*.35),height=h*(.48+depth*.38);
+   const x=w*(.5+drift+side*part*(.14+depth*.21))-width/2,y=h*(.30+(i%3)*.18+Math.sin(clock*.09+i)*.035)-height/2;
+   ambient.globalAlpha=clamp(amount*(.48+depth*.22));ambient.drawImage(fogSheets[i%3],x,y,width,height);
+  }
+  const veil=ambient.createRadialGradient(w*.5,h*.52,0,w*.5,h*.52,w*.78);veil.addColorStop(0,`rgba(241,241,237,${amount*.42*(1-part*.7)})`);veil.addColorStop(1,'rgba(241,241,237,0)');ambient.globalAlpha=1;ambient.fillStyle=veil;ambient.fillRect(0,0,w,h);ambient.restore();
+ }
+ function mountainPass(context,t,alpha=1){
+  const travel=smooth((t-3.4)/4.3),w=canvas.width,h=canvas.height,aspect=images.mountains.width/images.mountains.height,scale=Math.max(w/images.mountains.width,h/images.mountains.height),iw=images.mountains.width*scale,ih=iw/aspect,ox=(w-iw)/2,oy=(h-ih)/2,vx=w*.53,vy=h*.47;
+  const fade=smooth((t-3.4)/.52);if(fade<1)plate(context,'mountains',1,.5,.5,alpha*(1-fade));
+  context.save();context.filter="url('#spatialOpeningPaperBalance')";context.globalAlpha=alpha*fade;
+  for(const ridge of mountainLayers){const magnify=1/(1-ridge.depth*travel*.92),side=ridge.side*travel*ridge.depth*w*.045;context.save();context.translate(vx+side,vy);context.scale(magnify,magnify);context.drawImage(ridge.sheet,ox+ridge.sx*iw-vx,oy+ridge.sy*ih-vy,ridge.sw*iw,ridge.sh*ih);context.restore();}
+  context.restore();root.dataset.mountainTravel=travel.toFixed(4);root.dataset.mountainLayers=String(mountainLayers.length);
+ }
  function maskToLayer(){lc.globalCompositeOperation='destination-in';const r=canvas.width/canvas.height;let sh=mh,sw=sh*r;if(sw>mw){sw=mw;sh=sw/r;}lc.drawImage(mask,(mw-sw)/2,(mh-sh)/2,sw,sh,0,0,canvas.width,canvas.height);lc.globalCompositeOperation='source-over';}
 
- function sequenceShot(name,u,z0=1,z1=1.04,x=.5,y=.5){plate(ctx,name,z0+(z1-z0)*smooth(u),x,y);}
  function update(progress,elapsed=0,opacity=1){
   if(!prepared||!stage.clientWidth||!stage.clientHeight)return;root.hidden=false;root.style.opacity=String(clamp(opacity));resize();const p=clamp(progress),t=p*openingDuration,phase=openingPhase(p);if(coverStarted===null||p<1e-7&&previousProgress>1e-7)coverStarted=elapsed;previousProgress=p;
   root.dataset.phase=phase;root.dataset.progress=p.toFixed(4);root.dataset.ambientTime=elapsed.toFixed(3);
@@ -71,8 +136,8 @@ export function createOpening(stage,options={}){
    if(initial<1){lc.clearRect(0,0,canvas.width,canvas.height);plate(lc,'cover');absorption(initial,true);maskToLayer();ctx.drawImage(layer,0,0);}else plate(ctx,'cover');
    const reveal=clamp((t-.12)/3.1);if(reveal>0){lc.clearRect(0,0,canvas.width,canvas.height);plate(lc,'mountains');absorption(reveal);maskToLayer();ctx.drawImage(layer,0,0);}
   }
-  else if(t<6.6){sequenceShot('mountains',(t-3.4)/3.2,1,1.15,.5,.56);fog(.10,elapsed);}
-  else if(t<9){const f=smooth((t-6.6)/2.4);film.command(0);film.draw(ctx,{x:0,y:0,width:canvas.width,height:canvas.height},0);plate(ctx,'mountains',1.15+.06*f,.5,.56,1-f);fog(Math.sin(f*Math.PI)*.83+.08*(1-f),elapsed);}
+  else if(t<6.6){mountainPass(ctx,t);fog(.10+.64*smooth((t-4.5)/2.1),elapsed);}
+  else if(t<9){const clearing=smooth((t-7.05)/1.95),reveal=smooth((t-6.85)/2.15);film.command(0);film.draw(ctx,{x:0,y:0,width:canvas.width,height:canvas.height},0);ctx.save();ctx.globalAlpha=1-reveal;ctx.fillStyle='#f1f1ed';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.restore();mountainPass(ctx,t,1-reveal);fog((.74+.26*smooth((t-6.6)/.45))*(1-clearing),elapsed,clearing);}
   else {const filmTime=clamp(t-13,0,17);film.command(filmTime);film.draw(ctx,{x:0,y:0,width:canvas.width,height:canvas.height},filmTime);fog(t<13?.028:.018,elapsed);}
   if(t<6.6)film.command(0);
   root.dataset.residentAnimation='independent-recorded-video';
