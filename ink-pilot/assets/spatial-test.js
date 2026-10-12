@@ -158,7 +158,7 @@ try{
  const change=delta=>{if(auto&&target<openingEnd&&performance.now()<openingGestureUntil&&delta>0)return;if(target<.002&&delta>0){resume();openingGestureUntil=performance.now()+650;return;}stopAuto();const cap=delta>0?nextStopAfter(target):1;target=clamp(target+delta,0,cap);};
  $('run').onclick=()=>auto?stopAuto():resume();$('progress').oninput=e=>go(Number(e.target.value));$('chapter').onchange=e=>go(chapters[Number(e.target.value)]);
  $('dialogue').onclick=()=>go(stops.find(s=>s>=progress-.002)??1);
- $('next').onclick=()=>{if(currentSpeaker===2)go(0);else if(currentSpeaker>=0){go(stops[currentSpeaker]);resume();}};
+ $('next').onclick=()=>{if(currentSpeaker===2){rememberStory();location.assign($('indexLink').href);}else if(currentSpeaker>=0){go(stops[currentSpeaker]);resume();}};
  $('compare').onclick=()=>{showGuide=!showGuide;$('compare').setAttribute('aria-pressed',String(showGuide));$('compare').textContent=showGuide?'한국화 보기':'기준 구도 비교';};
  $('ambience').onclick=()=>{ambient=!ambient;for(const actor of actors)ambient?actor.play():actor.pause();opening.film.setAmbient?.(ambient);$('ambience').textContent=ambient?'인물 움직임 켜짐':'인물 움직임 꺼짐';$('ambience').setAttribute('aria-pressed',String(ambient));};
  stage.addEventListener('pointerdown',()=>{if(ambient)for(const actor of actors)void actor.play();},{passive:true});
@@ -167,8 +167,9 @@ try{
  $('world').addEventListener('pointermove',e=>{if(!drag)return;change(((drag.y-e.clientY)+(e.clientX-drag.x)*.3)/1600);drag={x:e.clientX,y:e.clientY};});
  ['pointerup','pointercancel'].forEach(type=>$('world').addEventListener(type,()=>drag=null));
  addEventListener('keydown',e=>{if(e.target.matches('input,button,a,summary,select'))return;if(['ArrowDown','ArrowRight','PageDown'].includes(e.key)){e.preventDefault();change(.04);}if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();change(-.04);}});
- function showDialogue(index){if(currentSpeaker===index)return;currentSpeaker=index;panel.hidden=index<0;if(index>=0){panel.querySelector('h2').textContent=names[index];panel.querySelector('p').textContent=dialogueCopy[index].testimony;$('next').textContent=index===2?'처음으로':names[index+1]+'에게 이동';}}
- $('storyLink').onclick=e=>{e.preventDefault();go(0);};$('indexLink').onclick=()=>{sessionStorage.setItem('spatial-test-resume-v3',String(target));sessionStorage.setItem('ink-pilot-return','spatial-test.html');};
+ function showDialogue(index){if(currentSpeaker===index)return;currentSpeaker=index;panel.hidden=index<0;if(index>=0){panel.querySelector('h2').textContent=names[index];panel.querySelector('p').textContent=dialogueCopy[index].testimony;$('next').textContent=index===2?'석사자 아카이브로':names[index+1]+'에게 이동';}}
+ function rememberStory(){stopAuto();sessionStorage.setItem('spatial-test-resume-v3',String(target));sessionStorage.setItem('ink-pilot-return','spatial-test.html');}
+ $('storyLink').onclick=e=>{e.preventDefault();go(0);};$('indexLink').onclick=rememberStory;
  const saved=sessionStorage.getItem('spatial-test-resume-v3');if(saved!==null){go(clamp(Number(saved)||0,0,1));sessionStorage.removeItem('spatial-test-resume-v3');}
  addEventListener('visibilitychange',()=>{if(document.hidden){for(const actor of actors)actor.pause();}else if(ambient)for(const actor of actors)void actor.play();});
  if(matchMedia('(pointer:coarse) and (orientation:portrait)').matches){$('rotate').hidden=false;setTimeout(()=>$('rotate').hidden=true,3000);}

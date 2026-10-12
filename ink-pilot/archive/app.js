@@ -2,13 +2,14 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-import { measurements } from './measurements.js?v=1';
+import { measurements } from './measurements.js?v=archive-link-1';
 
 const decoder = new DRACOLoader().setDecoderPath('./vendor/draco/').setWorkerLimit(1);
 const loader = new GLTFLoader().setDRACOLoader(decoder);
 const returnLink = document.querySelector('[data-story-return]');
 const returnPage=new URLSearchParams(location.search).get('from')==='spatial-test'?'spatial-test.html':sessionStorage.getItem('ink-pilot-return');
-returnLink.href='../'+(['review.html','review.html?candidate=720p','spatial-test.html'].includes(returnPage)?returnPage:'play.html');
+const storyPage=['play.html','review.html','review.html?candidate=720p','spatial-test.html'].includes(returnPage)?returnPage:'spatial-test.html';
+returnLink.href='../'+storyPage+(storyPage==='spatial-test.html'?'?rev=archive-link-1':'');
 
 function createViewer({ element, loading, modelUrl, targetSize, yaw = 0 }) {
   const scene = new THREE.Scene();
@@ -66,44 +67,59 @@ const viewers = {
  male:createViewer({element:document.querySelector('#male-scene'),loading:document.querySelector('#male-loading'),modelUrl:'models/male.glb',targetSize:1.83,yaw:-3.902609*Math.PI/180}),
  female:createViewer({element:document.querySelector('#female-scene'),loading:document.querySelector('#female-loading'),modelUrl:'models/female.glb',targetSize:2.10,yaw:-140.445485*Math.PI/180})
 };
-const detail = document.querySelector(".detail-card");
-const measurementTable=document.createElement('table');
-measurementTable.className='measurement-table';measurementTable.hidden=true;
-detail.querySelector('.detail-status').before(measurementTable);
-detail.tabIndex=0;
-function showMeasurements(note){
- const caption=document.createElement('caption');caption.textContent=note.label+' 비교';
- const head=document.createElement('thead'),headRow=document.createElement('tr');
- for(const label of ['항목','암','수']){const th=document.createElement('th');th.scope='col';th.textContent=label;headRow.append(th);}
- head.append(headRow);
- const body=document.createElement('tbody');
- for(const row of note.rows){const tr=document.createElement('tr');row.forEach((value,i)=>{const cell=document.createElement(i?'td':'th');if(!i)cell.scope='row';cell.textContent=value;tr.append(cell);});body.append(tr);}
- measurementTable.replaceChildren(caption,head,body);measurementTable.hidden=false;
- detail.classList.add('is-measurement');detail.scrollTop=0;
- detail.querySelector('.detail-status').textContent='제공 수치 · 암사자 / 수사자';
+// The archive's numbered descriptions and side panels use the supplied scan values.
+// Keep the local GLB projection settings above: the remote archive used different OBJ axes.
+const detail = document.querySelector('.detail-card');
+const panels = [...document.querySelectorAll('.info-panel')];
+const sourceNote = '출처 · 공주대학교 박물관 소장 (디지털 변환: 사자성어 팀)';
+const descriptions = [
+ '스캔 데이터를 통해 정수리 부분의 곱슬거리는 털 표현의 미세한 음각 양각을 입체적으로 관찰할 수 있습니다.',
+ '마모되어 두드러지지 않던 입과 수염 자국의 굴곡이 스캔 데이터를 통해 뚜렷하게 드러납니다.',
+ '목 뒤부터 등 전체로 규칙적으로 새겨진 결 형태의 털 무늬와 질감이 스캔 데이터를 통해 더욱 입체적이고 선명하게 확인됩니다.',
+ '육안으로 확인하기 힘들었던 얼굴 윤곽과 이목구비 조형 표현이 스캔 데이터로 선명하게 시각화됩니다.',
+ '암수사자의 얼굴 크기 차이가 비교되고, 눈매의 차이가 스캔 데이터를 통해 선명하게 확인됩니다.'
+];
+function setPanelOpen(panel, open) {
+ panel.classList.toggle('is-open', open);
+ panel.querySelector('.panel-toggle').setAttribute('aria-expanded', String(open));
 }
-document.querySelectorAll(".hotspot").forEach(button => button.addEventListener("click", () => {
-  const pointIndex = Number(button.dataset.point) - 1, note = measurements[pointIndex];
-  document.querySelectorAll(".hotspot").forEach(item => item.classList.toggle("is-active", item === button));
-  viewers.male.focus(note.position,note.target);
-  viewers.female.focus(note.position,note.target);
-  detail.querySelector(".detail-kicker").textContent = `${button.dataset.point} ${note.label} · 스캔 비교`;
-  detail.querySelector("h3").textContent = note.title;
-  detail.querySelector(".detail-copy").textContent = note.text;
-  showMeasurements(note);
+function updatePanel(panel, objectName, column, point, note) {
+ panel.querySelector('.panel-kicker').textContent=`OBJECT ${column===2?'01':'02'} · ${point} ${note.label}`;
+ panel.querySelector('h1,h2').textContent=objectName;
+ panel.querySelector('.panel-subtitle').textContent=note.label;
+ const rows=note.rows.map(row=>{
+  const pair=document.createElement('div'),term=document.createElement('dt'),value=document.createElement('dd');
+  term.textContent=row[0];value.textContent=row[column];pair.append(term,value);return pair;
+ });
+ panel.querySelector('dl').replaceChildren(...rows);
+ panel.querySelector('.panel-note').textContent=sourceNote;
+ panel.querySelector('.panel-content').scrollTop=0;
+}
+function showObservation(index, focus=false) {
+ const note=measurements[index],point=String(index+1).padStart(2,'0');
+ document.querySelectorAll('.hotspot').forEach(button=>{
+  const selected=button.dataset.point===point;
+  button.classList.toggle('is-active',selected);
+  button.setAttribute('aria-pressed',String(selected));
+ });
+ detail.querySelector('.detail-kicker').textContent=`${point} · 두 개체 공통 시점`;
+ detail.querySelector('h3').textContent=`${point}. ${note.label}`;
+ detail.querySelector('.detail-copy').textContent=descriptions[index];
+ detail.querySelector('.detail-status').textContent=sourceNote;
+ updatePanel(document.querySelector('.left-panel'),'수사자',2,point,note);
+ updatePanel(document.querySelector('.right-panel'),'암사자',1,point,note);
+ if(focus){viewers.male.focus(note.position,note.target);viewers.female.focus(note.position,note.target);}
+}
+showObservation(0);
+document.querySelectorAll('.hotspot').forEach(button=>button.addEventListener('click',()=>{
+ if(button.classList.contains('is-active')&&panels.some(panel=>panel.classList.contains('is-open'))){
+  panels.forEach(panel=>setPanelOpen(panel,false));return;
+ }
+ showObservation(Number(button.dataset.point)-1,true);
+ panels.forEach(panel=>setPanelOpen(panel,true));
 }));
-document.querySelectorAll(".panel-toggle").forEach(button => button.addEventListener("click", () => {
-  const panel = button.closest(".info-panel");
-  const isOpen = panel.classList.contains("is-open");
-  document.querySelectorAll(".info-panel").forEach(item => {
-    item.classList.remove("is-open");
-    item.querySelector(".panel-toggle").setAttribute("aria-expanded", "false");
-  });
-  if (!isOpen) {
-    panel.classList.add("is-open");
-    button.setAttribute("aria-expanded", "true");
-  }
+document.querySelectorAll('.panel-toggle').forEach(button=>button.addEventListener('click',()=>{
+ const panel=button.closest('.info-panel'),wasOpen=panel.classList.contains('is-open');
+ panels.forEach(item=>setPanelOpen(item,false));
+ if(!wasOpen)setPanelOpen(panel,true);
 }));
-
-// The initial view shows both complete scans; no detail point is selected yet.
-document.querySelector('.hotspot.is-active')?.classList.remove('is-active');

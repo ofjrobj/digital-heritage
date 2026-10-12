@@ -8,7 +8,7 @@
  .object-stage{position:absolute;inset:0;min-height:0;margin:0}
  .object-card{top:16%;height:75%;width:47%}
  .female-card{top:16%;right:0;left:auto}
- .card-label{bottom:4%;left:13%}.female-card .card-label{right:13%;left:auto}
+ .male-card .card-label,.female-card .card-label{bottom:4%;left:50%;right:auto}
  .global-hotspot-set{top:18%;left:50%;right:auto;gap:6px;transform:translateX(-50%)}
  .global-hotspot-set .hotspot{width:26px;height:26px}
  .detail-card{bottom:9%;width:230px;padding:10px 12px;max-height:112px;overflow:auto}
@@ -17,6 +17,15 @@
  .left-panel{transform:translateX(calc(-100% + 36px)) translateY(-50%)}
  .right-panel{transform:translateX(calc(100% - 36px)) translateY(-50%)}
  .left-panel.is-open,.right-panel.is-open{transform:translateX(0) translateY(-50%)}
- .panel-content dl{margin-top:15px;gap:12px}.panel-content{padding:18px 25px}
+ .panel-content{padding-top:18px;padding-bottom:18px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+ .panel-content .panel-kicker{margin-bottom:10px;font-size:8px}
+ .panel-content h1,.panel-content h2{font-size:22px}
+ .panel-content .panel-subtitle{font-size:13px}
+ .panel-content .panel-subtitle+dl{margin-top:14px;gap:0}
+ .panel-content dl div{padding:6px 0;gap:14px}
+ .panel-content dl dd{font-size:12px}
+ .panel-content .panel-note{position:static;margin-top:14px;padding-top:10px;white-space:normal;font-size:8px;line-height:1.5}
  footer{position:absolute;bottom:10px;left:4%;margin:0;font-size:6px}
 }
+
+@media(max-width:620px) and (orientation:portrait){.panel-content{overflow-y:auto;overscroll-behavior:contain}.panel-content .panel-note{position:static;margin-top:18px;white-space:normal}}
