@@ -1,5 +1,5 @@
 import * as THREE from '../../assets/vendor/three.module.js';
-import {createVideoActor} from './spatial-video-actor.js?v=final-first-2';
+import {createVideoActor} from './spatial-video-actor.js?v=final-second-1';
 
 const clamp=(v,lo=0,hi=1)=>Math.min(hi,Math.max(lo,v));
 const smooth=v=>{v=clamp(v);return v*v*(3-2*v);};
@@ -14,8 +14,8 @@ const SAFE_WINDOWS=Object.freeze({
 // Extras occupy fixed roadside work positions registered to the painted plate.
 // The center lane is clear; preserve original source roots for comparison.
 const PLATE_ACTOR_REGISTRATION=Object.freeze({
- 'v064 cloth folder':{p:[-38,-25.4,.2],windows:[[.15,5.85],[6.9,10.65]]},
- 'v071 resident 15 grain provisions':{p:[-45,-29,.2],windows:[[.15,5.7],[6.8,10.4]]}
+ 'v064 cloth folder':{p:[-38,-25.4,.2],windows:[[6.9,10.65]]},
+ 'v071 resident 15 grain provisions':{p:[-45,-29,.2],windows:[[6.8,10.4]]}
 });
 
 /**
@@ -126,10 +126,10 @@ export function createSpatialFilm(options={}){
  function ensureActorRenderer(){
   if(renderer)return;
   renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,premultipliedAlpha:true,powerPreference:'low-power'});
-  renderer.setPixelRatio(1);renderer.setSize(1280,720,false);renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.setPixelRatio(1);renderer.setSize(1920,1080,false);renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.setClearColor(0x000000,0);actorScene=new THREE.Scene();actorCamera=new THREE.PerspectiveCamera(30,16/9,.05,1200);
   actorCamera.up.set(0,0,1);
-  actorComposite=document.createElement('canvas');actorComposite.width=1280;actorComposite.height=720;
+  actorComposite=document.createElement('canvas');actorComposite.width=1920;actorComposite.height=1080;
   actorCompositeCtx=actorComposite.getContext('2d');
  }
  function windowOpacity(time,windows){
@@ -210,8 +210,9 @@ export function createSpatialFilm(options={}){
    const visibility=actors.map(row=>({row,actor:row.actor.mesh.visible,shadow:row.shadow?.visible??false}));
    const composite=(polygons)=>{
     renderer.render(actorScene,actorCamera);
-    const layer=actorCompositeCtx;layer.clearRect(0,0,1280,720);layer.drawImage(renderer.domElement,0,0);
+    const layer=actorCompositeCtx;layer.clearRect(0,0,actorComposite.width,actorComposite.height);layer.drawImage(renderer.domElement,0,0);
     layer.save();layer.globalCompositeOperation='destination-out';layer.fillStyle='#000';
+    layer.scale(actorComposite.width/1280,actorComposite.height/720);
     for(const polygon of polygons){
      layer.beginPath();polygon.forEach(([x,y],i)=>i?layer.lineTo(x,y):layer.moveTo(x,y));layer.closePath();layer.fill();
     }
@@ -262,7 +263,7 @@ export function createSpatialFilm(options={}){
   cancelVideoReady=()=>{cleanup();if(!loaded)reject(Error('Background film disposed before loading'));};
   video.addEventListener('loadeddata',success,{once:true});video.addEventListener('error',fail,{once:true});
  });
- video.src=options.url?new URL(options.url,import.meta.url).href:'https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261013_020215_4cddaa52-0a56-4dfd-8528-e10421919e2a.mp4';video.load();
+ video.src=options.url?new URL(options.url,import.meta.url).href:'https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261013_025317_40ca510a-8b2c-4f3f-b69d-da31465c0fa5.mp4';video.load();
  const occlusionReady=(options.occlusionData?Promise.resolve(options.occlusionData):fetch(options.occlusionUrl?new URL(options.occlusionUrl,import.meta.url):asset('film-third/entry-occlusion.json')).then(r=>{if(!r.ok)throw Error(`Entry occlusion ${r.status}`);return r.json();})).then(value=>{occlusionData=value;occlusionFrames=new Map(value.frames.map(row=>[row.frame,row]));return value;});
  const dataReady=(options.cameraData?Promise.resolve(options.cameraData):fetch(options.cameraUrl?new URL(options.cameraUrl,import.meta.url):asset('film-third/opening-camera-hq.json')).then(r=>{if(!r.ok)throw Error(`Camera track ${r.status}`);return r.json();})).then(value=>{data=value;duration=Number(data.duration)||17;actorsReady=setupActors();return data;});
  const ready=Promise.all([videoReady,dataReady,occlusionReady]).then(()=>{mode='paused';return api;});

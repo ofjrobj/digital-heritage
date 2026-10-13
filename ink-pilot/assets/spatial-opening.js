@@ -1,4 +1,4 @@
-import {createSpatialFilm} from "./spatial-film.js?v=final-first-2";
+import {createSpatialFilm} from "./spatial-film.js?v=final-second-1";
 /* Original opening choreography, followed by a continuous Blender-route film.
  * Sources: v071 ink-entry.js, storyboard-opening.js, blender-spatial-view.js,
  * mountain-entry.json; see spatial-opening-notes.json for the exact mapping.
