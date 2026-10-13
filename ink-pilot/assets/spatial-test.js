@@ -59,7 +59,7 @@ const mediaFolder=kind=>['trio','woodcutter','return'].includes(kind)?'film-endi
 
 try{
  const [merchantManifest,merchantPlate,merchantGuide,filmCamera,routeData,endingRouteData]=await Promise.all([
-  read('scene.json'),tex('../film-third/opening-end.webp'),tex('../film-first/guide-end.jpg'),read('../film-first/camera.json'),read('../film-third/routes.json'),read('../film-ending/routes.json')
+  read('scene.json'),tex('../film-third/opening-end.webp?v=final-second-1'),tex('../film-first/guide-end.jpg'),read('../film-first/camera.json'),read('../film-third/routes.json'),read('../film-ending/routes.json')
  ]);
  const routes=['farmer','cook','trio','woodcutter'].map(kind=>({kind,...(routeData.routes[kind]??endingRouteData.routes[kind])}));
  const returnRoute={kind:'return',...endingRouteData.routes.return,duration:7};
