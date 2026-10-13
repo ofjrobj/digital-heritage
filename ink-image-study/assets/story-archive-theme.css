@@ -1,0 +1,45 @@
+/* Story adopts the current Index palette and type hierarchy.
+   The Figma ornament source, path, proportions and corner orientation stay intact. */
+:root{--story-ink:#1e1e1c;--story-secondary:#555550;--story-line:rgba(30,30,28,.2);--story-paper:rgba(250,250,248,.91);--story-serif:'Noto Serif KR','User KoPubWorld Light',serif;--story-sans:'Space Grotesk',sans-serif;--story-nav-size:12px;--story-label-size:17px;--story-copy-size:13px;--story-meta-size:10px}
+body,button,select,input{color:var(--story-ink)}
+/* Match archive/background.css .masthead nav, including its native underline. */
+body #storyIndexBar{top:36px!important;gap:0!important;align-items:stretch;background:none!important;padding:0!important;letter-spacing:.04em}
+body #storyIndexBar :is(button,a){position:relative;display:block;align-items:normal;justify-content:normal;width:auto;height:auto;min-height:0;min-width:0;margin:0;border:0;border-radius:0;background:transparent;text-decoration:none;white-space:nowrap;font-family:var(--story-serif);font-size:12px!important;font-weight:400!important;line-height:normal!important;letter-spacing:.04em;padding:4px 18px!important;color:#373734!important;text-shadow:none!important;box-shadow:none}
+body #storyIndexBar :is(button,a)+:is(button,a){border-left:1px solid var(--story-line)}
+body #storyIndexBar :is(button,a)[aria-current=page]{text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:auto}
+body #storyIndexBar :is(button,a)[aria-current=page]:after{content:none!important}
+@media(max-width:950px) and (orientation:landscape){body #storyIndexBar{top:20px!important}}
+body #cinemaDialogue{color:var(--story-ink)!important;background:var(--story-paper) url('./hanji-grain.svg')!important;border-color:var(--story-line)!important;padding:20px clamp(34px,3.6vw,56px) 12px!important;gap:8px;max-height:42vh!important}
+body #cinemaDialogue h2{font-family:var(--story-serif);font-size:var(--story-label-size)!important;font-weight:600!important;color:#292925!important;line-height:1.5!important;letter-spacing:-.035em!important}
+body #cinemaDialogue p{font-family:var(--story-serif);font-size:var(--story-copy-size)!important;font-weight:400!important;line-height:1.85!important;letter-spacing:-.025em!important;color:#373734!important;overflow:auto;scrollbar-width:thin;touch-action:pan-y;overscroll-behavior:contain}
+body #cinemaDialogue .dialogue-footer{min-height:28px}
+body #cinemaDialogue .hanji-corner{filter:grayscale(1);opacity:.86}
+body #soundToggle,body #cinemaDialogue .dialogue-footer #soundToggle{font-family:var(--story-serif);font-size:11px!important;font-weight:400;color:#555550!important;min-height:32px!important}
+body #soundToggle svg{width:15px!important;height:15px!important}
+body #cue{color:#555550}body #cue p,body #begin{font-family:var(--story-serif);font-size:13px!important;letter-spacing:.015em}
+body #cue span,body #begin .scroll-stem{background:rgba(55,55,52,.32)}
+body #title h1{font-family:var(--story-serif);font-size:27px;font-weight:500;color:#373734;letter-spacing:.015em}
+body #title .cover-copy p,body #title .cover-top{font-family:var(--story-sans);font-size:10px;color:#62625d;letter-spacing:.17em}
+body #openingCopy{font-family:var(--story-serif);font-size:17px;font-weight:400;color:#373734;background:radial-gradient(ellipse,rgba(250,250,248,.94),transparent 72%);text-shadow:none}
+body #review{border-color:var(--story-line);background:rgba(250,250,248,.94);border-radius:0;gap:14px;padding:7px 12px;color:#373734}
+body #review select,body #review button{font-family:var(--story-serif);font-size:11px;min-height:32px}
+body #review select{border-color:var(--story-line);max-width:210px;background:transparent}
+body #seek{accent-color:#74746e}
+body #rotate,body #loading{background:#fafaf8;color:#373734;font-family:var(--story-serif)}
+body #rotate p{font-size:18px}body #rotate small{color:#62625d;font-size:12px}
+body button:focus-visible,body select:focus-visible,body input:focus-visible{outline:2px solid #373734;outline-offset:4px}
+@media(orientation:landscape) and (max-height:500px){
+ body #cinemaDialogue{padding:10px 30px 6px!important;gap:4px;max-height:43vh!important}
+ body #cinemaDialogue h2{font-size:14px!important;line-height:1.45!important}
+ body #cinemaDialogue p{font-size:12px!important;line-height:1.65!important}
+ body #cinemaDialogue .dialogue-footer{min-height:24px}
+ body #soundToggle,body #cinemaDialogue .dialogue-footer #soundToggle{font-size:10px!important;min-height:24px!important}
+ body #review{padding:3px 9px;gap:10px}body #review button,body #review select{font-size:10px;min-height:28px}
+ body[data-mode=review] #cinemaDialogue{bottom:53px!important}
+ body #title h1{font-size:24px}body #title .cover-copy p{font-size:8px}
+ body #openingCopy{font-size:14px}body #cue p{font-size:12px!important}
+}
+@media(orientation:portrait) and (max-width:700px){
+ body #cinemaDialogue{padding:17px 32px 10px!important;max-height:43vh!important}
+ body #cinemaDialogue h2{font-size:16px!important}body #cinemaDialogue p{font-size:13px!important;line-height:1.75!important}
+}

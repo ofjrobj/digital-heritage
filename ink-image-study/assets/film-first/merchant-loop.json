@@ -1,0 +1,56 @@
+{
+  "file": "merchant-loop.mp4",
+  "layout": "rgb-top-alpha-bottom",
+  "frames": 121,
+  "fps": 24.0,
+  "duration": 5.041666666666667,
+  "rgbDimensions": [
+    834,
+    1112
+  ],
+  "packedDimensions": [
+    834,
+    2224
+  ],
+  "boundsPixelsLTRB": [
+    208,
+    64,
+    624,
+    1056
+  ],
+  "bounds": {
+    "left": 0.24940047961630696,
+    "top": 0.05755395683453238,
+    "right": 0.7482014388489209,
+    "bottom": 0.9496402877697842
+  },
+  "alphaExtraction": "boundary-connected near-neutral background; foreground-connected components; 0.65px edge feather",
+  "backgroundMode": "dark",
+  "seamFrames": 10,
+  "preencodeFirstLastEqual": true,
+  "rgbGeometricWarp": false,
+  "fileBytes": 2824791,
+  "kind": "merchant",
+  "height": 1.86,
+  "sourceJobId": "29584a7d-e140-45a3-93e1-f3a615731fc5",
+  "sourceReferenceMediaId": "bec39497-6456-4e55-b39c-007301e4eafb",
+  "sourceCardMediaId": "d92d6a2f-017a-4825-b955-4bd9f4573d3c",
+  "sourceCardCropLTRB": [
+    0,
+    195,
+    390,
+    1270
+  ],
+  "sourceUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261011_150557_29584a7d-e140-45a3-93e1-f3a615731fc5.mp4",
+  "model": "seedance_2_0_mini",
+  "motion": "Recorded right-hand lift toward waist/strap then release, small head turn; feet planted; mouth visibly closed in sampled frames.",
+  "identityReview": "Same original card headband/topknot, face/beard, patterned ivory hanbok, charcoal vest, woven carrier, one gourd, bag in original viewer-left hand. Generative ink details vary slightly during the head turn; not pixel-identical art.",
+  "backgroundReview": "Actual output has dark charcoal paper. Removed only boundary-connected near-neutral dark pixels; enclosed hair/vest darks and all ivory clothing retained.",
+  "seamReview": {
+    "preencodeFirstLastIdentical": true,
+    "encodedFirstLastMAE255": 0.7264219200179425,
+    "settleDurationSeconds": 0.4166666666666667
+  },
+  "proofContact": "../../../film-first/merchant-matte/matte-contact.jpg",
+  "faceProof": "../../../film-first/merchant-face-contact.jpg"
+}
