@@ -44,7 +44,9 @@ export function createRouteFilm(url,track){
   return {p:a.p.map((v,n)=>v+(b.p[n]-v)*u),q:[q.w,q.x,q.y,q.z],horizontalFov:track.horizontalFov};
  }
  return {video,texture,ready,update,cameraAt,get sourceTime(){return sourceTime();},get duration(){return duration;},
-  get ended(){return loaded&&!video.seeking&&sourceTime()>=duration-(duration/mediaDuration()/24+.025);},
+  // At 12fps the final presented frame is 1/12s before media duration.
+  // Use the playback clock at EOF as well so the opaque handoff cannot stall.
+  get ended(){return loaded&&!video.seeking&&(video.ended||mediaDuration()-video.currentTime<.025||sourceTime()>=duration-(duration/mediaDuration()/12+.025));},
   proof(){return {sourceTime:sourceTime(),targetTime:target,duration,mediaTime:video.currentTime,mediaDuration:mediaDuration(),paused:video.paused,seeking:video.seeking,mode,seeks,decodedFrames:frames,error,completeSourcePath:true};}
  };
 }

@@ -1,8 +1,10 @@
 import * as THREE from '../../assets/vendor/three.module.js';
 import {dialogueCopy} from './dialogue-copy.js?v=film-third-1';
-import {createOpening,openingPhase} from './spatial-opening.js?v=film-third-1';
-import {createVideoActor} from './spatial-video-actor.js?v=film-third-1';
-import {createRouteFilm,createDialogueMist} from './spatial-route-film.js?v=film-third-1';
+import {createOpening,openingPhase} from './spatial-opening.js?v=proportion-1';
+import {createVideoActor} from './spatial-video-actor.js?v=proportion-1';
+import {createRouteFilm,createDialogueMist} from './spatial-route-film.js?v=proportion-1';
+import {createFrontActor} from './spatial-front-actor.js?v=proportion-1';
+import {createEnding} from './spatial-ending.js?v=proportion-1';
 
 const $=id=>document.getElementById(id),base=new URL('./spatial-test/',import.meta.url);
 const panel=$('cinemaDialogue'),loading=$('loading'),stage=$('stage');
@@ -44,36 +46,45 @@ function fitPlateCoverage(e){
 let target=0,progress=0,auto=false,ambient=true,elapsed=0,last=performance.now(),showGuide=false,currentSpeaker=-1;
 const openingSeconds=30,merchantSeconds=15.272727,FOG=2.4,CUT=.48;
 let openingEnd=0,stops=[],chapters=[],totalSeconds=1;
-const labels=['시작 화면','먹 번짐 · 산과 안개','마을 부감','마을 입구','장사꾼에게 다가가기','장사꾼의 이야기','농민에게 다가가기','농민의 이야기','찬모에게 다가가기','찬모의 이야기'];
-const names=['장사꾼','농민','찬모'],opening=createOpening(stage),mist=createDialogueMist(stage);
+const labels=['시작 화면','먹 번짐 · 산과 안개','마을 부감','마을 입구','장사꾼에게 다가가기','장사꾼의 이야기','농민에게 다가가기','농민의 이야기','찬모에게 다가가기','찬모의 이야기','주민 삼총사에게 다가가기','주민 삼총사의 이야기','나무꾼에게 다가가기','나무꾼의 이야기','석사자에게 돌아가기','사계절의 흐름','옛 건물이 걷히는 시간','현대 · 밤에서 아침으로','여정의 끝'];
+const names=['장사꾼','농민','찬모','주민 삼총사','나무꾼'],opening=createOpening(stage),mist=createDialogueMist(stage);
 const handoffDuration=.24;let handoffComplete=false,handoffElapsed=0;
 const music=$('music');let soundOn=false;music.volume=0;
 $('soundToggle').onclick=()=>{soundOn=!soundOn;$('soundToggle').textContent=soundOn?'소리 켜짐':'소리 꺼짐';$('soundToggle').setAttribute('aria-pressed',String(soundOn));if(soundOn)music.play().catch(()=>{});};
 const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const asset=name=>new URL('./film-third/'+name,import.meta.url).href;
+const endingAsset=name=>new URL('./film-ending/'+name,import.meta.url).href;
+const mediaFolder=kind=>['trio','woodcutter','return'].includes(kind)?'film-ending':'film-third';
 
 try{
- const [merchantManifest,merchantPlate,merchantGuide,filmCamera,routeData]=await Promise.all([
-  read('scene.json'),tex('../film-third/opening-end.webp'),tex('../film-first/guide-end.jpg'),read('../film-first/camera.json'),read('../film-third/routes.json')
+ const [merchantManifest,merchantPlate,merchantGuide,filmCamera,routeData,endingRouteData]=await Promise.all([
+  read('scene.json'),tex('../film-third/opening-end.webp'),tex('../film-first/guide-end.jpg'),read('../film-first/camera.json'),read('../film-third/routes.json'),read('../film-ending/routes.json')
  ]);
- const routes=['farmer','cook'].map(kind=>({kind,...routeData.routes[kind]}));
+ const routes=['farmer','cook','trio','woodcutter'].map(kind=>({kind,...(routeData.routes[kind]??endingRouteData.routes[kind])}));
+ const returnRoute={kind:'return',...endingRouteData.routes.return,duration:7};
+ const ending=createEnding(stage,{children:endingRouteData.children??[],camera:endingRouteData.endingCamera,pairRegistration:true,images:{pair:'ending-pair-ink.png',historicBare:'ending-historic-bare.webp'},masks:{branches:'ending-masks/branches.png'}});
+ ending.root.style.zIndex='2';
+ await ending.ready;
  const merchantStop=openingSeconds+merchantSeconds;
  let cursor=merchantStop;
  for(const r of routes){r.outStart=cursor;r.start=cursor+FOG;r.end=r.start+r.duration;r.inStart=r.end-FOG*CUT;r.stop=r.end+FOG*(1-CUT);cursor=r.stop;}
- totalSeconds=cursor;openingEnd=openingSeconds/totalSeconds;
+ returnRoute.outStart=cursor;returnRoute.start=cursor+FOG;returnRoute.end=returnRoute.start+returnRoute.duration;returnRoute.stop=returnRoute.end+FOG*(1-CUT);
+ const endingStart=returnRoute.end-FOG*CUT;
+ totalSeconds=returnRoute.stop+ending.duration;openingEnd=openingSeconds/totalSeconds;
  stops=[merchantStop,...routes.map(r=>r.stop)].map(t=>t/totalSeconds);
- chapters=[0,3.4,10.7,22,30,merchantStop,routes[0].start,routes[0].stop,routes[1].start,routes[1].stop].map(t=>t/totalSeconds);
+ chapters=[0,3.4,10.7,22,30,merchantStop,...routes.flatMap(r=>[r.start,r.stop]),returnRoute.start,returnRoute.stop+6,returnRoute.stop+43.2,returnRoute.stop+50,totalSeconds].map(t=>t/totalSeconds);
+ $('chapter').replaceChildren(...labels.map((label,i)=>{const option=document.createElement('option');option.value=String(i);option.textContent=label;return option;}));
  await opening.ready;await opening.film.actorsReady;
  async function loadActor(kind){
   if(kind==='merchant'){
    const shared=opening.film.actor('merchant');
    if(shared?.video.src.includes('/film-third/'))return shared;
   }
-  const meta=await read('../film-third/'+kind+'-loop.json');
-  const actor=createVideoActor(THREE,asset(kind+'-loop.mp4'),{...meta,kind,height:kind==='cook'?1.65:1.86,autoplay:ambient,loop:true});
+  const folder=mediaFolder(kind),meta=await read('../'+folder+'/'+kind+'-loop.json');
+  const actor=createVideoActor(THREE,new URL('../'+folder+'/'+kind+'-loop.mp4',base).href,{...meta,kind,height:kind==='cook'?1.65:1.86,autoplay:ambient,loop:true});
   await actor.ready;return actor;
  }
- const actors=await Promise.all(['merchant','farmer','cook'].map(loadActor));
+ const actors=await Promise.all(['merchant','farmer','cook','trio','woodcutter'].map(loadActor));
  // Dialogue holds the card's frontal first frame. Guard the shared merchant
  // API too, so opening-film gesture/visibility retries cannot restart it.
  for(const [index,actor] of actors.entries()){
@@ -95,8 +106,11 @@ try{
  const cloneActor=actor=>{const mesh=actor.mesh.clone();mesh.material=actor.mesh.material.clone();mesh.material.onBeforeCompile=actor.mesh.material.onBeforeCompile;mesh.material.customProgramCacheKey=actor.mesh.material.customProgramCacheKey;mesh.material.opacity=1;mesh.visible=true;return mesh;};
  function addActor(scene,actor,anchor,reference){
   const hero=cloneActor(actor);hero.position.fromArray(anchor);hero.up.set(0,0,1);hero.lookAt(reference.position.x,reference.position.y,hero.position.z);scene.add(hero);
-  const c=document.createElement('canvas');c.width=c.height=128;const ctx=c.getContext('2d'),g=ctx.createRadialGradient(64,64,2,64,64,62);g.addColorStop(0,'rgba(43,49,40,.15)');g.addColorStop(1,'rgba(43,49,40,0)');ctx.fillStyle=g;ctx.fillRect(0,0,128,128);
-  const shadow=new THREE.Mesh(new THREE.PlaneGeometry(.9,.6),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false}));shadow.position.copy(hero.position);shadow.position.z+=.008;scene.add(shadow);return {hero,shadow};
+  const c=document.createElement('canvas');c.width=384;c.height=128;const ctx=c.getContext('2d'),group=actor.mesh.name.startsWith('trio');
+  for(const x of group?[64,192,320]:[192]){const g=ctx.createRadialGradient(x,64,3,x,64,60);g.addColorStop(0,'rgba(43,49,40,.30)');g.addColorStop(.45,'rgba(43,49,40,.14)');g.addColorStop(1,'rgba(43,49,40,0)');ctx.fillStyle=g;ctx.fillRect(x-62,0,124,128);}
+  const shadow=new THREE.Mesh(new THREE.PlaneGeometry(group?2.65:1.7,.42),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false}));shadow.position.copy(hero.position);shadow.position.z+=.008;
+  shadow.rotation.z=Math.atan2(reference.position.y-hero.position.y,reference.position.x-hero.position.x)+Math.PI/2;scene.add(shadow);
+  return {hero,shadow};
  }
  function makeEncounter(manifest,plate,guide,actor,index){
   const scene=new THREE.Scene();scene.background=new THREE.Color('#f0f1ed');const camera=new THREE.PerspectiveCamera(30,1,.08,700);camera.up.set(0,0,1);
@@ -114,9 +128,11 @@ try{
  const merchant=makeEncounter({...merchantManifest,projectionHFov:48,reference:{p:endCamera.p,q:endCamera.qWXYZ}},merchantPlate,merchantGuide,actors[0],0);
  const encounters=[merchant];
  await Promise.all(routes.map(async(r,i)=>{
-  const [plate,guide]=await Promise.all([tex('../film-third/'+r.kind+'-dialogue.webp'),tex('../film-third/'+r.kind+'-dialogue-guide.jpg')]);
-  const encounter=makeEncounter({projectionHFov:48,viewHFov:48,reference:r.frontal,hero:r.hero,cameraSource:r.sourceCamera},plate,guide,actors[i+1],i+1);encounters[i+1]=encounter;r.encounter=encounter;
-  r.film=createRouteFilm(asset(r.kind+'-route.mp4'),r);await r.film.ready;
+  const folder=mediaFolder(r.kind);
+  const [plate,guide]=await Promise.all([tex('../'+folder+'/'+r.kind+'-dialogue.webp'),tex('../'+folder+'/'+r.kind+'-dialogue-guide.jpg')]);
+  const portrait=['trio','woodcutter'].includes(r.kind)?await createFrontActor(THREE,endingAsset('front/'+r.kind+'.webp'),r.kind,1.86):actors[i+1];
+  const encounter=makeEncounter({projectionHFov:48,viewHFov:48,reference:r.frontal,hero:r.hero,cameraSource:r.sourceCamera},plate,guide,portrait,i+1);encounter.actor=actors[i+1];encounters[i+1]=encounter;r.encounter=encounter;
+  r.film=createRouteFilm(new URL('../'+folder+'/'+r.kind+'-route.mp4',base).href,r);await r.film.ready;
   r.scene=new THREE.Scene();r.camera=new THREE.PerspectiveCamera(30,1,.05,700);r.camera.up.set(0,0,1);
   // One immutable decoded frame fills the viewport; no parallax wobble, image
   // deformation, or synthetic building motion is applied to the route video.
@@ -125,13 +141,17 @@ try{
   const backdrop=new THREE.Mesh(new THREE.PlaneGeometry(2,2),material);backdrop.frustumCulled=false;backdrop.renderOrder=-1000;r.scene.add(backdrop);
   const placed=addActor(r.scene,actors[i+1],r.hero,encounter.reference);r.heroMesh=placed.hero;r.shadow=placed.shadow;
  }));
+ // The generated return camera drifted away from the source stair geometry.
+ // Keep the complete painted scene and its lions in ONE registered projection.
+ // A gentle plate approach preserves contact, relative size, and architecture.
+ const allRoutes=routes;
  const qa=new THREE.Quaternion(),qb=new THREE.Quaternion(),pa=new THREE.Vector3(),pb=new THREE.Vector3();
  function resize(){const w=Math.max(1,innerWidth),h=Math.max(1,innerHeight);renderer.setSize(w,h,false);
   for(const e of encounters){e.camera.aspect=w/h;e.effectiveHFov=coverHFov(e.manifest.viewHFov,w/h);e.baseVFov=vFov(e.effectiveHFov,w/h);e.camera.fov=e.baseVFov;e.camera.updateProjectionMatrix();
    const visibleHeight=h<=500?1.48:1.36,distance=Math.max(2.55,visibleHeight*e.camera.aspect/(2*Math.tan(THREE.MathUtils.degToRad(e.effectiveHFov/2))));
    e.closeCamera.position.copy(e.hero.position).addScaledVector(e.direction,distance);e.closeCamera.position.z=e.hero.position.z+1.55;e.closeCamera.lookAt(e.hero.position.x,e.hero.position.y,e.closeCamera.position.z);e.closeCamera.updateMatrixWorld();
   }
-  for(const r of routes){r.camera.aspect=w/h;r.camera.fov=vFov(coverHFov(48,w/h),w/h);r.camera.updateProjectionMatrix();const crop=w/h>16/9?[1,(16/9)/(w/h)]:[(w/h)/(16/9),1];r.film.texture.repeat.set(...crop);r.film.texture.offset.set((1-crop[0])/2,(1-crop[1])/2);}
+  for(const r of allRoutes){r.camera.aspect=w/h;r.camera.fov=vFov(coverHFov(48,w/h),w/h);r.camera.updateProjectionMatrix();const crop=w/h>16/9?[1,(16/9)/(w/h)]:[(w/h)/(16/9),1];r.film.texture.repeat.set(...crop);r.film.texture.offset.set((1-crop[0])/2,(1-crop[1])/2);}
  }
  resize();addEventListener('resize',resize);
  function poseMerchant(local){
@@ -148,7 +168,7 @@ try{
   const visibleHeight=2*distance*Math.tan(THREE.MathUtils.degToRad(e.baseVFov/2)),headAboveEye=e.hero.position.z+e.height-e.reference.position.z;
   // Crop the registered background and actor by exactly the same projection.
   // Fit the entire head below nav; lift phone framing enough to expose the prop.
-  const ratio=headAboveEye/visibleHeight,headMargin=innerHeight<=500?Math.max(.07,.12-Math.max(0,innerWidth/innerHeight-16/9)*.13):.17,offset=clamp((.5-ratio-headMargin)/(1+2*ratio),0,innerHeight<=500?.20:.12);
+  const ratio=headAboveEye/visibleHeight,headMargin=innerHeight<=500?.16:.17,offset=clamp((.5-ratio-headMargin)/(1+2*ratio),0,innerHeight<=500?.20:.12);
   e.camera.setViewOffset(innerWidth,innerHeight,0,innerHeight*offset,innerWidth,innerHeight);e.camera.updateMatrixWorld();fitPlateCoverage(e);
   e.hero.visible=e.shadow.visible=!showGuide;e.hero.material.opacity=1;e.uniforms.useGuide.value=Number(showGuide);return e;
  }
@@ -159,15 +179,19 @@ try{
   projectedHead.set(0,r.encounter.height,0);r.heroMesh.localToWorld(projectedHead);projectedHead.project(r.camera);
   projectedFeet.copy(r.heroMesh.position).project(r.camera);
   const headY=(1-projectedHead.y)/2,feetY=(1-projectedFeet.y)/2;
-  // No unoccluded actor is drawn across the hillside, wall, or native turn.
-  // The last clear courtyard approach is the only approved visibility window.
-  const safe=u>.80&&projectedHead.z<1&&projectedHead.z>-1&&Math.abs(projectedHead.x)<.72&&headY>.10&&feetY>.45;
-  const opacity=safe?smooth((u-.80)/.055)*smooth((headY-.10)/.045):0;
+  // Visibility follows the actual projected body, not an arbitrary last-20%
+  // time gate. Preserve aspect and world height while entering/leaving frame.
+  const safe=projectedHead.z<1&&projectedHead.z>-1&&projectedFeet.z<1&&Math.abs(projectedHead.x)<1.12&&headY<1.08&&feetY>-.08;
+  const opacity=safe?1:0;
   r.heroMesh.visible=r.shadow.visible=!showGuide&&opacity>.001;r.heroMesh.material.opacity=opacity;r.shadow.material.opacity=opacity;
   return {scene:r.scene,camera:r.camera,hero:r.heroMesh,actor:r.encounter.actor,index:r.encounter.index,height:r.encounter.height,manifest:r.encounter.manifest,effectiveHFov:48,route:r.kind,actorSafe:safe,actorOpacity:opacity};
  }
+ function poseReturn(time){
+  ending.update(0,elapsed,1+.065*smooth(time/returnRoute.duration));
+  return {scene:encounters.at(-1).scene,camera:encounters.at(-1).camera,height:0,manifest:{cameraSource:'Registered ending plate; deterministic 2.5D approach'},effectiveHFov:55,route:'return'};
+ }
  function stopAuto(){auto=false;$('run').textContent='이동 재생';}
- function snapMedia(){opening.film.command(clamp(progress*totalSeconds-13,0,17),{snap:true});for(const r of routes)r.film.update(clamp(progress*totalSeconds-r.start,0,r.duration),{snap:true,active:false});}
+ function snapMedia(){opening.film.command(clamp(progress*totalSeconds-13,0,17),{snap:true});for(const r of allRoutes)r.film.update(clamp(progress*totalSeconds-r.start,0,r.duration),{snap:true,active:false});}
  function go(value,play=false){target=clamp(value,0,1);if(!play){progress=target;handoffComplete=target>=openingEnd;handoffElapsed=handoffComplete?handoffDuration:0;snapMedia();}auto=play;$('run').textContent=auto?'이동 멈춤':'이동 재생';}
  function nextStopAfter(p){return stops.find(s=>p<s-1e-8)??1;}
  function resume(){if(target>.9999){go(0);}auto=true;target=Math.min(1,target+.00012);$('run').textContent='이동 멈춤';}
@@ -175,7 +199,7 @@ try{
  const change=delta=>{if(auto&&target<openingEnd&&performance.now()<openingGestureUntil&&delta>0)return;if(target<.002&&delta>0){resume();openingGestureUntil=performance.now()+650;return;}stopAuto();const cap=delta>0?nextStopAfter(target):1;target=clamp(target+delta,0,cap);};
  $('run').onclick=()=>auto?stopAuto():resume();$('progress').oninput=e=>go(Number(e.target.value));$('chapter').onchange=e=>go(chapters[Number(e.target.value)]);
  $('dialogue').onclick=()=>go(stops.find(s=>s>=progress-.002)??1);
- $('next').onclick=()=>{if(currentSpeaker===2){rememberStory();location.assign($('indexLink').href);}else if(currentSpeaker>=0){go(stops[currentSpeaker]);resume();}};
+ $('next').onclick=()=>{if(currentSpeaker>=0){go(stops[currentSpeaker]);resume();}};
  $('compare').onclick=()=>{showGuide=!showGuide;$('compare').setAttribute('aria-pressed',String(showGuide));$('compare').textContent=showGuide?'한국화 보기':'기준 구도 비교';};
  $('ambience').onclick=()=>{ambient=!ambient;opening.film.setAmbient?.(ambient);syncActorMotion();$('ambience').textContent=ambient?'인물 움직임 켜짐':'인물 움직임 꺼짐';$('ambience').setAttribute('aria-pressed',String(ambient));};
  stage.addEventListener('pointerdown',()=>syncActorMotion(),{passive:true});
@@ -184,10 +208,11 @@ try{
  $('world').addEventListener('pointermove',e=>{if(!drag)return;change(((drag.y-e.clientY)+(e.clientX-drag.x)*.3)/1600);drag={x:e.clientX,y:e.clientY};});
  ['pointerup','pointercancel'].forEach(type=>$('world').addEventListener(type,()=>drag=null));
  addEventListener('keydown',e=>{if(e.target.matches('input,button,a,summary,select'))return;if(['ArrowDown','ArrowRight','PageDown'].includes(e.key)){e.preventDefault();change(.04);}if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();change(-.04);}});
- function showDialogue(index){if(currentSpeaker===index)return;currentSpeaker=index;syncActorMotion(index>=0);panel.hidden=index<0;if(index>=0){panel.querySelector('h2').textContent=names[index];panel.querySelector('p').textContent=dialogueCopy[index].testimony;$('next').textContent=index===2?'석사자 아카이브로':names[index+1]+'에게 이동';}}
- function rememberStory(){stopAuto();sessionStorage.setItem('spatial-test-resume-v3',String(target));sessionStorage.setItem('ink-pilot-return','spatial-test.html');}
+ function showDialogue(index){if(currentSpeaker===index)return;currentSpeaker=index;syncActorMotion(index>=0);panel.hidden=index<0;if(index>=0){panel.querySelector('h2').textContent=names[index];panel.querySelector('p').textContent=dialogueCopy[index].testimony;$('next').textContent=index===names.length-1?'석사자에게 돌아가기':names[index+1]+'에게 이동';}}
+ function rememberStory(){stopAuto();sessionStorage.setItem('spatial-test-resume-seconds',String(target*totalSeconds));sessionStorage.setItem('ink-pilot-return',location.pathname.endsWith('/play.html')?'play.html':'spatial-test.html');}
  $('storyLink').onclick=e=>{e.preventDefault();go(0);};$('indexLink').onclick=rememberStory;
- const saved=sessionStorage.getItem('spatial-test-resume-v3');if(saved!==null){go(clamp(Number(saved)||0,0,1));sessionStorage.removeItem('spatial-test-resume-v3');}
+ const saved=sessionStorage.getItem('spatial-test-resume-seconds'),legacy=sessionStorage.getItem('spatial-test-resume-v3');if(saved!==null||legacy!==null){go(clamp((saved!==null?Number(saved):Number(legacy)*79.234914)||0,0,totalSeconds)/totalSeconds);sessionStorage.removeItem('spatial-test-resume-seconds');sessionStorage.removeItem('spatial-test-resume-v3');}
+ const finish=document.createElement('a');finish.id='endingIndex';finish.href=$('indexLink').href;finish.textContent='석사자 아카이브로';finish.hidden=true;finish.onclick=rememberStory;stage.append(finish);
  addEventListener('visibilitychange',()=>syncActorMotion());
  if(matchMedia('(pointer:coarse) and (orientation:portrait)').matches){$('rotate').hidden=false;setTimeout(()=>$('rotate').hidden=true,3000);}
  loading.hidden=true;document.body.dataset.ready='true';
@@ -202,30 +227,40 @@ try{
   // A route must decode its final frame before the fog-covered frontal cut.
   // Large explicit chapter/slider seeks are allowed; ordinary playback waits.
   let time=progress*totalSeconds,heldRoute=null;
-  for(const r of routes){if(previous*totalSeconds<=r.end+.01&&time>=r.end&&time<r.stop&&!r.film.ended){time=r.end;progress=time/totalSeconds;heldRoute=r;}}
+  for(const r of allRoutes){if(previous*totalSeconds<=r.end+.01&&time>=r.end&&time<r.stop&&!r.film.ended){time=r.end;progress=time/totalSeconds;heldRoute=r;}}
   let active=poseMerchant(clamp(time-openingSeconds,0,merchantSeconds)),speaker=-1,chapter=time<.16?0:time<9?1:time<13?2:time<30?3:time<42.868?4:5;
   mist.clear();
-  for(const r of routes)if(time<r.start||time>r.end)r.film.update(clamp(time-r.start,0,r.duration),{active:false,dt});
+  for(const r of allRoutes)if(time<r.start||time>r.end)r.film.update(clamp(time-r.start,0,r.duration),{active:false,dt});
   if(time>=42.868&&time<=merchantStop+.001)speaker=0;
   for(let i=0;i<routes.length;i++){
    const r=routes[i];if(time<r.outStart-.001)break;
    if(time<=r.outStart+.001){active=i===0?poseMerchant(merchantSeconds):poseFrontal(encounters[i]);speaker=i;chapter=5+i*2;break;}
    chapter=6+i*2;speaker=-1;
-   if(time<r.start){const p=(time-r.outStart)/FOG;active=p<CUT?(i===0?poseMerchant(merchantSeconds):poseFrontal(encounters[i])):poseRoute(r,0,dt,false);mist.draw('dialogue-out',p);break;}
-   if(time<r.end||heldRoute===r){active=poseRoute(r,clamp(time-r.start,0,r.duration),dt,true);if(time>=r.inStart)mist.draw('dialogue-in',(time-r.inStart)/FOG);break;}
+   if(time<r.start){const p=(time-r.outStart)/FOG;active=p<CUT?(i===0?poseMerchant(merchantSeconds):poseFrontal(encounters[i])):poseRoute(r,0,dt,false);mist.draw('dialogue-out',r.kind==='woodcutter'?Math.min(p,CUT):p);break;}
+   if(time<r.end||heldRoute===r){active=poseRoute(r,clamp(time-r.start,0,r.duration),dt,true);if(r.kind==='woodcutter'&&time-r.start<1.9)mist.draw('dialogue-out',CUT+(1-CUT)*(time-r.start)/1.9);if(time>=r.inStart)mist.draw('dialogue-in',(time-r.inStart)/FOG);break;}
    active=poseFrontal(r.encounter);
    if(time<r.stop){mist.draw('dialogue-in',(time-r.inStart)/FOG);if(time>r.stop-.06)speaker=i+1;break;}
    chapter=7+i*2;speaker=i+1;
   }
+  let endingVisible=false;
+  if(time>returnRoute.outStart+.001){
+   speaker=-1;chapter=14;
+   if(time<returnRoute.start){const p=(time-returnRoute.outStart)/FOG;endingVisible=p>=CUT;active=p<CUT?poseFrontal(encounters.at(-1)):poseReturn(0);mist.draw('dialogue-out',p);}
+   else if(time<returnRoute.end){endingVisible=true;active=poseReturn(clamp(time-returnRoute.start,0,returnRoute.duration));}
+   else {active=poseReturn(returnRoute.duration,dt,false);endingVisible=true;ending.update(Math.max(0,time-returnRoute.stop),elapsed);const local=time-returnRoute.stop;chapter=local<42?15:local<47.2?16:local<ending.duration-.01?17:18;}
+  }
+  if(!endingVisible)ending.hide();
+  finish.hidden=!endingVisible||!ending.finished;
   renderer.setRenderTarget(null);renderer.render(active.scene,active.camera);
   const openingVisible=progress<openingEnd||holdingFilm;
   if(openingVisible){opening.update(holdingFilm?1:progress/openingEnd,elapsed,holdingFilm?1-smooth(handoffElapsed/handoffDuration):1);speaker=-1;}else opening.hide();
   document.body.dataset.openingPhase=openingVisible?openingPhase(progress/openingEnd):'encounter';$('storyIndexBar').style.opacity=String(smooth(progress/(.018*68.181818/totalSeconds)));
-  music.volume=THREE.MathUtils.lerp(music.volume,soundOn&&!document.hidden&&progress>.002&&progress<.998?.09:0,1-Math.exp(-dt/1.3));
-  showDialogue(speaker);$('hint').hidden=speaker>=0||auto||holdingFilm||!!heldRoute||Math.abs(progress-target)>.0001||(progress>.002&&progress<openingEnd);$('hint').textContent='Scroll';
+  const musicTarget=soundOn&&!document.hidden&&progress>.002?.09*(endingVisible?ending.musicGain:1):0;
+  music.volume=THREE.MathUtils.lerp(music.volume,musicTarget,1-Math.exp(-dt/.7));if(endingVisible&&ending.finished)music.volume=0;
+  showDialogue(speaker);$('hint').hidden=speaker>=0||auto||holdingFilm||!!heldRoute||ending.finished&&endingVisible||Math.abs(progress-target)>.0001||(progress>.002&&progress<openingEnd);$('hint').textContent='Scroll';
   $('progress').value=String(progress);$('chapter').value=String(chapter);
-  const head=new THREE.Vector3(0,active.height,0);active.hero.localToWorld(head);head.project(active.camera);
-  document.body.dataset.proof=JSON.stringify({progress,target,timelineSeconds:time,totalSeconds,opening:openingVisible?openingPhase(progress/openingEnd):null,handoff:{holdingFilm,complete:handoffComplete,fade:handoffElapsed/handoffDuration},chapter:labels[chapter],speaker,ambientSeconds:elapsed,camera:active.camera.matrixWorld.toArray(),effectiveHFov:active.effectiveHFov,plateCoverage:active.plateCoverage,headTopScreenY:(1-head.y)/2,actor:active.actor.proof(),actorWorldPosition:active.hero.position.toArray(),actorSafe:active.actorSafe,actorOpacity:active.actorOpacity,renderMethod:'continuous-background-video-and-independent-character-video',film:opening.film.proof(),routes:routes.map(r=>({kind:r.kind,...r.film.proof()})),cameraSource:active.manifest.cameraSource,transition:mist.proof(),drawCalls:renderer.info.render.calls});
+  const head=new THREE.Vector3(0,active.height,0);if(active.hero){active.hero.localToWorld(head);head.project(active.camera);}
+  document.body.dataset.proof=JSON.stringify({progress,target,timelineSeconds:time,totalSeconds,opening:openingVisible?openingPhase(progress/openingEnd):null,handoff:{holdingFilm,complete:handoffComplete,fade:handoffElapsed/handoffDuration},chapter:labels[chapter],speaker,ambientSeconds:elapsed,camera:active.camera.matrixWorld.toArray(),effectiveHFov:active.effectiveHFov,plateCoverage:active.plateCoverage,headTopScreenY:active.hero?(1-head.y)/2:null,actor:active.actor?.proof(),actorWorldPosition:active.hero?.position.toArray(),actorSafe:active.actorSafe,actorOpacity:active.actorOpacity,renderMethod:'registered-illustrated-story-with-fixed-proportion-actors',film:opening.film.proof(),routes:allRoutes.map(r=>({kind:r.kind,...r.film.proof()})),ending:ending.proof(),musicVolume:music.volume,cameraSource:active.manifest.cameraSource,transition:mist.proof(),drawCalls:renderer.info.render.calls});
   requestAnimationFrame(frame);
  }
  requestAnimationFrame(frame);

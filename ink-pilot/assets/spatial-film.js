@@ -1,5 +1,5 @@
 import * as THREE from '../../assets/vendor/three.module.js';
-import {createVideoActor} from './spatial-video-actor.js?v=film-third-1';
+import {createVideoActor} from './spatial-video-actor.js?v=proportion-1';
 
 const clamp=(v,lo=0,hi=1)=>Math.min(hi,Math.max(lo,v));
 const smooth=v=>{v=clamp(v);return v*v*(3-2*v);};
@@ -160,7 +160,10 @@ export function createSpatialFilm(options={}){
    const anchor=typeof config.anchor==='string'?data.anchors?.find(a=>a.id===config.anchor):config.anchor;
    if(!anchor||anchor.replaced)throw Error(`Missing or replaced actor anchor: ${config.anchor}`);
    const windows=config.windows??anchor.visibleWindows??SAFE_WINDOWS[anchor.id]??[];
-   const actor=createVideoActor(THREE,new URL(config.url??config.src,import.meta.url).href,{...config,autoplay:ambientEnabled,height:config.height??anchor.heightMetres??1.6});
+   const actor=createVideoActor(THREE,new URL(config.url??config.src,import.meta.url).href,{...config,autoplay:config.kind==='merchant'&&ambientEnabled,height:config.height??anchor.heightMetres??1.6});
+   // Background residents hold a grounded pose; prioritize architectural scale
+   // and contact over motion in the small distant sprites.
+   if(config.kind!=='merchant'){actor.play=()=>{actor.pause();return Promise.resolve(false);};actor.video.addEventListener('play',()=>actor.pause());}
    const row={actor,anchor,windows,kind:config.kind??anchor.role,loaded:false,opacity:0,shadow:null};actors.push(row);
    const feet=anchor.p.slice();feet[2]=anchor.sourceFloorZ??feet[2];actor.mesh.position.fromArray(feet);actor.mesh.up.set(0,0,1);actorScene.add(actor.mesh);
    if(row.kind!=='merchant'){

@@ -104,8 +104,8 @@ uniform vec2 actorMatteLevels;
     const widthMetres = frameMetres * aspect;
     geometry.dispose();
     geometry = new THREE.PlaneGeometry(widthMetres, frameMetres);
-    geometry.translate((.5 - (bounds.left + bounds.right) / 2) * widthMetres,
-      (bounds.bottom - .5) * frameMetres, 0);
+    const foot=options.footAnchor??[(bounds.left+bounds.right)/2,bounds.bottom];
+    geometry.translate((.5-foot[0])*widthMetres,(foot[1]-.5)*frameMetres,0);
     mesh.geometry = geometry;
     texel.value.set(1 / video.videoWidth, 1 / video.videoHeight);
     mesh.userData.videoActor.frame = {width: frameWidth, height: frameHeight, aspect};
