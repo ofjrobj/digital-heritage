@@ -1,5 +1,5 @@
 import * as THREE from '../../assets/vendor/three.module.js';
-import {createVideoActor} from './spatial-video-actor.js?v=final-second-1';
+import {createVideoActor} from './spatial-video-actor.js?v=final-second-2';
 
 const clamp=(v,lo=0,hi=1)=>Math.min(hi,Math.max(lo,v));
 const smooth=v=>{v=clamp(v);return v*v*(3-2*v);};
@@ -265,7 +265,7 @@ export function createSpatialFilm(options={}){
  });
  video.src=options.url?new URL(options.url,import.meta.url).href:'https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261013_025317_40ca510a-8b2c-4f3f-b69d-da31465c0fa5.mp4';video.load();
  const occlusionReady=(options.occlusionData?Promise.resolve(options.occlusionData):fetch(options.occlusionUrl?new URL(options.occlusionUrl,import.meta.url):asset('film-third/entry-occlusion.json')).then(r=>{if(!r.ok)throw Error(`Entry occlusion ${r.status}`);return r.json();})).then(value=>{occlusionData=value;occlusionFrames=new Map(value.frames.map(row=>[row.frame,row]));return value;});
- const dataReady=(options.cameraData?Promise.resolve(options.cameraData):fetch(options.cameraUrl?new URL(options.cameraUrl,import.meta.url):asset('film-third/opening-camera-hq.json?v=final-second-1')).then(r=>{if(!r.ok)throw Error(`Camera track ${r.status}`);return r.json();})).then(value=>{data=value;duration=Number(data.duration)||17;actorsReady=setupActors();return data;});
+ const dataReady=(options.cameraData?Promise.resolve(options.cameraData):fetch(options.cameraUrl?new URL(options.cameraUrl,import.meta.url):asset('film-third/opening-camera-hq.json?v=final-second-2')).then(r=>{if(!r.ok)throw Error(`Camera track ${r.status}`);return r.json();})).then(value=>{data=value;duration=Number(data.duration)||17;actorsReady=setupActors();return data;});
  const ready=Promise.all([videoReady,dataReady,occlusionReady]).then(()=>{mode='paused';return api;});
  const api={video,ready,command,draw,cameraAt,play,pause,unlock,setAmbient,actor(kind){return actors.find(row=>row.kind===kind)?.actor??null;},
   get sourceTime(){return sourceTime();},get ended(){return finalFramePresented();},get targetTime(){return target;},get duration(){return timeline();},get actorsReady(){return actorsReady;},

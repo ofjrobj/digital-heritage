@@ -1,11 +1,11 @@
 import * as THREE from '../../assets/vendor/three.module.js';
 import {dialogueCopy} from './dialogue-copy.js?v=film-third-1';
-import {createOpening,openingPhase} from './spatial-opening.js?v=final-second-1';
-import {createVideoActor} from './spatial-video-actor.js?v=final-second-1';
-import {createRouteFilm,createDialogueMist} from './spatial-route-film.js?v=final-second-1';
-import {createPlateOccluder} from './spatial-occlusion.js?v=final-second-1';
-import {createFrontActor} from './spatial-front-actor.js?v=final-second-1';
-import {createEnding} from './spatial-ending.js?v=final-second-1';
+import {createOpening,openingPhase} from './spatial-opening.js?v=final-second-2';
+import {createVideoActor} from './spatial-video-actor.js?v=final-second-2';
+import {createRouteFilm,createDialogueMist} from './spatial-route-film.js?v=final-second-2';
+import {createPlateOccluder} from './spatial-occlusion.js?v=final-second-2';
+import {createFrontActor} from './spatial-front-actor.js?v=final-second-2';
+import {createEnding} from './spatial-ending.js?v=final-second-2';
 
 const $=id=>document.getElementById(id),base=new URL('./spatial-test/',import.meta.url);
 const panel=$('cinemaDialogue'),loading=$('loading'),stage=$('stage');
@@ -59,7 +59,7 @@ const mediaFolder=kind=>['trio','woodcutter','return'].includes(kind)?'film-endi
 
 try{
  const [merchantManifest,merchantPlate,merchantGuide,filmCamera,routeData,endingRouteData]=await Promise.all([
-  read('scene.json'),tex('../film-third/opening-end.webp?v=final-second-1'),tex('../film-first/guide-end.jpg'),read('../film-first/camera.json'),read('../film-third/routes.json'),read('../film-ending/routes.json')
+  read('scene.json'),tex('../film-third/opening-end.webp?v=final-second-2'),tex('../film-first/guide-end.jpg'),read('../film-first/camera.json'),read('../film-third/routes.json'),read('../film-ending/routes.json')
  ]);
  const routes=['farmer','cook','trio','woodcutter'].map(kind=>({kind,...(routeData.routes[kind]??endingRouteData.routes[kind])}));
  const returnRoute={kind:'return',...endingRouteData.routes.return,duration:7};
@@ -205,7 +205,7 @@ try{
  function snapMedia(){opening.film.command(clamp(progress*totalSeconds-13,0,17),{snap:true});for(const r of allRoutes)r.film.update(clamp(progress*totalSeconds-r.start,0,r.duration),{snap:true,active:false});}
  function go(value,play=false){naturalPlayback=play;autoSegment=null;autoLimit=null;dialogueElapsed=0;dialogueTimed=-1;dialogueFinished=-1;target=clamp(value,0,1);if(!play){progress=target;handoffComplete=target>=openingEnd;handoffElapsed=handoffComplete?handoffDuration:0;snapMedia();}auto=play;$('run').textContent=auto?'이동 멈춤':'이동 재생';}
  function nextStopAfter(p){return stops.find(s=>p<s-1e-8)??1;}
- function resume(){if(target>.9999){go(0);}naturalPlayback=true;autoLimit=null;if(currentSpeaker>=0&&Math.abs(target-stops[currentSpeaker])<.0001){dialogueTimed=currentSpeaker;dialogueElapsed=0;dialogueFinished=-1;stopAuto();return;}auto=true;target=Math.min(1,target+.00012);$('run').textContent='이동 멈춤';}
+ function resume(){if(target>.9999){go(0);}naturalPlayback=true;autoLimit=null;if(currentSpeaker>=0&&Math.abs(target-stops[currentSpeaker])<.0001){dialogueTimed=currentSpeaker;dialogueElapsed=0;dialogueFinished=-1;stopAuto();return;}change(.007);}
  // Only the three authored automatic zones own a clock. All other travel
  // is bounded by input; a large wheel event cannot skip a zone boundary.
  const change=delta=>{
@@ -221,7 +221,7 @@ try{
  };
  $('run').onclick=()=>{if(auto||dialogueTimed>=0){naturalPlayback=false;dialogueTimed=-1;stopAuto();}else resume();};$('progress').oninput=e=>go(Number(e.target.value));$('chapter').onchange=e=>go(chapters[Number(e.target.value)]);
  $('dialogue').onclick=()=>go(stops.find(s=>s>=progress-.002)??1);
- $('next').onclick=()=>{if(currentSpeaker>=0){go(stops[currentSpeaker]);resume();}};
+ $('next').onclick=()=>{if(currentSpeaker<0)return;const index=currentSpeaker;naturalPlayback=true;dialogueFinished=index;dialogueTimed=-1;dialogueElapsed=0;target=stops[index]+.000001;startAutomatic('dialogue-out',routes[index]?.start??returnRoute.start);};
  $('compare').onclick=()=>{showGuide=!showGuide;$('compare').setAttribute('aria-pressed',String(showGuide));$('compare').textContent=showGuide?'한국화 보기':'기준 구도 비교';};
  $('ambience').onclick=()=>{ambient=!ambient;opening.film.setAmbient?.(ambient);syncActorMotion();$('ambience').textContent=ambient?'인물 움직임 켜짐':'인물 움직임 꺼짐';$('ambience').setAttribute('aria-pressed',String(ambient));};
  stage.addEventListener('pointerdown',()=>syncActorMotion(),{passive:true});
