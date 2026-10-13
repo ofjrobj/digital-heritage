@@ -32,7 +32,7 @@ export function createOpening(stage,options={}){
  root.append(svg);stage.append(root);
  const canvas=root.querySelector('.spatial-opening-art'),ctx=canvas.getContext('2d',{alpha:false}),ambientCanvas=root.querySelector('.spatial-opening-ambient'),ambient=ambientCanvas.getContext('2d'),title=root.querySelector('.spatial-cover-copy'),copy=root.querySelector('.spatial-opening-copy');
  const layer=document.createElement('canvas'),lc=layer.getContext('2d');
- const paths={cover:'cover.png',mountains:'locked-style/mountains.webp'};
+ const paths={cover:'cover.png',mountains:'locked-style/mountains.webp',aerial:'locked-style/aerial-korean-ink.webp'};
  const images={},mountainLayers=[],fogSheets=[],mask=document.createElement('canvas'),mw=384,mh=216;mask.width=mw;mask.height=mh;
  const mc=mask.getContext('2d',{willReadFrequently:true}),field=new Float32Array(mw*mh),coverField=new Float32Array(mw*mh);let pixels,prepared=false,lastProgress=-1,lastMist=-1,coverStarted=null,previousProgress=0;
  const film=createSpatialFilm();
@@ -48,6 +48,20 @@ export function createOpening(stage,options={}){
  const ready=Promise.all(Object.entries(paths).map(async([name,path])=>{const im=new Image();im.src=new URL(path,import.meta.url).href;await im.decode();images[name]=im;})).then(async()=>{prepare();await film.ready;return root;});
  function resize(){const scale=Math.min(devicePixelRatio||1,2),w=Math.min(3840,Math.round(stage.clientWidth*scale)),h=Math.round(w*stage.clientHeight/Math.max(1,stage.clientWidth));if(canvas.width!==w||canvas.height!==h){canvas.width=layer.width=ambientCanvas.width=w;canvas.height=layer.height=ambientCanvas.height=h;lastProgress=-1;}}
  function plate(context,name,zoom=1,cx=.5,cy=.5,alpha=1){const im=images[name],w=canvas.width,h=canvas.height;if(!im||alpha<=0)return;const ratio=w/h;let sh=im.height/zoom,sw=sh*ratio;if(sw>im.width/zoom){sw=im.width/zoom;sh=sw/ratio;}const x=clamp(im.width*cx-sw/2,0,im.width-sw),y=clamp(im.height*cy-sh/2,0,im.height-sh);context.save();context.filter="url('#spatialOpeningPaperBalance')";context.globalAlpha=alpha;context.drawImage(im,x,y,sw,sh,0,0,w,h);context.restore();}
+ // Fit the lion's ink bounds into the space above the actual title, including
+ // the review toolbar allowance. The absorption mask uses this same mapping.
+ function coverRect(){
+  const w=canvas.width,h=canvas.height,scale=w/stage.clientWidth;
+  const footer=parseFloat(getComputedStyle(document.body).getPropertyValue('--cover-footer-space'))||0;
+  const short=stage.clientHeight<=500&&stage.clientWidth>stage.clientHeight;
+  const top=h*(short?.20:.18),bottom=h-Math.max(short?88:100,stage.clientHeight*.18)*scale-footer*scale-(short?55:75)*scale-20*scale;
+  const iw=images.cover.width,ih=images.cover.height;
+  const fit=Math.max(.01,Math.min(w*.88/(iw*.90),Math.max(32*scale,bottom-top)/(ih*.44)));
+  const dw=iw*fit,dh=ih*fit,x=(w-dw)/2,y=top-ih*.20*fit;
+  root.dataset.coverInkBounds=JSON.stringify({top:top/scale,bottom:(y+ih*.64*fit)/scale});
+  return {x,y,w:dw,h:dh};
+ }
+ function coverPlate(context){const r=coverRect();context.save();context.filter="url('#spatialOpeningPaperBalance')";context.drawImage(images.cover,r.x,r.y,r.w,r.h);context.restore();}
  function absorption(p,initial=false){const distances=initial?coverField:field,radius=initial?smooth(p)*264:smooth(p)*180-4;for(let i=0;i<field.length;i++){const j=i*4;pixels.data[j]=pixels.data[j+1]=pixels.data[j+2]=255;pixels.data[j+3]=Math.round(smooth((radius-distances[i]+3)/6)*255);}mc.putImageData(pixels,0,0);}
  // Each ridge is a disjoint region of the existing painting, never a mirrored
  // or repeated mountain. The pale painted mist supplies the feathered edges.
@@ -116,7 +130,7 @@ export function createOpening(stage,options={}){
   for(const ridge of mountainLayers){const magnify=1/(1-ridge.depth*travel*.92),side=ridge.side*travel*ridge.depth*w*.045;context.save();context.translate(vx+side,vy);context.scale(magnify,magnify);context.drawImage(ridge.sheet,ox+ridge.sx*iw-vx,oy+ridge.sy*ih-vy,ridge.sw*iw,ridge.sh*ih);context.restore();}
   context.restore();root.dataset.mountainTravel=travel.toFixed(4);root.dataset.mountainLayers=String(mountainLayers.length);
  }
- function maskToLayer(){lc.globalCompositeOperation='destination-in';const r=canvas.width/canvas.height;let sh=mh,sw=sh*r;if(sw>mw){sw=mw;sh=sw/r;}lc.drawImage(mask,(mw-sw)/2,(mh-sh)/2,sw,sh,0,0,canvas.width,canvas.height);lc.globalCompositeOperation='source-over';}
+ function maskToLayer(cover=false){lc.globalCompositeOperation='destination-in';if(cover){const r=coverRect();lc.drawImage(mask,0,0,mw,mh,r.x,r.y,r.w,r.h);lc.globalCompositeOperation='source-over';return;}const r=canvas.width/canvas.height;let sh=mh,sw=sh*r;if(sw>mw){sw=mw;sh=sw/r;}lc.drawImage(mask,(mw-sw)/2,(mh-sh)/2,sw,sh,0,0,canvas.width,canvas.height);lc.globalCompositeOperation='source-over';}
 
  function update(progress,elapsed=0,opacity=1){
   if(!prepared||!stage.clientWidth||!stage.clientHeight)return;root.hidden=false;root.style.opacity=String(clamp(opacity));resize();const p=clamp(progress),t=p*openingDuration,phase=openingPhase(p);if(coverStarted===null||p<1e-7&&previousProgress>1e-7)coverStarted=elapsed;previousProgress=p;
@@ -128,17 +142,18 @@ export function createOpening(stage,options={}){
   // Video decoding must keep ticking while its target is fixed, including a
   // final-frame handoff wait or when ambient motion is explicitly disabled.
   const mistFrame=Math.floor(t>=6.6?performance.now()/1000*24:elapsed*15);if(Math.abs(p-lastProgress)<1e-7&&mistFrame===lastMist)return;lastProgress=p;lastMist=mistFrame;
-  ambient.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#f1f1ed';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ambient.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle=t<3.4?'#ececea':'#f1f1ed';ctx.fillRect(0,0,canvas.width,canvas.height);
   if(t<3.4){
    // The original page draws the fixed lion through a 2.2-second capillary bloom
    // on load. A first scroll completes this reveal before the landscape bridge.
    const initial=p>1e-7?1:clamp((elapsed-coverStarted)/2.2);root.dataset.coverReveal=initial.toFixed(3);
-   if(initial<1){lc.clearRect(0,0,canvas.width,canvas.height);plate(lc,'cover');absorption(initial,true);maskToLayer();ctx.drawImage(layer,0,0);}else plate(ctx,'cover');
+   if(initial<1){lc.clearRect(0,0,canvas.width,canvas.height);coverPlate(lc);absorption(initial,true);maskToLayer(true);ctx.drawImage(layer,0,0);}else coverPlate(ctx);
    const reveal=clamp((t-.12)/3.1);if(reveal>0){lc.clearRect(0,0,canvas.width,canvas.height);plate(lc,'mountains');absorption(reveal);maskToLayer();ctx.drawImage(layer,0,0);}
   }
   else if(t<6.6){mountainPass(ctx,t);fog(.10+.64*smooth((t-4.5)/2.1),elapsed);}
-  else if(t<9){const clearing=smooth((t-7.05)/1.95),reveal=smooth((t-6.85)/2.15);film.command(0);film.draw(ctx,{x:0,y:0,width:canvas.width,height:canvas.height},0);ctx.save();ctx.globalAlpha=1-reveal;ctx.fillStyle='#f1f1ed';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.restore();mountainPass(ctx,t,1-reveal);fog((.74+.26*smooth((t-6.6)/.45))*(1-clearing),elapsed,clearing);}
-  else {const filmTime=clamp(t-13,0,17);film.command(filmTime);film.draw(ctx,{x:0,y:0,width:canvas.width,height:canvas.height},filmTime);fog(t<13?.028:.018,elapsed);}
+  else if(t<9){const clearing=smooth((t-7.05)/1.95),reveal=smooth((t-6.85)/2.15);film.command(0);plate(ctx,'aerial');ctx.save();ctx.globalAlpha=1-reveal;ctx.fillStyle='#f1f1ed';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.restore();mountainPass(ctx,t,1-reveal);fog((.74+.26*smooth((t-6.6)/.45))*(1-clearing),elapsed,clearing);}
+  else if(t<13){film.command(0);plate(ctx,'aerial');fog(.028,elapsed);}
+  else {const filmTime=clamp(t-13,0,17);film.command(filmTime);film.draw(ctx,{x:0,y:0,width:canvas.width,height:canvas.height},filmTime);if(t<13.8)plate(ctx,'aerial',1,.5,.5,1-smooth((t-13)/.8));fog(t<13?.028:.018,elapsed);}
   if(t<6.6)film.command(0);
   root.dataset.residentAnimation='background-film-only';
   root.dataset.film=JSON.stringify(film.proof());

@@ -1,6 +1,6 @@
 import * as THREE from '../../assets/vendor/three.module.js';
 import {dialogueCopy} from './dialogue-copy.js?v=film-third-1';
-import {createOpening,openingPhase} from './spatial-opening.js?v=background-ui-1';
+import {createOpening,openingPhase} from './spatial-opening.js?v=ink-cover-1';
 import {createVideoActor} from './spatial-video-actor.js?v=background-ui-1';
 import {createRouteFilm,createDialogueMist} from './spatial-route-film.js?v=background-ui-1';
 import {createPlateOccluder} from './spatial-occlusion.js?v=background-ui-1';
