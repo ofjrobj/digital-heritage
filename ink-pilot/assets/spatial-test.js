@@ -1,16 +1,16 @@
 import * as THREE from '../../assets/vendor/three.module.js';
 import {dialogueCopy} from './dialogue-copy.js?v=film-third-1';
-import {createOpening,openingPhase} from './spatial-opening.js?v=proportion-1';
-import {createVideoActor} from './spatial-video-actor.js?v=proportion-1';
-import {createRouteFilm,createDialogueMist} from './spatial-route-film.js?v=proportion-1';
-import {createFrontActor} from './spatial-front-actor.js?v=proportion-1';
-import {createEnding} from './spatial-ending.js?v=proportion-1';
+import {createOpening,openingPhase} from './spatial-opening.js?v=final-first-1';
+import {createVideoActor} from './spatial-video-actor.js?v=final-first-1';
+import {createRouteFilm,createDialogueMist} from './spatial-route-film.js?v=final-first-1';
+import {createFrontActor} from './spatial-front-actor.js?v=final-first-1';
+import {createEnding} from './spatial-ending.js?v=final-first-1';
 
 const $=id=>document.getElementById(id),base=new URL('./spatial-test/',import.meta.url);
 const panel=$('cinemaDialogue'),loading=$('loading'),stage=$('stage');
 const renderer=new THREE.WebGLRenderer({canvas:$('world'),antialias:true,powerPreference:'high-performance'});
 renderer.outputColorSpace=THREE.SRGBColorSpace;
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
 const loader=new THREE.TextureLoader(),clamp=(v,lo=0,hi=1)=>THREE.MathUtils.clamp(v,lo,hi);
 const smooth=t=>{t=clamp(t,0,1);return t*t*(3-2*t);};
 const tex=name=>loader.loadAsync(new URL(name,base).href).then(t=>{t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=renderer.capabilities.getMaxAnisotropy();return t;});
@@ -126,6 +126,8 @@ try{
   return {manifest,scene,camera,reference,uniforms,hero,shadow,actor,direction,closeCamera,index,height:index===2?1.65:1.86};
  }
  const merchant=makeEncounter({...merchantManifest,projectionHFov:48,reference:{p:endCamera.p,q:endCamera.qWXYZ}},merchantPlate,merchantGuide,actors[0],0);
+ const merchantFront=await createFrontActor(THREE,asset('merchant-front-hq.webp'),'merchant',1.86);
+ merchant.frontHero=merchantFront.mesh;merchant.frontHero.position.copy(merchant.hero.position);merchant.frontHero.quaternion.copy(merchant.hero.quaternion);merchant.frontHero.visible=false;merchant.scene.add(merchant.frontHero);
  const encounters=[merchant];
  await Promise.all(routes.map(async(r,i)=>{
   const folder=mediaFolder(r.kind);
@@ -160,7 +162,7 @@ try{
   c.position.copy(pa.fromArray(A.p).lerp(pb.fromArray(B.p),t));qa.set(A.q[1],A.q[2],A.q[3],A.q[0]);qb.set(B.q[1],B.q[2],B.q[3],B.q[0]);c.quaternion.copy(qa.slerp(qb,t));
   if(walk===0&&close===0){c.position.copy(e.reference.position);c.quaternion.copy(e.reference.quaternion);}
   c.position.lerp(e.closeCamera.position,close);c.quaternion.slerp(e.closeCamera.quaternion,close);c.setViewOffset(innerWidth,innerHeight,0,innerHeight*.14*close,innerWidth,innerHeight);c.updateMatrixWorld();fitPlateCoverage(e);
-  e.hero.visible=e.shadow.visible=!showGuide;e.hero.material.opacity=1;e.uniforms.useGuide.value=Number(showGuide);return e;
+  e.frontHero.visible=!showGuide&&local>=13.92;e.hero.visible=!showGuide&&!e.frontHero.visible;e.shadow.visible=!showGuide;e.hero.material.opacity=1;e.uniforms.useGuide.value=Number(showGuide);return e;
  }
  function poseFrontal(e){
   setPose(e.camera,e.manifest.reference);
@@ -190,14 +192,21 @@ try{
   ending.update(0,elapsed,1+.065*smooth(time/returnRoute.duration));
   return {scene:encounters.at(-1).scene,camera:encounters.at(-1).camera,height:0,manifest:{cameraSource:'Registered ending plate; deterministic 2.5D approach'},effectiveHFov:55,route:'return'};
  }
+ let naturalPlayback=false,autoLimit=null,dialogueElapsed=0,dialogueTimed=-1,dialogueFinished=-1;
+ const dialogueSeconds=i=>Math.max(10,dialogueCopy[i].testimony.length/5);
  function stopAuto(){auto=false;$('run').textContent='이동 재생';}
  function snapMedia(){opening.film.command(clamp(progress*totalSeconds-13,0,17),{snap:true});for(const r of allRoutes)r.film.update(clamp(progress*totalSeconds-r.start,0,r.duration),{snap:true,active:false});}
- function go(value,play=false){target=clamp(value,0,1);if(!play){progress=target;handoffComplete=target>=openingEnd;handoffElapsed=handoffComplete?handoffDuration:0;snapMedia();}auto=play;$('run').textContent=auto?'이동 멈춤':'이동 재생';}
+ function go(value,play=false){naturalPlayback=play;autoLimit=null;dialogueElapsed=0;dialogueTimed=-1;dialogueFinished=-1;target=clamp(value,0,1);if(!play){progress=target;handoffComplete=target>=openingEnd;handoffElapsed=handoffComplete?handoffDuration:0;snapMedia();}auto=play;$('run').textContent=auto?'이동 멈춤':'이동 재생';}
  function nextStopAfter(p){return stops.find(s=>p<s-1e-8)??1;}
- function resume(){if(target>.9999){go(0);}auto=true;target=Math.min(1,target+.00012);$('run').textContent='이동 멈춤';}
- let openingGestureUntil=0;
- const change=delta=>{if(auto&&target<openingEnd&&performance.now()<openingGestureUntil&&delta>0)return;if(target<.002&&delta>0){resume();openingGestureUntil=performance.now()+650;return;}stopAuto();const cap=delta>0?nextStopAfter(target):1;target=clamp(target+delta,0,cap);};
- $('run').onclick=()=>auto?stopAuto():resume();$('progress').oninput=e=>go(Number(e.target.value));$('chapter').onchange=e=>go(chapters[Number(e.target.value)]);
+ function resume(){if(target>.9999){go(0);}naturalPlayback=true;autoLimit=null;if(currentSpeaker>=0&&Math.abs(target-stops[currentSpeaker])<.0001){dialogueTimed=currentSpeaker;dialogueElapsed=0;dialogueFinished=-1;stopAuto();return;}auto=true;target=Math.min(1,target+.00012);$('run').textContent='이동 멈춤';}
+ // Scroll owns travel; opening, dialogue holds and the ending own their clocks.
+ const change=delta=>{
+  if(naturalPlayback&&(auto&&target<openingEnd||dialogueTimed>=0||target>=returnRoute.end/totalSeconds))return;
+  naturalPlayback=true;dialogueFinished=-1;stopAuto();
+  const cap=delta>0?Math.min(nextStopAfter(target),target<returnRoute.end/totalSeconds?returnRoute.end/totalSeconds:1):1;target=clamp(target+delta,0,cap);
+  if(delta>0&&target*totalSeconds>=3.4&&progress<openingEnd){if(progress*totalSeconds<3.4)target=3.4/totalSeconds;auto=true;autoLimit=stops[0];$('run').textContent='이동 멈춤';}
+ };
+ $('run').onclick=()=>{if(auto||dialogueTimed>=0){naturalPlayback=false;dialogueTimed=-1;stopAuto();}else resume();};$('progress').oninput=e=>go(Number(e.target.value));$('chapter').onchange=e=>go(chapters[Number(e.target.value)]);
  $('dialogue').onclick=()=>go(stops.find(s=>s>=progress-.002)??1);
  $('next').onclick=()=>{if(currentSpeaker>=0){go(stops[currentSpeaker]);resume();}};
  $('compare').onclick=()=>{showGuide=!showGuide;$('compare').setAttribute('aria-pressed',String(showGuide));$('compare').textContent=showGuide?'한국화 보기':'기준 구도 비교';};
@@ -219,7 +228,8 @@ try{
  function frame(now){
   if(!innerWidth||!innerHeight||!stage.clientWidth||!stage.clientHeight){last=now;requestAnimationFrame(frame);return;}
   const dt=Math.min(.05,(now-last)/1000);last=now;if(ambient)elapsed+=dt;
-  if(auto){const next=nextStopAfter(target);target=Math.min(next,target+dt/totalSeconds);if(!handoffComplete)target=Math.min(target,openingEnd);if(target===next)stopAuto();}
+  if(naturalPlayback&&target>=returnRoute.end/totalSeconds&&target<1){auto=true;autoLimit=1;}
+  if(auto){const next=autoLimit??nextStopAfter(target);target=Math.min(next,target+dt/totalSeconds);if(!handoffComplete)target=Math.min(target,openingEnd);if(target===next){stopAuto();autoLimit=null;}}
   const previous=progress;progress=THREE.MathUtils.lerp(progress,target,1-Math.exp(-dt/(reduced?.08:.32)));if(Math.abs(progress-target)<.00001)progress=target;
   if(progress<openingEnd-.001){handoffComplete=false;handoffElapsed=0;}
   let holdingFilm=false;
@@ -230,8 +240,9 @@ try{
   for(const r of allRoutes){if(previous*totalSeconds<=r.end+.01&&time>=r.end&&time<r.stop&&!r.film.ended){time=r.end;progress=time/totalSeconds;heldRoute=r;}}
   let active=poseMerchant(clamp(time-openingSeconds,0,merchantSeconds)),speaker=-1,chapter=time<.16?0:time<9?1:time<13?2:time<30?3:time<42.868?4:5;
   mist.clear();
+  if(time>=42.768&&time<45.168)mist.draw('dialogue-in',(time-42.768)/2.4);
   for(const r of allRoutes)if(time<r.start||time>r.end)r.film.update(clamp(time-r.start,0,r.duration),{active:false,dt});
-  if(time>=42.868&&time<=merchantStop+.001)speaker=0;
+  if(time>=45.168&&time<=merchantStop+.001)speaker=0;
   for(let i=0;i<routes.length;i++){
    const r=routes[i];if(time<r.outStart-.001)break;
    if(time<=r.outStart+.001){active=i===0?poseMerchant(merchantSeconds):poseFrontal(encounters[i]);speaker=i;chapter=5+i*2;break;}
@@ -257,10 +268,19 @@ try{
   document.body.dataset.openingPhase=openingVisible?openingPhase(progress/openingEnd):'encounter';$('storyIndexBar').style.opacity=String(smooth(progress/(.018*68.181818/totalSeconds)));
   const musicTarget=soundOn&&!document.hidden&&progress>.002?.09*(endingVisible?ending.musicGain:1):0;
   music.volume=THREE.MathUtils.lerp(music.volume,musicTarget,1-Math.exp(-dt/.7));if(endingVisible&&ending.finished)music.volume=0;
-  showDialogue(speaker);$('hint').hidden=speaker>=0||auto||holdingFilm||!!heldRoute||ending.finished&&endingVisible||Math.abs(progress-target)>.0001||(progress>.002&&progress<openingEnd);$('hint').textContent='Scroll';
+  showDialogue(speaker);
+  if(naturalPlayback&&speaker>=0&&Math.abs(progress-stops[speaker])<.00002&&dialogueFinished!==speaker){
+   if(dialogueTimed!==speaker){dialogueTimed=speaker;dialogueElapsed=0;$('run').textContent='이동 멈춤';}
+   if(!document.hidden)dialogueElapsed+=dt;
+   if(dialogueElapsed>=dialogueSeconds(speaker)){
+    dialogueFinished=speaker;dialogueTimed=-1;autoLimit=(routes[speaker]?.start??returnRoute.start)/totalSeconds;
+    auto=true;target=stops[speaker]+.000001;$('run').textContent='이동 멈춤';
+   }
+  }
+  $('hint').hidden=speaker>=0||auto||holdingFilm||!!heldRoute||ending.finished&&endingVisible||Math.abs(progress-target)>.0001||(progress>.002&&progress<openingEnd);$('hint').textContent='Scroll';
   $('progress').value=String(progress);$('chapter').value=String(chapter);
   const head=new THREE.Vector3(0,active.height,0);if(active.hero){active.hero.localToWorld(head);head.project(active.camera);}
-  document.body.dataset.proof=JSON.stringify({progress,target,timelineSeconds:time,totalSeconds,opening:openingVisible?openingPhase(progress/openingEnd):null,handoff:{holdingFilm,complete:handoffComplete,fade:handoffElapsed/handoffDuration},chapter:labels[chapter],speaker,ambientSeconds:elapsed,camera:active.camera.matrixWorld.toArray(),effectiveHFov:active.effectiveHFov,plateCoverage:active.plateCoverage,headTopScreenY:active.hero?(1-head.y)/2:null,actor:active.actor?.proof(),actorWorldPosition:active.hero?.position.toArray(),actorSafe:active.actorSafe,actorOpacity:active.actorOpacity,renderMethod:'registered-illustrated-story-with-fixed-proportion-actors',film:opening.film.proof(),routes:allRoutes.map(r=>({kind:r.kind,...r.film.proof()})),ending:ending.proof(),musicVolume:music.volume,cameraSource:active.manifest.cameraSource,transition:mist.proof(),drawCalls:renderer.info.render.calls});
+  document.body.dataset.proof=JSON.stringify({automatic:{enabled:naturalPlayback,running:auto,limit:autoLimit,dialogueIndex:dialogueTimed,dialogueElapsed,dialogueDuration:speaker>=0?dialogueSeconds(speaker):0},progress,target,timelineSeconds:time,totalSeconds,opening:openingVisible?openingPhase(progress/openingEnd):null,handoff:{holdingFilm,complete:handoffComplete,fade:handoffElapsed/handoffDuration},chapter:labels[chapter],speaker,ambientSeconds:elapsed,camera:active.camera.matrixWorld.toArray(),effectiveHFov:active.effectiveHFov,plateCoverage:active.plateCoverage,headTopScreenY:active.hero?(1-head.y)/2:null,actor:active.actor?.proof(),actorWorldPosition:active.hero?.position.toArray(),actorSafe:active.actorSafe,actorOpacity:active.actorOpacity,renderMethod:'registered-illustrated-story-with-fixed-proportion-actors',film:opening.film.proof(),routes:allRoutes.map(r=>({kind:r.kind,...r.film.proof()})),ending:ending.proof(),musicVolume:music.volume,cameraSource:active.manifest.cameraSource,transition:mist.proof(),drawCalls:renderer.info.render.calls});
   requestAnimationFrame(frame);
  }
  requestAnimationFrame(frame);

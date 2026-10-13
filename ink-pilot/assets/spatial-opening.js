@@ -1,4 +1,4 @@
-import {createSpatialFilm} from "./spatial-film.js?v=proportion-1";
+import {createSpatialFilm} from "./spatial-film.js?v=final-first-1";
 /* Original opening choreography, followed by a continuous Blender-route film.
  * Sources: v071 ink-entry.js, storyboard-opening.js, blender-spatial-view.js,
  * mountain-entry.json; see spatial-opening-notes.json for the exact mapping.
@@ -28,7 +28,7 @@ export function createOpening(stage,options={}){
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('width','0');svg.setAttribute('height','0');svg.setAttribute('aria-hidden','true');svg.style.cssText='position:absolute;pointer-events:none';
  // Identical display-only white balance on every opening plate. The originals
  // and the UI remain untouched. Paper is neutral rather than sepia yellow.
- svg.innerHTML='<defs><filter id="spatialOpeningPaperBalance" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".98 0 0 0 0  0 1 0 0 0  0 0 1.08 0 0  0 0 0 1 0"/><feColorMatrix type="saturate" values=".94"/></filter></defs>';
+ svg.innerHTML='<defs><filter id="spatialOpeningPaperBalance" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".98 0 0 0 0  0 1 0 0 0  0 0 1.08 0 0  0 0 0 1 0"/><feColorMatrix type="saturate" values=".94"/></filter><filter id="spatialFilmNeutral" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".95655 0 0 0 0  0 1.00441 0 0 0  0 0 1.06375 0 0  0 0 0 1 0"/></filter></defs>';
  root.append(svg);stage.append(root);
  const canvas=root.querySelector('.spatial-opening-art'),ctx=canvas.getContext('2d',{alpha:false}),ambientCanvas=root.querySelector('.spatial-opening-ambient'),ambient=ambientCanvas.getContext('2d'),title=root.querySelector('.spatial-cover-copy'),copy=root.querySelector('.spatial-opening-copy');
  const layer=document.createElement('canvas'),lc=layer.getContext('2d');
@@ -46,7 +46,7 @@ export function createOpening(stage,options={}){
   pixels=mc.createImageData(mw,mh);prepareMountains();prepareFog();prepared=true;
  }
  const ready=Promise.all(Object.entries(paths).map(async([name,path])=>{const im=new Image();im.src=new URL(path,import.meta.url).href;await im.decode();images[name]=im;})).then(async()=>{prepare();await film.ready;return root;});
- function resize(){const scale=Math.min(devicePixelRatio||1,1.6),w=Math.min(2560,Math.round(stage.clientWidth*scale)),h=Math.round(w*stage.clientHeight/Math.max(1,stage.clientWidth));if(canvas.width!==w||canvas.height!==h){canvas.width=layer.width=ambientCanvas.width=w;canvas.height=layer.height=ambientCanvas.height=h;lastProgress=-1;}}
+ function resize(){const scale=Math.min(devicePixelRatio||1,2),w=Math.min(3840,Math.round(stage.clientWidth*scale)),h=Math.round(w*stage.clientHeight/Math.max(1,stage.clientWidth));if(canvas.width!==w||canvas.height!==h){canvas.width=layer.width=ambientCanvas.width=w;canvas.height=layer.height=ambientCanvas.height=h;lastProgress=-1;}}
  function plate(context,name,zoom=1,cx=.5,cy=.5,alpha=1){const im=images[name],w=canvas.width,h=canvas.height;if(!im||alpha<=0)return;const ratio=w/h;let sh=im.height/zoom,sw=sh*ratio;if(sw>im.width/zoom){sw=im.width/zoom;sh=sw/ratio;}const x=clamp(im.width*cx-sw/2,0,im.width-sw),y=clamp(im.height*cy-sh/2,0,im.height-sh);context.save();context.filter="url('#spatialOpeningPaperBalance')";context.globalAlpha=alpha;context.drawImage(im,x,y,sw,sh,0,0,w,h);context.restore();}
  function absorption(p,initial=false){const distances=initial?coverField:field,radius=initial?smooth(p)*264:smooth(p)*180-4;for(let i=0;i<field.length;i++){const j=i*4;pixels.data[j]=pixels.data[j+1]=pixels.data[j+2]=255;pixels.data[j+3]=Math.round(smooth((radius-distances[i]+3)/6)*255);}mc.putImageData(pixels,0,0);}
  // Each ridge is a disjoint region of the existing painting, never a mirrored
@@ -92,7 +92,7 @@ export function createOpening(stage,options={}){
     const u=x/sheet.width,v=y/sheet.height;let n=0,weight=0;
     for(let octave=0;octave<4;octave++){const f=2**octave,a=.5**octave;n+=noise(u*5*f,v*3*f,seed)*a;weight+=a;}
     const edge=smooth(u/.11)*smooth((1-u)/.11)*smooth(v/.18)*smooth((1-v)/.18),a=smooth((n/weight-.18)/.64)*edge,j=(y*sheet.width+x)*4;
-    d.data[j]=241;d.data[j+1]=241;d.data[j+2]=237;d.data[j+3]=Math.round(a*255);
+    d.data[j]=255;d.data[j+1]=255;d.data[j+2]=255;d.data[j+3]=Math.round(a*255);
    }
    c.putImageData(d,0,0);fogSheets.push(sheet);
   }
@@ -107,7 +107,7 @@ export function createOpening(stage,options={}){
    const x=w*(.5+drift+side*part*(.14+depth*.21))-width/2,y=h*(.30+(i%3)*.18+Math.sin(clock*.09+i)*.035)-height/2;
    ambient.globalAlpha=clamp(amount*(.48+depth*.22));ambient.drawImage(fogSheets[i%3],x,y,width,height);
   }
-  const veil=ambient.createRadialGradient(w*.5,h*.52,0,w*.5,h*.52,w*.78);veil.addColorStop(0,`rgba(241,241,237,${amount*.42*(1-part*.7)})`);veil.addColorStop(1,'rgba(241,241,237,0)');ambient.globalAlpha=1;ambient.fillStyle=veil;ambient.fillRect(0,0,w,h);ambient.restore();
+  const veil=ambient.createRadialGradient(w*.5,h*.52,0,w*.5,h*.52,w*.78);veil.addColorStop(0,`rgba(255,255,255,${amount*.42*(1-part*.7)})`);veil.addColorStop(1,'rgba(255,255,255,0)');ambient.globalAlpha=1;ambient.fillStyle=veil;ambient.fillRect(0,0,w,h);ambient.restore();
  }
  function mountainPass(context,t,alpha=1){
   const travel=smooth((t-3.4)/4.3),w=canvas.width,h=canvas.height,aspect=images.mountains.width/images.mountains.height,scale=Math.max(w/images.mountains.width,h/images.mountains.height),iw=images.mountains.width*scale,ih=iw/aspect,ox=(w-iw)/2,oy=(h-ih)/2,vx=w*.53,vy=h*.47;

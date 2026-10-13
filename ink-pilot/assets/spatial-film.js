@@ -1,5 +1,5 @@
 import * as THREE from '../../assets/vendor/three.module.js';
-import {createVideoActor} from './spatial-video-actor.js?v=proportion-1';
+import {createVideoActor} from './spatial-video-actor.js?v=final-first-1';
 
 const clamp=(v,lo=0,hi=1)=>Math.min(hi,Math.max(lo,v));
 const smooth=v=>{v=clamp(v);return v*v*(3-2*v);};
@@ -199,10 +199,13 @@ export function createSpatialFilm(options={}){
   // repeated/held frames, so interpolating silhouettes would expose columns.
   const mediaTime=hasPresented?presentedMediaTime:video.currentTime;
   occlusionFrame=occlusionData?Math.floor(mediaTime/mediaDuration()*occlusionData.duration*occlusionData.fps+1e-4):null;
-  const foreground=occlusionFrames.get(occlusionFrame);
+  const maskPosition=mediaTime/mediaDuration()*occlusionData.duration*occlusionData.fps;
+  const aMask=occlusionFrames.get(Math.floor(maskPosition)),bMask=occlusionFrames.get(Math.floor(maskPosition)+1),blend=maskPosition%1;
+  const interpolate=(a,b)=>a?.map((polygon,i)=>b?.[i]?.length===polygon.length?polygon.map((point,j)=>point.map((v,k)=>v+(b[i][j][k]-v)*blend)):polygon)??[];
+  // Track foreground silhouettes between original annotations at higher FPS.
+  // Do not invent topology when a post exits the frame or masks change shape.
+  const foreground=aMask&&bMask?{polygons:interpolate(aMask.polygons,bMask.polygons),actorPolygons:Object.fromEntries(Object.entries(aMask.actorPolygons??{}).map(([key,value])=>[key,interpolate(value,bMask.actorPolygons?.[key])]))}:aMask;
   occlusionPolygons=(foreground?.polygons?.length??0)+Object.values(foreground?.actorPolygons??{}).reduce((n,polygons)=>n+polygons.length,0);
-  const merchant=actors.find(row=>row.kind==='merchant');
-  const showMerchant=merchant?.actor.mesh.visible??false;
   if(foreground&&actorCompositeCtx){
    const visibility=actors.map(row=>({row,actor:row.actor.mesh.visible,shadow:row.shadow?.visible??false}));
    const composite=(polygons)=>{
@@ -218,20 +221,15 @@ export function createSpatialFilm(options={}){
     // The garden fence is between the cloth folder and the lens, while the
     // sweeper is on its near side. Keep these depth relationships separate.
     for(const current of visibility){
-     if(!current.actor||current.row===merchant)continue;
+     if(!current.actor)continue;
      for(const state of visibility){const selected=state===current;state.row.actor.mesh.visible=selected&&state.actor;if(state.row.shadow)state.row.shadow.visible=selected&&state.shadow;}
      composite([...(foreground.polygons??[]),...(foreground.actorPolygons[current.row.anchor.id]??[])]);
     }
    }else{
-    if(merchant)merchant.actor.mesh.visible=false;
     composite(foreground.polygons??[]);
    }
    for(const state of visibility){state.row.actor.mesh.visible=state.actor;if(state.row.shadow)state.row.shadow.visible=state.shadow;}
-   if(showMerchant){
-    for(const row of actors)if(row!==merchant){row.actor.mesh.visible=false;if(row.shadow)row.shadow.visible=false;}
-    renderer.render(actorScene,actorCamera);ctx.drawImage(renderer.domElement,dest.x,dest.y,dest.width,dest.height);
-    for(const state of visibility){state.row.actor.mesh.visible=state.actor;if(state.row.shadow)state.row.shadow.visible=state.shadow;}
-   }
+
   }else{
    renderer.render(actorScene,actorCamera);ctx.drawImage(renderer.domElement,dest.x,dest.y,dest.width,dest.height);
   }
@@ -244,7 +242,9 @@ export function createSpatialFilm(options={}){
   const scale=Math.max(w/16,h/9),dest={x:x+(w-scale*16)/2,y:y+(h-scale*9)/2,width:scale*16,height:scale*9};
   const vw=video.videoWidth,vh=video.videoHeight,sw=Math.min(vw,vh*16/9),sh=sw*9/16;
   ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
+  ctx.filter="url('#spatialFilmNeutral')";
   ctx.drawImage(video,(vw-sw)/2,(vh-sh)/2,sw,sh,dest.x,dest.y,dest.width,dest.height);
+  ctx.filter='none';
   const shown=sourceTime();drawActors(ctx,dest,shown);ctx.restore();lastDrawTime=shown;lastRect=dest;return true;
  }
  function setAmbient(enabled){ambientEnabled=Boolean(enabled);for(const {actor} of actors)if(ambientEnabled)void actor.play();else actor.pause();}
@@ -262,13 +262,13 @@ export function createSpatialFilm(options={}){
   cancelVideoReady=()=>{cleanup();if(!loaded)reject(Error('Background film disposed before loading'));};
   video.addEventListener('loadeddata',success,{once:true});video.addEventListener('error',fail,{once:true});
  });
- video.src=options.url?new URL(options.url,import.meta.url).href:asset('film-third/opening-route.mp4');video.load();
+ video.src=options.url?new URL(options.url,import.meta.url).href:'https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261013_013140_64fed7e5-00ef-4838-af82-8b988b4e41d6.mp4';video.load();
  const occlusionReady=(options.occlusionData?Promise.resolve(options.occlusionData):fetch(options.occlusionUrl?new URL(options.occlusionUrl,import.meta.url):asset('film-third/entry-occlusion.json')).then(r=>{if(!r.ok)throw Error(`Entry occlusion ${r.status}`);return r.json();})).then(value=>{occlusionData=value;occlusionFrames=new Map(value.frames.map(row=>[row.frame,row]));return value;});
- const dataReady=(options.cameraData?Promise.resolve(options.cameraData):fetch(options.cameraUrl?new URL(options.cameraUrl,import.meta.url):asset('film-third/opening-camera.json')).then(r=>{if(!r.ok)throw Error(`Camera track ${r.status}`);return r.json();})).then(value=>{data=value;duration=Number(data.duration)||17;actorsReady=setupActors();return data;});
+ const dataReady=(options.cameraData?Promise.resolve(options.cameraData):fetch(options.cameraUrl?new URL(options.cameraUrl,import.meta.url):asset('film-third/opening-camera-hq.json')).then(r=>{if(!r.ok)throw Error(`Camera track ${r.status}`);return r.json();})).then(value=>{data=value;duration=Number(data.duration)||17;actorsReady=setupActors();return data;});
  const ready=Promise.all([videoReady,dataReady,occlusionReady]).then(()=>{mode='paused';return api;});
  const api={video,ready,command,draw,cameraAt,play,pause,unlock,setAmbient,actor(kind){return actors.find(row=>row.kind===kind)?.actor??null;},
   get sourceTime(){return sourceTime();},get ended(){return finalFramePresented();},get targetTime(){return target;},get duration(){return timeline();},get actorsReady(){return actorsReady;},
-  proof(){return {method:'continuous-recorded-background',loaded,mode,targetTime:target,sourceTime:sourceTime(),mediaTime:video.currentTime,mediaDuration:mediaDuration(),sourceDuration:timeline(),presentedMediaTime,decodedFrames,paused:video.paused,seeking:video.seeking,playbackRate:video.playbackRate,seeks,forwardSeeks,reverseSeeks,playCalls,lastDrawTime,rect:lastRect,error:lastError||null,
+  proof(){return {resolution:[video.videoWidth,video.videoHeight],mediaFps:data?.registration?.mediaFps,method:'continuous-recorded-background',loaded,mode,targetTime:target,sourceTime:sourceTime(),mediaTime:video.currentTime,mediaDuration:mediaDuration(),sourceDuration:timeline(),presentedMediaTime,decodedFrames,paused:video.paused,seeking:video.seeking,playbackRate:video.playbackRate,seeks,forwardSeeks,reverseSeeks,playCalls,lastDrawTime,rect:lastRect,error:lastError||null,
    actorOcclusion:'Decoded-frame gate, plinth and adjacent-wall masks, with actor-specific garden-fence depth; not whole-scene depth',occlusion:{loaded:!!occlusionData,frame:occlusionFrame,polygons:occlusionPolygons,trackedFrames:occlusionFrames.size},actors:actors.map(row=>({kind:row.kind,anchor:row.anchor.id,worldPosition:row.anchor.p,sourcePosition:row.anchor.sourcePosition??row.anchor.p,registration:row.anchor.registration??'Source world anchor',opacity:row.opacity,windows:row.windows,contactShadow:!!row.shadow,...row.actor.proof()})),actorErrors};},
   dispose(){if(disposed)return;disposed=true;cancelVideoReady();if(frameRequest!==null&&video.cancelVideoFrameCallback)video.cancelVideoFrameCallback(frameRequest);gestures.forEach(type=>document.removeEventListener(type,unlock));document.removeEventListener('visibilitychange',onVisibility);video.removeEventListener('seeked',onSeeked);video.pause();video.removeAttribute('src');video.load();for(const {actor,shadow}of actors){actor.dispose();shadow?.geometry.dispose();shadow?.material.dispose();}renderer?.dispose();}
  };

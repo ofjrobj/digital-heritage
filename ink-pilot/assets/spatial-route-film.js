@@ -64,7 +64,7 @@ export function createDialogueMist(stage){
   for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++){
    let n=0;for(let octave=0;octave<5;octave++)n+=noise(x/100*2**octave,y/75*2**octave)*.5**(octave+1);
    const i=(y*c.width+x)*4,edge=Math.sin(Math.PI*x/(c.width-1))**.35*Math.sin(Math.PI*y/(c.height-1))**.35;
-   pixels.data[i]=224;pixels.data[i+1]=230;pixels.data[i+2]=219;pixels.data[i+3]=clamp((n-.27)*720,0,255)*edge;
+   pixels.data[i]=255;pixels.data[i+1]=255;pixels.data[i+2]=255;pixels.data[i+3]=clamp((n-.27)*720,0,255)*edge;
   }context.putImageData(pixels,0,0);return c;
  }
  const textures=[noiseTexture(13),noiseTexture(37)];let last=-1,lastKind='';
@@ -72,7 +72,7 @@ export function createDialogueMist(stage){
   const p=clamp(progress),strength=smooth(p/.40)*(1-smooth((p-.52)/.48));
   canvas.style.opacity=String(strength);canvas.hidden=strength<=.001;canvas.dataset.progress=String(p);canvas.dataset.transition=kind;
   if(canvas.hidden||p===last&&kind===lastKind)return strength;last=p;lastKind=kind;ctx.clearRect(0,0,960,540);
-  ctx.fillStyle=`rgba(220,226,215,${strength})`;ctx.fillRect(0,0,960,540);
+  ctx.fillStyle=`rgba(255,255,255,${strength})`;ctx.fillRect(0,0,960,540);
   const shift=reduced?0:(p-.5)*160,direction=kind==='dialogue-in'?1:-1;
   ctx.globalAlpha=.92;ctx.drawImage(textures[0],-230+shift*direction,-90,1440,810);
   ctx.globalAlpha=.64;ctx.drawImage(textures[1],-240-shift*direction*.6,-180,1440,810);ctx.globalAlpha=1;return strength;
