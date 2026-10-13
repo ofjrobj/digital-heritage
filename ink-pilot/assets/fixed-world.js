@@ -31,10 +31,10 @@ try{
  bool occluded=depth>texture2D(referenceDepth,uv).r+.00006;
  if(useGuide<.5&&occluded){float line=sin(pos.x*47.+sin(pos.y*31.))*sin(pos.z*39.);c=texture2D(fill,uv).rgb+line*.003;}
  if(useGuide<.5 && kind>.5 && kind<1.5){
- vec2 grainUV=vec2(.213+.002*fract((pos.x+pos.y)*2.),.64+.06*fract(pos.z*.22));
+ vec2 grainUV=vec2(.208+.025*fract((pos.x+pos.y)*1.7),.55+.20*fract(pos.z*.24));
  vec3 wood=texture2D(painting,grainUV).rgb;
- if(occluded)c=mix(c,wood,.92);
- }gl_FragColor=vec4(c,1.);
+ if(pos.z<7.6)c=wood;else if(occluded)c=mix(wood,vec3(.15,.16,.15),.45);
+ }if(useGuide<.5&&kind<.5&&c.r>c.g*1.16&&c.r>c.b*1.15)c=texture2D(fill,uv).rgb;gl_FragColor=vec4(c,1.);
   #include <colorspace_fragment>
  }`});
  const world=new THREE.Mesh(geo,material);world.matrixAutoUpdate=false;world.updateMatrix();scene.add(world);const savedMaterial=world.material;world.material=new THREE.MeshDepthMaterial();renderer.setRenderTarget(depthTarget);renderer.render(scene,projectionCamera);renderer.setRenderTarget(null);world.material.dispose();world.material=savedMaterial;
