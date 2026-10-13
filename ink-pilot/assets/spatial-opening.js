@@ -57,8 +57,8 @@ export function createOpening(stage,options={}){
   const top=h*(short?.20:.18),bottom=h-Math.max(short?88:100,stage.clientHeight*.18)*scale-footer*scale-(short?55:75)*scale-20*scale;
   const iw=images.cover.width,ih=images.cover.height;
   const fit=Math.max(.01,Math.min(w*.88/(iw*.90),Math.max(32*scale,bottom-top)/(ih*.44)));
-  const dw=iw*fit,dh=ih*fit,x=(w-dw)/2,y=top-ih*.20*fit;
-  root.dataset.coverInkBounds=JSON.stringify({top:top/scale,bottom:(y+ih*.64*fit)/scale});
+  const dw=iw*fit,dh=ih*fit,x=(w-dw)/2,inkTop=top+Math.max(0,bottom-top-ih*.44*fit)/2,y=inkTop-ih*.20*fit;
+  root.dataset.coverInkBounds=JSON.stringify({top:inkTop/scale,bottom:(y+ih*.64*fit)/scale});
   return {x,y,w:dw,h:dh};
  }
  function coverPlate(context){const r=coverRect();context.save();context.filter="url('#spatialOpeningPaperBalance')";context.drawImage(images.cover,r.x,r.y,r.w,r.h);context.restore();}
