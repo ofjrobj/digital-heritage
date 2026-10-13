@@ -1,4 +1,4 @@
-import {createSpatialFilm} from "./spatial-film.js?v=final-first-1";
+import {createSpatialFilm} from "./spatial-film.js?v=final-first-2";
 /* Original opening choreography, followed by a continuous Blender-route film.
  * Sources: v071 ink-entry.js, storyboard-opening.js, blender-spatial-view.js,
  * mountain-entry.json; see spatial-opening-notes.json for the exact mapping.
@@ -28,7 +28,7 @@ export function createOpening(stage,options={}){
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('width','0');svg.setAttribute('height','0');svg.setAttribute('aria-hidden','true');svg.style.cssText='position:absolute;pointer-events:none';
  // Identical display-only white balance on every opening plate. The originals
  // and the UI remain untouched. Paper is neutral rather than sepia yellow.
- svg.innerHTML='<defs><filter id="spatialOpeningPaperBalance" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".98 0 0 0 0  0 1 0 0 0  0 0 1.08 0 0  0 0 0 1 0"/><feColorMatrix type="saturate" values=".94"/></filter><filter id="spatialFilmNeutral" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".95655 0 0 0 0  0 1.00441 0 0 0  0 0 1.06375 0 0  0 0 0 1 0"/></filter></defs>';
+ svg.innerHTML='<defs><filter id="spatialOpeningPaperBalance" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values=".98 0 0 0 0  0 1 0 0 0  0 0 1.08 0 0  0 0 0 1 0"/><feColorMatrix type="saturate" values=".94"/></filter><filter id="spatialFilmNeutral" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.97318 0 0 0 0  0 1.02503 0 0 0  0 0 1.09690 0 0  0 0 0 1 0"/></filter></defs>';
  root.append(svg);stage.append(root);
  const canvas=root.querySelector('.spatial-opening-art'),ctx=canvas.getContext('2d',{alpha:false}),ambientCanvas=root.querySelector('.spatial-opening-ambient'),ambient=ambientCanvas.getContext('2d'),title=root.querySelector('.spatial-cover-copy'),copy=root.querySelector('.spatial-opening-copy');
  const layer=document.createElement('canvas'),lc=layer.getContext('2d');
