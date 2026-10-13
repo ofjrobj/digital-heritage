@@ -1,5 +1,5 @@
 import * as THREE from '../../assets/vendor/three.module.js';
-import {createVideoActor} from './spatial-video-actor.js?v=final-second-2';
+import {createVideoActor} from './spatial-video-actor.js?v=background-ui-1';
 
 const clamp=(v,lo=0,hi=1)=>Math.min(hi,Math.max(lo,v));
 const smooth=v=>{v=clamp(v);return v*v*(3-2*v);};
@@ -138,19 +138,14 @@ export function createSpatialFilm(options={}){
  async function actorConfigs(){
   if(options.actors!==undefined)return options.actors;
   const read=async path=>{const r=await fetch(asset(path));if(!r.ok)throw Error(`${path}: ${r.status}`);return r.json();};
-  const results=await Promise.allSettled([read('film-first/extras-metadata.json'),read('film-third/merchant-loop.json')]);
+  // Background residents are already painted into the film. Do not overlay
+  // independently projected cutouts: only the principal merchant is separate.
   const configs=[];
-  if(results[0].status==='fulfilled')for(const item of results[0].value.actors??[]){
-   const id=item.anchor??item.sourceRoot;
-   const sourceAnchor=data.anchors?.find(a=>a.id===id)??{id,p:item.worldPosition,sourceFloorZ:item.worldPosition?.[2],heightMetres:item.id==='sweeper'?1.4:1.6};
-   const registration=PLATE_ACTOR_REGISTRATION[id];
-   const anchor=registration?{...sourceAnchor,sourcePosition:sourceAnchor.p.slice(),p:registration.p.slice(),sourceFloorZ:registration.p[2],registration:'Fixed roadside placement matching generated plate'}:sourceAnchor;
-   configs.push({...item,kind:item.kind??item.id,url:item.url??asset('film-first/'+item.file),anchor,windows:registration?.windows,loop:true});
-  }else actorErrors.push({kind:'extras-manifest',error:String(results[0].reason)});
-  if(results[1].status==='fulfilled'){
-   const item=results[1].value;configs.push({...item,kind:'merchant',url:asset('film-third/'+item.file),height:1.86,loop:true,
+  try{
+   const item=await read('film-third/merchant-loop.json');
+   configs.push({...item,kind:'merchant',url:asset('film-third/'+item.file),height:1.86,loop:true,
     anchor:{id:'Jegeumru merchant',p:[22,-19,2.0691163539886475],sourceFloorZ:2.0691163539886475},windows:[[13,17.5]]});
-  }else actorErrors.push({kind:'merchant-manifest',error:String(results[1].reason)});
+  }catch(error){actorErrors.push({kind:'merchant-manifest',error:String(error)});}
   return configs;
  }
  async function setupActors(){
@@ -265,7 +260,7 @@ export function createSpatialFilm(options={}){
  });
  video.src=options.url?new URL(options.url,import.meta.url).href:'https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261013_025317_40ca510a-8b2c-4f3f-b69d-da31465c0fa5.mp4';video.load();
  const occlusionReady=(options.occlusionData?Promise.resolve(options.occlusionData):fetch(options.occlusionUrl?new URL(options.occlusionUrl,import.meta.url):asset('film-third/entry-occlusion.json')).then(r=>{if(!r.ok)throw Error(`Entry occlusion ${r.status}`);return r.json();})).then(value=>{occlusionData=value;occlusionFrames=new Map(value.frames.map(row=>[row.frame,row]));return value;});
- const dataReady=(options.cameraData?Promise.resolve(options.cameraData):fetch(options.cameraUrl?new URL(options.cameraUrl,import.meta.url):asset('film-third/opening-camera-hq.json?v=final-second-2')).then(r=>{if(!r.ok)throw Error(`Camera track ${r.status}`);return r.json();})).then(value=>{data=value;duration=Number(data.duration)||17;actorsReady=setupActors();return data;});
+ const dataReady=(options.cameraData?Promise.resolve(options.cameraData):fetch(options.cameraUrl?new URL(options.cameraUrl,import.meta.url):asset('film-third/opening-camera-hq.json?v=background-ui-1')).then(r=>{if(!r.ok)throw Error(`Camera track ${r.status}`);return r.json();})).then(value=>{data=value;duration=Number(data.duration)||17;actorsReady=setupActors();return data;});
  const ready=Promise.all([videoReady,dataReady,occlusionReady]).then(()=>{mode='paused';return api;});
  const api={video,ready,command,draw,cameraAt,play,pause,unlock,setAmbient,actor(kind){return actors.find(row=>row.kind===kind)?.actor??null;},
   get sourceTime(){return sourceTime();},get ended(){return finalFramePresented();},get targetTime(){return target;},get duration(){return timeline();},get actorsReady(){return actorsReady;},

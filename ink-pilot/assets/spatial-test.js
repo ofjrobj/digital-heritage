@@ -1,11 +1,11 @@
 import * as THREE from '../../assets/vendor/three.module.js';
 import {dialogueCopy} from './dialogue-copy.js?v=film-third-1';
-import {createOpening,openingPhase} from './spatial-opening.js?v=final-second-2';
-import {createVideoActor} from './spatial-video-actor.js?v=final-second-2';
-import {createRouteFilm,createDialogueMist} from './spatial-route-film.js?v=final-second-2';
-import {createPlateOccluder} from './spatial-occlusion.js?v=final-second-2';
-import {createFrontActor} from './spatial-front-actor.js?v=final-second-2';
-import {createEnding} from './spatial-ending.js?v=final-second-2';
+import {createOpening,openingPhase} from './spatial-opening.js?v=background-ui-1';
+import {createVideoActor} from './spatial-video-actor.js?v=background-ui-1';
+import {createRouteFilm,createDialogueMist} from './spatial-route-film.js?v=background-ui-1';
+import {createPlateOccluder} from './spatial-occlusion.js?v=background-ui-1';
+import {createFrontActor} from './spatial-front-actor.js?v=background-ui-1';
+import {createEnding} from './spatial-ending.js?v=background-ui-1';
 
 const $=id=>document.getElementById(id),base=new URL('./spatial-test/',import.meta.url);
 const panel=$('cinemaDialogue'),loading=$('loading'),stage=$('stage');
@@ -59,11 +59,11 @@ const mediaFolder=kind=>['trio','woodcutter','return'].includes(kind)?'film-endi
 
 try{
  const [merchantManifest,merchantPlate,merchantGuide,filmCamera,routeData,endingRouteData]=await Promise.all([
-  read('scene.json'),tex('../film-third/opening-end.webp?v=final-second-2'),tex('../film-first/guide-end.jpg'),read('../film-first/camera.json'),read('../film-third/routes.json'),read('../film-ending/routes.json')
+  read('scene.json'),tex('../film-third/opening-end.webp?v=background-ui-1'),tex('../film-first/guide-end.jpg'),read('../film-first/camera.json'),read('../film-third/routes.json'),read('../film-ending/routes.json')
  ]);
  const routes=['farmer','cook','trio','woodcutter'].map(kind=>({kind,...(routeData.routes[kind]??endingRouteData.routes[kind])}));
  const returnRoute={kind:'return',...endingRouteData.routes.return,duration:7};
- const ending=createEnding(stage,{children:endingRouteData.children??[],camera:endingRouteData.endingCamera,pairRegistration:true,images:{pair:'ending-pair-ink.png',historicBare:'ending-historic-bare.webp'},masks:{branches:'ending-masks/branches.png'}});
+ const ending=createEnding(stage,{children:[],camera:endingRouteData.endingCamera,pairRegistration:true,images:{pair:'ending-pair-ink.png',historicBare:'ending-historic-bare.webp'},masks:{branches:'ending-masks/branches.png'}});
  ending.root.style.zIndex='2';
  await ending.ready;
  const merchantStop=openingSeconds+merchantSeconds;
@@ -277,7 +277,7 @@ try{
   renderer.setRenderTarget(null);renderer.render(active.scene,active.camera);
   const openingVisible=progress<openingEnd||holdingFilm;
   if(openingVisible){opening.update(holdingFilm?1:progress/openingEnd,elapsed,holdingFilm?1-smooth(handoffElapsed/handoffDuration):1);speaker=-1;}else opening.hide();
-  document.body.dataset.openingPhase=openingVisible?openingPhase(progress/openingEnd):'encounter';$('storyIndexBar').style.opacity=String(smooth(progress/(.018*68.181818/totalSeconds)));
+  document.body.dataset.openingPhase=openingVisible?openingPhase(progress/openingEnd):'encounter';const navigationVisible=openingVisible?smooth((time-1.7)/.6):1;$('storyIndexBar').style.opacity=String(navigationVisible);$('storyIndexBar').style.visibility=navigationVisible>.001?'visible':'hidden';
   const musicTarget=soundOn&&!document.hidden&&progress>.002?.09*(endingVisible?ending.musicGain:1):0;
   music.volume=THREE.MathUtils.lerp(music.volume,musicTarget,1-Math.exp(-dt/.7));if(endingVisible&&ending.finished)music.volume=0;
   showDialogue(speaker);

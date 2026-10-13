@@ -11,7 +11,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 a{text-decoration:none}
 #stage{width:100%;height:100svh;height:100dvh;position:relative;overflow:hidden;overflow:clip;touch-action:auto;outline:none}
 #world{display:block;width:100%;height:100%;touch-action:none}
-#storyIndexBar{position:absolute;left:50%;transform:translateX(-50%);display:flex;z-index:4}
+#storyIndexBar{visibility:hidden;position:absolute;left:50%;transform:translateX(-50%);display:flex;z-index:4}
 #loading{position:absolute;inset:0;display:grid;place-content:center;z-index:8;font-size:13px;letter-spacing:-.025em}
 #loading[hidden]{display:none}
 #hint{position:absolute;z-index:4;bottom:94px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--story-secondary);background:none;border:0;padding:0;text-align:center;white-space:nowrap;pointer-events:none}
@@ -84,3 +84,8 @@ body[data-mode="play"] #testTools {display:none}
 body[data-mode="play"] #cinemaDialogue {bottom:max(48px,calc(env(safe-area-inset-bottom) + 40px))!important}
 
 body[data-mode="play"] #soundToggle,body[data-mode="play"]:has(#cinemaDialogue:not([hidden])) #soundToggle{bottom:max(15px,env(safe-area-inset-bottom));right:24px}
+
+/* Reserve separate space for the cover title/subtitle and scroll invitation. */
+body{--cover-footer-space:70px}body[data-mode="play"]{--cover-footer-space:0px}
+body:has(.spatial-cover-copy:not([hidden])) #hint{bottom:calc(max(32px,6dvh,env(safe-area-inset-bottom)) + var(--cover-footer-space));}
+body:has(.spatial-cover-copy:not([hidden])) #hint:before{height:24px;margin-bottom:8px;}

@@ -1,4 +1,4 @@
-import {createSpatialFilm} from "./spatial-film.js?v=final-second-2";
+import {createSpatialFilm} from "./spatial-film.js?v=background-ui-1";
 /* Original opening choreography, followed by a continuous Blender-route film.
  * Sources: v071 ink-entry.js, storyboard-opening.js, blender-spatial-view.js,
  * mountain-entry.json; see spatial-opening-notes.json for the exact mapping.
@@ -18,11 +18,11 @@ export function createOpening(stage,options={}){
  .spatial-opening[hidden]{display:none}.spatial-opening-ambient{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.spatial-opening-art{display:block;width:100%;height:100%;filter:none}
  .spatial-cover-copy{position:absolute;inset:0;text-align:center;color:#373734;font-family:var(--story-serif,'Noto Serif KR',serif)}
  .spatial-cover-copy>span{position:absolute;top:9%;left:0;right:0;font-family:var(--story-sans,'Space Grotesk',sans-serif);font-size:10px;letter-spacing:.25em}
- .spatial-cover-copy>div{position:absolute;top:75%;left:8%;right:8%;transform:translateY(-50%)}
+ .spatial-cover-copy>div{position:absolute;bottom:calc(max(100px,18dvh) + var(--cover-footer-space,0px));left:8%;right:8%}
  .spatial-cover-copy h1{margin:0;font-size:27px;font-weight:500;letter-spacing:.015em;line-height:1.6}
  .spatial-cover-copy p{margin:13px 0 0;font-family:var(--story-sans,'Space Grotesk',sans-serif);font-size:9px;letter-spacing:.17em;color:#62625d}
  .spatial-opening-copy{position:absolute;top:43%;left:12%;right:12%;margin:0;padding:24px;text-align:center;white-space:pre-line;color:#373734;font-family:var(--story-serif,'Noto Serif KR',serif);font-size:17px;line-height:1.9;word-break:keep-all;background:radial-gradient(ellipse,rgba(250,250,248,.88),rgba(250,250,248,.64) 45%,transparent 74%)}
- @media(orientation:landscape) and (max-height:500px){.spatial-cover-copy>span{top:13%;font-size:8px}.spatial-cover-copy h1{font-size:24px}.spatial-cover-copy p{font-size:8px;margin-top:7px}.spatial-cover-copy>div{top:73%}.spatial-opening-copy{font-size:14px;padding:14px;top:42%}}
+ @media(orientation:landscape) and (max-height:500px){.spatial-cover-copy>span{top:13%;font-size:8px}.spatial-cover-copy h1{font-size:24px}.spatial-cover-copy p{font-size:8px;margin-top:7px}.spatial-cover-copy>div{bottom:calc(max(88px,18dvh) + var(--cover-footer-space,0px))}.spatial-opening-copy{font-size:14px;padding:14px;top:42%}}
  @media(orientation:portrait) and (max-width:700px){.spatial-cover-copy h1{font-size:24px}.spatial-opening-copy{left:5%;right:5%;font-size:14px;padding:20px 10px}}
  `;document.head.append(style);
  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('width','0');svg.setAttribute('height','0');svg.setAttribute('aria-hidden','true');svg.style.cssText='position:absolute;pointer-events:none';
@@ -140,7 +140,7 @@ export function createOpening(stage,options={}){
   else if(t<9){const clearing=smooth((t-7.05)/1.95),reveal=smooth((t-6.85)/2.15);film.command(0);film.draw(ctx,{x:0,y:0,width:canvas.width,height:canvas.height},0);ctx.save();ctx.globalAlpha=1-reveal;ctx.fillStyle='#f1f1ed';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.restore();mountainPass(ctx,t,1-reveal);fog((.74+.26*smooth((t-6.6)/.45))*(1-clearing),elapsed,clearing);}
   else {const filmTime=clamp(t-13,0,17);film.command(filmTime);film.draw(ctx,{x:0,y:0,width:canvas.width,height:canvas.height},filmTime);fog(t<13?.028:.018,elapsed);}
   if(t<6.6)film.command(0);
-  root.dataset.residentAnimation='independent-recorded-video';
+  root.dataset.residentAnimation='background-film-only';
   root.dataset.film=JSON.stringify(film.proof());
   options.onFrame?.({root,canvas,ambientCanvas,progress:p,phase,elapsed,residentRegions});
  }
