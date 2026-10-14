@@ -6,10 +6,10 @@ import * as THREE from '../../assets/vendor/three.module.js';
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
 import {createOpening,openingPhase} from './spatial-opening.js?v=intro-final-20261014';
 import {createVideoActor} from './spatial-video-actor.js?v=background-ui-1';
-import {createRouteFilm,createDialogueMist} from './spatial-route-film.js?v=background-ui-1';
+import {createRouteFilm,createDialogueMist} from './rolling-dialogue-mist.js?v=rolling-mist-1';
 import {createPlateOccluder} from './spatial-occlusion.js?v=background-ui-1';
 import {createFrontActor} from './spatial-front-actor.js?v=background-ui-1';
-import {createEnding} from './spatial-ending.js?v=ending-20s-1';
+import {createEnding} from './spatial-ending.js?v=ending-20s-focus-3';
 
 const $=id=>document.getElementById(id),base=assetURL('./spatial-test/',import.meta.url);
 const panel=$('cinemaDialogue'),loading=$('loading'),stage=$('stage');

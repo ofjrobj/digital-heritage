@@ -1,0 +1,9 @@
+/* Keep the observation caption secondary to the sculptures. */
+.archive .detail-card{width:min(680px,calc(100% - 96px));padding:clamp(12px,1.3vw,18px) clamp(16px,1.8vw,26px);max-height:min(170px,30dvh);overflow-y:auto}
+.archive .detail-card h3{margin:0 0 7px;font-size:clamp(18px,1.75vw,22px);line-height:1.4}
+.archive .detail-card .detail-copy{font-size:clamp(14px,1.25vw,17px);line-height:1.7;word-break:keep-all;overflow-wrap:anywhere}
+.archive .global-hotspot-set{flex-direction:column;gap:clamp(4px,1dvh,8px)}
+.archive .global-hotspot-set .surface-toggle{margin:0 0 4px}
+@media(min-width:701px),(orientation:landscape){.archive .global-hotspot-set{top:17%;left:50%;right:auto;transform:translateX(-50%)}.archive .global-hotspot-set .hotspot span{top:50%;left:calc(100% + 10px);right:auto;transform:translateY(-50%)}}
+@media(orientation:landscape) and (max-height:500px){.archive .global-hotspot-set{top:14%}.archive .global-hotspot-set .hotspot,.archive .global-hotspot-set .surface-toggle{width:24px;height:24px}.archive .detail-card{bottom:12px;max-height:26dvh;padding:10px 16px}}
+@media(orientation:portrait) and (max-width:700px){.archive .detail-card{width:calc(100% - 40px);max-height:200px}}

@@ -7,7 +7,7 @@ import * as THREE from '../../assets/vendor/three.module.js';
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
 import {createOpening,openingPhase} from './seedance-draft-opening.js?v=edge-1';
 import {createVideoActor} from './spatial-video-actor.js?v=background-ui-1';
-import {createRouteFilm,createDialogueMist} from './spatial-route-film.js?v=background-ui-1';
+import {createRouteFilm,createDialogueMist} from './rolling-dialogue-mist.js?v=rolling-mist-1';
 import {createPlateOccluder} from './spatial-occlusion.js?v=background-ui-1';
 import {createFrontActor} from './spatial-front-actor.js?v=background-ui-1';
 import {createEnding} from './seedance-draft-ending.js?v=1';
