@@ -1,0 +1,36 @@
+[
+  {
+    "sex": "male",
+    "sourceSha256": "fff04f41d550aac233b642bc36fe81923ff8a4c589a03fbc770fb3ed550a2c0a",
+    "vertices": 921749,
+    "triangles": 1835264,
+    "decimated": false,
+    "texture": [
+      8192,
+      8192
+    ],
+    "textureLossless": true,
+    "positionQuantizationBits": 24,
+    "seamVertices": 8231,
+    "maxSeamNormalDifference": 0.0,
+    "modelBytes": 5471788,
+    "textureBytes": 33701703
+  },
+  {
+    "sex": "female",
+    "sourceSha256": "eb7754ac1e28ce65ada7202943824f34935f08b7edb459d27c94260772b43971",
+    "vertices": 1109653,
+    "triangles": 2211328,
+    "decimated": false,
+    "texture": [
+      8192,
+      8192
+    ],
+    "textureLossless": true,
+    "positionQuantizationBits": 24,
+    "seamVertices": 7965,
+    "maxSeamNormalDifference": 0.0,
+    "modelBytes": 6212884,
+    "textureBytes": 36487226
+  }
+]

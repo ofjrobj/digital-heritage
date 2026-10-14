@@ -1,0 +1,138 @@
+{
+  "actors": [
+    {
+      "id": "woman",
+      "crop": [
+        96,
+        0,
+        576,
+        720
+      ],
+      "seed": [
+        0.4,
+        0.49
+      ],
+      "sourceRoot": "v064 cloth folder",
+      "worldPosition": [
+        -27.5,
+        -25.4,
+        1.2
+      ],
+      "file": "woman-loop.mp4",
+      "layout": "rgb-top-alpha-bottom",
+      "rgbDimensions": [
+        480,
+        720
+      ],
+      "packedDimensions": [
+        480,
+        1440
+      ],
+      "boundsPixelsLTRB": [
+        54,
+        59,
+        329,
+        678
+      ],
+      "bounds": {
+        "left": 0.1125,
+        "top": 0.08194444444444444,
+        "right": 0.66875,
+        "bottom": 0.9416666666666667
+      },
+      "frames": 241,
+      "fps": 24,
+      "duration": 10.041666666666666,
+      "loop": "native forward/reverse",
+      "sourceFrames": 121,
+      "preencodeFirstLastEqual": true,
+      "fileBytes": 3071068,
+      "kind": "cloth-folding woman",
+      "height": 1.6,
+      "url": "./film-first/woman-loop.mp4",
+      "anchor": "v064 cloth folder",
+      "registrationPixelsLTRB": [
+        54,
+        59,
+        321,
+        678
+      ],
+      "boundsBasis": "body crown and shoe baseline; horizontal midpoint is planted foot midpoint, not broom extent",
+      "footAnchor": [
+        0.390625,
+        0.9416666666666667
+      ],
+      "headAnchor": [
+        0.390625,
+        0.08194444444444444
+      ]
+    },
+    {
+      "id": "sweeper",
+      "crop": [
+        736,
+        0,
+        1280,
+        720
+      ],
+      "seed": [
+        0.36,
+        0.48
+      ],
+      "sourceRoot": "v071 resident 15 grain provisions",
+      "worldPosition": [
+        -40.5,
+        -29,
+        1.2
+      ],
+      "file": "sweeper-loop.mp4",
+      "layout": "rgb-top-alpha-bottom",
+      "rgbDimensions": [
+        544,
+        720
+      ],
+      "packedDimensions": [
+        544,
+        1440
+      ],
+      "boundsPixelsLTRB": [
+        43,
+        34,
+        504,
+        698
+      ],
+      "bounds": {
+        "left": 0.14338235294117646,
+        "top": 0.04722222222222222,
+        "right": 0.5863970588235294,
+        "bottom": 0.9416666666666667
+      },
+      "frames": 241,
+      "fps": 24,
+      "duration": 10.041666666666666,
+      "loop": "native forward/reverse",
+      "sourceFrames": 121,
+      "preencodeFirstLastEqual": true,
+      "fileBytes": 5200527,
+      "kind": "entrance sweeper",
+      "height": 1.4,
+      "url": "./film-first/sweeper-loop.mp4",
+      "anchor": "v071 resident 15 grain provisions",
+      "registrationPixelsLTRB": [
+        78,
+        34,
+        319,
+        678
+      ],
+      "boundsBasis": "body crown and shoe baseline; horizontal midpoint is planted foot midpoint, not broom extent",
+      "footAnchor": [
+        0.3648897058823529,
+        0.9416666666666667
+      ],
+      "headAnchor": [
+        0.3648897058823529,
+        0.04722222222222222
+      ]
+    }
+  ]
+}

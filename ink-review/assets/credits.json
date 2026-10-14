@@ -1,0 +1,653 @@
+{
+  "totalCredits": 543.25,
+  "imageCount": 34,
+  "videoCount": 32,
+  "items": [
+    {
+      "label": "entry",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "f443b141-5cbb-463a-b426-f1984fb3b796"
+      ]
+    },
+    {
+      "label": "merchant",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "34e4c78f-8b2e-4bc7-bb31-5471215bff37"
+      ]
+    },
+    {
+      "label": "farmer",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "41c5bd37-5447-4709-9369-0f08eaa37c77"
+      ]
+    },
+    {
+      "label": "intro",
+      "type": "video",
+      "credits": 3,
+      "ids": [
+        "244cd710-326c-4c13-a874-50d56eba6222"
+      ]
+    },
+    {
+      "label": "walk-merchant",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "f986f665-3d65-47f4-bf34-d673f54de46b"
+      ]
+    },
+    {
+      "label": "walk-farmer",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "3f20e59c-7aea-4443-a5ba-5e142b91db04"
+      ]
+    },
+    {
+      "label": "entry",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "a22c938d-0b8a-49dc-8dea-986cfea21133"
+      ],
+      "revision": "strict-layout-ink"
+    },
+    {
+      "label": "merchant",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "272fd432-cd2b-4374-b743-5ebc52d427f9"
+      ],
+      "revision": "strict-layout-ink"
+    },
+    {
+      "label": "farmer",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "918803d9-740c-47b6-baf7-a4e03f3232cd"
+      ],
+      "revision": "strict-layout-ink"
+    },
+    {
+      "label": "intro",
+      "type": "video",
+      "credits": 3,
+      "ids": [
+        "7d561bb7-8b93-41db-993f-3db11323a659"
+      ],
+      "revision": "strict-layout-ink"
+    },
+    {
+      "label": "walk-merchant",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "182d6989-4d12-403a-afc9-49587d01fdb0"
+      ],
+      "revision": "strict-layout-ink"
+    },
+    {
+      "label": "walk-farmer",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "b0bec1d9-2f92-4b83-b20c-91e4964f1edd"
+      ],
+      "revision": "strict-layout-ink"
+    },
+    {
+      "label": "merchant-mid-1",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "5c86f30e-cbd9-441f-a4ed-352bd7f9a149"
+      ],
+      "revision": "painted-midpoints"
+    },
+    {
+      "label": "merchant-mid-2",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "84b8d9d2-8bc9-41b2-a6e0-b948fff27239"
+      ],
+      "revision": "painted-midpoints"
+    },
+    {
+      "label": "farmer-mid-1",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "035ae0d5-261d-415a-b357-cdf3fd43c552"
+      ],
+      "revision": "painted-midpoints"
+    },
+    {
+      "label": "farmer-mid-2",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "0d3897e2-dcb5-4a8f-90cd-4966e624ba64"
+      ],
+      "revision": "painted-midpoints"
+    },
+    {
+      "label": "walk-merchant",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "00657886-0d36-4445-959c-5c9e23bc7693"
+      ],
+      "revision": "painted-midpoints"
+    },
+    {
+      "label": "walk-farmer",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "ebd25ed5-875c-42fa-bf10-f0a34994a8e1"
+      ],
+      "revision": "painted-midpoints"
+    },
+    {
+      "label": "720p-image-0",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "f856a3be-e1bc-415b-8147-cecb7c3b0a78"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-image-1",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "6918764f-75ea-4362-84dd-5edb9c8d96f7"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-image-2",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "dbab5d64-5101-45f2-8a67-4c057a070a29"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-image-3",
+      "type": "image",
+      "credits": 0.25,
+      "ids": [
+        "d7cc5cea-8677-4dc7-ac14-5d8bfc299ed2"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-0",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "0a266c86-7968-460f-9e91-c6f36b7112bc"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-1",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "024eba05-503d-411e-be2b-02b353b1b461"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-2",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "ffbfd010-9ded-41e2-a368-6091bba8601f"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-3",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "d1642f2d-9d85-4f7b-a400-c2ad42f32965"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-4",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "be8bea22-b0d2-41fe-be81-56e73517a9da"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-5",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "c54267fa-682c-4548-b4d7-137209bda866"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-6",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "9ae6c1c6-6a10-478e-bab2-4456320460aa"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-7",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "cd2e700e-0fa3-4e64-a90b-2b55e5f8966f"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-video-8",
+      "type": "video",
+      "credits": 4,
+      "ids": [
+        "47432fc4-51de-4aac-be24-71fae70302e4"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-continuous-0",
+      "type": "video",
+      "credits": 8,
+      "ids": [
+        "fdf4f8ea-3b3c-4b65-85dc-83a9d9c7829c"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "720p-continuous-1",
+      "type": "video",
+      "credits": 8,
+      "ids": [
+        "d328ab9a-9491-4645-9007-eb45fb7214a2"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "farmer-blender-driven",
+      "type": "video",
+      "credits": 8,
+      "ids": [
+        "2dfd7392-549d-47d1-b8b4-12c3da3f076f"
+      ],
+      "revision": "720p-review",
+      "accepted": false
+    },
+    {
+      "label": "mountains",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "504d6f93-918e-49e6-acb2-46e9cf4e8fbe"
+      ],
+      "revision": "2k-layout-studies",
+      "accepted": false
+    },
+    {
+      "label": "aerial",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "08182526-bdd5-4534-b29a-76b2d1ddf722"
+      ],
+      "revision": "2k-layout-studies",
+      "accepted": false
+    },
+    {
+      "label": "descent",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "13c19a89-3d86-42f1-a795-3ec09508f916"
+      ],
+      "revision": "2k-layout-studies",
+      "accepted": false
+    },
+    {
+      "label": "street",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "324fefd2-0b16-43ae-b838-69f30324a635"
+      ],
+      "revision": "2k-layout-studies",
+      "accepted": false
+    },
+    {
+      "label": "gate",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "74630146-ff69-45e0-9bc9-ae55602fad1e"
+      ],
+      "revision": "2k-layout-studies",
+      "accepted": false
+    },
+    {
+      "label": "courtyard",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "58da65a4-0302-47bd-8f75-45bb3f048995"
+      ],
+      "revision": "2k-layout-studies",
+      "accepted": false
+    },
+    {
+      "label": "spatial merchant cutout",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "a1e59779-65e3-4c7c-ae57-f554d592eb96"
+      ],
+      "revision": "spatial-layer-proof",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "spatial registered painting",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "119fcee1-9534-46ed-ae22-7f82340125ff"
+      ],
+      "revision": "spatial-layer-proof",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "spatial occlusion fill experiment",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "9d29763f-072e-4de2-a293-25bbad9fa29b"
+      ],
+      "revision": "spatial-layer-proof",
+      "usedInPublishedProof": false
+    },
+    {
+      "label": "spatial farmer card cutout",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "cdd68004-acfb-4eff-9c11-5b9fcad903de"
+      ],
+      "revision": "spatial-two-encounters",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "spatial farmer background initial",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "8fd0faca-3628-43e8-8137-8b28ea8d168d"
+      ],
+      "revision": "spatial-two-encounters",
+      "usedInPublishedProof": false
+    },
+    {
+      "label": "spatial farmer layout stair correction",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "5109ad9c-0479-406b-99be-d7638b6f6bf7"
+      ],
+      "revision": "spatial-two-encounters",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "discarded merchant old cutout",
+      "type": "video",
+      "credits": 5,
+      "ids": [
+        "f471b003-cc10-4f35-b282-23797b1afbc6"
+      ],
+      "revision": "continuous-first-character-film",
+      "usedInPublishedProof": false
+    },
+    {
+      "label": "original-card merchant hand and head loop",
+      "type": "video",
+      "credits": 5,
+      "ids": [
+        "29584a7d-e140-45a3-93e1-f3a615731fc5"
+      ],
+      "revision": "continuous-first-character-film",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "independent village workers sheet",
+      "type": "image",
+      "credits": 0.5,
+      "ids": [
+        "8428b73f-fb0c-4009-a13c-3c643adf03a7"
+      ],
+      "revision": "continuous-first-character-film",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "independent village work loops",
+      "type": "video",
+      "credits": 5,
+      "ids": [
+        "1990615e-437e-4607-82b9-8600b6086fdc"
+      ],
+      "revision": "continuous-first-character-film",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "Blender-guided continuous opening",
+      "type": "video",
+      "credits": 128,
+      "ids": [
+        "cfea7c02-53d3-4628-abcb-098473c1e644"
+      ],
+      "revision": "continuous-first-character-film",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "continuous route barrier repair",
+      "type": "video",
+      "credits": 47,
+      "ids": [
+        "72315469-2283-41b1-850a-dd3228c2dd37"
+      ],
+      "revision": "continuous-first-character-film",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "front-still",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "6919cf6d-e36a-4fc0-9af6-6b2f8de93058"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "front-still",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "3faee317-4bd0-4e26-9e87-439b5084822c"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "front-still",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "57a696b6-97b2-4753-a318-ffc77aff2a76"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "opening-1080-repair",
+      "type": "video",
+      "credits": 48.0,
+      "ids": [
+        "91037549-6a6f-4328-853c-9ae86130c4f5"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": false
+    },
+    {
+      "label": "front-loop",
+      "type": "video",
+      "credits": 5.0,
+      "ids": [
+        "d6580d54-d360-4a4e-be70-ad7ce7bb8213"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "front-loop",
+      "type": "video",
+      "credits": 5.0,
+      "ids": [
+        "16d2738e-9a77-4b79-91a1-eee1d4783073"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "front-loop",
+      "type": "video",
+      "credits": 5.0,
+      "ids": [
+        "f45a3551-d0de-4c3e-bdee-c1d7f483e8fd"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "environment-detail-keyframes",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "289b13f2-cb9f-4575-844d-0242339aa2fc"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "environment-detail-keyframes",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "f5c643fa-3324-42f1-bf62-5ad7be98c9b4"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "environment-detail-keyframes",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "85015ef5-b735-4281-9b40-3b360b51fabd"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "environment-detail-films",
+      "type": "video",
+      "credits": 48.0,
+      "ids": [
+        "21c756fd-3268-410d-82a3-e30605bf17e3"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "environment-detail-films",
+      "type": "video",
+      "credits": 48.0,
+      "ids": [
+        "3eac2696-ef72-4409-b6ff-61a7679fb619"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "environment-detail-films",
+      "type": "video",
+      "credits": 48.0,
+      "ids": [
+        "7eaa4220-5973-4514-9e2b-81602fbf765d"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    },
+    {
+      "label": "merchant-detail-backdrop",
+      "type": "image",
+      "credits": 2.75,
+      "ids": [
+        "27eb8bd7-6c52-45ad-b0cc-cd5cd6f8311e"
+      ],
+      "revision": "film-third-1",
+      "usedInPublishedProof": true
+    }
+  ],
+  "model": "Seedance 2.5 video edit + Seedance 2.0 Mini character loops",
+  "resolution": "1080p sparse travel frames; 2k fixed dialogue plates; independent 720p character loops",
+  "audio": false,
+  "creditsBefore": 1234.5,
+  "creditsAfter": 1008.25,
+  "previousDraftCredits": 32.5,
+  "currentRevisionCredits": 226.25,
+  "qualityStatus": "Start to merchant, farmer and cook. Original camera paths, front-facing original-card cast, foreground occlusion, ramp correction, mountain and dialogue fog. Some distant figures remain baked into background frames and minor generated architectural line variation remains.",
+  "verifiedRemainingBalance": 1008.25,
+  "lastRevision": "film-third-1"
+}

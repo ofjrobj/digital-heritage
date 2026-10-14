@@ -1,0 +1,108 @@
+{
+  "file": "children-loop.mp4",
+  "layout": "rgb-top-alpha-bottom",
+  "frames": 61,
+  "fps": 12.0,
+  "duration": 5.083333333333333,
+  "rgbDimensions": [
+    1280,
+    720
+  ],
+  "packedDimensions": [
+    1280,
+    1440
+  ],
+  "boundsPixelsLTRB": [
+    207,
+    63,
+    1080,
+    668
+  ],
+  "bounds": {
+    "left": 0.16171875,
+    "top": 0.0875,
+    "right": 0.84375,
+    "bottom": 0.9277777777777778
+  },
+  "alphaExtraction": "boundary-connected near-neutral background; foreground-connected components; 0.65px edge feather",
+  "backgroundMode": "dark",
+  "seamFrames": 6,
+  "preencodeFirstLastEqual": true,
+  "rgbGeometricWarp": false,
+  "fileBytes": 4072292,
+  "actors": [
+    {
+      "id": "girl",
+      "url": "children-loop.mp4",
+      "layout": "rgb-top-alpha-bottom",
+      "crop": [
+        0.0,
+        0,
+        0.5,
+        1
+      ],
+      "bounds": {
+        "left": 0.3234375,
+        "top": 0.10138888888888889,
+        "right": 0.840625,
+        "bottom": 0.9277777777777778
+      },
+      "height": 1.04,
+      "path": [
+        [
+          -34,
+          13.0,
+          1.3
+        ],
+        [
+          -24,
+          13.0,
+          1.24
+        ]
+      ]
+    },
+    {
+      "id": "boy",
+      "url": "children-loop.mp4",
+      "layout": "rgb-top-alpha-bottom",
+      "crop": [
+        0.5,
+        0,
+        0.5,
+        1
+      ],
+      "bounds": {
+        "left": 0.1765625,
+        "top": 0.0875,
+        "right": 0.6875,
+        "bottom": 0.925
+      },
+      "height": 1.09,
+      "path": [
+        [
+          -34,
+          13.7,
+          1.3
+        ],
+        [
+          -24,
+          13.7,
+          1.24
+        ]
+      ]
+    }
+  ],
+  "purpose": "Summer background children, illustrative daily life rather than a documented guesthouse event",
+  "generation": {
+    "imageJob": "ca43db11-54b1-4d8d-a276-69be5d16a9e0",
+    "videoJob": "84066ce2-eacb-45bb-8059-3af5b1195d44",
+    "credits": 7.75
+  },
+  "groundedBy": "Feet anchored to original Blender summer walkway; source alpha bounds measured over all frames",
+  "loopAnimation": "Native walking footage; gentle alternating steps and arm swing, closed mouth",
+  "backgroundMatteRange": {
+    "maxRGB": 99,
+    "minRGB": 48,
+    "maxChroma": 27
+  }
+}

@@ -1,0 +1,9 @@
+/* Shared with the story dialogue's corner ornament. */
+.archive-corner-frame{position:fixed;inset:max(18px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));z-index:6;pointer-events:none}
+.archive-corner-frame i{position:absolute;width:38px;height:38px;background:url('../assets/figma-corner.svg') center/contain no-repeat;filter:grayscale(1);opacity:.65;pointer-events:none}
+.archive-corner-frame .tl{top:0;left:0}.archive-corner-frame .tr{top:0;right:0;transform:scaleX(-1)}.archive-corner-frame .bl{bottom:0;left:0;transform:scaleY(-1)}.archive-corner-frame .br{bottom:0;right:0;transform:rotate(180deg)}
+@media(max-width:620px),(max-height:500px){.archive-corner-frame{inset:10px}.archive-corner-frame i{width:26px;height:26px;opacity:.6}}
+
+.masthead .wordmark{transform:translateY(-10px)}
+
+.archive .detail-card{background:rgba(250,250,248,.58);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 10px 28px rgba(41,41,38,.07)}
