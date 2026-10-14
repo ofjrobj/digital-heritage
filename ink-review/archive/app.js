@@ -8,7 +8,7 @@ import { measurements } from './measurements.js?v=archive-link-1';
 const decoder = new DRACOLoader().setDecoderPath('./vendor/draco/').setWorkerLimit(1);
 const loader = new GLTFLoader().setDRACOLoader(decoder);
 const returnLink = document.querySelector('[data-story-return]');
-const storyPages={play:'play.html','spatial-test':'spatial-test.html','seedance-draft':'seedance-draft.html'};
+const storyPages={'test-render':'test-render.html','test-render-clean':'test-render-clean.html',play:'play.html','spatial-test':'spatial-test.html','seedance-draft':'seedance-draft.html'};
 const from=new URLSearchParams(location.search).get('from');
 const returnPage=storyPages[from]??sessionStorage.getItem('ink-pilot-return');
 const storyPage=[...Object.values(storyPages),'review.html','review.html?candidate=720p'].includes(returnPage)?returnPage:'play.html';
