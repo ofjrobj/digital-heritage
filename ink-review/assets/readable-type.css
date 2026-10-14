@@ -1,0 +1,40 @@
+/* Shared reading scale for Story dialogue and Index explanation panels. */
+:root{--reading-copy:19.5px;--reading-title:25.5px}
+body #cinemaDialogue{padding:30px clamp(51px,5.4vw,84px) 24px!important;gap:12px!important;min-height:190px!important;max-height:52dvh!important}
+body #cinemaDialogue h2{font-size:var(--reading-title)!important}
+body #cinemaDialogue p{font-size:var(--reading-copy)!important;line-height:1.65!important}
+body #cinemaDialogue .hanji-corner{width:40px;height:40px}
+.archive .detail-card h3{font-size:var(--reading-title);line-height:1.4}
+.archive .detail-copy,.archive .panel-content dl dd{font-size:var(--reading-copy);line-height:1.65}
+.archive .panel-content dl dt{font-size:13.5px}
+.archive .panel-content .panel-subtitle{font-size:22.5px}
+.archive .panel-content .panel-note{position:static;margin-top:22px;font-size:12px;line-height:1.65;white-space:normal}
+.archive .info-panel{width:min(390px,35vw);height:min(540px,78dvh)}
+.archive .panel-content{overflow-y:auto;overscroll-behavior:contain}
+.archive .panel-content dl div{grid-template-columns:minmax(0,1fr);gap:3px}
+.archive .panel-content dl dd{white-space:normal}
+/* Keep the enlarged explanation below the models instead of covering them. */
+.archive .object-stage{height:100dvh;min-height:600px;margin:0}
+.archive .object-card{top:17%;height:calc(83% - 220px)}
+.archive .detail-card{bottom:26px;width:min(760px,calc(100% - 120px));max-height:185px;overflow-y:auto;padding:18px 24px}
+.archive .card-label{bottom:0}
+@media(orientation:landscape) and (max-height:650px){
+ :root{--reading-copy:18px;--reading-title:21px}
+ body #cinemaDialogue{padding:20px 42px 18px!important;gap:10px!important;min-height:156px!important;max-height:52dvh!important}
+ body #cinemaDialogue .hanji-corner{width:30px;height:30px}
+ .archive .object-stage{min-height:0}
+ .archive .object-card{top:18%;height:calc(82% - 156px)}
+ .archive .detail-card{bottom:16px;max-height:140px;padding:12px 18px}
+ .archive .global-hotspot-set{top:16%;flex-direction:row;gap:6px}
+ .archive .global-hotspot-set>p{display:none}
+ .archive .global-hotspot-set .hotspot span{top:calc(100% + 6px);left:50%;transform:translateX(-50%)}
+ .archive .global-hotspot-set .surface-toggle{margin:0 5px 0 0}
+}
+@media(orientation:portrait) and (max-width:700px){
+ body #cinemaDialogue{padding:26px 40px 22px!important;min-height:190px!important;max-height:52dvh!important}
+ .archive .info-panel{width:min(390px,88vw)}
+ .archive .object-stage{height:150dvh;min-height:900px}
+ .archive .object-card{height:calc(42% - 90px);width:100%;left:0;right:auto}
+ .archive .male-card{top:14%}.archive .female-card{top:49%}
+ .archive .detail-card{width:calc(100% - 40px);bottom:20px;max-height:240px}
+}
