@@ -1,4 +1,4 @@
-import {createSurfaceView,mountSurfaceToggle} from '../archive/surface-view.js?v=relief-contrast-1';
+import {createSurfaceView,mountSurfaceToggle} from '../archive/surface-view.js?v=inspection-light-1';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -15,6 +15,14 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   // Scan vertices, proportions, scene scale and supplied measurements stay unchanged.
   camera.zoom = displayZoom;
   camera.updateProjectionMatrix();
+  // OrbitControls drives a virtual viewpoint; only the scan root receives its view matrix.
+  // The actual render camera and lights never rotate, including during preset transitions.
+  const renderCamera = new THREE.PerspectiveCamera(34, 1, .01, 100);
+  renderCamera.zoom = displayZoom;
+  const inspectionRoot = new THREE.Group();
+  inspectionRoot.matrixAutoUpdate = false;
+  scene.add(inspectionRoot);
+  element.dataset.lighting = "fixed-neutral-key-chin-fill";
   element.dataset.displayZoom = String(displayZoom);
   const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -28,9 +36,12 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   controls.enableZoom = true; controls.zoomSpeed = .65;
   controls.minDistance = 1.15; controls.maxDistance = 6.5;
   controls.minPolarAngle = .18; controls.maxPolarAngle = 2.4;
-  scene.add(new THREE.HemisphereLight(0xfff9ee, 0x62635f, 2));
-  const key = new THREE.DirectionalLight(0xfff8ed, 2.2); key.position.set(-3,4,4);scene.add(key);
-  const rim = new THREE.DirectionalLight(0xe0ebee, .7);rim.position.set(4,1,-3);scene.add(rim);
+  // Neutral upper key preserves relief; lower frontal fill opens the chin and neck.
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x888888, 1.35));
+  const key = new THREE.DirectionalLight(0xffffff, 2.4);
+  key.position.set(-3, 4, 5); scene.add(key);
+  const fill = new THREE.DirectionalLight(0xffffff, 1.45);
+  fill.position.set(3, -3, 4); scene.add(fill);
   let dirty = true, ready = false;
   // Wheel zoom updates synchronously inside OrbitControls, before the next RAF.
   controls.addEventListener('change',()=>{dirty=true;});
@@ -39,6 +50,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
     const r = element.getBoundingClientRect();
     if (!r.width || !r.height) return;
     camera.aspect=r.width/r.height;camera.updateProjectionMatrix();
+    renderCamera.aspect=camera.aspect;renderCamera.updateProjectionMatrix();
     renderer.setSize(r.width,r.height,false);dirty=true;
   };
   new ResizeObserver(frame).observe(element);frame();
@@ -52,7 +64,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
     model.scale.setScalar(scale);model.position.sub(center.multiplyScalar(scale));
     model.traverse(n=>{if(n.isMesh){n.material.roughness=.95;n.material.metalness=0;n.material.map && (n.material.map.anisotropy=renderer.capabilities.getMaxAnisotropy());}});
     model.traverse(n=>{if(n.isMesh&&n.material.map)element.dataset.colorTextureResolution=`${n.material.map.image.width}x${n.material.map.image.height}`;});
-    surface.bind(model);scene.add(model);ready=true;dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
+    surface.bind(model);inspectionRoot.add(model);ready=true;dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
     element.dataset.loaded='true';
   }).catch(error => {
     console.error(error);loading.textContent='모델을 불러오지 못했습니다. 새로고침해 주세요.';element.dataset.loaded='error';
@@ -65,7 +77,17 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
     if(document.hidden)return;
     if(goal){camera.position.lerp(goal.position,.1);controls.target.lerp(goal.target,.1);dirty=true;if(camera.position.distanceTo(goal.position)<.002){camera.position.copy(goal.position);controls.target.copy(goal.target);goal=null;}}
     if(controls.update())dirty=true;
-    if(dirty){renderer.render(scene,camera);element.dataset.viewDistance=camera.position.distanceTo(controls.target).toFixed(4);dirty=false;}
+    if(dirty){
+      camera.updateMatrixWorld(true);
+      inspectionRoot.matrix.copy(camera.matrixWorldInverse);
+      inspectionRoot.matrixWorldNeedsUpdate=true;
+      renderer.render(scene,renderCamera);
+      element.dataset.viewDistance=camera.position.distanceTo(controls.target).toFixed(4);
+      element.dataset.objectTransform=inspectionRoot.matrix.elements.map(n=>n.toFixed(4)).join(",");
+      element.dataset.renderCamera=renderCamera.matrixWorld.elements.join(",");
+      element.dataset.lightPositions=[key.position.toArray(),fill.position.toArray()].join(";");
+      dirty=false;
+    }
   }
   animate();return {focus,loaded,setColor:surface.setColor};
 }
