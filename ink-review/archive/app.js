@@ -8,9 +8,11 @@ import { measurements } from './measurements.js?v=archive-link-1';
 const decoder = new DRACOLoader().setDecoderPath('./vendor/draco/').setWorkerLimit(1);
 const loader = new GLTFLoader().setDRACOLoader(decoder);
 const returnLink = document.querySelector('[data-story-return]');
-const returnPage=new URLSearchParams(location.search).get('from')==='spatial-test'?'spatial-test.html':sessionStorage.getItem('ink-pilot-return');
-const storyPage=['play.html','review.html','review.html?candidate=720p','spatial-test.html'].includes(returnPage)?returnPage:'spatial-test.html';
-returnLink.href='../'+storyPage+(storyPage==='spatial-test.html'?'?rev=archive-link-1':'');
+const storyPages={play:'play.html','spatial-test':'spatial-test.html','seedance-draft':'seedance-draft.html'};
+const from=new URLSearchParams(location.search).get('from');
+const returnPage=storyPages[from]??sessionStorage.getItem('ink-pilot-return');
+const storyPage=[...Object.values(storyPages),'review.html','review.html?candidate=720p'].includes(returnPage)?returnPage:'play.html';
+returnLink.href='../'+storyPage;
 
 function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, displayZoom = 1 }) {
   const scene = new THREE.Scene();

@@ -1,5 +1,5 @@
 import {createEntryDraft} from './seedance-entry-draft.js';
-import {createMusicFade} from "./story-audio-mix.js?v=quiet-2";
+import {createMusicFade} from "./story-audio-mix.js?v=soft-return-3";
 import {createStoryVoices} from "./story-voices.js?v=voices-timing-3";
 import {assetURL} from './asset-url.js';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=slow-steps-2';
@@ -242,7 +242,7 @@ try{
  ['pointerup','pointercancel'].forEach(type=>$('world').addEventListener(type,()=>{drag=null;footsteps.stop();}));
  addEventListener('keydown',e=>{if(e.target.matches('input,button,a,summary,select'))return;if(['ArrowDown','ArrowRight','PageDown'].includes(e.key)){e.preventDefault();manualChange(.007);}if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();manualChange(-.007);}});
  function showDialogue(index){if(currentSpeaker===index)return;currentSpeaker=index;voices.select(index);syncActorMotion(index>=0);panel.hidden=index<0;if(index>=0){panel.querySelector('h2').textContent=names[index];panel.querySelector('p').textContent=dialogueCopy[index].testimony;$('next').textContent=index===names.length-1?'석사자에게 돌아가기':names[index+1]+'에게 이동';}}
- function rememberStory(){footsteps.stop();stopAuto();sessionStorage.setItem('spatial-test-resume-seconds',String(target*totalSeconds));sessionStorage.setItem('ink-pilot-return',location.pathname.endsWith('/play.html')?'play.html':'spatial-test.html');}
+ function rememberStory(){footsteps.stop();stopAuto();sessionStorage.setItem('spatial-test-resume-seconds',String(target*totalSeconds));sessionStorage.setItem('ink-pilot-return',location.pathname.endsWith('/seedance-draft.html')?'seedance-draft.html':location.pathname.endsWith('/play.html')?'play.html':'spatial-test.html');}
  $('storyLink').onclick=e=>{e.preventDefault();go(0);};$('indexLink').onclick=rememberStory;
  const saved=sessionStorage.getItem('spatial-test-resume-seconds'),legacy=sessionStorage.getItem('spatial-test-resume-v3');if(saved!==null||legacy!==null){go(clamp((saved!==null?Number(saved):Number(legacy)*79.234914)||0,0,totalSeconds)/totalSeconds);sessionStorage.removeItem('spatial-test-resume-seconds');sessionStorage.removeItem('spatial-test-resume-v3');}
  const finish=document.createElement('a');finish.id='endingIndex';finish.href=$('indexLink').href;finish.textContent='석사자 아카이브로';finish.hidden=true;finish.onclick=rememberStory;stage.append(finish);

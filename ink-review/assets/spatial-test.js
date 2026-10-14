@@ -1,4 +1,4 @@
-import {createMusicFade} from "./story-audio-mix.js?v=quiet-2";
+import {createMusicFade} from "./story-audio-mix.js?v=soft-return-3";
 import {createStoryVoices} from "./story-voices.js?v=voices-timing-3";
 import {assetURL} from './asset-url.js';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=slow-steps-2';
