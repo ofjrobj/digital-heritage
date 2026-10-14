@@ -5,7 +5,7 @@ import {assetURL} from './asset-url.js';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=slow-steps-2';
 import * as THREE from '../../assets/vendor/three.module.js';
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
-import {createOpening,openingPhase} from './spatial-opening.js?v=intro-final-20261014';
+import {createOpening,openingPhase} from './seedance-draft-opening.js?v=edge-1';
 import {createVideoActor} from './spatial-video-actor.js?v=background-ui-1';
 import {createRouteFilm,createDialogueMist} from './spatial-route-film.js?v=background-ui-1';
 import {createPlateOccluder} from './spatial-occlusion.js?v=background-ui-1';
