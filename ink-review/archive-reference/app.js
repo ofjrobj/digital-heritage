@@ -1,4 +1,4 @@
-import {createSurfaceView,mountSurfaceToggle} from '../archive/surface-view.js?v=inspection-light-1';
+import {createSurfaceView,mountSurfaceToggle} from '../archive/surface-view.js?v=inspection-relief-2';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -28,7 +28,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = .9;
   element.appendChild(renderer.domElement);
   renderer.domElement.setAttribute('aria-label', element.getAttribute('aria-label'));
   const controls = new OrbitControls(camera, renderer.domElement);
@@ -37,10 +37,10 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   controls.minDistance = 1.15; controls.maxDistance = 6.5;
   controls.minPolarAngle = .18; controls.maxPolarAngle = 2.4;
   // Neutral upper key preserves relief; lower frontal fill opens the chin and neck.
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x888888, 1.35));
-  const key = new THREE.DirectionalLight(0xffffff, 2.4);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x888888, .8));
+  const key = new THREE.DirectionalLight(0xffffff, 1.8);
   key.position.set(-3, 4, 5); scene.add(key);
-  const fill = new THREE.DirectionalLight(0xffffff, 1.45);
+  const fill = new THREE.DirectionalLight(0xffffff, .65);
   fill.position.set(3, -3, 4); scene.add(fill);
   let dirty = true, ready = false;
   // Wheel zoom updates synchronously inside OrbitControls, before the next RAF.

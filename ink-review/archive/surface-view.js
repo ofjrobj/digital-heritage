@@ -2,10 +2,16 @@
 export function createSurfaceView(THREE, scene, element, redraw) {
   let color = false;
   const pairs = [];
+  const lights = scene.children.filter(n=>n.isLight).map(light=>({light,intensity:light.intensity}));
   function setColor(enabled) {
     color = enabled;
     for (const {mesh, original, relief} of pairs) mesh.material = color ? original : relief;
-    // Keep the same neutral, screen-fixed light rig in both material modes.
+    // Directions remain screen-fixed; subdued fill reveals relief in the untextured scan.
+    let directional=0;
+    for(const saved of lights){
+      const reliefIntensity=saved.light.isHemisphereLight ? .60 : (directional++===0?2.4:.65);
+      saved.light.intensity=color?saved.intensity:reliefIntensity;
+    }
     element.dataset.surfaceMode = color ? 'color' : 'relief';
     element.dataset.textureCount = String(pairs.reduce((sum,{mesh}) => sum + (Array.isArray(mesh.material)?mesh.material:[mesh.material]).reduce((n,m)=>n+Object.values(m).filter(value=>value?.isTexture).length,0),0));
     redraw();
@@ -18,7 +24,7 @@ export function createSurfaceView(THREE, scene, element, redraw) {
         // A fresh material deliberately inherits no color, normal, bump,
         // displacement, AO, roughness or environment texture from the scan.
         const relief = new THREE.MeshStandardMaterial({
-          color:0x929292, metalness:0, roughness:1,
+          color:0x737373, metalness:0, roughness:1,
           vertexColors:false, side:material.side
         });
         return relief;
