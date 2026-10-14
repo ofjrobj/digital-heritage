@@ -5,7 +5,7 @@ import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
 const $=id=>document.getElementById(id),stage=$('stage'),canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
 const manifestURL=new URL('./test-render/manifest.json?v=ink2-complete-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
-const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=2',import.meta.url).href;document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=3',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
 const caption=document.createElement('p');caption.className='tr-caption';caption.hidden=true;stage.append(caption);
