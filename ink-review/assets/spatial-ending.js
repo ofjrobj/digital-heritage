@@ -8,15 +8,15 @@ const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 const smooth=v=>{v=clamp(v);return v*v*(3-2*v);};
 const ramp=(t,a,b)=>smooth((t-a)/(b-a));
 const pulse=(t,a,b,c,d)=>ramp(t,a,b)*(1-ramp(t,c,d));
-export const endingDuration=79.1;
-export const endingTiming=Object.freeze({settle:2.6,seasons:72,fade:4.5,removal:[40.52,42.45],construction:[43.2,44.6],dawn:[52,59],day:[59,66],musicFade:[66,72]});
+export const endingDuration=20;
+export const endingTiming=Object.freeze({settle:1,seasons:17,fade:2,removal:[40.52,42.45],construction:[43.2,44.6],dawn:[52,59],day:[59,66],musicFade:[66,72]});
 
 export function endingState(seconds){
- const local=clamp(Number(seconds)||0,0,endingDuration),t=clamp(local-endingTiming.settle,0,72);
+ const local=clamp(Number(seconds)||0,0,endingDuration),t=clamp((local-endingTiming.settle)/endingTiming.seasons,0,1)*72;
  const spring=pulse(t,1,4,7,9),autumn=pulse(t,21,25,43,48),bare=pulse(t,26,34,43,49),winter=pulse(t,34,37,42,45);
  const rain=pulse(t,12,14,17,19),earlyNight=pulse(t,28,30,33,35),enter=ramp(t,42,45),dawn=ramp(t,52,59),day=ramp(t,59,66);
- const fade=ramp(local,74.6,79.1),musicGain=1-ramp(t,66,72);
- return {local,t,spring,autumn,bare,winter,rain,earlyNight,enter,dawn,day,night:Math.max(earlyNight,enter*(1-dawn)),moon:enter*(1-ramp(t,52,57)),sun:ramp(t,54,59),fade,musicGain,finished:local>=endingDuration,phase:local<2.6?'settle':local>=74.6?'fade':t<3?'stillness':t<8?'spring':t<13?'summer':t<18?'rain':t<23?'sunshine':t<29?'autumn':t<34?'night':t<40.52?'winter':t<42.45?'dismantling':t<43.2?'cleared-site':t<44.6?'construction':t<52?'modern-night':t<59?'dawn':'day'};
+ const fade=ramp(local,18,20),musicGain=1-ramp(t,66,72);
+ return {local,t,spring,autumn,bare,winter,rain,earlyNight,enter,dawn,day,night:Math.max(earlyNight,enter*(1-dawn)),moon:enter*(1-ramp(t,52,57)),sun:ramp(t,54,59),fade,musicGain,finished:local>=endingDuration,phase:local<1?'settle':local>=18?'fade':t<3?'stillness':t<8?'spring':t<13?'summer':t<18?'rain':t<23?'sunshine':t<29?'autumn':t<34?'night':t<40.52?'winter':t<42.45?'dismantling':t<43.2?'cleared-site':t<44.6?'construction':t<52?'modern-night':t<59?'dawn':'day'};
 }
 
 // Times reproduce ending-timelapse.js, including the clear-site interval.
