@@ -1,5 +1,5 @@
 {
-  "version": "presentation-1614",
+  "version": "presentation-1622",
   "scenes": [
     {
       "id": "intro",
@@ -35,7 +35,8 @@
       "captionUntil": 5,
       "transition": "none",
       "clipIn": 0,
-      "sourceDuration": 20
+      "sourceDuration": 20,
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
     },
     {
       "id": "entry-merchant",
@@ -53,7 +54,8 @@
       },
       "clipIn": 10,
       "sourceDuration": 20,
-      "transition": "none"
+      "transition": "none",
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
     },
     {
       "id": "merchant",
@@ -298,24 +300,20 @@
     {
       "id": "seasons",
       "label": "사계절과 시간 · 20초",
-      "src": "ending-20s-lions-fixed.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_004231_fb5287e9-accc-470b-8bcb-b756f4ef3412.png",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/4569603c-ca46-41ff-9dbc-e10af052d112.mp4",
       "duration": 20,
       "fps": 24,
       "mode": "auto",
       "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationIds": [
-          "73a9350b-0694-46c0-b55e-02f8bfb93664",
-          "9341f216-c9b9-4be7-84d1-19eb10f81c0b"
-        ],
-        "frames": 480,
-        "postprocess": "Fixed original n239 lion silhouette; modern background only; 12 percent approach and soft mist ending baked once; 24fps20sec"
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "2941e357-b18b-48a1-984d-12de8c012ff0",
+        "postprocess": "20 seconds, 720p24, neutral brightness, quiet separate ambience, staged rebuilding and four women, paper fade"
       },
       "sourceDuration": 20,
-      "motionBaked": true
+      "motionBaked": true,
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/41cc0b31-4bd2-4e4f-9bd8-bd10e193c0b7.mp3"
     }
   ],
   "review": {

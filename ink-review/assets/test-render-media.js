@@ -1,3 +1,4 @@
+import {createSceneLife} from './scene-life.js?v=quiet-life-1';
 import {createSeasonAmbience} from './season-ambience.js?v=quiet-seasons-3';
 import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=face-safe-7';
 import {dialogueFrame} from './dialogue-framing.js?v=portrait-fit-2';
@@ -15,7 +16,7 @@ const introAssetsFailed=()=>[...introPaintings,introVillage].some(im=>im.dataset
 const $=id=>document.getElementById(id),stage=$('stage'),canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const PAPER='#f0f0ee';
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
-const manifestURL=new URL('./test-render/manifest.json?v=presentation-1614',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
+const manifestURL=new URL('./test-render/manifest.json?v=presentation-1622',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
 const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=bgm-restore-4',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
@@ -30,7 +31,7 @@ const foot=document.createElement('audio');foot.id='scrollFootsteps';foot.preloa
 const names=['장사꾼','농민','찬모','주민 삼총사','나무꾼'];
 let scenes=[],lengths=[],total=0,index=-1,current=null,transition=null,local=0,target=0,sound=false,paused=false,previewAuto=false,compare=false,motion=true,last=performance.now(),width=1,height=1,lastSource=null,hasFrame=false,finished=false,lastVoiceEnable=null,lastStatus='',renderedKind='none',renderedSource='';
 const footsteps=createScrollFootsteps(foot,()=>sound&&!paused&&!compare&&!previewAuto&&!transition&&!document.hidden&&!current?.error&&scenes[index]?.mode==='scroll'&&scenes[index]?.footsteps===true&&(current.still||current.video.readyState>=2&&!current.video.seeking));
-const seasonAmbience=createSeasonAmbience(stage);
+const seasonAmbience=createSeasonAmbience(stage),sceneLife=createSceneLife(stage);
 const dialogueFit=createDialogueFaceSafe({stage,panel:$('cinemaDialogue'),tools:$('testTools'),sound:$('soundToggle')});
 const duration=i=>lengths[i]||1,offset=i=>lengths.slice(0,Math.max(0,i)).reduce((a,b)=>a+b,0);
 function status(text,retry=false){if(storyStarted&&text==='Loading...')text='';const node=$('loading');if(!node)return;const key=text+'|'+retry;if(key===lastStatus)return;lastStatus=key;node.replaceChildren(document.createTextNode(text));node.hidden=!text;if(retry){const button=document.createElement('button');button.textContent='다시 불러오기';button.onclick=()=>requestScene(transition?.to??Math.max(0,index),transition?.at??local);node.append(button);}}
@@ -83,10 +84,10 @@ function requestScene(i,at=0){
  footsteps.stop();current?.video.pause();voices.select(-1);voiceEnabled(false);$('cinemaDialogue')?.setAttribute('hidden','');caption.hidden=true;archiveCta.hidden=true;finished=false;endingElapsed=0;if(archiveFrame){archiveFrame.style.opacity='0';archiveFrame.style.pointerEvents='none';archiveFrame.inert=true;archiveFrame.setAttribute('aria-hidden','true');}if($('hint'))$('hint').hidden=true;
  transition={to:i,at:clamp(at,0,duration(i)),record:preparedScene(i,at),phase:storyStarted?'in':'loading',initial:!storyStarted,elapsed:0,fade:storyStarted?(scenes[i].transition==='none'?0:.95):.8};status('Loading...');
 }
-function remember(){seasonAmbience.stop();footsteps.stop();videos.forEach(v=>v.pause());voiceEnabled(false);music.pause();sessionStorage.setItem('test-render-resume',JSON.stringify({index,local}));sessionStorage.setItem('ink-pilot-return',location.pathname.endsWith('/test-render-clean.html')?'test-render-clean.html':'test-render.html');}
+function remember(){sceneLife.stop();seasonAmbience.stop();footsteps.stop();videos.forEach(v=>v.pause());voiceEnabled(false);music.pause();sessionStorage.setItem('test-render-resume',JSON.stringify({index,local}));sessionStorage.setItem('ink-pilot-return',location.pathname.endsWith('/test-render-clean.html')?'test-render-clean.html':'test-render.html');}
 if($('indexLink'))$('indexLink').onclick=remember;
 if($('storyLink'))$('storyLink').onclick=e=>{e.preventDefault();paused=false;previewAuto=false;requestScene(0);};
-if($('soundToggle'))$('soundToggle').onclick=()=>{sound=!sound;const b=$('soundToggle');b.setAttribute('aria-pressed',String(sound));b.setAttribute('aria-label',sound?'소리 끄기':'소리 켜기');b.title=sound?'소리 끄기':'소리 켜기';const img=b.querySelector('img');if(img)img.src=new URL(sound?'./icons8-voice-50.png':'./icons8-mute-50.png',import.meta.url).href;storyMusic.enable(sound);if(!sound)footsteps.stop();voiceEnabled(sound&&!paused&&!transition&&!current?.error);};
+if($('soundToggle'))$('soundToggle').onclick=()=>{sound=!sound;sceneLife.retry();const b=$('soundToggle');b.setAttribute('aria-pressed',String(sound));b.setAttribute('aria-label',sound?'소리 끄기':'소리 켜기');b.title=sound?'소리 끄기':'소리 켜기';const img=b.querySelector('img');if(img)img.src=new URL(sound?'./icons8-voice-50.png':'./icons8-mute-50.png',import.meta.url).href;storyMusic.enable(sound);if(!sound)footsteps.stop();voiceEnabled(sound&&!paused&&!transition&&!current?.error);};
 function manual(delta){
  if(!delta||transition||paused||compare||!current||current.error||scenes[index].mode!=='scroll'||!current.still&&(current.video.seeking||current.video.readyState<2))return;
  previewAuto=false;const d=duration(index);
@@ -103,8 +104,8 @@ if($('dialogue'))$('dialogue').onclick=()=>{const n=scenes.findIndex((s,i)=>i>=M
 if($('next'))$('next').onclick=()=>{if(index<scenes.length-1)requestScene(index+1);else{remember();location.href=$('indexLink').href;}};
 if($('compare'))$('compare').onclick=()=>{compare=!compare;footsteps.stop();$('compare').setAttribute('aria-pressed',String(compare));$('compare').textContent=compare?'영상 보기':'이미지 비교';};
 if($('ambience'))$('ambience').onclick=()=>{motion=!motion;$('ambience').setAttribute('aria-pressed',String(motion));$('ambience').textContent=motion?'인물 움직임 켜짐':'인물 움직임 꺼짐';};
-document.addEventListener('visibilitychange',()=>{if(document.hidden){seasonAmbience.stop();videos.forEach(v=>v.pause());footsteps.stop();storyMusic.suspend();}else if(sound)storyMusic.retry();last=performance.now();});
-addEventListener('pagehide',()=>{seasonAmbience.stop();videos.forEach(v=>v.pause());footsteps.stop();voiceEnabled(false);music.pause();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){sceneLife.stop();seasonAmbience.stop();videos.forEach(v=>v.pause());footsteps.stop();storyMusic.suspend();}else if(sound)storyMusic.retry();last=performance.now();});
+addEventListener('pagehide',()=>{sceneLife.stop();seasonAmbience.stop();videos.forEach(v=>v.pause());footsteps.stop();voiceEnabled(false);music.pause();});
 function play(r){const v=r.video;if(!v.paused||r.playPending||v.ended&&!v.loop)return;r.playPending=true;v.play().catch(()=>{r.playBlocked=true;}).finally(()=>{r.playPending=false;});}
 canvas.addEventListener('click',()=>{if(sound)storyMusic.retry();if(current&&!transition&&!paused){current.playBlocked=false;play(current);}});
 function mistAmount(p){mist.style.opacity=String(p);mist.style.setProperty('--veil',String(clamp((p-.62)/.38)));mist.style.setProperty('--drift',String((1-p)*12)+'%');}
@@ -151,13 +152,14 @@ function frame(now){
  if(finished){endingElapsed+=dt;mistAmount(ease(clamp(endingElapsed/2.2)));archiveCta.hidden=false;archiveCta.style.opacity=String(ease(clamp((endingElapsed-.3)/1.2)));}
 
  const musicScene=scenes[index],musicVoice=voices.proof();
+ sceneLife.tick({src:musicScene?.ambience||'',time:current?.video.currentTime||0,active:!paused&&!compare&&!transition&&!finished&&!document.hidden&&!!current&&!current.video.paused&&!current.video.seeking,sound,dt});
  const musicDuck=transition?.record.scene.mode==='dialogue'||musicScene?.mode==='dialogue'&&!musicVoice.ended;
  storyMusic.tick({duck:musicDuck,paused:paused||compare,hidden:document.hidden,finished,endingTime:musicScene?.id==='seasons'?local:null,endingDuration:duration(index),dt});
  const musicProof=storyMusic.proof();if($('soundToggle'))$('soundToggle').title=musicProof.blocked?'화면을 눌러 소리 재생 다시 시도':sound?'소리 끄기':'소리 켜기';
  const seasonPlaying=scenes[index]?.id==='seasons'&&!finished&&!compare&&!current?.error&&!current?.playBlocked&&current?.video.readyState>=3&&!current.video.paused&&!current.video.seeking;
  seasonAmbience.tick({active:seasonPlaying,time:local,sound,paused:paused||!seasonPlaying,hidden:document.hidden,transition:!!transition,dt});
  footsteps.tick();if($('run'))$('run').textContent=previewAuto?'이동 멈춤':'이동 재생';if($('chapter')&&index>=0)$('chapter').value=String(index);if($('progress'))$('progress').value=String((offset(index)+local)/Math.max(1,total));
- document.body.dataset.proof=JSON.stringify({engine:'test-render-media-v3',fit:'cover',dialogueFit:dialogueFit.proof(),paper:PAPER,storyStarted,startup:document.body.dataset.startup,loadingHiddenAt,firstSceneShownAt,firstSceneGapMs:firstSceneShownAt&&loadingHiddenAt?firstSceneShownAt-loadingHiddenAt:null,endingElapsed,scene:scenes[index]?.id,index,local,duration:duration(index),mode:scenes[index]?.mode,transition:transition?.phase||null,waiting:!!transition||!!current&&!current.loaded,renderedKind,renderedSource,imagePreview:renderedKind==='image',source:current?.scene.src||null,sourceTime:current?.video.currentTime||0,sourceFps:current?.scene.fps??null,provenance:current?.scene.provenance??null,geometryVerified:false,voice:voices.proof(),seasonAmbience:seasonAmbience.proof(),musicVolume:music.volume,music:musicProof,footsteps:{active:foot.dataset.active,starts:Number(foot.dataset.starts||0)},finished});requestAnimationFrame(frame);
+ document.body.dataset.proof=JSON.stringify({engine:'test-render-media-v3',fit:'cover',dialogueFit:dialogueFit.proof(),paper:PAPER,storyStarted,startup:document.body.dataset.startup,loadingHiddenAt,firstSceneShownAt,firstSceneGapMs:firstSceneShownAt&&loadingHiddenAt?firstSceneShownAt-loadingHiddenAt:null,endingElapsed,scene:scenes[index]?.id,index,local,duration:duration(index),mode:scenes[index]?.mode,transition:transition?.phase||null,waiting:!!transition||!!current&&!current.loaded,renderedKind,renderedSource,imagePreview:renderedKind==='image',source:current?.scene.src||null,sourceTime:current?.video.currentTime||0,sourceFps:current?.scene.fps??null,provenance:current?.scene.provenance??null,geometryVerified:false,voice:voices.proof(),seasonAmbience:seasonAmbience.proof(),musicVolume:music.volume,music:musicProof,sceneLife:sceneLife.proof(),footsteps:{active:foot.dataset.active,starts:Number(foot.dataset.starts||0)},finished});requestAnimationFrame(frame);
 }
 status('Loading...');requestAnimationFrame(frame);
 try{
