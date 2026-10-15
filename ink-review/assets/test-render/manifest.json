@@ -1,5 +1,5 @@
 {
-  "version": "exploration-flow-1",
+  "version": "modern-ink-22-v1",
   "scenes": [
     {
       "id": "intro",
@@ -190,7 +190,7 @@
       "id": "trio",
       "label": "주민 삼총사의 이야기",
       "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/07c74530-5eea-44f3-84b4-029d9afa2801.mp4",
-      "sourceDuration": 29.0,
+      "sourceDuration": 29,
       "fps": 24,
       "mode": "dialogue",
       "speaker": 3,
@@ -233,7 +233,7 @@
       "id": "woodcutter",
       "label": "나무꾼의 이야기",
       "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/875fda58-2013-47ad-82d1-6a90b73c84f1.mp4",
-      "sourceDuration": 26.0,
+      "sourceDuration": 26,
       "fps": 24,
       "mode": "dialogue",
       "speaker": 4,
@@ -274,19 +274,20 @@
     },
     {
       "id": "seasons",
-      "label": "사계절과 시간 · 20초",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/c0e5e6b4-9ad3-43b0-a0c1-a309fae8c4a9.mp4",
-      "duration": 19.709,
+      "label": "사계절과 시간 · 한국화",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/7f8af102-e124-49a2-8db8-cd2703c1d3aa.mp4",
+      "duration": 22.083333333333332,
       "fps": 24,
       "mode": "auto",
       "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "6280a0a6-9862-40c2-873c-883fb50b3dda",
-        "postprocess": "720p24, frequent keyframes, continuous gravel exhibition bed, preserved separate ambience; interim layout correction, final ink style pending"
+        "model": "Genjutsu Custom Style",
+        "generationId": "7e9c5ae1-bf76-4732-8441-d8e782952f22",
+        "postprocess": "720p24, GOP6, silent; source after18s slowed2x to hold four researchers and lengthen fade",
+        "review": "Interim ink-style improvement; four researchers and two lions within a distinct gravel bed. Gravel boundary differs from628; source seasonal time-lapse remains."
       },
-      "sourceDuration": 19.709,
+      "sourceDuration": 22.083333333333332,
       "motionBaked": true,
       "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/41cc0b31-4bd2-4e4f-9bd8-bd10e193c0b7.mp3",
       "startDelay": 2,
