@@ -20,7 +20,7 @@
     {
       "id": "aerial-entry",
       "label": "마을 부감 → 입구 · 스크롤 이동",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/1b52fd10-71e1-4fb0-a28f-6dc56ebdaefa.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/f56840cc-b7d5-4fd3-9a75-56d51ec3a911.mp4",
       "duration": 10,
       "fps": 24,
       "mode": "scroll",
@@ -28,8 +28,8 @@
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5 Unlimited",
-        "generationId": "89aa2fb7-44f9-469a-95f2-e6ddb5aa430a",
-        "postprocess": "720p24, bright neutral color, frequent keyframes, continuous 20-second source split at gate"
+        "generationId": "48c68feb-1e8d-419e-acf1-25575787fbe0",
+        "postprocess": "720p24 frequent keyframes, refined pine clusters, brighter ink palette, direct scroll seeking"
       },
       "caption": "어느 옛날, 공주목과 그 주변 고을에는\n신비로운 두 사자의 이야기가 떠돌고 있습니다.",
       "captionUntil": 5,
@@ -41,7 +41,7 @@
     {
       "id": "entry-merchant",
       "label": "입구 → 장사꾼 · 연속 이동",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/1b52fd10-71e1-4fb0-a28f-6dc56ebdaefa.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/f56840cc-b7d5-4fd3-9a75-56d51ec3a911.mp4",
       "duration": 10,
       "fps": 24,
       "mode": "scroll",
@@ -49,8 +49,8 @@
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5 Unlimited",
-        "generationId": "89aa2fb7-44f9-469a-95f2-e6ddb5aa430a",
-        "postprocess": "720p24, bright neutral color, frequent keyframes, continuous 20-second source split at gate"
+        "generationId": "48c68feb-1e8d-419e-acf1-25575787fbe0",
+        "postprocess": "720p24 frequent keyframes, refined pine clusters, brighter ink palette, direct scroll seeking"
       },
       "clipIn": 10,
       "sourceDuration": 20,
@@ -98,11 +98,6 @@
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
         "generationId": "891745ce-a6a4-4523-960f-70aefff923f9"
-      },
-      "bridge": {
-        "at": 0.25,
-        "resume": 5.5,
-        "fade": 0.95
       }
     },
     {
@@ -146,11 +141,6 @@
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
         "generationId": "6f46f062-0f98-4e28-92f5-d797d2c55e2e"
-      },
-      "bridge": {
-        "at": 0.25,
-        "resume": 5.5,
-        "fade": 0.95
       }
     },
     {
@@ -194,11 +184,6 @@
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
         "generationId": "cd5aef99-5153-443c-b3b2-cf54415721d7"
-      },
-      "bridge": {
-        "at": 0.25,
-        "resume": 5.5,
-        "fade": 0.95
       }
     },
     {
@@ -242,11 +227,6 @@
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
         "generationId": "36e407eb-2006-4d2f-8ac6-604bc1882f79"
-      },
-      "bridge": {
-        "at": 0.25,
-        "resume": 5.5,
-        "fade": 0.95
       }
     },
     {
@@ -290,11 +270,6 @@
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
         "generationId": "a65114ae-b7b2-4773-93a0-2c7164b0effd"
-      },
-      "bridge": {
-        "at": 0.25,
-        "resume": 5.5,
-        "fade": 0.95
       }
     },
     {
