@@ -1,6 +1,6 @@
 import {createSeasonAmbience} from './season-ambience.js?v=season-sounds-2';
-import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=face-safe-6';
-import {dialogueFrame} from './dialogue-framing.js?v=portrait-fit-1';
+import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=face-safe-7';
+import {dialogueFrame} from './dialogue-framing.js?v=portrait-fit-2';
 import {createStoryVoices} from './story-voices.js?v=voices-timing-3';
 import {createMusicFade} from './story-audio-mix.js?v=soft-return-3';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=slow-steps-2';
@@ -15,7 +15,7 @@ const introAssetsFailed=()=>[...introPaintings,introVillage].some(im=>im.dataset
 const $=id=>document.getElementById(id),stage=$('stage'),canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const PAPER='#f0f0ee';
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
-const manifestURL=new URL('./test-render/manifest.json?v=portrait-fit-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
+const manifestURL=new URL('./test-render/manifest.json?v=portrait-fit-2',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
 const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=mountain-bridge-3',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);

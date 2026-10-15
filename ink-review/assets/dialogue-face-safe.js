@@ -1,4 +1,4 @@
-import {dialogueFrame} from './dialogue-framing.js?v=portrait-fit-1';
+import {dialogueFrame} from './dialogue-framing.js?v=portrait-fit-2';
 const bound=(v,a,b)=>Math.max(a,Math.min(b,v));
 const NECK=[.77,.77,.67,.69,.71];
 export function createDialogueFaceSafe({stage,panel,tools,sound}){
@@ -22,7 +22,7 @@ export function createDialogueFaceSafe({stage,panel,tools,sound}){
   set(title,'display',available<40?'none':'block');set(title,'margin','0');set(title,'line-height','1.3');set(title,'font-size','calc(var(--safe-font)*1.307692)');set(copy,'margin','0');set(copy,'font-size','var(--safe-font)');set(copy,'line-height','1.65');set(copy,'min-height','0');set(copy,'max-height','none');set(copy,'height','auto');set(copy,'overflow','hidden');set(copy,'overflow-wrap','anywhere');set(copy,'overscroll-behavior','contain');copy.removeAttribute('tabindex');
   const applyFont=f=>{panel.style.setProperty('--safe-font',f+'px');panel.style.setProperty('--reading-copy',f+'px');panel.style.setProperty('--reading-title',(f*1.307692)+'px');set(panel,'font-size',f+'px');};
   const natural=()=>Math.ceil(panel.getBoundingClientRect().height)+1;
-  const preferred=bound(Math.min(7.614285714+.00928571429*W,.02708333333*H),11,21)*.85,minimum=Math.min(preferred,3);
+  const preferred=bound(Math.min(7.614285714+.00928571429*W+Math.max(0,W-900)*.006,.036*H),11,30),minimum=Math.min(preferred,3);
   set(panel,'height','auto');applyFont(preferred);let font=preferred,naturalHeight=natural();
   if(naturalHeight>available){let lo=minimum,hi=preferred;for(let i=0;i<12;i++){const mid=(lo+hi)/2;applyFont(mid);if(natural()<=available)lo=mid;else hi=mid;}font=lo;applyFont(font);naturalHeight=natural();}
   const height=Math.min(available,naturalHeight);set(panel,'height',height+'px');set(panel,'max-height',available+'px');set(panel,'top',Math.max(safeTop,bottom-height)+'px');set(panel,'visibility','visible');
