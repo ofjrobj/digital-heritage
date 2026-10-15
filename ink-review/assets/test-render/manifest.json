@@ -1,5 +1,5 @@
 {
-  "version": "portrait-fit-1",
+  "version": "colored-entry-1",
   "scenes": [
     {
       "id": "intro",
@@ -38,19 +38,20 @@
     },
     {
       "id": "entry-merchant",
-      "label": "입구 → 장사꾼 · 안개 전환",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_164445_963b319e-01cd-432b-89f2-2274634d3d5f.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_164135_88b57847-cba9-4784-bc5c-fb99afe49f58.png",
-      "duration": 0.4,
+      "label": "입구 → 장사꾼 · 연속 이동",
+      "src": "entry-colored-ink-480p24.mp4",
+      "duration": 8,
       "fps": 24,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "963b319e-01cd-432b-89f2-2274634d3d5f"
-      },
-      "editorialNote": "Malformed final approach removed; hold entrance motion then fog into stable merchant video."
+        "model": "Seedance 2.5 video edit",
+        "generationId": "2a45fbf2-77a1-485e-bf77-a7a7d13cc83b",
+        "sourceGenerationId": "25cabac3-06d3-4525-9d27-f288c34fa7f5",
+        "frames": 192,
+        "postprocess": "24fps, original muted greens, russet red and ochre preserved; continuous approved camera route"
+      }
     },
     {
       "id": "merchant",
