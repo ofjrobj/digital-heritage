@@ -1,0 +1,59 @@
+/* Keep the caption inside the same inset used by the decorative frame. */
+:root {
+  --archive-frame-inset: 18px;
+  --archive-frame-corner: 38px;
+  --archive-frame-gap: 12px;
+}
+
+.archive-corner-frame {
+  inset: max(var(--archive-frame-inset), env(safe-area-inset-top, 0px))
+    max(var(--archive-frame-inset), env(safe-area-inset-right, 0px))
+    max(var(--archive-frame-inset), env(safe-area-inset-bottom, 0px))
+    max(var(--archive-frame-inset), env(safe-area-inset-left, 0px));
+}
+.archive-corner-frame i {
+  width: var(--archive-frame-corner);
+  height: var(--archive-frame-corner);
+}
+
+.archive {
+  --archive-frame-safe-left: calc(max(var(--archive-frame-inset), env(safe-area-inset-left, 0px)) + var(--archive-frame-corner) + var(--archive-frame-gap));
+  --archive-frame-safe-right: calc(max(var(--archive-frame-inset), env(safe-area-inset-right, 0px)) + var(--archive-frame-corner) + var(--archive-frame-gap));
+  --archive-frame-safe-bottom: calc(max(var(--archive-frame-inset), env(safe-area-inset-bottom, 0px)) + var(--archive-frame-corner) + var(--archive-frame-gap));
+  --archive-stage-safe-left: max(var(--archive-reserved-left), var(--archive-frame-safe-left));
+  --archive-stage-safe-right: max(var(--archive-reserved-right), var(--archive-frame-safe-right));
+}
+
+/* The grid keeps labels above the caption; opening a side panel still reserves
+   its full width before the sculpture and caption columns are measured. */
+.archive .object-stage {
+  padding-left: var(--archive-stage-safe-left);
+  padding-right: var(--archive-stage-safe-right);
+  padding-bottom: var(--archive-frame-safe-bottom);
+  row-gap: max(12px, 1.1em);
+}
+.archive .detail-card {
+  width: min(680px, 100%);
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.archive .detail-card :is(h3, .detail-copy, .detail-status) {
+  max-width: 100%;
+  white-space: normal;
+}
+
+@media (min-width: 701px), (orientation: landscape) {
+  .archive .global-hotspot-set {
+    left: calc(50% + (var(--archive-stage-safe-left) - var(--archive-stage-safe-right)) / 2);
+  }
+}
+
+@media (max-width: 620px), (max-height: 500px) {
+  :root {
+    --archive-frame-inset: 10px;
+    --archive-frame-corner: 26px;
+    --archive-frame-gap: 10px;
+  }
+}

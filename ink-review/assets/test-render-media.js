@@ -16,7 +16,7 @@ const introAssetsFailed=()=>[...introPaintings,introVillage].some(im=>im.dataset
 const $=id=>document.getElementById(id),stage=$('stage'),canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const PAPER='#f0f0ee';
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
-const manifestURL=new URL('./test-render/manifest.json?v=exploration-flow-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
+const manifestURL=new URL('./test-render/manifest.json?v=modern-layout-2',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
 const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=exploration-flow-1',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);

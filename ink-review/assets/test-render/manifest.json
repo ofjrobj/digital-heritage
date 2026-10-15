@@ -275,18 +275,18 @@
     {
       "id": "seasons",
       "label": "사계절과 시간 · 20초",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/4569603c-ca46-41ff-9dbc-e10af052d112.mp4",
-      "duration": 20,
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/c0e5e6b4-9ad3-43b0-a0c1-a309fae8c4a9.mp4",
+      "duration": 19.709,
       "fps": 24,
       "mode": "auto",
       "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "2941e357-b18b-48a1-984d-12de8c012ff0",
-        "postprocess": "20 seconds, 720p24, neutral brightness, quiet separate ambience, staged rebuilding and four women, paper fade"
+        "generationId": "6280a0a6-9862-40c2-873c-883fb50b3dda",
+        "postprocess": "720p24, frequent keyframes, continuous gravel exhibition bed, preserved separate ambience; interim layout correction, final ink style pending"
       },
-      "sourceDuration": 20,
+      "sourceDuration": 19.709,
       "motionBaked": true,
       "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/41cc0b31-4bd2-4e4f-9bd8-bd10e193c0b7.mp3",
       "startDelay": 2,
