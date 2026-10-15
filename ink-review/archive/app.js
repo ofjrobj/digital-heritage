@@ -1,4 +1,4 @@
-import {levelScan,createInspectionFraming} from './scan-framing.js?v=part-framing-1';
+import {levelScan,createInspectionFraming} from './scan-framing.js?v=part-framing-2';
 import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=inspection-relief-2';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";

@@ -5,7 +5,7 @@ import {createStoryVoices} from './story-voices.js?v=voices-timing-3';
 import {createMusicFade} from './story-audio-mix.js?v=soft-return-3';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=slow-steps-2';
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
-import {createIntroInkSpread} from './intro-ink-spread.js?v=mountain-bridge-3';
+import {createIntroInkSpread} from './intro-ink-spread.js?v=square-intro-1';
 const introEffect=createIntroInkSpread({paper:'#f0f0ee',paperNormalization:{target:[240,240,238],lion:[240,239,237],mountains:[243,242,240]},lionFilter:'saturate(.1) brightness(1.035)',mountainFilter:'saturate(.1) brightness(1.035)'});
 const introPaintings=['./cover-reference.png','./test-render/intro-mountains.webp'].map(path=>{const im=new Image();im.src=new URL(path,import.meta.url).href;return im;});
 const introVillage=new Image();introVillage.src=new URL('./test-render/aerial-bridge-first.png',import.meta.url).href;

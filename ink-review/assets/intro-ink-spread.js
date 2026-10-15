@@ -46,8 +46,11 @@ export function createIntroInkSpread(options={}){
  }
  function prepare(w,h,lion,mountains){
   const [iw,ih]=dims(lion),[mw,mh]=dims(mountains);if(!iw||!ih||!mw||!mh)return null;
-  const crop=ih*(options.lionCropBottom??.72),fit=Math.min(w*.96/iw,h*.51/crop);
-  const r=typeof options.lionRect==='function'?options.lionRect(w,h,lion):options.lionRect||{x:(w-iw*fit)/2,y:h*.14+(h*.51-crop*fit)/2,w:iw*fit,h:crop*fit};
+  const crop=ih*(options.lionCropBottom??.72);
+  // Give the face more presence in square windows while preserving title clearance.
+  const square=Math.max(0,Math.min(1,(1.6-w/h)/.5));
+  const fit=Math.min(w*(.96+.20*square)/iw,h*(.51+.06*square)/crop);
+  const r=typeof options.lionRect==='function'?options.lionRect(w,h,lion):options.lionRect||{x:(w-iw*fit)/2,y:h*(.395-.015*square)-crop*fit/2,w:iw*fit,h:crop*fit};
   const lionPlate=canvas(w,h),lp=lionPlate.getContext('2d',{willReadFrequently:true});
   lp.filter=options.lionFilter||'none';lp.drawImage(lion,0,0,iw,crop,r.x,r.y,r.w,r.h);lp.filter='none';normalizePaper(lp,w,h,options.paperNormalization?.lion);
   lp.globalCompositeOperation='destination-in';

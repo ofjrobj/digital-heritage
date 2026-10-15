@@ -1,9 +1,9 @@
 const LEVEL={male:[-.078247699,.032765705],female:[-.103479210,-.003594774]};
 const PARTS=[
  {band:[.80,1],direction:[-.20,1,.10],key:[-4,2,4],fill:[3,-1,4]},
- {band:[.30,.66],direction:[1,-.38,.12],key:[-4,-1,4],fill:[3,2,4]},
+ {band:[.37,.79],direction:[1,-.08,.06],key:[-4,-1,4],fill:[3,2,4],width:.80,height:.80},
  {all:true,direction:[-.002,1,.00001],key:[-4,1,3],fill:[3,2,5],height:.9},
- {band:[.46,1],direction:[1,.025,.24],key:[-3,3,5],fill:[3,-1,4]},
+ {band:[.46,1],direction:[1,.025,.22],femaleDirection:[1,.025,-.10],key:[-3,3,5],fill:[3,-1,4],width:.80,height:.84},
  {band:[.64,.94],direction:[1,.015,.04],key:[-5,1,2],fill:[3,1,4]}
 ];
 export function levelScan(THREE,scan,{yaw,targetSize,sex}){
@@ -24,7 +24,7 @@ export function createInspectionFraming(THREE,{camera,controls,element,key,fill}
   const selected=part&&!part.all?all.filter(p=>p.x>=bounds.min.x+size.x*.65&&p.y>=bounds.min.y+size.y*part.band[0]&&p.y<=bounds.min.y+size.y*part.band[1]):all;
   const points=selected.length>20?selected:all;
   const target=part?new THREE.Box3().setFromPoints(points).getCenter(new THREE.Vector3()):bounds.getCenter(new THREE.Vector3());
-  const direction=new THREE.Vector3(...(part?.direction??[2.7,1.15,3.6])).normalize();
+  const direction=new THREE.Vector3(...((element.id==='female-scene'&&part?.femaleDirection)||part?.direction||[2.7,1.15,3.6])).normalize();
   const rotation=new THREE.Matrix4().lookAt(direction,zero,up).transpose();
   return {index,part,target,direction,points:points.map(p=>p.clone().sub(target).applyMatrix4(rotation))};
  }
@@ -35,7 +35,7 @@ export function createInspectionFraming(THREE,{camera,controls,element,key,fill}
   return {width:right-left,height:top-bottom,left,right,bottom,top};
  }
  function distanceFor(spec,r){
-  const width=r.width*(spec.part?(spec.part.all ? .78 : .83):.62);
+  const width=r.width*(spec.part?(spec.part.width??(spec.part.all ? .78 : .83)):.76);
   const height=spec.part?r.height*(spec.part.height??.86):Math.min(r.height*.82,innerHeight*.42);
   let near=.05;for(const p of spec.points)near=Math.max(near,p.z+.05);let far=50;
   for(let i=0;i<22;i++){
