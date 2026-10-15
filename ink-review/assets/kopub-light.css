@@ -1,0 +1,6 @@
+@font-face{font-family:'KoPubWorld Batang Light';src:url('./fonts/kopubworld-batang-light.woff2') format('woff2');font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:'KoPubWorld Dotum Light';src:url('./fonts/kopubworld-dotum-light.woff2') format('woff2');font-weight:300;font-style:normal;font-display:swap}
+:root{--story-serif:'KoPubWorld Batang Light',serif;--story-sans:'KoPubWorld Dotum Light',sans-serif;--serif:var(--story-serif);--sans:var(--story-sans);font-family:var(--story-serif)}
+body,button,input,select,textarea{font-family:var(--story-serif);font-synthesis:none}
+body:has(.archive){font-family:var(--sans)}
+body *,body #cinemaDialogue h2,body #cinemaDialogue p,body #storyIndexBar :is(button,a),body #hint,body .tr-caption,body .tr-archive-cta{font-weight:300!important;font-synthesis:none!important}
