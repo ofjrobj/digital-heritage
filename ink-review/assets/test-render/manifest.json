@@ -280,7 +280,7 @@
     {
       "id": "seasons",
       "label": "사계절과 시간 · 20초",
-      "src": "seasons-location-ink-480p24.mp4",
+      "src": "ending-20s-lions-fixed.mp4",
       "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_004231_fb5287e9-accc-470b-8bcb-b756f4ef3412.png",
       "duration": 20,
       "fps": 24,
@@ -290,18 +290,19 @@
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
         "generationIds": [
-          "2be7e2a0-88ea-4bf3-9209-8ab1c617700a",
-          "721714e2-202d-4a23-b8e2-d6995c268bb9"
+          "73a9350b-0694-46c0-b55e-02f8bfb93664",
+          "9341f216-c9b9-4be7-84d1-19eb10f81c0b"
         ],
         "frames": 480,
-        "postprocess": "24fps; restrained saturation; paper fade between historical seasons and actual modern site; geometry checked at four samples per clip"
+        "postprocess": "Fixed original n239 lion silhouette; modern background only; 12 percent approach and soft mist ending baked once; 24fps20sec"
       },
-      "sourceDuration": 20
+      "sourceDuration": 20,
+      "motionBaked": true
     }
   ],
   "review": {
     "geometryPass": false,
     "excludedIntermediateFrames": true,
-    "remaining": "Ending sculpture details drift during 12-14s; native continuous route replacement still required before final production."
+    "remaining": "Native continuous route replacements still under style and location review."
   }
 }

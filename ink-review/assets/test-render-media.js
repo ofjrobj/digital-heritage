@@ -15,7 +15,7 @@ const introAssetsFailed=()=>[...introPaintings,introVillage].some(im=>im.dataset
 const $=id=>document.getElementById(id),stage=$('stage'),canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const PAPER='#f0f0ee';
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
-const manifestURL=new URL('./test-render/manifest.json?v=portrait-fit-2',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
+const manifestURL=new URL('./test-render/manifest.json?v=ending-fixed-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
 const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=mountain-bridge-3',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
@@ -40,7 +40,7 @@ function draw(source){
  const sceneRecord=records.find(r=>r&&(r.video===source||r.image===source));
  if(sceneRecord?.scene.id==='intro'&&introAssetsReady()){
   const time=Math.floor(sceneRecord.video.currentTime*24)/24;introEffect.draw(ctx,width,height,clamp((time-.35)/5),...introPaintings,introVillage);
- }else if(sceneRecord?.scene.id==='seasons'){
+ }else if(sceneRecord?.scene.id==='seasons'&&!sceneRecord.scene.motionBaked){
   const t=sceneRecord.video.currentTime,approach=ease(clamp((t-10)/8.5)),zoom=1+.12*approach;
   const x=(width-sw*scale)/2,y=(height-sh*scale)/2,fx=x+sw*scale*.52,fy=y+sh*scale*.66;
   ctx.save();ctx.translate(fx,fy);ctx.scale(zoom,zoom);ctx.translate(-fx,-fy);ctx.drawImage(source,x,y,sw*scale,sh*scale);ctx.restore();
