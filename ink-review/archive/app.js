@@ -1,3 +1,4 @@
+import {levelScan,createInspectionFraming} from './scan-framing.js?v=part-framing-1';
 import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=inspection-relief-2';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -42,46 +43,43 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   controls.enableDamping = true; controls.dampingFactor = .08; controls.enablePan = false;
   controls.enableZoom = true; controls.zoomSpeed = .65;
   controls.minDistance = 1.15; controls.maxDistance = 6.5;
-  controls.minPolarAngle = .18; controls.maxPolarAngle = 2.4;
+  controls.minPolarAngle = .001; controls.maxPolarAngle = 2.4;
   // Neutral upper key preserves relief; lower frontal fill opens the chin and neck.
   scene.add(new THREE.HemisphereLight(0xffffff, 0x888888, .8));
   const key = new THREE.DirectionalLight(0xffffff, 1.8);
   key.position.set(-3, 4, 5); scene.add(key);
   const fill = new THREE.DirectionalLight(0xffffff, .65);
   fill.position.set(3, -3, 4); scene.add(fill);
-  let dirty = true, ready = false;
+  let dirty = true, ready = false, goal = null;
   // Wheel zoom updates synchronously inside OrbitControls, before the next RAF.
   controls.addEventListener('change',()=>{dirty=true;});
   const surface = createSurfaceView(THREE,scene,element,()=>{dirty=true;});
+  const framing=createInspectionFraming(THREE,{camera,controls,element,key,fill});
   const frame = () => {
     const r = element.getBoundingClientRect();
     if (!r.width || !r.height) return;
     camera.aspect=r.width/r.height;camera.updateProjectionMatrix();
     renderCamera.aspect=camera.aspect;renderCamera.updateProjectionMatrix();
-    renderer.setSize(r.width,r.height,false);dirty=true;
+    renderer.setSize(r.width,r.height,false);framing.resize(r,goal);dirty=true;
   };
   new ResizeObserver(frame).observe(element);frame();
   const loaded = loader.loadAsync(modelUrl, event => {
     loading.textContent = event.total ? `불러오는 중 ${Math.min(100,Math.round(event.loaded/event.total*100))}%` : '스캔 데이터를 불러오는 중…';
   }).then(gltf => {
-    const model=gltf.scene;
-    model.rotation.y=yaw;
-    const box=new THREE.Box3().setFromObject(model),center=box.getCenter(new THREE.Vector3());
-    const scale=targetSize/box.getSize(new THREE.Vector3()).x;
-    model.scale.setScalar(scale);model.position.sub(center.multiplyScalar(scale));
+    const model=levelScan(THREE,gltf.scene,{yaw,targetSize,sex:element.id==='male-scene'?'male':'female'});
     model.traverse(n=>{if(n.isMesh){n.material.roughness=.95;n.material.metalness=0;n.material.map && (n.material.map.anisotropy=renderer.capabilities.getMaxAnisotropy());}});
     model.traverse(n=>{if(n.isMesh&&n.material.map)element.dataset.colorTextureResolution=`${n.material.map.image.width}x${n.material.map.image.height}`;});
-    surface.bind(model);inspectionRoot.add(model);ready=true;dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
+    framing.bind(model);surface.bind(model);inspectionRoot.add(model);ready=true;frame();dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
     element.dataset.loaded='true';
   }).catch(error => {
     console.error(error);loading.textContent='모델을 불러오지 못했습니다. 새로고침해 주세요.';element.dataset.loaded='error';
   });
-  let goal=null;
-  function focus(position,target=[0,0,0]) {goal={position:new THREE.Vector3(...position),target:new THREE.Vector3(...target)};dirty=true;}
+  function focus(index){goal=framing.focus(index);dirty=true;}
   controls.addEventListener('start',()=>{goal=null;});
   function animate(){
     requestAnimationFrame(animate);
     if(document.hidden)return;
+    if(framing.updateLights())dirty=true;
     if(goal){camera.position.lerp(goal.position,.1);controls.target.lerp(goal.target,.1);dirty=true;if(camera.position.distanceTo(goal.position)<.002){camera.position.copy(goal.position);controls.target.copy(goal.target);goal=null;}}
     if(controls.update())dirty=true;
     if(dirty){
@@ -144,7 +142,7 @@ function showObservation(index, focus=false) {
  detail.querySelector('.detail-status').textContent=sourceNote;
  updatePanel(document.querySelector('.left-panel'),'수사자',2,point,note);
  updatePanel(document.querySelector('.right-panel'),'암사자',1,point,note);
- if(focus){viewers.male.focus(note.position,note.target);viewers.female.focus(note.position,note.target);}
+ if(focus){viewers.male.focus(index);viewers.female.focus(index);}
 }
 showObservation(0);
 document.querySelectorAll('.hotspot').forEach(button=>button.addEventListener('click',()=>{
@@ -152,7 +150,7 @@ document.querySelectorAll('.hotspot').forEach(button=>button.addEventListener('c
   panels.forEach(panel=>setPanelOpen(panel,false));return;
  }
  showObservation(Number(button.dataset.point)-1,true);
- panels.forEach(panel=>setPanelOpen(panel,true));
+ panels.forEach(panel=>setPanelOpen(panel,false));
 }));
 document.querySelectorAll('.panel-toggle').forEach(button=>button.addEventListener('click',()=>{
  const panel=button.closest('.info-panel'),wasOpen=panel.classList.contains('is-open');

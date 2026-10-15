@@ -26,3 +26,40 @@
 .archive .wordmark{left:max(8px,calc(96px - 4vw));top:clamp(48px,9dvh,72px)}
 .archive .wordmark .wordmark-title{font-size:clamp(20px,2.1vw,27px)}
 .archive .object-card .card-label em{display:block}
+
+/* Use the same viewport scale for navigation, labels, controls and copy. */
+.archive{--archive-copy:min(19px,calc(7px + .65vw),2.45dvh);--archive-control:clamp(24px,calc(var(--archive-copy)*2.1),38px)}
+.archive .masthead nav a{font-size:calc(var(--archive-copy)*1.38);padding:.3em 1.05em;line-height:1.4}
+.archive .masthead nav .active{text-underline-offset:.3em}
+.archive .wordmark .wordmark-title{font-size:calc(var(--archive-copy)*1.72)}
+.archive .wordmark small{font-size:calc(var(--archive-copy)*.52);margin-top:.85em}
+.archive .masthead>p{font-size:calc(var(--archive-copy)*.52)}
+.archive .global-hotspot-set{flex-direction:column!important;gap:calc(var(--archive-copy)*.45)}
+.archive .global-hotspot-set>p{font-size:calc(var(--archive-copy)*.55);margin-bottom:.4em}
+.archive .global-hotspot-set :is(.hotspot,.surface-toggle){width:var(--archive-control);height:var(--archive-control);font-size:calc(var(--archive-copy)*.7);flex-shrink:0}
+.archive .global-hotspot-set .surface-toggle{margin:0 0 calc(var(--archive-copy)*.25)}
+.archive .global-hotspot-set .surface-toggle i{font-size:calc(var(--archive-copy)*1.3)}
+.archive .global-hotspot-set :is(.hotspot,.surface-toggle) span{font-size:calc(var(--archive-copy)*.78);padding:.35em .6em}
+.archive .detail-card{font-size:calc(var(--archive-copy)*.82);width:min(680px,84%);padding:.75em 1.6em;max-height:none;overflow:visible}
+.archive .detail-card h3{font-size:1.25em;line-height:1.3;margin-bottom:.35em}
+.archive .detail-card .detail-copy{font-size:1em;line-height:1.5}
+.archive .detail-card .detail-status{font-size:.7em;line-height:1.4;margin-top:.65em!important;padding-top:.55em}
+.archive .object-card .card-label strong{font-size:calc(var(--archive-copy)*1.5)}
+.archive .object-card .card-label em{font-size:calc(var(--archive-copy)*.55)}
+.archive .info-panel{font-size:var(--archive-copy)}
+.archive .panel-content{font-size:inherit;padding-top:1.3em;padding-bottom:1.3em}
+.archive .left-panel .panel-content{padding-left:1.35em;padding-right:max(44px,3.9em)}
+.archive .right-panel .panel-content{padding-right:1.35em;padding-left:max(44px,3.9em)}
+.archive .panel-content :is(h1,h2){font-size:1.7em;line-height:1.3}
+.archive .panel-content .panel-subtitle{font-size:1.1em;margin-top:.45em}
+.archive .panel-content .panel-kicker{font-size:.65em;margin-bottom:1.2em}
+.archive .panel-content dl{margin-top:1.4em}
+.archive .panel-content dl div{padding:.5em 0;gap:.2em}
+.archive .panel-content dl dt{font-size:.72em}
+.archive .panel-content dl dd{font-size:.95em;line-height:1.5}
+.archive .panel-content .panel-note{font-size:.74em;line-height:1.5;margin-top:1.25em;padding-top:.9em}
+.archive .panel-toggle{font-size:calc(var(--archive-copy)*.65)}
+.archive .panel-toggle i{font-size:calc(var(--archive-copy)*1.15)}
+.archive .loading{font-size:calc(var(--archive-copy)*.65)}
+
+.archive .masthead nav a{font-size:clamp(8px,min(1.65vw,2.7dvh),23px)}

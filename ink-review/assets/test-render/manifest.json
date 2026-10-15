@@ -1,10 +1,10 @@
 {
-  "version": "paper-flow-1",
+  "version": "stage-fit-6",
   "scenes": [
     {
       "id": "intro",
       "label": "갈기의 먹선 → 산과 안개",
-      "src": "intro-ink-spread-paper-480p24.mp4",
+      "src": "intro-ink-depth-480p24.mp4",
       "duration": 6,
       "fps": 24,
       "mode": "scroll",
@@ -13,7 +13,8 @@
       "transition": "none",
       "provenance": {
         "provider": "local-canvas",
-        "source": "original-lion-mane-and-mountains"
+        "source": "original-lion-mane-and-mountains",
+        "motion": "mane ink growth and 5 original mountain layers"
       }
     },
     {
@@ -32,7 +33,8 @@
         "frames": 192
       },
       "caption": "어느 옛날, 공주목과 그 주변 고을에는\n신비로운 두 사자의 이야기가 떠돌고 있습니다.",
-      "captionUntil": 5
+      "captionUntil": 5,
+      "transition": "none"
     },
     {
       "id": "entry-merchant",
@@ -53,9 +55,9 @@
     {
       "id": "merchant",
       "label": "장사꾼의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_163130_673e8995-2896-4440-929f-ce7c9843bc73.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_162806_fcc44552-e9c2-4000-80f5-b60edf0b1cdb.png",
-      "sourceDuration": 5,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_003405_f161fdf6-b283-499c-8a1e-a2d179487125.mp4",
+      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_001956_568d4766-b2fa-4036-945b-d718aeaa0db4.png",
+      "sourceDuration": 5.04,
       "fps": 24,
       "mode": "dialogue",
       "speaker": 0,
@@ -63,8 +65,10 @@
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
-        "generationId": "673e8995-2896-4440-929f-ce7c9843bc73"
-      }
+        "generationId": "f161fdf6-b283-499c-8a1e-a2d179487125",
+        "review": "sampled beginning, middle and end; identity references and static background checked"
+      },
+      "neckSafeY": 0.77
     },
     {
       "id": "merchant-farmer",
@@ -89,8 +93,8 @@
     {
       "id": "farmer",
       "label": "농민의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_163130_fbf85ffe-b23d-43fd-b049-70f48bf50ed8.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_162811_46718128-a75e-4dff-8ece-528660857303.png",
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_002129_eb85289d-3d15-4489-895e-269a4ce58eee.mp4",
+      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_000351_18295dd5-03c8-4953-9f12-22b9b9b345e3.png",
       "sourceDuration": 5,
       "fps": 24,
       "mode": "dialogue",
@@ -99,8 +103,9 @@
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
-        "generationId": "fbf85ffe-b23d-43fd-b049-70f48bf50ed8"
-      }
+        "generationId": "eb85289d-3d15-4489-895e-269a4ce58eee"
+      },
+      "neckSafeY": 0.77
     },
     {
       "id": "farmer-cook",
@@ -125,9 +130,9 @@
     {
       "id": "cook",
       "label": "찬모의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_163130_875d7ab5-1fe5-4dd0-af3a-3e0f72e9d3aa.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_162814_7a1683d2-1665-4b84-9a62-95aa713d7d4a.png",
-      "sourceDuration": 5,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_003407_4dd06e8a-048e-4f8c-8509-eaa239f2b576.mp4",
+      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_001955_6752359c-c2f5-440b-8941-9fb4eef16137.png",
+      "sourceDuration": 5.04,
       "fps": 24,
       "mode": "dialogue",
       "speaker": 2,
@@ -135,8 +140,10 @@
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
-        "generationId": "875d7ab5-1fe5-4dd0-af3a-3e0f72e9d3aa"
-      }
+        "generationId": "4dd06e8a-048e-4f8c-8509-eaa239f2b576",
+        "review": "sampled beginning, middle and end; identity references and static background checked"
+      },
+      "neckSafeY": 0.67
     },
     {
       "id": "cook-trio",
@@ -161,9 +168,9 @@
     {
       "id": "trio",
       "label": "주민 삼총사의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_163130_cc9a4ca5-5064-44b8-b8e6-3e7c259c850f.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_162806_85ef5f2e-80ad-4d2d-86e4-2f6d72371b92.png",
-      "sourceDuration": 5,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_003410_0d606087-d9fc-4ad5-b74a-b80a9ea3b38b.mp4",
+      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_001956_78e6b28b-f07f-434f-a048-eeac7456c56a.png",
+      "sourceDuration": 5.04,
       "fps": 24,
       "mode": "dialogue",
       "speaker": 3,
@@ -171,8 +178,10 @@
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
-        "generationId": "cc9a4ca5-5064-44b8-b8e6-3e7c259c850f"
-      }
+        "generationId": "0d606087-d9fc-4ad5-b74a-b80a9ea3b38b",
+        "review": "sampled beginning, middle and end; identity references and static background checked"
+      },
+      "neckSafeY": 0.69
     },
     {
       "id": "trio-woodcutter",
@@ -197,9 +206,9 @@
     {
       "id": "woodcutter",
       "label": "나무꾼의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_163130_6905f015-385f-4c0a-81d6-87ee6b1d7951.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_162805_effdbabb-a0bf-4639-8742-bb21eb164774.png",
-      "sourceDuration": 5,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_003412_0ca0f2db-15e4-4507-9d5c-d5ebc1b0316a.mp4",
+      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_001956_5c34bc9a-9af6-4acf-b16c-466b1ae098db.png",
+      "sourceDuration": 5.04,
       "fps": 24,
       "mode": "dialogue",
       "speaker": 4,
@@ -207,8 +216,10 @@
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
-        "generationId": "6905f015-385f-4c0a-81d6-87ee6b1d7951"
-      }
+        "generationId": "0ca0f2db-15e4-4507-9d5c-d5ebc1b0316a",
+        "review": "sampled beginning, middle and end; identity references and static background checked"
+      },
+      "neckSafeY": 0.71
     },
     {
       "id": "return-lions",
@@ -233,8 +244,8 @@
     {
       "id": "seasons",
       "label": "사계절과 시간 · 20초",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_164527_87c6994c-4ad6-47b7-9117-41f107566185.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_163749_dd1fd014-dcf1-4985-9255-a9fcb933fcff.png",
+      "src": "seasons-location-ink-480p24.mp4",
+      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_004231_fb5287e9-accc-470b-8bcb-b756f4ef3412.png",
       "duration": 20,
       "fps": 24,
       "mode": "auto",
@@ -242,8 +253,14 @@
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
-        "generationId": "87c6994c-4ad6-47b7-9117-41f107566185"
-      }
+        "generationIds": [
+          "2be7e2a0-88ea-4bf3-9209-8ab1c617700a",
+          "721714e2-202d-4a23-b8e2-d6995c268bb9"
+        ],
+        "frames": 480,
+        "postprocess": "24fps; restrained saturation; paper fade between historical seasons and actual modern site; geometry checked at four samples per clip"
+      },
+      "sourceDuration": 20
     }
   ],
   "review": {
