@@ -1,5 +1,5 @@
 {
-  "version": "stage-fit-6",
+  "version": "portrait-fit-1",
   "scenes": [
     {
       "id": "intro",
@@ -55,20 +55,27 @@
     {
       "id": "merchant",
       "label": "장사꾼의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_003405_f161fdf6-b283-499c-8a1e-a2d179487125.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_001956_568d4766-b2fa-4036-945b-d718aeaa0db4.png",
-      "sourceDuration": 5.04,
+      "src": "merchant-front-hold-480p24.mp4",
+      "sourceDuration": 27.708333333333332,
       "fps": 24,
       "mode": "dialogue",
       "speaker": 0,
-      "loop": true,
+      "loop": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
-        "generationId": "f161fdf6-b283-499c-8a1e-a2d179487125",
-        "review": "sampled beginning, middle and end; identity references and static background checked"
+        "generationId": "cb4e4762-d7c3-4c62-baf2-456db63352ed",
+        "frames": 665,
+        "postprocess": "24fps; one initial head turn, stable frontal 3.5–5s ping-pong tail; responsive upper-body framing"
       },
-      "neckSafeY": 0.77
+      "neckSafeY": 0.75,
+      "framing": {
+        "cx": 0.486,
+        "headY": 0.4,
+        "neckY": 0.75,
+        "minX": 0.43,
+        "maxX": 0.545
+      }
     },
     {
       "id": "merchant-farmer",
@@ -93,19 +100,27 @@
     {
       "id": "farmer",
       "label": "농민의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_002129_eb85289d-3d15-4489-895e-269a4ce58eee.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_000351_18295dd5-03c8-4953-9f12-22b9b9b345e3.png",
-      "sourceDuration": 5,
+      "src": "farmer-front-hold-480p24.mp4",
+      "sourceDuration": 26.625,
       "fps": 24,
       "mode": "dialogue",
       "speaker": 1,
-      "loop": true,
+      "loop": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
-        "generationId": "eb85289d-3d15-4489-895e-269a4ce58eee"
+        "generationId": "23bbda36-1c89-49ba-b97c-1d79547962c5",
+        "frames": 639,
+        "postprocess": "24fps; one initial head turn, stable frontal 3.5–5s ping-pong tail; responsive upper-body framing"
       },
-      "neckSafeY": 0.77
+      "neckSafeY": 0.53,
+      "framing": {
+        "cx": 0.498,
+        "headY": 0.08,
+        "neckY": 0.53,
+        "minX": 0.425,
+        "maxX": 0.565
+      }
     },
     {
       "id": "farmer-cook",
@@ -130,20 +145,27 @@
     {
       "id": "cook",
       "label": "찬모의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_003407_4dd06e8a-048e-4f8c-8509-eaa239f2b576.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_001955_6752359c-c2f5-440b-8941-9fb4eef16137.png",
-      "sourceDuration": 5.04,
+      "src": "cook-front-hold-480p24.mp4",
+      "sourceDuration": 22.291666666666668,
       "fps": 24,
       "mode": "dialogue",
       "speaker": 2,
-      "loop": true,
+      "loop": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
-        "generationId": "4dd06e8a-048e-4f8c-8509-eaa239f2b576",
-        "review": "sampled beginning, middle and end; identity references and static background checked"
+        "generationId": "369288e3-e99b-400c-a93a-5cb50690c40a",
+        "frames": 535,
+        "postprocess": "24fps; one initial head turn, stable frontal 3.5–5s ping-pong tail; responsive upper-body framing"
       },
-      "neckSafeY": 0.67
+      "neckSafeY": 0.62,
+      "framing": {
+        "cx": 0.492,
+        "headY": 0.4,
+        "neckY": 0.62,
+        "minX": 0.445,
+        "maxX": 0.54
+      }
     },
     {
       "id": "cook-trio",
@@ -168,20 +190,27 @@
     {
       "id": "trio",
       "label": "주민 삼총사의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_003410_0d606087-d9fc-4ad5-b74a-b80a9ea3b38b.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_001956_78e6b28b-f07f-434f-a048-eeac7456c56a.png",
-      "sourceDuration": 5.04,
+      "src": "trio-front-hold-480p24.mp4",
+      "sourceDuration": 29.0,
       "fps": 24,
       "mode": "dialogue",
       "speaker": 3,
-      "loop": true,
+      "loop": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
-        "generationId": "0d606087-d9fc-4ad5-b74a-b80a9ea3b38b",
-        "review": "sampled beginning, middle and end; identity references and static background checked"
+        "generationId": "03a18e07-8c96-4d8a-ae76-71aee3cb2406",
+        "frames": 696,
+        "postprocess": "24fps; one initial head turn, stable frontal 3.5–5s ping-pong tail; responsive upper-body framing"
       },
-      "neckSafeY": 0.69
+      "neckSafeY": 0.64,
+      "framing": {
+        "cx": 0.5,
+        "headY": 0.37,
+        "neckY": 0.64,
+        "minX": 0.12,
+        "maxX": 0.88
+      }
     },
     {
       "id": "trio-woodcutter",
@@ -206,20 +235,27 @@
     {
       "id": "woodcutter",
       "label": "나무꾼의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_003412_0ca0f2db-15e4-4507-9d5c-d5ebc1b0316a.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261015_001956_5c34bc9a-9af6-4acf-b16c-466b1ae098db.png",
-      "sourceDuration": 5.04,
+      "src": "woodcutter-front-hold-480p24.mp4",
+      "sourceDuration": 26.0,
       "fps": 24,
       "mode": "dialogue",
       "speaker": 4,
-      "loop": true,
+      "loop": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5",
-        "generationId": "0ca0f2db-15e4-4507-9d5c-d5ebc1b0316a",
-        "review": "sampled beginning, middle and end; identity references and static background checked"
+        "generationId": "450f609c-7e3c-4009-95a6-0e623e542e33",
+        "frames": 624,
+        "postprocess": "24fps; one initial head turn, stable frontal 3.5–5s ping-pong tail; responsive upper-body framing"
       },
-      "neckSafeY": 0.71
+      "neckSafeY": 0.66,
+      "framing": {
+        "cx": 0.5,
+        "headY": 0.35,
+        "neckY": 0.66,
+        "minX": 0.445,
+        "maxX": 0.55
+      }
     },
     {
       "id": "return-lions",

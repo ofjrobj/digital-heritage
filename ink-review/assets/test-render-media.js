@@ -1,5 +1,6 @@
 import {createSeasonAmbience} from './season-ambience.js?v=season-sounds-2';
-import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=face-safe-5';
+import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=face-safe-6';
+import {dialogueFrame} from './dialogue-framing.js?v=portrait-fit-1';
 import {createStoryVoices} from './story-voices.js?v=voices-timing-3';
 import {createMusicFade} from './story-audio-mix.js?v=soft-return-3';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=slow-steps-2';
@@ -10,8 +11,8 @@ const introPaintings=['./cover-reference.png','./test-render/intro-mountains.web
 const $=id=>document.getElementById(id),stage=$('stage'),canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const PAPER='#f0f0ee';
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
-const manifestURL=new URL('./test-render/manifest.json?v=stage-fit-8',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
-const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=stage-fit-8',import.meta.url).href;document.head.append(css);
+const manifestURL=new URL('./test-render/manifest.json?v=portrait-fit-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
+const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=portrait-fit-1',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
 stage.style.setProperty('--nav-paper','0');
@@ -40,7 +41,13 @@ function draw(source){
   const x=(width-sw*scale)/2,y=(height-sh*scale)/2,fx=x+sw*scale*.52,fy=y+sh*scale*.66;
   ctx.save();ctx.translate(fx,fy);ctx.scale(zoom,zoom);ctx.translate(-fx,-fy);ctx.drawImage(source,x,y,sw*scale,sh*scale);ctx.restore();
   ctx.save();ctx.globalAlpha=ease(clamp((t-18.5)/1.5));ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);ctx.restore();
- }else ctx.drawImage(source,(width-sw*scale)/2,sceneRecord?.scene.mode==='dialogue'?height-sh*scale:(height-sh*scale)/2,sw*scale,sh*scale);dialogueFit.update(sceneRecord?.scene,source);lastSource=source;hasFrame=true;
+ }else if(sceneRecord?.scene.mode==='dialogue'){
+  const r=dialogueFrame(sceneRecord.scene,width,height,sw,sh);ctx.drawImage(source,r.x,r.y,r.w,r.h);
+  // Let the edge of a portrait dissolve into the same paper when a narrow window
+  // needs the entire group to remain visible above the dialogue.
+  const fade=Math.min(36,height*.06);
+  for(const edge of ['top','bottom']){const y=edge==='top'?r.y:r.y+r.h;if(y>0&&y<height){const g=ctx.createLinearGradient(0,y,0,y+(edge==='top'?fade:-fade));g.addColorStop(0,PAPER);g.addColorStop(1,'rgba(240,240,238,0)');ctx.fillStyle=g;ctx.fillRect(0,edge==='top'?y:y-fade,width,fade);}}
+ }else ctx.drawImage(source,(width-sw*scale)/2,(height-sh*scale)/2,sw*scale,sh*scale);dialogueFit.update(sceneRecord?.scene,source);lastSource=source;hasFrame=true;
  renderedKind=source.tagName==='VIDEO'?'video':'image';renderedSource=source.currentSrc||source.src||'';return true;
 }
 function resize(){const d=Math.min(devicePixelRatio||1,2);width=Math.max(1,stage.clientWidth);height=Math.max(1,stage.clientHeight);canvas.width=Math.round(width*d);canvas.height=Math.round(height*d);ctx.setTransform(d,0,0,d,0,0);hasFrame=false;ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);draw(lastSource);}

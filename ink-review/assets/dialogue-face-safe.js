@@ -1,3 +1,4 @@
+import {dialogueFrame} from './dialogue-framing.js?v=portrait-fit-1';
 const bound=(v,a,b)=>Math.max(a,Math.min(b,v));
 const NECK=[.77,.77,.67,.69,.71];
 export function createDialogueFaceSafe({stage,panel,tools,sound}){
@@ -14,7 +15,7 @@ export function createDialogueFaceSafe({stage,panel,tools,sound}){
   const W=stage.clientWidth,H=stage.clientHeight,title=panel.querySelector('h2'),copy=panel.querySelector('p');if(!W||!H||!title||!copy)return;
   const key=[scene.id,W,H,sw,sh,copy.textContent].join('|');if(!dirty&&key===lastKey)return;dirty=false;lastKey=key;
   const box=stage.getBoundingClientRect(),gap=bound(H*.012,6,10),neck=Number(scene.neckSafeY)||NECK[scene.speaker]||.77;
-  const scale=Math.max(W/sw,H/sh),neckY=H-sh*scale+neck*sh*scale,safeTop=Math.max(0,neckY+gap);
+  const neckY=dialogueFrame(scene,W,H,sw,sh).neckY,safeTop=Math.max(0,neckY+gap);
   const lower=[tools,sound].filter(visible).map(n=>n.getBoundingClientRect()).filter(r=>r.top-box.top>H*.55);
   const bottom=Math.min(H-Math.max(12,safeArea.getBoundingClientRect().height),...lower.map(r=>r.top-box.top-gap)),available=Math.max(0,bottom-safeTop),panelWidth=Math.min(W*.92,1440),left=(W-panelWidth)/2;
   set(panel,'box-sizing','border-box');set(panel,'left',left+'px');set(panel,'right','auto');set(panel,'width',panelWidth+'px');set(panel,'transform','none');set(panel,'bottom','auto');set(panel,'min-height','0');set(panel,'max-height','none');set(panel,'overflow','hidden');panel.style.removeProperty('display');set(panel,'grid-template-rows','auto minmax(0,1fr)');set(panel,'gap','.4em');set(panel,'padding','.95em 2.1em');
