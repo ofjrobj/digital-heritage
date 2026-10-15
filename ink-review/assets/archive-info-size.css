@@ -114,3 +114,6 @@
  .archive .right-panel{transform:translateX(calc(100% - var(--archive-tab-width)))}
  .archive .left-panel.is-open,.archive .right-panel.is-open{transform:none}
 }
+
+/* Closed labels stay legible against the pale glass rail. */
+.archive .info-panel:not(.is-open) .panel-toggle{color:#373734;text-shadow:none}
