@@ -1,12 +1,12 @@
 // One grounded step at most every 720ms, only while manual travel input continues.
 export function createScrollFootsteps(audio,allowed,clock=()=>performance.now()) {
  let deadline=0,nextStep=0,pending=false;
- audio.loop=false;audio.volume=.28;
+ audio.loop=false;audio.volume=.12;
  function stop(){deadline=0;audio.pause();audio.dataset.active='false';}
  function tick(){
   const now=clock();
   if(!allowed()||now>=deadline){stop();return;}
-  audio.volume=.28*Math.min(1,(deadline-now)/35);
+  audio.volume=.12*Math.min(1,(deadline-now)/35);
   if(now<nextStep||pending||!audio.paused&&!audio.ended)return;
   nextStep=now+720;pending=true;audio.currentTime=0;
   audio.play().then(()=>{

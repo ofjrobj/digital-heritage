@@ -144,7 +144,9 @@ function showObservation(index, focus=false) {
  updatePanel(document.querySelector('.right-panel'),'암사자',1,point,note);
  if(focus){viewers.male.focus(index);viewers.female.focus(index);}
 }
-showObservation(0);
+// Start in the complete-object view with no numbered observation selected.
+document.querySelectorAll('.hotspot').forEach(button=>{button.classList.remove('is-active');button.setAttribute('aria-pressed','false');});
+panels.forEach(panel=>setPanelOpen(panel,false));
 document.querySelectorAll('.hotspot').forEach(button=>button.addEventListener('click',()=>{
  if(button.classList.contains('is-active')&&panels.some(panel=>panel.classList.contains('is-open'))){
   panels.forEach(panel=>setPanelOpen(panel,false));return;
@@ -157,3 +159,4 @@ document.querySelectorAll('.panel-toggle').forEach(button=>button.addEventListen
  panels.forEach(item=>setPanelOpen(item,false));
  if(!wasOpen)setPanelOpen(panel,true);
 }));
+

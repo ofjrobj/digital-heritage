@@ -1,5 +1,5 @@
 {
-  "version": "reference-dialogue-1",
+  "version": "presentation-1614",
   "scenes": [
     {
       "id": "intro",
@@ -19,39 +19,41 @@
     },
     {
       "id": "aerial-entry",
-      "label": "마을 전경 · 자동 재생",
-      "src": "aerial-fixed-480p24.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_162807_3ad98a9e-6c3e-4b59-9048-690d1191f974.png",
-      "duration": 8,
+      "label": "마을 부감 → 입구 · 스크롤 이동",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/1b52fd10-71e1-4fb0-a28f-6dc56ebdaefa.mp4",
+      "duration": 10,
       "fps": 24,
-      "mode": "auto",
+      "mode": "scroll",
       "footsteps": false,
       "provenance": {
-        "provider": "local-camera-render",
-        "source": "Higgsfield fixed aerial illustration",
-        "motion": "single rigid image transform; no building morph",
-        "frames": 192
+        "provider": "Higgsfield",
+        "model": "Seedance 2.5 Unlimited",
+        "generationId": "89aa2fb7-44f9-469a-95f2-e6ddb5aa430a",
+        "postprocess": "720p24, bright neutral color, frequent keyframes, continuous 20-second source split at gate"
       },
       "caption": "어느 옛날, 공주목과 그 주변 고을에는\n신비로운 두 사자의 이야기가 떠돌고 있습니다.",
       "captionUntil": 5,
-      "transition": "none"
+      "transition": "none",
+      "clipIn": 0,
+      "sourceDuration": 20
     },
     {
       "id": "entry-merchant",
       "label": "입구 → 장사꾼 · 연속 이동",
-      "src": "entry-colored-ink-480p24.mp4",
-      "duration": 8,
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/1b52fd10-71e1-4fb0-a28f-6dc56ebdaefa.mp4",
+      "duration": 10,
       "fps": 24,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 video edit",
-        "generationId": "2a45fbf2-77a1-485e-bf77-a7a7d13cc83b",
-        "sourceGenerationId": "25cabac3-06d3-4525-9d27-f288c34fa7f5",
-        "frames": 192,
-        "postprocess": "24fps, original muted greens, russet red and ochre preserved; continuous approved camera route"
-      }
+        "model": "Seedance 2.5 Unlimited",
+        "generationId": "89aa2fb7-44f9-469a-95f2-e6ddb5aa430a",
+        "postprocess": "720p24, bright neutral color, frequent keyframes, continuous 20-second source split at gate"
+      },
+      "clipIn": 10,
+      "sourceDuration": 20,
+      "transition": "none"
     },
     {
       "id": "merchant",

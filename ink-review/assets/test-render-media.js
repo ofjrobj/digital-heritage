@@ -1,9 +1,9 @@
-import {createSeasonAmbience} from './season-ambience.js?v=season-sounds-2';
+import {createSeasonAmbience} from './season-ambience.js?v=quiet-seasons-3';
 import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=face-safe-7';
 import {dialogueFrame} from './dialogue-framing.js?v=portrait-fit-2';
 import {createStoryVoices} from './story-voices.js?v=voices-timing-3';
 import {createStoryMusic} from './story-audio-mix.js?v=bgm-restore-4';
-import {createScrollFootsteps} from './scroll-footsteps.js?v=slow-steps-2';
+import {createScrollFootsteps} from './scroll-footsteps.js?v=quiet-steps-3';
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
 import {createIntroInkSpread} from './intro-ink-spread.js?v=square-intro-1';
 const introEffect=createIntroInkSpread({paper:'#f0f0ee',paperNormalization:{target:[240,240,238],lion:[240,239,237],mountains:[243,242,240]},lionFilter:'saturate(.1) brightness(1.035)',mountainFilter:'saturate(.1) brightness(1.035)'});
@@ -15,7 +15,7 @@ const introAssetsFailed=()=>[...introPaintings,introVillage].some(im=>im.dataset
 const $=id=>document.getElementById(id),stage=$('stage'),canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const PAPER='#f0f0ee';
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
-const manifestURL=new URL('./test-render/manifest.json?v=reference-dialogue-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
+const manifestURL=new URL('./test-render/manifest.json?v=presentation-1614',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
 const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=bgm-restore-4',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
