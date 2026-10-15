@@ -13,3 +13,41 @@ export function createMusicFade(audio){
   audio.volume=lastApplied;
  };
 }
+
+export function endingMusicGain(time,duration){
+ if(!(duration>0))return 1;
+ const t=Math.max(0,Math.min(1,(time-duration*11/12)/(duration/12)));
+ return 1-t*t*(3-2*t);
+}
+
+// Keep the dialogue envelope separate from the ending fade, so a changing
+// ending gain does not restart the volume ramp on every animation frame.
+export function createStoryMusic(audio){
+ const envelope={volume:0},fade=createMusicFade(envelope);
+ let enabled=false,pending=false,blocked=false,error=null,suspended=false,request=0;
+ function ensure(){
+  if(!enabled||suspended||pending||blocked||!audio.paused)return;
+  const attempt=++request;pending=true;
+  Promise.resolve().then(()=>{if(attempt===request&&enabled&&!suspended)return audio.play();}).then(()=>{
+   if(!enabled||suspended)audio.pause();
+   else if(attempt===request)error=null;
+  }).catch(e=>{if(attempt===request){blocked=true;error=e?.name||'AudioError';}})
+   .finally(()=>{if(attempt===request)pending=false;});
+ }
+ function retry(){blocked=false;error=null;ensure();}
+ audio.addEventListener?.('canplay',()=>{if(error!=='NotAllowedError')retry();});
+ return {
+  enable(value){enabled=value;blocked=false;error=null;if(value)ensure();else{request++;pending=false;audio.pause();audio.volume=0;envelope.volume=0;}},
+  retry,
+  suspend(){suspended=true;request++;pending=false;audio.pause();audio.volume=0;envelope.volume=0;},
+  tick({duck=false,paused=false,hidden=false,finished=false,endingTime=null,endingDuration=20,dt=0}){
+   suspended=paused||hidden;
+   if(suspended){audio.pause();audio.volume=0;envelope.volume=0;return;}
+   fade(enabled&&!duck&&!finished ? .045 : 0,dt);
+   const gain=endingTime==null?1:endingMusicGain(endingTime,endingDuration);
+   audio.volume=envelope.volume*gain;
+   if(!enabled||finished&&audio.volume<.00001)audio.pause();else ensure();
+  },
+  proof(){return {enabled,paused:audio.paused,blocked,error,volume:audio.volume};}
+ };
+}
