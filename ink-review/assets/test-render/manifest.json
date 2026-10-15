@@ -1,5 +1,5 @@
 {
-  "version": "presentation-1622",
+  "version": "exploration-flow-1",
   "scenes": [
     {
       "id": "intro",
@@ -7,7 +7,7 @@
       "src": "intro-ink-depth-480p24.mp4",
       "duration": 6,
       "fps": 24,
-      "mode": "scroll",
+      "mode": "auto",
       "caption": "돌에 새긴 선, 풍경이 되다",
       "captionUntil": 1.4,
       "transition": "none",
@@ -288,7 +288,9 @@
       },
       "sourceDuration": 20,
       "motionBaked": true,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/41cc0b31-4bd2-4e4f-9bd8-bd10e193c0b7.mp3"
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/41cc0b31-4bd2-4e4f-9bd8-bd10e193c0b7.mp3",
+      "startDelay": 2,
+      "transition": "none"
     }
   ],
   "review": {
