@@ -1,13 +1,13 @@
 {
-  "version": "modern-ink-22-v1",
+  "version": "intro-scroll-auto-1",
   "scenes": [
     {
       "id": "intro",
-      "label": "갈기의 먹선 → 산과 안개",
+      "label": "먹선 · 스크롤 진입 → 산과 안개 · 자동 재생",
       "src": "intro-ink-depth-480p24.mp4",
       "duration": 6,
       "fps": 24,
-      "mode": "auto",
+      "mode": "scroll",
       "caption": "돌에 새긴 선, 풍경이 되다",
       "captionUntil": 1.4,
       "transition": "none",
@@ -15,21 +15,23 @@
         "provider": "local-canvas",
         "source": "original-lion-mane-and-mountains",
         "motion": "mane ink growth and 5 original mountain layers"
-      }
+      },
+      "autoFrom": 2.375,
+      "footsteps": false
     },
     {
       "id": "aerial-entry",
-      "label": "마을 부감 → 입구 · 스크롤 이동",
+      "label": "산과 안개 → 마을 입구 · 자동 재생",
       "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/f56840cc-b7d5-4fd3-9a75-56d51ec3a911.mp4",
       "duration": 10,
       "fps": 24,
-      "mode": "scroll",
+      "mode": "auto",
       "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5 Unlimited",
         "generationId": "48c68feb-1e8d-419e-acf1-25575787fbe0",
-        "postprocess": "720p24 frequent keyframes, refined pine clusters, brighter ink palette, direct scroll seeking"
+        "postprocess": "720p24 frequent keyframes, refined pine clusters, brighter ink palette, automatic approach to entrance"
       },
       "caption": "어느 옛날, 공주목과 그 주변 고을에는\n신비로운 두 사자의 이야기가 떠돌고 있습니다.",
       "captionUntil": 5,
