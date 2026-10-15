@@ -1,5 +1,5 @@
 {
-  "version": "colored-entry-1",
+  "version": "reference-dialogue-1",
   "scenes": [
     {
       "id": "intro",
@@ -56,7 +56,7 @@
     {
       "id": "merchant",
       "label": "장사꾼의 이야기",
-      "src": "merchant-front-hold-480p24.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/e0560a7a-36f7-4ea0-8cad-45b8ee009dda.mp4",
       "sourceDuration": 27.708333333333332,
       "fps": 24,
       "mode": "dialogue",
@@ -64,16 +64,19 @@
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "cb4e4762-d7c3-4c62-baf2-456db63352ed",
-        "frames": 665,
-        "postprocess": "24fps; one initial head turn, stable frontal 3.5–5s ping-pong tail; responsive upper-body framing"
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
+        "sourceRangeSeconds": [
+          0,
+          6
+        ],
+        "postprocess": "24fps 720p, original dialogue timing with subtle reversible hold, responsive upper-body framing"
       },
       "neckSafeY": 0.75,
       "framing": {
         "cx": 0.486,
-        "headY": 0.4,
-        "neckY": 0.75,
+        "headY": 0.43,
+        "neckY": 0.78,
         "minX": 0.43,
         "maxX": 0.545
       }
@@ -101,7 +104,7 @@
     {
       "id": "farmer",
       "label": "농민의 이야기",
-      "src": "farmer-front-hold-480p24.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/a86546cc-4f84-4864-9a0a-e52b1624dcbf.mp4",
       "sourceDuration": 26.625,
       "fps": 24,
       "mode": "dialogue",
@@ -109,15 +112,18 @@
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "23bbda36-1c89-49ba-b97c-1d79547962c5",
-        "frames": 639,
-        "postprocess": "24fps; one initial head turn, stable frontal 3.5–5s ping-pong tail; responsive upper-body framing"
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
+        "sourceRangeSeconds": [
+          6,
+          12
+        ],
+        "postprocess": "24fps 720p, original dialogue timing with subtle reversible hold, responsive upper-body framing"
       },
       "neckSafeY": 0.53,
       "framing": {
         "cx": 0.498,
-        "headY": 0.08,
+        "headY": 0.1,
         "neckY": 0.53,
         "minX": 0.425,
         "maxX": 0.565
@@ -146,7 +152,7 @@
     {
       "id": "cook",
       "label": "찬모의 이야기",
-      "src": "cook-front-hold-480p24.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/55b4af1d-b843-4ca7-9a9a-a9c0cb6820e4.mp4",
       "sourceDuration": 22.291666666666668,
       "fps": 24,
       "mode": "dialogue",
@@ -154,16 +160,19 @@
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "369288e3-e99b-400c-a93a-5cb50690c40a",
-        "frames": 535,
-        "postprocess": "24fps; one initial head turn, stable frontal 3.5–5s ping-pong tail; responsive upper-body framing"
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
+        "sourceRangeSeconds": [
+          12,
+          18
+        ],
+        "postprocess": "24fps 720p, original dialogue timing with subtle reversible hold, responsive upper-body framing"
       },
       "neckSafeY": 0.62,
       "framing": {
         "cx": 0.492,
         "headY": 0.4,
-        "neckY": 0.62,
+        "neckY": 0.68,
         "minX": 0.445,
         "maxX": 0.54
       }
@@ -191,7 +200,7 @@
     {
       "id": "trio",
       "label": "주민 삼총사의 이야기",
-      "src": "trio-front-hold-480p24.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/07c74530-5eea-44f3-84b4-029d9afa2801.mp4",
       "sourceDuration": 29.0,
       "fps": 24,
       "mode": "dialogue",
@@ -199,16 +208,19 @@
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "03a18e07-8c96-4d8a-ae76-71aee3cb2406",
-        "frames": 696,
-        "postprocess": "24fps; one initial head turn, stable frontal 3.5–5s ping-pong tail; responsive upper-body framing"
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
+        "sourceRangeSeconds": [
+          18,
+          24
+        ],
+        "postprocess": "24fps 720p, original dialogue timing with subtle reversible hold, responsive upper-body framing"
       },
       "neckSafeY": 0.64,
       "framing": {
         "cx": 0.5,
-        "headY": 0.37,
-        "neckY": 0.64,
+        "headY": 0.35,
+        "neckY": 0.66,
         "minX": 0.12,
         "maxX": 0.88
       }
@@ -236,7 +248,7 @@
     {
       "id": "woodcutter",
       "label": "나무꾼의 이야기",
-      "src": "woodcutter-front-hold-480p24.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/875fda58-2013-47ad-82d1-6a90b73c84f1.mp4",
       "sourceDuration": 26.0,
       "fps": 24,
       "mode": "dialogue",
@@ -244,16 +256,19 @@
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "450f609c-7e3c-4009-95a6-0e623e542e33",
-        "frames": 624,
-        "postprocess": "24fps; one initial head turn, stable frontal 3.5–5s ping-pong tail; responsive upper-body framing"
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
+        "sourceRangeSeconds": [
+          24,
+          30
+        ],
+        "postprocess": "24fps 720p, original dialogue timing with subtle reversible hold, responsive upper-body framing"
       },
       "neckSafeY": 0.66,
       "framing": {
         "cx": 0.5,
-        "headY": 0.35,
-        "neckY": 0.66,
+        "headY": 0.34,
+        "neckY": 0.68,
         "minX": 0.445,
         "maxX": 0.55
       }
