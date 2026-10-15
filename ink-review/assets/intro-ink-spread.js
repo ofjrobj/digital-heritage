@@ -1,3 +1,4 @@
+import {normalizePaperPixels, samplePaperWhite, PAPER_RGB, PAPER_CSS} from './paper-color.js?v=archive-paper-1';
 const clamp=v=>Math.max(0,Math.min(1,v));
 const smooth=v=>{v=clamp(v);return v*v*(3-2*v);};
 const dims=im=>[im.naturalWidth||im.videoWidth||im.width,im.naturalHeight||im.videoHeight||im.height];
@@ -31,19 +32,13 @@ function paintMountainDepth(context,w,h,plates,progress,paper,village){
  context.globalAlpha=1;context.globalCompositeOperation='source-over';
  const veil=smooth((progress-.43)/.20)*(1-smooth((progress-.76)/.24));
  if(village&&veil>0){const drift=smooth((progress-.43)/.57);const banks=[[.18+.17*drift,.66-.09*drift,.62,.24,.76],[.87-.16*drift,.39+.12*drift,.59,.28,.80],[.48,.71-.10*drift,.70,.23,.56]];
-  for(const[x,y,rx,ry,opacity]of banks){context.save();context.translate(w*x,h*y);context.scale(w*rx,h*ry);const fog=context.createRadialGradient(0,0,0,0,0,1);fog.addColorStop(0,'rgba(240,240,238,1)');fog.addColorStop(.35,'rgba(240,240,238,.91)');fog.addColorStop(1,'rgba(240,240,238,0)');context.globalAlpha=veil*opacity;context.fillStyle=fog;context.fillRect(-1,-1,2,2);context.restore();}}
+  for(const[x,y,rx,ry,opacity]of banks){context.save();context.translate(w*x,h*y);context.scale(w*rx,h*ry);const fog=context.createRadialGradient(0,0,0,0,0,1);fog.addColorStop(0,'rgba(232,232,230,1)');fog.addColorStop(.35,'rgba(232,232,230,.91)');fog.addColorStop(1,'rgba(232,232,230,0)');context.globalAlpha=veil*opacity;context.fillStyle=fog;context.fillRect(-1,-1,2,2);context.restore();}}
  context.globalAlpha=1;context.globalCompositeOperation='source-over';
 }
 
 export const maneOrigins=Object.freeze([[.23,.47,0],[.77,.51,.018],[.27,.66,.045],[.75,.70,.065],[.21,.77,.09],[.80,.85,.11]].map(Object.freeze));
 export function createIntroInkSpread(options={}){
  let c=null;
- function normalizePaper(context,w,h,source){
-  const target=options.paperNormalization?.target;if(!target||!source)return;
-  const pixels=context.getImageData(0,0,w,h),d=pixels.data;
-  for(let i=0;i<d.length;i+=4)if(d[i+3])for(let ch=0;ch<3;ch++)d[i+ch]=Math.min(255,Math.round(d[i+ch]*target[ch]/source[ch]));
-  context.putImageData(pixels,0,0);
- }
  function prepare(w,h,lion,mountains){
   const [iw,ih]=dims(lion),[mw,mh]=dims(mountains);if(!iw||!ih||!mw||!mh)return null;
   const crop=ih*(options.lionCropBottom??.72);
@@ -52,7 +47,7 @@ export function createIntroInkSpread(options={}){
   const fit=Math.min(w*(.96+.20*square)/iw,h*(.51+.06*square)/crop);
   const r=typeof options.lionRect==='function'?options.lionRect(w,h,lion):options.lionRect||{x:(w-iw*fit)/2,y:h*(.395-.015*square)-crop*fit/2,w:iw*fit,h:crop*fit};
   const lionPlate=canvas(w,h),lp=lionPlate.getContext('2d',{willReadFrequently:true});
-  lp.filter=options.lionFilter||'none';lp.drawImage(lion,0,0,iw,crop,r.x,r.y,r.w,r.h);lp.filter='none';normalizePaper(lp,w,h,options.paperNormalization?.lion);
+  lp.filter=options.lionFilter||'none';lp.drawImage(lion,0,0,iw,crop,r.x,r.y,r.w,r.h);lp.filter='none';normalizePaperPixels(lp,w,h,samplePaperWhite(lion),PAPER_RGB);
   lp.globalCompositeOperation='destination-in';
   let g=lp.createLinearGradient(0,r.y,0,r.y+r.h);
   for(const [p,v]of[[0,'transparent'],[.09,'white'],[.83,'white'],[1,'transparent']])g.addColorStop(p,v);
@@ -61,8 +56,8 @@ export function createIntroInkSpread(options={}){
   for(const [p,v]of[[0,'transparent'],[.12,'white'],[.88,'white'],[1,'transparent']])g.addColorStop(p,v);
   lp.fillStyle=g;lp.fillRect(0,0,w,h);lp.globalCompositeOperation='source-over';
   const mountainPlate=canvas(w,h),mp=mountainPlate.getContext('2d'),k=Math.max(w/mw,h/mh);
-  mp.filter=options.mountainFilter||'none';mp.drawImage(mountains,(w-mw*k)/2,(h-mh*k)/2,mw*k,mh*k);normalizePaper(mp,w,h,options.paperNormalization?.mountains);
-  const mountainLayers=splitMountainInk(mountainPlate,w,h,mw,mh,options.paperNormalization?.target||[240,240,238]);
+  mp.filter=options.mountainFilter||'none';mp.drawImage(mountains,(w-mw*k)/2,(h-mh*k)/2,mw*k,mh*k);normalizePaperPixels(mp,w,h,samplePaperWhite(mountains),PAPER_RGB);
+  const mountainLayers=splitMountainInk(mountainPlate,w,h,mw,mh,PAPER_RGB);
   const mountainScene=canvas(w,h),ms=mountainScene.getContext('2d');
   const scale=Math.min(384/w,384/h),gw=Math.max(1,Math.round(w*scale)),gh=Math.max(1,Math.round(h*scale));
   const probe=canvas(gw,gh),pc=probe.getContext('2d',{willReadFrequently:true});pc.drawImage(lionPlate,0,0,gw,gh);
@@ -98,14 +93,15 @@ export function createIntroInkSpread(options={}){
     d[j]=d[j+1]=d[j+2]=255;d[j+3]=Math.round(a*255);wet[j]=93;wet[j+1]=101;wet[j+2]=95;wet[j+3]=Math.round(front*15);
    }
    c.mc.putImageData(c.pixels,0,0);c.wc.putImageData(c.wetPixels,0,0);
-   if(c.mountainLayers)paintMountainDepth(c.ms,w,h,c.mountainLayers,p,options.paper||'#f0f0ee',village);
+   if(c.mountainLayers)paintMountainDepth(c.ms,w,h,c.mountainLayers,p,options.paper||PAPER_CSS,village);
    c.rc.clearRect(0,0,w,h);c.rc.drawImage(c.mountainLayers?c.mountainScene:c.mountainPlate,0,0);c.rc.globalCompositeOperation='destination-in';c.rc.drawImage(c.mask,0,0,w,h);c.rc.globalCompositeOperation='source-over';c.last=p;c.lastVillage=village;
   }
-  ctx.save();ctx.globalCompositeOperation='source-over';ctx.fillStyle=options.paper||'#f0f0ee';ctx.fillRect(0,0,w,h);
+  ctx.save();ctx.globalCompositeOperation='source-over';ctx.fillStyle=options.paper||PAPER_CSS;ctx.fillRect(0,0,w,h);
   ctx.drawImage(c.lionPlate,0,0);ctx.drawImage(c.wet,0,0,w,h);ctx.drawImage(c.reveal,0,0);ctx.restore();return true;
  }
  return{draw,reset(){c=null;},proof(){return c?{type:'local-mane-ink-growth',lionRect:c.r,cropBottom:options.lionCropBottom??.72,origins:c.origins,progress:c.last,sourceAssetsModified:false,mountainLayers:c.mountainLayers?5:1,spatialTransform:'original mountain painting; fixed far ridge and outward middle/near layers'}:null;}};
 }
 const instances=new WeakMap();
 export function draw(ctx,w,h,progress,lion,mountains){let instance=instances.get(ctx);if(!instance){instance=createIntroInkSpread();instances.set(ctx,instance);}return instance.draw(ctx,w,h,progress,lion,mountains);}
+
 
