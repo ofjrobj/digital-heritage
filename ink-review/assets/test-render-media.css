@@ -43,3 +43,8 @@ body.test-render-media{--ui-copy:clamp(8px,min(1.65vw,2.7dvh),23px)}
 body.test-render-media #soundToggle{font-size:var(--ui-copy)!important;width:2.7em!important;height:2.7em!important;min-height:0!important;min-width:0!important;padding:.45em!important;box-sizing:border-box;right:1em!important;bottom:max(1em,env(safe-area-inset-bottom))!important}
 body.test-render-media #soundToggle :is(img,svg){width:1.8em!important;height:1.8em!important;display:block;object-fit:contain}
 body.test-render-media[data-dialogue="true"] #soundToggle{font-size:var(--dialogue-nav-font,var(--ui-copy))!important;top:max(.8em,env(safe-area-inset-top))!important;right:max(.8em,env(safe-area-inset-right))!important;bottom:auto!important}
+
+/* Keep centered narration legible over fine architectural ink. */
+body.test-render-media .tr-caption:not([data-intro="true"]){isolation:isolate;background:none;color:#262d29;text-shadow:0 1px 2px rgba(240,240,238,.9)}
+body.test-render-media .tr-caption:not([data-intro="true"])::before{content:"";position:absolute;z-index:-1;inset:-1.7em -3.5em;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,rgba(240,240,238,.98) 0 54%,rgba(240,240,238,.92) 69%,rgba(240,240,238,.45) 84%,transparent 100%);filter:blur(clamp(9px,1.1vw,16px))}
+@media(max-width:600px){body.test-render-media .tr-caption:not([data-intro="true"]){width:88%;line-height:1.9}body.test-render-media .tr-caption:not([data-intro="true"])::before{inset:-1.25em -1.5em}}

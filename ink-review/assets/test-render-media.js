@@ -5,14 +5,18 @@ import {createStoryVoices} from './story-voices.js?v=voices-timing-3';
 import {createMusicFade} from './story-audio-mix.js?v=soft-return-3';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=slow-steps-2';
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
-import {createIntroInkSpread} from './intro-ink-spread.js?v=mountain-depth-2';
+import {createIntroInkSpread} from './intro-ink-spread.js?v=mountain-bridge-3';
 const introEffect=createIntroInkSpread({paper:'#f0f0ee',paperNormalization:{target:[240,240,238],lion:[240,239,237],mountains:[243,242,240]},lionFilter:'saturate(.1) brightness(1.035)',mountainFilter:'saturate(.1) brightness(1.035)'});
 const introPaintings=['./cover-reference.png','./test-render/intro-mountains.webp'].map(path=>{const im=new Image();im.src=new URL(path,import.meta.url).href;return im;});
+const introVillage=new Image();introVillage.src=new URL('./test-render/aerial-bridge-first.png',import.meta.url).href;
+introVillage.onerror=()=>{introVillage.dataset.failed='true';};
+const introAssetsReady=()=>[...introPaintings,introVillage].every(im=>im.complete&&im.naturalWidth);
+const introAssetsFailed=()=>[...introPaintings,introVillage].some(im=>im.dataset.failed==='true'||im.complete&&!im.naturalWidth);
 const $=id=>document.getElementById(id),stage=$('stage'),canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const PAPER='#f0f0ee';
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
 const manifestURL=new URL('./test-render/manifest.json?v=portrait-fit-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
-const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=portrait-fit-1',import.meta.url).href;document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=mountain-bridge-3',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
 stage.style.setProperty('--nav-paper','0');
@@ -34,8 +38,8 @@ function draw(source){
  if(!source)return false;const sw=source.videoWidth||source.naturalWidth,sh=source.videoHeight||source.naturalHeight;if(!sw||!sh)return false;
  ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);const scale=Math.max(width/sw,height/sh);
  const sceneRecord=records.find(r=>r&&(r.video===source||r.image===source));
- if(sceneRecord?.scene.id==='intro'&&introPaintings.every(im=>im.complete&&im.naturalWidth)){
-  const time=Math.floor(sceneRecord.video.currentTime*24)/24;const next=records.find(r=>r?.scene.id==='aerial-entry');const village=next?.video.readyState>=2?next.video:next?.image;introEffect.draw(ctx,width,height,clamp((time-.35)/5),...introPaintings,village);
+ if(sceneRecord?.scene.id==='intro'&&introAssetsReady()){
+  const time=Math.floor(sceneRecord.video.currentTime*24)/24;introEffect.draw(ctx,width,height,clamp((time-.35)/5),...introPaintings,introVillage);
  }else if(sceneRecord?.scene.id==='seasons'){
   const t=sceneRecord.video.currentTime,approach=ease(clamp((t-10)/8.5)),zoom=1+.12*approach;
   const x=(width-sw*scale)/2,y=(height-sh*scale)/2,fx=x+sw*scale*.52,fy=y+sh*scale*.66;
@@ -52,7 +56,7 @@ function draw(source){
 }
 function resize(){const d=Math.min(devicePixelRatio||1,2);width=Math.max(1,stage.clientWidth);height=Math.max(1,stage.clientHeight);canvas.width=Math.round(width*d);canvas.height=Math.round(height*d);ctx.setTransform(d,0,0,d,0,0);hasFrame=false;ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);draw(lastSource);}
 addEventListener('resize',resize);new ResizeObserver(resize).observe(stage);resize();
-function showText(){const s=scenes[index],panel=$('cinemaDialogue');if(!s)return;if(s.id==='seasons')prepareArchive();const speaking=s.mode==='dialogue';document.body.dataset.dialogue=String(speaking);if(panel){panel.hidden=!speaking;if(speaking){panel.querySelector('h2').textContent=names[s.speaker]||s.label;panel.querySelector('p').textContent=dialogueCopy[s.speaker]?.testimony||'';panel.querySelector('p').scrollTop=0;}}caption.dataset.intro=String(s.id==='intro');caption.textContent=s.caption||'';caption.hidden=!s.caption||speaking;if($('next'))$('next').textContent=index<scenes.length-1?'다음 장면으로':'아카이브로';voices.select(speaking?s.speaker:-1);dialogueFit.invalidate();}
+function showText(){const s=scenes[index],panel=$('cinemaDialogue');if(!s)return;if(s.id==='seasons')prepareArchive();const speaking=s.mode==='dialogue';document.body.dataset.dialogue=String(speaking);if(panel){panel.hidden=!speaking;if(speaking){panel.querySelector('h2').textContent=names[s.speaker]||s.label;panel.querySelector('p').textContent=dialogueCopy[s.speaker]?.testimony||'';panel.querySelector('p').scrollTop=0;}}caption.dataset.scene=s.id;caption.dataset.intro=String(s.id==='intro');caption.textContent=s.caption||'';caption.hidden=!s.caption||speaking;if($('next'))$('next').textContent=index<scenes.length-1?'다음 장면으로':'아카이브로';voices.select(speaking?s.speaker:-1);dialogueFit.invalidate();}
 function prepare(i,at=0){
  const s=scenes[i],slot=current?1-current.slot:0,v=videos[slot],r={slot,scene:s,video:v,image:null,loaded:false,error:null,still:!s.src,at,clipIn:Math.max(0,Number(s.clipIn)||0),playPending:false};
  records[slot]=r;v.pause();v.onloadeddata=null;v.onloadedmetadata=null;v.onerror=null;v.removeAttribute('src');v.load();
@@ -108,11 +112,11 @@ function frame(now){
  const dt=document.hidden?0:Math.min(.08,Math.max(0,(now-last)/1000));last=now;
  if(!hasFrame&&current?.loaded){if(current.still&&current.image)draw(current.image);else if(current.video.readyState>=2)draw(current.video);}
  if(transition){
-  const t=transition;t.elapsed+=dt;
+  const t=transition;t.elapsed+=dt;if(t.record.scene.id==='intro'&&introAssetsFailed())t.record.error='인트로 이미지를 불러오지 못했습니다.';
   if(t.phase==='loading'){
    mistAmount(0);ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);status('Loading...');
    if(t.record.error){status(t.record.error,true);}
-   else if(t.record.loaded&&!t.record.video.seeking&&(t.record.scene.id!=='intro'||introPaintings.every(im=>im.complete&&im.naturalWidth))){
+   else if(t.record.loaded&&!t.record.video.seeking&&(t.record.scene.id!=='intro'||introAssetsReady())){
     status('');loadingHiddenAt=now;t.phase='gap';t.elapsed=0;document.body.dataset.startup='gap';
    }
   }else if(t.phase==='gap'){
@@ -121,7 +125,7 @@ function frame(now){
    const p=t.fade?clamp(t.elapsed/t.fade):1;mistAmount(t.fade?ease(p):0);
    if(!hasFrame&&t.record.image){draw(t.record.image);status('Loading...');}
    if(t.record.error){mistAmount(.25);status(t.record.error+' Story를 눌러 다시 시작할 수도 있습니다.',true);}
-   if(p>=1&&t.record.loaded&&!t.record.error&&!t.record.video.seeking){
+   if(p>=1&&t.record.loaded&&!t.record.error&&!t.record.video.seeking&&(t.record.scene.id!=='intro'||introAssetsReady())){
     current=t.record;index=t.to;local=Math.min(t.at,duration(index));target=local;current.video.pause();t.phase='out';t.elapsed=0;document.body.dataset.ready='true';
     draw(current.still?current.image:current.video);status(current.still?'이미지 미리보기':'');
    }
@@ -137,7 +141,7 @@ function frame(now){
   if(!current.still){if(active&&(motion||!dialogue))play(current);else v.pause();}
   if(active){if(dialogue||current.still||v.loop)local=Math.min(d,local+dt);else if(!v.paused||v.ended)local=clamp(v.currentTime-current.clipIn,0,d);}
   if(compare&&current.image)draw(current.image);else if(drawable)draw(current.still?current.image:v);
-  caption.dataset.intro=String(s.id==='intro');stage.style.setProperty('--nav-paper',String(s.id==='intro'?ease(clamp((local-4.2)/1.5)):1));caption.style.opacity=String(s.captionUntil==null?1:1-clamp((local-s.captionUntil)/.6));
+  caption.dataset.scene=s.id;caption.dataset.intro=String(s.id==='intro');stage.style.setProperty('--nav-paper',String(s.id==='intro'?ease(clamp((local-4.2)/1.5)):1));caption.style.opacity=String(s.captionUntil==null?1:1-clamp((local-s.captionUntil)/.6));
   voiceEnabled(sound&&allowed&&ready&&!current.error);if(dialogue&&allowed&&ready&&!current.error)voices.tick(dt);
   const voice=voices.proof(),duck=finished||dialogue&&!voice.ended;fadeMusic(sound&&!document.hidden&&!paused&&!duck ? .045 : 0,dt);
   if(active&&s.bridge&&local>=s.bridge.at&&local<s.bridge.resume-.05){requestScene(index,s.bridge.resume);transition.fade=s.bridge.fade||.95;}

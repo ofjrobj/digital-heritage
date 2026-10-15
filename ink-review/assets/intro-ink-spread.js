@@ -21,10 +21,18 @@ function splitMountainInk(plate,w,h,mw,mh,paper){
  contexts.forEach((p,i)=>p.putImageData(pixels[i],0,0));return plates;
 }
 function paintMountainDepth(context,w,h,plates,progress,paper,village){
- context.globalCompositeOperation='source-over';context.fillStyle=paper;context.fillRect(0,0,w,h);if(village){const [vw,vh]=dims(village),q=smooth((progress-.67)/.33);if(vw&&vh){const z=.96+.04*q,k=Math.max(w/vw,h/vh)*z;context.globalAlpha=q;context.drawImage(village,(w-vw*k)/2,(h-vh*k)/2,vw*k,vh*k);context.globalAlpha=1;}}context.globalCompositeOperation='multiply';
- const near=smooth((progress-.42)/.58),middle=smooth((progress-.59)/.41);
- const offsets=[[0,0],[-w*.20*middle,h*.025*middle],[w*.20*middle,h*.025*middle],[-w*.54*near,h*.085*near],[w*.54*near,h*.085*near]];
- plates.forEach((plate,i)=>{context.globalAlpha=village?1-smooth((progress-[.69,.82,.82,.92,.92][i])/(1-[.69,.82,.82,.92,.92][i])):1;context.drawImage(plate,offsets[i][0],offsets[i][1],w,h);});context.globalAlpha=1;context.globalCompositeOperation='source-over';
+ context.globalCompositeOperation='source-over';context.fillStyle=paper;context.fillRect(0,0,w,h);
+ const land=smooth((progress-.50)/.45);
+ if(village){const [vw,vh]=dims(village);if(vw&&vh){const zoom=1+.055*(1-land),k=Math.max(w/vw,h/vh)*zoom;context.globalAlpha=land;context.drawImage(village,(w-vw*k)/2+w*.028*(1-land),(h-vh*k)/2+h*.012*(1-land),vw*k,vh*k);context.globalAlpha=1;}}
+ context.globalCompositeOperation='multiply';
+ const near=smooth((progress-.40)/.60),middle=smooth((progress-.55)/.45);
+ const offsets=[[0,0],[-w*.23*middle,h*.035*middle],[w*.23*middle,h*.035*middle],[-w*.57*near,h*.09*near],[w*.57*near,h*.09*near]];
+ plates.forEach((plate,i)=>{const from=[.61,.72,.72,.83,.83][i];context.globalAlpha=village?1-smooth((progress-from)/(1-from)):1;context.drawImage(plate,offsets[i][0],offsets[i][1],w,h);});
+ context.globalAlpha=1;context.globalCompositeOperation='source-over';
+ const veil=smooth((progress-.43)/.20)*(1-smooth((progress-.76)/.24));
+ if(village&&veil>0){const drift=smooth((progress-.43)/.57);const banks=[[.18+.17*drift,.66-.09*drift,.62,.24,.76],[.87-.16*drift,.39+.12*drift,.59,.28,.80],[.48,.71-.10*drift,.70,.23,.56]];
+  for(const[x,y,rx,ry,opacity]of banks){context.save();context.translate(w*x,h*y);context.scale(w*rx,h*ry);const fog=context.createRadialGradient(0,0,0,0,0,1);fog.addColorStop(0,'rgba(240,240,238,1)');fog.addColorStop(.35,'rgba(240,240,238,.91)');fog.addColorStop(1,'rgba(240,240,238,0)');context.globalAlpha=veil*opacity;context.fillStyle=fog;context.fillRect(-1,-1,2,2);context.restore();}}
+ context.globalAlpha=1;context.globalCompositeOperation='source-over';
 }
 
 export const maneOrigins=Object.freeze([[.23,.47,0],[.77,.51,.018],[.27,.66,.045],[.75,.70,.065],[.21,.77,.09],[.80,.85,.11]].map(Object.freeze));
