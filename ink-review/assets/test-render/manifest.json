@@ -62,9 +62,9 @@
     {
       "id": "merchant",
       "label": "장사꾼의 이야기",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/e0560a7a-36f7-4ea0-8cad-45b8ee009dda.mp4",
-      "sourceDuration": 27.708333333333332,
-      "fps": 24,
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/8db8cb9b-22f7-4d57-b54a-bf2374b7444e.mp4",
+      "sourceDuration": 27.716666666666665,
+      "fps": 60,
       "mode": "dialogue",
       "speaker": 0,
       "loop": false,
@@ -73,10 +73,11 @@
         "model": "Seedance 2.5 Edit Unlimited",
         "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
         "sourceRangeSeconds": [
-          0,
-          6
+          0.0,
+          6.0
         ],
-        "postprocess": "24fps 720p, original dialogue timing with subtle reversible hold, responsive upper-body framing"
+        "postprocess": "Native1920x1080, CRF16, GOP6, silent;24fps motion-interpolated to60fps; exact character cuts and reversible hold retain original voice timing",
+        "deliveryFrameProvenance": "24fps source with motion-inferred60fps; no claim of native60fps capture"
       },
       "neckSafeY": 0.75,
       "framing": {
@@ -85,7 +86,8 @@
         "neckY": 0.78,
         "minX": 0.43,
         "maxX": 0.545
-      }
+      },
+      "sourceFrames": 1663
     },
     {
       "id": "merchant-farmer",
@@ -105,9 +107,9 @@
     {
       "id": "farmer",
       "label": "농민의 이야기",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/a86546cc-4f84-4864-9a0a-e52b1624dcbf.mp4",
-      "sourceDuration": 26.625,
-      "fps": 24,
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/570cb9dc-0dd0-42ff-886c-558e592c7cde.mp4",
+      "sourceDuration": 26.633333333333333,
+      "fps": 60,
       "mode": "dialogue",
       "speaker": 1,
       "loop": false,
@@ -116,10 +118,11 @@
         "model": "Seedance 2.5 Edit Unlimited",
         "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
         "sourceRangeSeconds": [
-          6,
-          12
+          6.0,
+          11.916666666666666
         ],
-        "postprocess": "24fps 720p, original dialogue timing with subtle reversible hold, responsive upper-body framing"
+        "postprocess": "Native1920x1080, CRF16, GOP6, silent;24fps motion-interpolated to60fps; exact character cuts and reversible hold retain original voice timing",
+        "deliveryFrameProvenance": "24fps source with motion-inferred60fps; no claim of native60fps capture"
       },
       "neckSafeY": 0.53,
       "framing": {
@@ -128,7 +131,8 @@
         "neckY": 0.53,
         "minX": 0.425,
         "maxX": 0.565
-      }
+      },
+      "sourceFrames": 1598
     },
     {
       "id": "farmer-cook",
@@ -148,9 +152,9 @@
     {
       "id": "cook",
       "label": "찬모의 이야기",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/55b4af1d-b843-4ca7-9a9a-a9c0cb6820e4.mp4",
-      "sourceDuration": 22.291666666666668,
-      "fps": 24,
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/6360e925-bb63-4670-98e9-6f8d116856df.mp4",
+      "sourceDuration": 22.3,
+      "fps": 60,
       "mode": "dialogue",
       "speaker": 2,
       "loop": false,
@@ -159,10 +163,11 @@
         "model": "Seedance 2.5 Edit Unlimited",
         "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
         "sourceRangeSeconds": [
-          12,
-          18
+          11.916666666666666,
+          17.833333333333332
         ],
-        "postprocess": "24fps 720p, original dialogue timing with subtle reversible hold, responsive upper-body framing"
+        "postprocess": "Native1920x1080, CRF16, GOP6, silent;24fps motion-interpolated to60fps; exact character cuts and reversible hold retain original voice timing",
+        "deliveryFrameProvenance": "24fps source with motion-inferred60fps; no claim of native60fps capture"
       },
       "neckSafeY": 0.62,
       "framing": {
@@ -171,7 +176,8 @@
         "neckY": 0.68,
         "minX": 0.445,
         "maxX": 0.54
-      }
+      },
+      "sourceFrames": 1338
     },
     {
       "id": "cook-trio",
@@ -191,9 +197,9 @@
     {
       "id": "trio",
       "label": "주민 삼총사의 이야기",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/07c74530-5eea-44f3-84b4-029d9afa2801.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/312fb4a1-b912-4806-99b3-a321869c9c03.mp4",
       "sourceDuration": 29,
-      "fps": 24,
+      "fps": 60,
       "mode": "dialogue",
       "speaker": 3,
       "loop": false,
@@ -202,10 +208,11 @@
         "model": "Seedance 2.5 Edit Unlimited",
         "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
         "sourceRangeSeconds": [
-          18,
-          24
+          17.833333333333332,
+          23.708333333333332
         ],
-        "postprocess": "24fps 720p, original dialogue timing with subtle reversible hold, responsive upper-body framing"
+        "postprocess": "Native1920x1080, CRF16, GOP6, silent;24fps motion-interpolated to60fps; exact character cuts and reversible hold retain original voice timing",
+        "deliveryFrameProvenance": "24fps source with motion-inferred60fps; no claim of native60fps capture"
       },
       "neckSafeY": 0.64,
       "framing": {
@@ -214,7 +221,8 @@
         "neckY": 0.66,
         "minX": 0.12,
         "maxX": 0.88
-      }
+      },
+      "sourceFrames": 1740
     },
     {
       "id": "trio-woodcutter",
@@ -234,9 +242,9 @@
     {
       "id": "woodcutter",
       "label": "나무꾼의 이야기",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/875fda58-2013-47ad-82d1-6a90b73c84f1.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/bedec95f-0e4a-4dee-ae5f-b83ac893a15a.mp4",
       "sourceDuration": 26,
-      "fps": 24,
+      "fps": 60,
       "mode": "dialogue",
       "speaker": 4,
       "loop": false,
@@ -245,10 +253,11 @@
         "model": "Seedance 2.5 Edit Unlimited",
         "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
         "sourceRangeSeconds": [
-          24,
-          30
+          23.708333333333332,
+          29.708333333333332
         ],
-        "postprocess": "24fps 720p, original dialogue timing with subtle reversible hold, responsive upper-body framing"
+        "postprocess": "Native1920x1080, CRF16, GOP6, silent;24fps motion-interpolated to60fps; exact character cuts and reversible hold retain original voice timing",
+        "deliveryFrameProvenance": "24fps source with motion-inferred60fps; no claim of native60fps capture"
       },
       "neckSafeY": 0.66,
       "framing": {
@@ -257,7 +266,8 @@
         "neckY": 0.68,
         "minX": 0.445,
         "maxX": 0.55
-      }
+      },
+      "sourceFrames": 1560
     },
     {
       "id": "return-lions",
@@ -277,28 +287,31 @@
     {
       "id": "seasons",
       "label": "사계절과 시간 · 한국화",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/7f8af102-e124-49a2-8db8-cd2703c1d3aa.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/cd4dba34-5a80-44f2-8468-79af1b6fedca.mp4",
       "duration": 22.083333333333332,
-      "fps": 24,
+      "fps": 60,
       "mode": "auto",
       "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Genjutsu Custom Style",
         "generationId": "7e9c5ae1-bf76-4732-8441-d8e782952f22",
-        "postprocess": "720p24, GOP6, silent; source after18s slowed2x to hold four researchers and lengthen fade",
-        "review": "Interim ink-style improvement; four researchers and two lions within a distinct gravel bed. Gravel boundary differs from628; source seasonal time-lapse remains."
+        "postprocess": "Native1280x720, CRF16, GOP6, silent;24fps motion-interpolated to60fps after continuous2x slowdown past18s; original four-person ending and fade preserved",
+        "review": "Interim ink-style improvement; four researchers and two lions within a distinct gravel bed. Gravel boundary differs from628; source seasonal time-lapse remains.",
+        "deliveryFrameProvenance": "24fps source with motion-inferred60fps; no claim of native60fps capture"
       },
       "sourceDuration": 22.083333333333332,
       "motionBaked": true,
       "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/41cc0b31-4bd2-4e4f-9bd8-bd10e193c0b7.mp3",
       "startDelay": 2,
-      "transition": "none"
+      "transition": "none",
+      "sourceFrames": 1325
     }
   ],
   "review": {
     "geometryPass": false,
-    "excludedIntermediateFrames": true,
-    "remaining": "Native continuous route replacements still under style and location review."
+    "excludedIntermediateFrames": false,
+    "remaining": "Native continuous route replacements still under style and location review.",
+    "deliveryQuality": "Native source resolution preserved; reviewed60fps delivery for dialogue and modern scenes; whole ink-style replacement still pending"
   }
 }
