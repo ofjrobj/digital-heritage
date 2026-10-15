@@ -7,3 +7,22 @@
 @media(min-width:701px),(orientation:landscape){.archive .global-hotspot-set{top:17%;left:50%;right:auto;transform:translateX(-50%)}.archive .global-hotspot-set .hotspot span{top:50%;left:calc(100% + 10px);right:auto;transform:translateY(-50%)}}
 @media(orientation:landscape) and (max-height:500px){.archive .global-hotspot-set{top:14%}.archive .global-hotspot-set .hotspot,.archive .global-hotspot-set .surface-toggle{width:24px;height:24px}.archive .detail-card{bottom:12px;max-height:26dvh;padding:10px 16px}}
 @media(orientation:portrait) and (max-width:700px){.archive .detail-card{width:calc(100% - 40px);max-height:200px}}
+
+/* Keep object labels and the description in separate intrinsic rows. */
+.archive{--archive-copy:clamp(14px,min(calc(8px + .6vw),2.5dvh),20px)}
+.archive .object-stage{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;column-gap:6%;row-gap:1.1em;height:100dvh;min-height:0;margin:0;padding:clamp(88px,17dvh,150px) 0 max(16px,env(safe-area-inset-bottom));font-size:var(--archive-copy)}
+.archive .object-card{position:relative;inset:auto;grid-row:1;display:grid;grid-template-rows:minmax(0,1fr) auto;row-gap:.65em;width:100%;height:100%;min-width:0;min-height:0}
+.archive .male-card{grid-column:1}.archive .female-card{grid-column:2}
+.archive .object-card .scene{position:relative;inset:auto;grid-row:1;width:100%;height:100%;min-height:0}
+.archive .object-card .card-label{position:static;grid-row:2;justify-self:center;transform:none;margin:0;gap:.18em;max-width:100%;line-height:1.35}
+.archive .object-card .card-label strong{font-size:1.5em;line-height:1.35}
+.archive .object-card .card-label em{font-size:.55em;line-height:1.5}
+.archive .detail-card{position:relative;inset:auto;grid-column:1/-1;grid-row:2;justify-self:center;align-self:end;transform:none;margin:0;width:min(680px,calc(100% - 96px));min-width:0;max-height:min(190px,30dvh);padding:.85em 1.35em;overflow:auto;font-size:inherit}
+.archive .detail-card h3{margin:0 0 .4em;font-size:1.4em;line-height:1.35}
+.archive .detail-card .detail-copy{font-size:1em;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}
+.archive .detail-card .detail-status{display:block;margin-top:.8em!important;padding-top:.6em;font-size:.72em;line-height:1.5;letter-spacing:0;white-space:normal}
+@media(orientation:landscape) and (max-height:500px){.archive .object-stage{padding-top:70px;padding-bottom:10px;row-gap:.7em}.archive .detail-card{max-height:26dvh;padding:.65em 1.1em}}
+@media(orientation:portrait) and (max-width:700px){.archive{height:auto;min-height:100dvh;overflow:auto}.archive .object-stage{position:relative;inset:auto;height:auto;min-height:100dvh;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(240px,38dvh) minmax(240px,38dvh) auto;padding-top:110px;column-gap:0}.archive .male-card{grid-column:1;grid-row:1}.archive .female-card{grid-column:1;grid-row:2}.archive .detail-card{grid-column:1;grid-row:3;width:calc(100% - 40px);max-height:none}}
+.archive .wordmark{left:max(8px,calc(96px - 4vw));top:clamp(48px,9dvh,72px)}
+.archive .wordmark .wordmark-title{font-size:clamp(20px,2.1vw,27px)}
+.archive .object-card .card-label em{display:block}

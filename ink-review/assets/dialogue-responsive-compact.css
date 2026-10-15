@@ -1,17 +1,11 @@
-body #cinemaDialogue,body[data-camera-test] #cinemaDialogue{--reading-copy:clamp(13px,min(calc(7.614285714px + .928571429vw),2.708333333dvh),25px);--reading-title:clamp(16px,min(calc(9.244px + 1.27vw),3.541666667dvh),33px)}
-body #cinemaDialogue h2,body[data-camera-test] #cinemaDialogue h2{font-size:var(--reading-title)!important;flex-shrink:0}
-body #cinemaDialogue p,body[data-camera-test] #cinemaDialogue p{font-size:var(--reading-copy)!important;min-width:0;min-height:0;max-width:100%;overflow:auto;overflow-wrap:anywhere}
-/* Let constrained windows reveal more of the character behind the dialogue. */
-@media(max-width:760px),(max-height:500px){
- body #cinemaDialogue,body[data-camera-test] #cinemaDialogue{height:auto!important;min-height:0!important;max-height:min(46dvh,calc(100dvh - 140px))!important;padding:clamp(10px,min(2vw,2.8dvh),14px) clamp(24px,4vw,30px)!important;gap:6px!important}
- body #cinemaDialogue h2,body[data-camera-test] #cinemaDialogue h2{font-size:var(--reading-title)!important;line-height:1.4!important;flex-shrink:0}
- body #cinemaDialogue p,body[data-camera-test] #cinemaDialogue p{font-size:var(--reading-copy)!important;line-height:1.6!important;min-height:0;overflow:auto;overflow-wrap:anywhere}
- body #cinemaDialogue .hanji-corner{width:18px;height:18px}
- body #cinemaDialogue .hanji-corner.tl{left:5px;top:5px}
- body #cinemaDialogue .hanji-corner.tr{right:5px;top:5px}
- body #cinemaDialogue .hanji-corner.bl{left:5px;bottom:5px}
- body #cinemaDialogue .hanji-corner.br{right:5px;bottom:5px}
-}
+body #cinemaDialogue,body[data-camera-test] #cinemaDialogue{--reading-copy:clamp(13px,min(calc(7.614285714px + .928571429vw),2.708333333dvh),25px);--reading-title:calc(var(--reading-copy)*1.307692);font-size:var(--reading-copy);height:auto!important;min-height:0!important;max-height:min(46dvh,calc(100dvh - var(--dialogue-floor) - 84px))!important;padding:.95em 2.1em!important;gap:.5em!important}
+body #cinemaDialogue h2,body[data-camera-test] #cinemaDialogue h2{font-size:var(--reading-title)!important;line-height:1.4!important;margin:0!important;flex-shrink:0}
+body #cinemaDialogue p,body[data-camera-test] #cinemaDialogue p{font-size:var(--reading-copy)!important;line-height:1.65!important;margin:0!important;min-width:0;min-height:0;max-width:100%;overflow:auto;overflow-wrap:anywhere}
+body #cinemaDialogue .hanji-corner{width:1.5em;height:1.5em}
+body #cinemaDialogue .hanji-corner.tl{left:.3em;top:.3em}
+body #cinemaDialogue .hanji-corner.tr{right:.3em;top:.3em}
+body #cinemaDialogue .hanji-corner.bl{left:.3em;bottom:.3em}
+body #cinemaDialogue .hanji-corner.br{right:.3em;bottom:.3em}
 
 body{--dialogue-floor:max(136px,calc(env(safe-area-inset-bottom) + 128px));--sound-floor:max(80px,calc(env(safe-area-inset-bottom) + 72px))}
 body #cinemaDialogue,body[data-camera-test] #cinemaDialogue,body[data-mode="play"] #cinemaDialogue{bottom:var(--dialogue-floor)!important}

@@ -1,0 +1,72 @@
+const clamp=v=>Math.max(0,Math.min(1,v));
+const smooth=v=>{v=clamp(v);return v*v*(3-2*v);};
+const dims=im=>[im.naturalWidth||im.videoWidth||im.width,im.naturalHeight||im.videoHeight||im.height];
+const canvas=(w,h)=>{const c=typeof document!=='undefined'?document.createElement('canvas'):new OffscreenCanvas(w,h);c.width=w;c.height=h;return c;};
+export const maneOrigins=Object.freeze([[.23,.47,0],[.77,.51,.018],[.27,.66,.045],[.75,.70,.065],[.21,.77,.09],[.80,.85,.11]].map(Object.freeze));
+export function createIntroInkSpread(options={}){
+ let c=null;
+ function normalizePaper(context,w,h,source){
+  const target=options.paperNormalization?.target;if(!target||!source)return;
+  const pixels=context.getImageData(0,0,w,h),d=pixels.data;
+  for(let i=0;i<d.length;i+=4)if(d[i+3])for(let ch=0;ch<3;ch++)d[i+ch]=Math.min(255,Math.round(d[i+ch]*target[ch]/source[ch]));
+  context.putImageData(pixels,0,0);
+ }
+ function prepare(w,h,lion,mountains){
+  const [iw,ih]=dims(lion),[mw,mh]=dims(mountains);if(!iw||!ih||!mw||!mh)return null;
+  const crop=ih*(options.lionCropBottom??.72),fit=Math.min(w*.96/iw,h*.51/crop);
+  const r=typeof options.lionRect==='function'?options.lionRect(w,h,lion):options.lionRect||{x:(w-iw*fit)/2,y:h*.14+(h*.51-crop*fit)/2,w:iw*fit,h:crop*fit};
+  const lionPlate=canvas(w,h),lp=lionPlate.getContext('2d',{willReadFrequently:true});
+  lp.filter=options.lionFilter||'none';lp.drawImage(lion,0,0,iw,crop,r.x,r.y,r.w,r.h);lp.filter='none';normalizePaper(lp,w,h,options.paperNormalization?.lion);
+  lp.globalCompositeOperation='destination-in';
+  let g=lp.createLinearGradient(0,r.y,0,r.y+r.h);
+  for(const [p,v]of[[0,'transparent'],[.09,'white'],[.83,'white'],[1,'transparent']])g.addColorStop(p,v);
+  lp.fillStyle=g;lp.fillRect(0,0,w,h);
+  g=lp.createLinearGradient(r.x,0,r.x+r.w,0);
+  for(const [p,v]of[[0,'transparent'],[.12,'white'],[.88,'white'],[1,'transparent']])g.addColorStop(p,v);
+  lp.fillStyle=g;lp.fillRect(0,0,w,h);lp.globalCompositeOperation='source-over';
+  const mountainPlate=canvas(w,h),mp=mountainPlate.getContext('2d'),k=Math.max(w/mw,h/mh);
+  mp.filter=options.mountainFilter||'none';mp.drawImage(mountains,(w-mw*k)/2,(h-mh*k)/2,mw*k,mh*k);normalizePaper(mp,w,h,options.paperNormalization?.mountains);
+  const scale=Math.min(384/w,384/h),gw=Math.max(1,Math.round(w*scale)),gh=Math.max(1,Math.round(h*scale));
+  const probe=canvas(gw,gh),pc=probe.getContext('2d',{willReadFrequently:true});pc.drawImage(lionPlate,0,0,gw,gh);
+  let rgb=null;try{rgb=pc.getImageData(0,0,gw,gh).data;}catch{}
+  const field=new Float32Array(gw*gh),cost=new Float32Array(gw*gh),origins=[];field.fill(1e6);
+  for(let y=0;y<gh;y++)for(let x=0;x<gw;x++)cost[y*gw+x]=.94+.16*(Math.sin(x*.36+Math.sin(y*.12)*2.7)+.5*Math.sin(y*.47+x*.17));
+  for(const[u,v,delay]of options.origins||maneOrigins){
+   const cx=(r.x+r.w*u)/w*gw,cy=(r.y+r.h*v)/h*gh,rx=Math.max(2,r.w/w*gw*.13),ry=Math.max(2,r.h/h*gh*.055);let found=0;
+   for(let y=Math.max(0,Math.floor(cy-ry));y<=Math.min(gh-1,Math.ceil(cy+ry));y++)for(let x=Math.max(0,Math.floor(cx-rx));x<=Math.min(gw-1,Math.ceil(cx+rx));x++){
+    const d=((x-cx)/rx)**2+((y-cy)/ry)**2,i=y*gw+x,j=i*4;if(d>1)continue;
+    if(rgb&&rgb[j+3]>100&&(rgb[j]*.213+rgb[j+1]*.715+rgb[j+2]*.072)<190){field[i]=Math.min(field[i],delay*Math.min(gw,gh)*.4+d*2);found++;}
+   }
+   if(!found){const x=Math.max(0,Math.min(gw-1,Math.round(cx))),y=Math.max(0,Math.min(gh-1,Math.round(cy)));field[y*gw+x]=delay*Math.min(gw,gh)*.4;}
+   origins.push({x:cx/gw,y:cy/gh,detectedInkPixels:found});
+  }
+  for(let pass=0;pass<3;pass++){
+   for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){const i=y*gw+x,t=cost[i];if(x)field[i]=Math.min(field[i],field[i-1]+t*.78);if(y)field[i]=Math.min(field[i],field[i-gw]+t*1.26);if(x&&y)field[i]=Math.min(field[i],field[i-gw-1]+t*1.48);if(x+1<gw&&y)field[i]=Math.min(field[i],field[i-gw+1]+t*1.48);}
+   for(let y=gh-1;y>=0;y--)for(let x=gw-1;x>=0;x--){const i=y*gw+x,t=cost[i];if(x+1<gw)field[i]=Math.min(field[i],field[i+1]+t*.78);if(y+1<gh)field[i]=Math.min(field[i],field[i+gw]+t*1.26);if(x+1<gw&&y+1<gh)field[i]=Math.min(field[i],field[i+gw+1]+t*1.48);if(x&&y+1<gh)field[i]=Math.min(field[i],field[i+gw-1]+t*1.48);}
+  }
+  let max=0;for(const d of field)max=Math.max(max,d);
+  for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){const i=y*gw+x,n=(.45*Math.sin(x*.049+y*.026)+.25*Math.sin(x*.095-y*.13)+.14*Math.sin(x*.31+y*.19))*.055;field[i]=Math.max(0,field[i]+max*n*smooth(field[i]/20));}
+  max=0;for(const d of field)max=Math.max(max,d);for(let i=0;i<field.length;i++)field[i]/=max||1;
+  const mask=canvas(gw,gh),mc=mask.getContext('2d'),wet=canvas(gw,gh),wc=wet.getContext('2d'),reveal=canvas(w,h),rc=reveal.getContext('2d');
+  return{w,h,lion,mountains,r,lionPlate,mountainPlate,field,mask,mc,wet,wc,pixels:mc.createImageData(gw,gh),wetPixels:wc.createImageData(gw,gh),reveal,rc,origins,last:-1};
+ }
+ function draw(ctx,w,h,progress,lion,mountains){
+  if(!ctx||!(w>0&&h>0)||!lion||!mountains)return false;w=Math.round(w);h=Math.round(h);
+  if(!c||c.w!==w||c.h!==h||c.lion!==lion||c.mountains!==mountains)c=prepare(w,h,lion,mountains);if(!c)return false;
+  const p=clamp(Number(progress)||0),u=clamp((p-.04)/.94)*1.065;
+  if(c.last!==p){
+   const d=c.pixels.data,wet=c.wetPixels.data,gain=smooth(p/.08)*(1-smooth((p-.78)/.22));
+   for(let i=0;i<c.field.length;i++){const j=i*4,a=p>=1?1:smooth((u-c.field[i])/.065),front=smooth((u+.035-c.field[i])/.055)*(1-a)*gain;
+    d[j]=d[j+1]=d[j+2]=255;d[j+3]=Math.round(a*255);wet[j]=93;wet[j+1]=101;wet[j+2]=95;wet[j+3]=Math.round(front*15);
+   }
+   c.mc.putImageData(c.pixels,0,0);c.wc.putImageData(c.wetPixels,0,0);
+   c.rc.clearRect(0,0,w,h);c.rc.drawImage(c.mountainPlate,0,0);c.rc.globalCompositeOperation='destination-in';c.rc.drawImage(c.mask,0,0,w,h);c.rc.globalCompositeOperation='source-over';c.last=p;
+  }
+  ctx.save();ctx.globalCompositeOperation='source-over';ctx.fillStyle=options.paper||'#f1f1ed';ctx.fillRect(0,0,w,h);
+  ctx.drawImage(c.lionPlate,0,0);ctx.drawImage(c.wet,0,0,w,h);ctx.drawImage(c.reveal,0,0);ctx.restore();return true;
+ }
+ return{draw,reset(){c=null;},proof(){return c?{type:'local-mane-ink-growth',lionRect:c.r,cropBottom:options.lionCropBottom??.72,origins:c.origins,progress:c.last,sourceAssetsModified:false,spatialTransform:'fixed paintings; local alpha reveal only'}:null;}};
+}
+const instances=new WeakMap();
+export function draw(ctx,w,h,progress,lion,mountains){let instance=instances.get(ctx);if(!instance){instance=createIntroInkSpread();instances.set(ctx,instance);}return instance.draw(ctx,w,h,progress,lion,mountains);}
+

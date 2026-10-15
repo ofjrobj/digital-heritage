@@ -1,12 +1,15 @@
 .test-render-media .tr-source{position:absolute;width:1px;height:1px;left:-10000px;top:0;opacity:0;pointer-events:none}
-.test-render-media #world{position:absolute;inset:0;display:block;width:100%;height:100%;background:#fafaf8;touch-action:none}
-.test-render-media .tr-mist{position:absolute;inset:-14%;z-index:3;pointer-events:none;opacity:0;background-color:rgba(250,250,248,var(--veil,0));background-image:radial-gradient(ellipse at 10% 80%,#fafaf8 0,rgba(250,250,248,.97) 24%,transparent 64%),radial-gradient(ellipse at 91% 34%,#fafaf8 0,rgba(250,250,248,.93) 26%,transparent 64%),radial-gradient(ellipse at 45% 62%,rgba(250,250,248,.9),transparent 66%);filter:blur(22px);transform:translateX(var(--drift,0%))}
-.test-render-media #loading{inset:auto;top:76px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 40px);padding:7px 12px;background:rgba(250,250,248,.82);font:400 12px/1.6 var(--story-serif);text-align:center;pointer-events:auto;z-index:8}
+.test-render-media #world{position:absolute;inset:0;display:block;width:100%;height:100%;background:#f0f0ee;touch-action:none}
+.test-render-media .tr-mist{position:absolute;inset:-14%;z-index:3;pointer-events:none;opacity:0;background-color:rgba(240,240,238,var(--veil,0));background-image:radial-gradient(ellipse at 10% 80%,#f0f0ee 0,rgba(240,240,238,.97) 24%,transparent 64%),radial-gradient(ellipse at 91% 34%,#f0f0ee 0,rgba(240,240,238,.93) 26%,transparent 64%),radial-gradient(ellipse at 45% 62%,rgba(240,240,238,.9),transparent 66%);filter:blur(22px);transform:translateX(var(--drift,0%))}
+.test-render-media #loading{inset:auto;top:76px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 40px);padding:7px 12px;background:rgba(240,240,238,.82);font:400 12px/1.6 var(--story-serif);text-align:center;pointer-events:auto;z-index:8}
 .test-render-media #loading button{display:block;margin:4px auto 0;padding:6px 10px;min-height:32px;text-decoration:underline;text-underline-offset:3px}
-.test-render-media .tr-caption{position:absolute;z-index:4;top:51%;left:12%;right:12%;margin:0;padding:20px;text-align:center;color:#373734;font:400 clamp(16px,1.8vw,27px)/1.8 var(--story-serif);word-break:keep-all;background:radial-gradient(ellipse,rgba(250,250,248,.85),transparent 73%);pointer-events:none}
+.test-render-media .tr-caption{position:absolute;z-index:4;top:51%;left:12%;right:12%;margin:0;padding:20px;text-align:center;color:#373734;font:400 clamp(16px,1.8vw,27px)/1.8 var(--story-serif);word-break:keep-all;background:radial-gradient(ellipse,rgba(240,240,238,.85),transparent 73%);pointer-events:none}
 .test-render-media .tr-caption[hidden]{display:none}
 .test-render-media .tr-caption{white-space:pre-line;transition:opacity .5s ease}
 .test-render-media .tr-caption[data-intro="true"]{top:auto;bottom:21%;font-size:clamp(18px,2.4vw,34px);letter-spacing:.12em;background:none}
-@media(min-width:761px){body.test-render-media:not([data-mode="play"]){--dialogue-floor:84px;--sound-floor:16px}body.test-render-media #cinemaDialogue{height:auto!important;min-height:0!important;padding:14px clamp(40px,4vw,68px)!important;gap:7px!important}}
-@media(min-width:761px) and (max-height:650px){body.test-render-media:not([data-mode="play"]){--dialogue-floor:80px;--sound-floor:16px}body.test-render-media:not([data-mode="play"]) #cinemaDialogue{min-height:0!important;padding:12px 40px!important;gap:6px!important}body.test-render-media:not([data-mode="play"]) #cinemaDialogue p{font-size:14px!important;line-height:1.6!important}body.test-render-media:not([data-mode="play"]) #cinemaDialogue h2{font-size:20px!important;line-height:1.4!important}}
 @media(max-height:500px){.test-render-media #loading{top:53px;font-size:11px}.test-render-media .tr-caption{top:38%;padding:10px}}
+
+body.test-render-media{background:#f0f0ee}.test-render-media #stage{background:#f0f0ee}
+.test-render-media .tr-archive{position:absolute;inset:0;width:100%;height:100%;z-index:10;border:0;background:#f0f0ee;opacity:0;pointer-events:none}
+@media(min-width:761px){body.test-render-media:not([data-mode="play"]){--dialogue-floor:84px;--sound-floor:16px}}
+@media(min-width:761px) and (max-height:650px){body.test-render-media:not([data-mode="play"]){--dialogue-floor:80px;--sound-floor:16px}}

@@ -1,10 +1,10 @@
 {
-  "version": "ink2-complete-1",
+  "version": "paper-flow-1",
   "scenes": [
     {
       "id": "intro",
       "label": "갈기의 먹선 → 산과 안개",
-      "src": "intro-ink-spread-480p24.mp4",
+      "src": "intro-ink-spread-paper-480p24.mp4",
       "duration": 6,
       "fps": 24,
       "mode": "scroll",
@@ -18,20 +18,21 @@
     },
     {
       "id": "aerial-entry",
-      "label": "산과 마을 → 마을 입구",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_164445_6b19585c-8a1b-46c2-acee-e878221e17f4.mp4",
+      "label": "마을 전경 · 자동 재생",
+      "src": "aerial-fixed-480p24.mp4",
       "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_162807_3ad98a9e-6c3e-4b59-9048-690d1191f974.png",
       "duration": 8,
       "fps": 24,
-      "mode": "scroll",
+      "mode": "auto",
       "footsteps": false,
       "provenance": {
-        "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "6b19585c-8a1b-46c2-acee-e878221e17f4"
+        "provider": "local-camera-render",
+        "source": "Higgsfield fixed aerial illustration",
+        "motion": "single rigid image transform; no building morph",
+        "frames": 192
       },
       "caption": "어느 옛날, 공주목과 그 주변 고을에는\n신비로운 두 사자의 이야기가 떠돌고 있습니다.",
-      "captionUntil": 3
+      "captionUntil": 5
     },
     {
       "id": "entry-merchant",
