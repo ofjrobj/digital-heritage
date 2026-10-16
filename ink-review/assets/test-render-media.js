@@ -107,9 +107,9 @@ function manual(delta){
  target=clamp(target+delta*scrollTimeMultiplier(),0,scrollLimit());
  current.video.pause();footsteps.pulse();
 }
-stage.addEventListener('wheel',e=>{if(!canWalk()||e.ctrlKey||e.target.closest('#testTools,#cinemaDialogue,nav,button,a,input,select,textarea,[contenteditable]'))return;e.preventDefault();const unit=e.deltaMode===1?16:e.deltaMode===2?height:1;manual(-clamp(e.deltaY*unit,-120,120)/120*.42);},{passive:false});
+stage.addEventListener('wheel',e=>{if(!canWalk()||e.ctrlKey||e.target.closest('#testTools,#cinemaDialogue,nav,button,a,input,select,textarea,[contenteditable]'))return;e.preventDefault();const unit=e.deltaMode===1?16:e.deltaMode===2?height:1;manual(clamp(e.deltaY*unit,-120,120)/120*.42);},{passive:false});
 let drag=null;canvas.addEventListener('pointerdown',e=>{if(!canWalk())return;drag={x:e.clientX,y:e.clientY};canvas.setPointerCapture(e.pointerId);});canvas.addEventListener('pointermove',e=>{if(!drag)return;manual(((drag.y-e.clientY)+(e.clientX-drag.x)*.25)/90);drag={x:e.clientX,y:e.clientY};});['pointerup','pointercancel'].forEach(t=>canvas.addEventListener(t,()=>{drag=null;footsteps.stop();}));
-addEventListener('keydown',e=>{if(e.target.closest('input,select,button,textarea,a,nav,[contenteditable],#cinemaDialogue'))return;if(e.code==='Space'){e.preventDefault();paused=!paused;footsteps.stop();}else if(canWalk()&&(e.key==='ArrowUp'||e.key==='PageUp')){e.preventDefault();manual(.7);}else if(canWalk()&&(e.key==='ArrowDown'||e.key==='PageDown')){e.preventDefault();manual(-.7);}});
+addEventListener('keydown',e=>{if(e.target.closest('input,select,button,textarea,a,nav,[contenteditable],#cinemaDialogue'))return;if(e.code==='Space'){e.preventDefault();paused=!paused;footsteps.stop();}else if(canWalk()&&(e.key==='ArrowDown'||e.key==='PageDown')){e.preventDefault();manual(.7);}else if(canWalk()&&(e.key==='ArrowUp'||e.key==='PageUp')){e.preventDefault();manual(-.7);}});
 if($('run'))$('run').onclick=()=>{paused=false;previewAuto=!previewAuto;footsteps.stop();};
 if($('chapter'))$('chapter').onchange=e=>requestScene(Number(e.target.value));
 if($('progress'))$('progress').oninput=e=>{const t=clamp(Number(e.target.value))*total;let n=0;while(n<scenes.length-1&&offset(n)+duration(n)<=t)n++;requestScene(n,t-offset(n));};
