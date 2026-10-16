@@ -1,6 +1,6 @@
 import {createSceneLife} from './scene-life.js?v=quiet-life-rest-3';
 import {createSeasonAmbience} from './season-ambience.js?v=quiet-seasons-3';
-import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=chest-safe-1';
+import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=bottom-safe-2';
 import {dialogueFrame} from './dialogue-framing.js?v=chest-fit-1';
 import {seasonsFrame} from './seasons-framing.js?v=all-visitors-1';
 import {createStoryVoices} from './story-voices.js?v=voices-timing-3';
@@ -78,11 +78,13 @@ function draw(source){
   ctx.save();ctx.translate(fx,fy);ctx.scale(zoom,zoom);ctx.translate(-fx,-fy);paint(x,y,sw*scale,sh*scale);ctx.restore();
   ctx.save();ctx.globalAlpha=ease(clamp((t-18.5)/1.5));ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);ctx.restore();
  }else if(sceneRecord?.scene.mode==='dialogue'){
-  const r=dialogueFrame(sceneRecord.scene,width,height,sw,sh);paint(r.x,r.y,r.w,r.h);
-  // Let the edge of a portrait dissolve into the same paper when a narrow window
-  // needs the entire group to remain visible above the dialogue.
+  dialogueFit.update(sceneRecord.scene,source);
+  const r=dialogueFrame(sceneRecord.scene,width,height,sw,sh),layout=dialogueFit.proof();
+  // Keep the complete source lower edge beneath the dialogue panel, not floating
+  // in an empty paper band. Never erase the hands or torso with a bottom fade.
+  r.y+=layout?.portraitOffsetY||0;paint(r.x,r.y,r.w,r.h);
   const fade=Math.min(36,height*.06);
-  for(const edge of ['top','bottom']){const y=edge==='top'?r.y:r.y+r.h;if(y>0&&y<height){const g=ctx.createLinearGradient(0,y,0,y+(edge==='top'?fade:-fade));g.addColorStop(0,PAPER);g.addColorStop(1,'rgba(232,232,230,0)');ctx.fillStyle=g;ctx.fillRect(0,edge==='top'?y:y-fade,width,fade);}}
+  if(r.y>0&&r.y<height){const g=ctx.createLinearGradient(0,r.y,0,r.y+fade);g.addColorStop(0,PAPER);g.addColorStop(1,'rgba(232,232,230,0)');ctx.fillStyle=g;ctx.fillRect(0,r.y,width,fade);}
   for(const edge of ['left','right']){const x=edge==='left'?r.x:r.x+r.w;if(x>0&&x<width){const feather=Math.min(24,r.w*.025),g=ctx.createLinearGradient(x,0,x+(edge==='left'?feather:-feather),0);g.addColorStop(0,PAPER);g.addColorStop(1,'rgba(232,232,230,0)');ctx.fillStyle=g;ctx.fillRect(edge==='left'?x:x-feather,0,feather,height);}}
  }else paint((width-sw*scale)/2,(height-sh*scale)/2,sw*scale,sh*scale);dialogueFit.update(sceneRecord?.scene,source);lastSource=source;hasFrame=true;
  renderedKind=source.tagName==='VIDEO'?'video':'image';renderedSource=source.currentSrc||source.src||'';return true;

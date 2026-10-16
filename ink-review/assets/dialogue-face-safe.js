@@ -27,7 +27,12 @@ export function createDialogueFaceSafe({stage,panel,tools,sound}){
   if(naturalHeight>available){let lo=minimum,hi=preferred;for(let i=0;i<12;i++){const mid=(lo+hi)/2;applyFont(mid);if(natural()<=available)lo=mid;else hi=mid;}font=lo;applyFont(font);naturalHeight=natural();}
   const height=Math.min(available,naturalHeight);set(panel,'height',height+'px');set(panel,'max-height',available+'px');set(panel,'top',Math.max(safeTop,bottom-height)+'px');set(panel,'visibility','visible');
   panel.dataset.faceSafe='true';panel.dataset.scrollText='false';document.body.style.setProperty('--dialogue-nav-font',Math.min(23,font*1.12)+'px');
-  lastProof={scene:scene.id,neckSourceY:neck,neckY,chestY,headY:portrait.headY,framing:portrait.framing,safeTop,bottom,available,panelTop:Math.max(safeTop,bottom-height),panelHeight:height,font,scrollText:false,textFits:copy.scrollHeight<=copy.clientHeight+1,limitedSpace:available<40};
+  // A wide group in a portrait window stays together with its caption in the
+  // middle of the screen; don't push a small landscape frame to the bottom.
+  const panelTop=portrait.h<H*.5?Math.min(Math.max(safeTop,bottom-height),portrait.y+portrait.h-1):Math.max(safeTop,bottom-height);
+  set(panel,'top',panelTop+'px');
+  const portraitOffsetY=Math.max(0,panelTop+1-(portrait.y+portrait.h));
+  lastProof={portraitOffsetY,sourceBottomY:portrait.y+portrait.h+portraitOffsetY,scene:scene.id,neckSourceY:neck,neckY:neckY+portraitOffsetY,chestY:chestY+portraitOffsetY,headY:portrait.headY+portraitOffsetY,framing:portrait.framing,safeTop,bottom,available,panelTop,panelHeight:height,font,scrollText:false,textFits:copy.scrollHeight<=copy.clientHeight+1,limitedSpace:available<40};
  }
  return{update,invalidate,proof:()=>lastProof,destroy(){ro.disconnect();safeArea.remove();}};
 }
