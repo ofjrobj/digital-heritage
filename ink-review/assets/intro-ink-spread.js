@@ -67,7 +67,13 @@ function paintMountainDepth(context,w,h,plates,progress,paper,village){
  plates.forEach((plate,i)=>context.drawImage(plate,(i===0?-1:1)*w*.56*pass,h*.10*pass,w,h));
 }
 
-export const introInkTiming=Object.freeze({sourceStart:.35,sourceSpan:5.65,spreadStart:.576,secondBurst:.876,burstGap:.30});
+export const introInkTiming=Object.freeze({sourceStart:.35,sourceSpan:5.65,spreadStart:.576,secondBurst:.876,burstGap:.30,duration:4.8,mountainTrimStart:1.8,handoff:4.75,aerialPreplay:3});
+export function introVisualTime(time){
+ const t=Math.max(0,Number(time)||0),start=introInkTiming.mountainTrimStart,end=introInkTiming.handoff;
+ // Preserve the two ink impacts, then compress the mountain pass smoothly.
+ // The last decoded frame is already the live aerial, before scene advance.
+ return t+(6-end)*smooth((t-start)/(end-start));
+}
 export const maneOrigins=Object.freeze([[.23,.47,0],[.77,.51,.018],[.27,.66,.045],[.75,.70,.065],[.21,.77,.09],[.80,.85,.11]].map(Object.freeze));
 export function createIntroInkSpread(options={}){
  let c=null;
@@ -132,7 +138,9 @@ export function createIntroInkSpread(options={}){
  }
  function draw(ctx,w,h,progress,lion,mountains,village){
   if(!ctx||!(w>0&&h>0)||!lion||!mountains)return false;w=Math.round(w);h=Math.round(h);
-  const p=clamp(Number(progress)||0);
+  const sourceProgress=clamp(Number(progress)||0);
+  const sourceTime=introInkTiming.sourceStart+sourceProgress*introInkTiming.sourceSpan;
+  const p=clamp((introVisualTime(sourceTime)-introInkTiming.sourceStart)/introInkTiming.sourceSpan);
   // At the hand-off, paint the live frame directly with the player's exact cover.
   // No cached raster, mountain, ink mask, veil or residual opacity remains.
   if(p>=1&&village){const[vw,vh]=dims(village);if(vw>0&&vh>0){

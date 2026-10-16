@@ -35,15 +35,9 @@ body.test-render-media[data-dialogue="true"] #stage #storyIndexBar {
   visibility: hidden;
   pointer-events: none;
 }
-body.test-render-media #stage #soundToggle[data-blocked="true"]::after {
-  content: "소리 재생";
-  position: absolute;
-  right: 110%; top: 15%;
-  white-space: nowrap;
-  font: 500 clamp(11px,1vw,15px)/1.5 var(--story-serif);
-  color: #343a35;
-  background: rgba(232,232,230,.9);
-  padding: .15em .5em;
+body.test-render-media #stage #soundToggle::after {
+  content: none;
+  display: none;
 }
 
 /* Soft, uneven banks move inward from opposite edges, then open outward. */

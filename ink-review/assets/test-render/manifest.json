@@ -1,11 +1,11 @@
 {
-  "version": "interim-v4-ink-flight-20261017",
+  "version": "interim-v4-fog-fade-travel-20261017",
   "scenes": [
     {
       "id": "intro",
       "label": "먹선 · 스크롤 진입 → 산과 안개 · 자동 재생",
       "src": "intro-ink-depth-480p24.mp4",
-      "duration": 6,
+      "duration": 4.8,
       "fps": 24,
       "mode": "scroll",
       "caption": "돌에 새긴 선, 풍경이 되다",
@@ -322,7 +322,7 @@
       "id": "trio-woodcutter",
       "label": "나무꾼에게 이동",
       "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_094721_958670dd-156d-4687-b79e-3901f37106c8.mp4",
-      "duration": 29.708333333333332,
+      "duration": 26.708333333333332,
       "fps": 24.0,
       "mode": "scroll",
       "footsteps": true,
@@ -342,8 +342,8 @@
       },
       "sourceDuration": 29.708333333333332,
       "sourceFrames": 713,
-      "clipIn": 0,
-      "walkingDuration": 91.416666667,
+      "clipIn": 3,
+      "walkingDuration": 82.18525011717672,
       "scrollTimeMultiplier": 0.3249772105731085,
       "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
     },

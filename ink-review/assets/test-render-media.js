@@ -1,4 +1,4 @@
-import {createFootageFog} from './footage-fog.js?v=footage-flow-1';
+import {createFootageFog} from './footage-fog.js?v=fog-fade-travel-1';
 import {createSceneLife} from './scene-life.js?v=quiet-wind-4';
 import {createSeasonAmbience} from './season-ambience.js?v=quiet-wind-4';
 import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=flow-cover-sound-1';
@@ -8,9 +8,9 @@ import {createStoryVoices} from './story-voices.js?v=voices-timing-3';
 import {createStoryMusic} from './story-audio-mix.js?v=drag-arrival-audio-1';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=drag-arrival-audio-1';
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
-import {createIntroInkSpread} from './intro-ink-spread.js?v=footage-flow-1';
+import {createIntroInkSpread,introVisualTime} from './intro-ink-spread.js?v=fog-fade-travel-1';
 import {createPaperColor, PAPER_CSS} from './paper-color.js?v=archive-paper-1';
-import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=flow-cover-sound-1';
+import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=fog-fade-travel-1';
 import {dialogueApproachGain,sceneArrivalDelay} from './dialogue-audio-flow.js?v=drag-arrival-audio-1';
 const walkingInput=createWalkingInput();
 let walkingRate=0,walkingDirection=1;
@@ -25,7 +25,7 @@ const introAssetsFailed=()=>[...introPaintings,introVillage].some(im=>im.dataset
 const $=id=>document.getElementById(id),stage=$('stage'),canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const PAPER=PAPER_CSS;
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
-const manifestURL=new URL('./test-render/manifest.json?v=footage-flow-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
+const manifestURL=new URL('./test-render/manifest.json?v=fog-fade-travel-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
 const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=archive-paper-1',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
@@ -207,7 +207,7 @@ function frame(now){
    const p=t.fade?clamp(t.elapsed/t.fade):1;mistAmount(t.fade?ease(p):0);
    if(!hasFrame&&t.record.image){draw(t.record.image);status('Loading...');}
    if(t.record.error){mistAmount(.25);status(t.record.error+' Story를 눌러 다시 시작할 수도 있습니다.',true);}
-   if(p>=1&&t.record.loaded&&!t.record.error&&!t.record.video.seeking&&(t.record.scene.id!=='intro'||introAssetsReady())){
+   if(p>=1&&t.elapsed>=t.fade+(t.fade ? .24 : 0)&&t.record.loaded&&!t.record.error&&!t.record.video.seeking&&(t.record.scene.id!=='intro'||introAssetsReady())){
     footageFog.midpoint();current=t.record;index=t.to;local=Math.min(t.at,duration(index));target=local;current.video.pause();t.phase='out';t.elapsed=0;document.body.dataset.ready='true';
     draw(current.still?current.image:current.video);status(current.still?'이미지 미리보기':'');
    }
@@ -241,7 +241,7 @@ function frame(now){
      walkingRate=walkingPlaybackRate(gap,dt,walkingRate);
      if(walkingRate){v.playbackRate=walkingRate;play(current);}else v.pause();
     }else if(gap<-.008&&walkingDirection<0){
-     v.pause();walkingRate=0;const next=Math.max(target,local-Math.max(dt,1/60)*1.4);
+     v.pause();walkingRate=walkingPlaybackRate(-gap,dt,walkingRate);const next=Math.max(target,local-Math.max(dt,1/60)*walkingRate);
      v.currentTime=current.clipIn+next;
     }else{v.pause();walkingRate=0;footsteps.stop();}
    }
@@ -252,11 +252,12 @@ function frame(now){
   }
   if(s.id==='intro'){
    const arrival=records.find(r=>r?.scene.id==='aerial-entry');
-   if(allowed&&local>=4.2&&arrival?.loaded&&!arrival.video.seeking){arrival.video.playbackRate=openingPlaybackRate(arrival.scene,arrival.video.currentTime-arrival.clipIn,duration(index+1));play(arrival);}
+   if(allowed&&local>=3.0&&arrival?.loaded&&!arrival.video.seeking){arrival.video.playbackRate=openingPlaybackRate(arrival.scene,arrival.video.currentTime-arrival.clipIn,duration(index+1));play(arrival);}
    else if(arrival)arrival.video.pause();
   }
   if(active&&!scroll){if(dialogue||current.still||v.loop)local=Math.min(d,local+dt);else if(!v.paused||v.ended)local=clamp(v.currentTime-current.clipIn,0,d);}
-  openingCaption(s,local);stage.style.setProperty('--nav-paper',String(s.id==='intro'?ease(clamp((local-4.2)/1.5)):1));
+  const visualTime=s.id==='intro'?introVisualTime(local):local;
+  openingCaption(s,visualTime);stage.style.setProperty('--nav-paper',String(s.id==='intro'?ease(clamp((visualTime-4.2)/1.5)):1));
   voiceEnabled(sound&&allowed&&ready&&!arrivalHold&&!current.error);if(dialogue&&allowed&&ready&&!arrivalHold&&!current.error)voices.tick(dt);
   if(allowed&&local>=d-.025&&(!scroll||target>=d-.008)&&(!dialogue||voices.canFinish()&&!(sound&&voices.proof().failed)))advance();
   if(!transition&&$('hint'))$('hint').hidden=finished||!scroll||previewAuto||paused;
