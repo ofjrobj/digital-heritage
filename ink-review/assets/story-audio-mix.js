@@ -40,12 +40,12 @@ export function createStoryMusic(audio){
   enable(value){enabled=value;blocked=false;error=null;if(value)ensure();else{request++;pending=false;audio.pause();audio.volume=0;envelope.volume=0;}},
   retry,
   suspend(){suspended=true;request++;pending=false;audio.pause();audio.volume=0;envelope.volume=0;},
-  tick({duck=false,paused=false,hidden=false,finished=false,endingTime=null,endingDuration=20,dt=0}){
+  tick({duck=false,paused=false,hidden=false,finished=false,endingTime=null,endingDuration=20,sceneGain=1,dt=0}){
    suspended=paused||hidden;
    if(suspended){audio.pause();audio.volume=0;envelope.volume=0;return;}
    fade(enabled&&!duck&&!finished ? .28 : 0,dt);
    const gain=endingTime==null?1:endingMusicGain(endingTime,endingDuration);
-   audio.volume=envelope.volume*gain;
+   audio.volume=envelope.volume*gain*Math.max(0,Math.min(1,sceneGain));
    if(!enabled||finished&&audio.volume<.00001)audio.pause();else ensure();
   },
   proof(){return {enabled,paused:audio.paused,blocked,error,volume:audio.volume};}

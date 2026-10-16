@@ -82,3 +82,36 @@ body.test-render-media #stage .tr-mist::after {
   body.test-render-media #stage .tr-mist::before,
   body.test-render-media #stage .tr-mist::after { transform: none; }
 }
+
+/* A slow, neutral-paper closing page, with a centered breathing invitation. */
+body.test-render-media #stage .tr-ending-paper {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: #e8e8e6;
+  opacity: 0;
+  pointer-events: none;
+}
+body.test-render-media[data-ending="true"] #stage #storyIndexBar::before {
+  content: none;
+}
+body.test-render-media #stage .tr-archive-cta {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 0;
+  padding: .6em .8em;
+  max-width: calc(100% - 32px);
+  white-space: normal;
+  text-align: center;
+  font-size: clamp(16px, min(2vw, 3.3dvh), 28px);
+  color: #373734;
+  transition: none;
+}
+body.test-render-media #stage .tr-archive-cta span {
+  display: inline-block;
+  animation: scroll-cue-breathe 2.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  body.test-render-media #stage .tr-archive-cta span { animation: none; }
+}

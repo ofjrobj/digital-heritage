@@ -1,0 +1,36 @@
+/* Match the dialogue reading scale while keeping the scans prominent. */
+body .archive .detail-card {
+  --detail-copy-size: clamp(14px, min(1.4vw, 2.5dvh), 23px);
+  box-sizing: border-box;
+  width: min(920px, 100%);
+  max-width: 100%;
+  padding: 1.05em 1.65em 1.15em;
+  font-size: var(--detail-copy-size);
+  line-height: 1.65;
+  text-align: left;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+}
+body .archive .detail-card h3 {
+  margin: 0 0 .4em;
+  font-size: 1.28em;
+  font-weight: 300;
+  line-height: 1.4;
+}
+body .archive .detail-card .detail-copy {
+  margin: 0;
+  font-size: 1em;
+  line-height: 1.65;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+body .archive .detail-card .detail-status {
+  display: none;
+}
+@media (max-width: 700px) and (orientation: portrait) {
+  body .archive .detail-card { padding: 1em 1.2em 1.1em; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  body .archive .detail-card { padding: .7em 1.3em .8em; }
+}

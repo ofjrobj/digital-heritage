@@ -1,0 +1,50 @@
+/* Both sculptures and their controls enter as one complete archive view. */
+html[data-archive-state] :is(.archive .object-stage, .archive .info-panel, .archive .wordmark, .archive .masthead > p, .archive-corner-frame) {
+  transition: opacity .9s ease;
+}
+html:is([data-archive-state="loading"], [data-archive-state="delayed"], [data-archive-state="error"]) :is(.archive .object-stage, .archive .info-panel, .archive .wordmark, .archive .masthead > p, .archive-corner-frame) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+html:is([data-archive-state="revealing"], [data-archive-state="ready"]) :is(.archive .object-stage, .archive .info-panel, .archive .wordmark, .archive .masthead > p, .archive-corner-frame) {
+  opacity: 1;
+  visibility: visible;
+}
+.archive-ready-status {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  padding: 24px;
+  color: #454640;
+  font-family: 'KoPubWorld Batang Light', serif;
+  font-size: clamp(15px, min(1.55vw, 2.8dvh), 22px);
+  line-height: 1.65;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity .4s ease;
+}
+.archive-ready-status p { margin: 0; }
+.archive-ready-status button {
+  pointer-events: auto;
+  font: inherit;
+  font-size: .82em;
+  color: inherit;
+  background: transparent;
+  border: 1px solid rgba(55,55,52,.28);
+  padding: .5em 1.1em;
+  cursor: pointer;
+}
+.archive-ready-status button[hidden] { display: none; }
+html[data-archive-state="loading"] .archive-ready-status p { animation: archive-loading-breathe 2.4s ease-in-out infinite; }
+html:is([data-archive-state="revealing"], [data-archive-state="ready"]) .archive-ready-status { opacity: 0; }
+@keyframes archive-loading-breathe { 0%,100% { opacity: .9; } 50% { opacity: .4; } }
+@media (prefers-reduced-motion: reduce) {
+  html[data-archive-state] :is(.archive .object-stage, .archive .info-panel, .archive .wordmark, .archive .masthead > p, .archive-corner-frame), .archive-ready-status { transition-duration: .01s; }
+  .archive-ready-status p { animation: none !important; }
+}

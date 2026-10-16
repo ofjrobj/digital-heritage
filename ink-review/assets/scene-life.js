@@ -5,11 +5,13 @@ export function createSceneLife(stage){
  const audio=document.createElement('audio');audio.id='sceneLife';audio.preload='auto';audio.volume=0;audio.loop=true;stage.append(audio);
  let source='',pending=false,blocked=false,request=0,wantedNow=false;
  return {
-  tick({src='',time=0,active=false,sound=false,dt=0}){
+  tick({src='',time=0,active=false,sound=false,gain=1,dt=0}){
    if(src!==source){audio.pause();source=src;audio.volume=0;blocked=false;request++;pending=false;if(src){audio.src=src;audio.load();}else{audio.removeAttribute('src');audio.load();}}
    const wanted=!!src&&active&&sound;wantedNow=wanted;
    if(!wanted){request++;pending=false;audio.pause();audio.volume=0;return;}
-   audio.volume=Math.min(.28,audio.volume+Math.max(0,dt)*.18);
+   // Keep the existing ambience level; approach timing fades it to zero.
+   const target=.28*Math.max(0,Math.min(1,gain));
+   audio.volume=target<audio.volume?target:Math.min(target,audio.volume+Math.max(0,dt)*.18);
    if(audio.paused&&!pending&&!blocked){
     const attempt=++request;pending=true;
     audio.play().then(()=>{if(!wantedNow)audio.pause();}).catch(()=>{if(attempt===request)blocked=true;}).finally(()=>{if(attempt===request)pending=false;});

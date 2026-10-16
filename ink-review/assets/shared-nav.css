@@ -69,8 +69,7 @@ body .archive #archiveStoryIndexBar [aria-current='page'] {
   text-decoration-thickness: auto;
 }
 
-body.test-render-media #stage #storyIndexBar::before,
-body .archive #archiveStoryIndexBar::before {
+body.test-render-media #stage #storyIndexBar::before {
   content: '';
   position: absolute;
   inset: -.2em -.3em;
@@ -81,3 +80,6 @@ body .archive #archiveStoryIndexBar::before {
   opacity: var(--nav-paper, 1);
   pointer-events: none;
 }
+
+/* The Index page already has a quiet paper background. */
+body .archive #archiveStoryIndexBar::before { content: none; }
