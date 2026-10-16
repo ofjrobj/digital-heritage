@@ -1,4 +1,4 @@
-import {dialogueFrame} from './dialogue-framing.js?v=chest-fit-1';
+import {dialogueFrame} from './dialogue-framing.js?v=interim-v4-cover-20261017';
 const bound=(v,a,b)=>Math.max(a,Math.min(b,v));
 const NECK=[.77,.77,.67,.69,.71];
 export function createDialogueFaceSafe({stage,panel,tools,sound}){
@@ -15,24 +15,23 @@ export function createDialogueFaceSafe({stage,panel,tools,sound}){
   const W=stage.clientWidth,H=stage.clientHeight,title=panel.querySelector('h2'),copy=panel.querySelector('p');if(!W||!H||!title||!copy)return;
   const key=[scene.id,W,H,sw,sh,copy.textContent].join('|');if(!dirty&&key===lastKey)return;dirty=false;lastKey=key;
   const box=stage.getBoundingClientRect(),gap=bound(H*.012,6,10),neck=Number(scene.neckSafeY)||NECK[scene.speaker]||.77;
-  const portrait=dialogueFrame(scene,W,H,sw,sh),neckY=portrait.neckY,chestY=portrait.chestY,safeTop=Math.max(0,chestY+gap);
+  const portrait=dialogueFrame(scene,W,H,sw,sh),neckY=portrait.neckY,chestY=portrait.chestY,safeTop=Math.max(0,Math.min(H*.62,chestY+gap));
   const lower=[tools,sound].filter(visible).map(n=>n.getBoundingClientRect()).filter(r=>r.top-box.top>H*.55);
   const bottom=Math.min(H-Math.max(12,safeArea.getBoundingClientRect().height),...lower.map(r=>r.top-box.top-gap)),available=Math.max(0,bottom-safeTop),panelWidth=Math.min(W*.92,1440),left=(W-panelWidth)/2;
   set(panel,'box-sizing','border-box');set(panel,'left',left+'px');set(panel,'right','auto');set(panel,'width',panelWidth+'px');set(panel,'transform','none');set(panel,'bottom','auto');set(panel,'min-height','0');set(panel,'max-height','none');set(panel,'overflow','hidden');panel.style.removeProperty('display');set(panel,'grid-template-rows','auto minmax(0,1fr)');set(panel,'gap','.4em');set(panel,'padding','.95em 2.1em');
   set(title,'display',available<40?'none':'block');set(title,'margin','0');set(title,'line-height','1.3');set(title,'font-size','calc(var(--safe-font)*1.307692)');set(copy,'margin','0');set(copy,'font-size','var(--safe-font)');set(copy,'line-height','1.65');set(copy,'min-height','0');set(copy,'max-height','none');set(copy,'height','auto');set(copy,'overflow','hidden');set(copy,'overflow-wrap','anywhere');set(copy,'overscroll-behavior','contain');copy.removeAttribute('tabindex');
   const applyFont=f=>{panel.style.setProperty('--safe-font',f+'px');panel.style.setProperty('--reading-copy',f+'px');panel.style.setProperty('--reading-title',(f*1.307692)+'px');set(panel,'font-size',f+'px');};
   const natural=()=>Math.ceil(panel.getBoundingClientRect().height)+1;
-  const preferred=bound(Math.min(7.614285714+.00928571429*W+Math.max(0,W-900)*.006,.036*H),11,30),minimum=Math.min(preferred,3);
+  const preferred=bound(Math.min(7.614285714+.00928571429*W+Math.max(0,W-900)*.006,.036*H),11,30),minimum=Math.min(preferred,11);
   set(panel,'height','auto');applyFont(preferred);let font=preferred,naturalHeight=natural();
   if(naturalHeight>available){let lo=minimum,hi=preferred;for(let i=0;i<12;i++){const mid=(lo+hi)/2;applyFont(mid);if(natural()<=available)lo=mid;else hi=mid;}font=lo;applyFont(font);naturalHeight=natural();}
   const height=Math.min(available,naturalHeight);set(panel,'height',height+'px');set(panel,'max-height',available+'px');set(panel,'top',Math.max(safeTop,bottom-height)+'px');set(panel,'visibility','visible');
-  panel.dataset.faceSafe='true';panel.dataset.scrollText='false';document.body.style.setProperty('--dialogue-nav-font',Math.min(23,font*1.12)+'px');
-  // A wide group in a portrait window stays together with its caption in the
-  // middle of the screen; don't push a small landscape frame to the bottom.
-  const panelTop=portrait.h<H*.5?Math.min(Math.max(safeTop,bottom-height),portrait.y+portrait.h-1):Math.max(safeTop,bottom-height);
+  const scrollText=copy.scrollHeight>copy.clientHeight+1;set(copy,'overflow-y',scrollText?'auto':'hidden');if(scrollText)copy.setAttribute('tabindex','0');panel.dataset.faceSafe='true';panel.dataset.scrollText=String(scrollText);document.body.style.setProperty('--dialogue-nav-font',Math.min(23,font*1.12)+'px');
+  // Caption overlays the full-bleed frame; never move the image to meet it.
+  const panelTop=Math.max(safeTop,bottom-height),portraitOffsetY=0;
   set(panel,'top',panelTop+'px');
-  const portraitOffsetY=Math.max(0,panelTop+1-(portrait.y+portrait.h));
-  lastProof={portraitOffsetY,sourceBottomY:portrait.y+portrait.h+portraitOffsetY,scene:scene.id,neckSourceY:neck,neckY:neckY+portraitOffsetY,chestY:chestY+portraitOffsetY,headY:portrait.headY+portraitOffsetY,framing:portrait.framing,safeTop,bottom,available,panelTop,panelHeight:height,font,scrollText:false,textFits:copy.scrollHeight<=copy.clientHeight+1,limitedSpace:available<40};
+  lastProof={portraitOffsetY,sourceBottomY:portrait.y+portrait.h+portraitOffsetY,scene:scene.id,neckSourceY:neck,neckY:neckY+portraitOffsetY,chestY:chestY+portraitOffsetY,headY:portrait.headY+portraitOffsetY,framing:portrait.framing,safeTop,bottom,available,panelTop,panelHeight:height,font,scrollText,textFits:copy.scrollHeight<=copy.clientHeight+1,limitedSpace:available<40};
  }
  return{update,invalidate,proof:()=>lastProof,destroy(){ro.disconnect();safeArea.remove();}};
 }
+

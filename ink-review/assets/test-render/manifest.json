@@ -1,5 +1,5 @@
 {
-  "version": "intro-scroll-auto-1",
+  "version": "interim-v4-cover-20261017",
   "scenes": [
     {
       "id": "intro",
@@ -22,64 +22,87 @@
     {
       "id": "aerial-entry",
       "label": "산과 안개 → 마을 입구 · 자동 재생",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/f56840cc-b7d5-4fd3-9a75-56d51ec3a911.mp4",
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_092646_c9840b78-6481-4e2f-9bdb-4e0b6b33b962.mp4",
       "duration": 10,
-      "fps": 24,
+      "fps": 24.0,
       "mode": "auto",
       "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Unlimited",
-        "generationId": "48c68feb-1e8d-419e-acf1-25575787fbe0",
-        "postprocess": "720p24 frequent keyframes, refined pine clusters, brighter ink palette, automatic approach to entrance"
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "c9840b78-6481-4e2f-9bdb-4e0b6b33b962",
+        "nativeDimensions": [
+          1920,
+          1080
+        ],
+        "nativeSha256": "32aaca406885210b758c401e1d2b1e4f98ec09c025682035b140d56f6e9c50a8",
+        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
+        "reviewStatus": "generated_rejected_requires_full_scene_redraw",
+        "releaseStatus": "user-requested-interim",
+        "finalVisualApproval": false
       },
       "caption": "어느 옛날, 공주목과 그 주변 고을에는\n신비로운 두 사자의 이야기가 떠돌고 있습니다.",
       "captionUntil": 5,
       "transition": "none",
       "clipIn": 0,
-      "sourceDuration": 20,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
+      "sourceDuration": 19.708333333333332,
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
+      "sourceFrames": 473
     },
     {
       "id": "entry-merchant",
       "label": "입구 → 장사꾼 · 연속 이동",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/f56840cc-b7d5-4fd3-9a75-56d51ec3a911.mp4",
-      "duration": 10,
-      "fps": 24,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_092646_c9840b78-6481-4e2f-9bdb-4e0b6b33b962.mp4",
+      "duration": 9.708333333333332,
+      "fps": 24.0,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Unlimited",
-        "generationId": "48c68feb-1e8d-419e-acf1-25575787fbe0",
-        "postprocess": "720p24 frequent keyframes, refined pine clusters, brighter ink palette, direct scroll seeking"
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "c9840b78-6481-4e2f-9bdb-4e0b6b33b962",
+        "nativeDimensions": [
+          1920,
+          1080
+        ],
+        "nativeSha256": "32aaca406885210b758c401e1d2b1e4f98ec09c025682035b140d56f6e9c50a8",
+        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
+        "reviewStatus": "generated_rejected_requires_full_scene_redraw",
+        "releaseStatus": "user-requested-interim",
+        "finalVisualApproval": false
       },
       "clipIn": 10,
-      "sourceDuration": 20,
+      "sourceDuration": 19.708333333333332,
       "transition": "none",
       "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
       "caption": "마을에 오신 것을 환영합니다.\n길을 따라 걸으며 사람들이 전하는 두 사자의 이야기를 들어보세요.",
-      "captionUntil": 0.15
+      "captionUntil": 0.15,
+      "sourceFrames": 473,
+      "walkingDuration": 48.541666667,
+      "scrollTimeMultiplier": 0.19999999999862658
     },
     {
       "id": "merchant",
       "label": "장사꾼의 이야기",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/8db8cb9b-22f7-4d57-b54a-bf2374b7444e.mp4",
-      "sourceDuration": 27.716666666666665,
-      "fps": 60,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_105456_d43b97d0-2ffa-41e4-abbc-3cde720f0042.mp4",
+      "sourceDuration": 27.708333333333332,
+      "fps": 24,
       "mode": "dialogue",
       "speaker": 0,
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
-        "sourceRangeSeconds": [
-          0,
-          6
+        "generationId": "d43b97d0-2ffa-41e4-abbc-3cde720f0042",
+        "nativeDimensions": [
+          1920,
+          1080
         ],
-        "postprocess": "Native1920x1080, CRF16, GOP6, silent;24fps motion-interpolated to60fps; exact character cuts and reversible hold retain original voice timing",
-        "deliveryFrameProvenance": "24fps source with motion-inferred60fps; no claim of native60fps capture"
+        "nativeSha256": "89653bef4e620e79a6c3f1bff4c12e7d82cc7f084c1f5a5575f46846fb1fea0a",
+        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
+        "reviewStatus": "generated_rejected_insufficient_redraw",
+        "releaseStatus": "user-requested-interim",
+        "finalVisualApproval": false
       },
       "neckSafeY": 0.75,
       "framing": {
@@ -89,42 +112,60 @@
         "minX": 0.43,
         "maxX": 0.545
       },
-      "sourceFrames": 1663
+      "sourceFrames": 665,
+      "clipIn": 0
     },
     {
       "id": "merchant-farmer",
       "label": "농민에게 이동",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_163831_891745ce-a6a4-4523-960f-70aefff923f9.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_162806_fcc44552-e9c2-4000-80f5-b60edf0b1cdb.png",
-      "duration": 6,
-      "fps": 24,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_101504_fd2d070c-d2f3-4544-9c02-75e73c1b72fa.mp4",
+      "duration": 29.708333333333332,
+      "fps": 24.0,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "891745ce-a6a4-4523-960f-70aefff923f9"
-      }
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "fd2d070c-d2f3-4544-9c02-75e73c1b72fa",
+        "nativeDimensions": [
+          1920,
+          1080
+        ],
+        "nativeSha256": "24df808443a4abd423a46ca32a5a62e276e0c01ac6dc36de3ef8984e10bfdb93",
+        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
+        "reviewStatus": "generated_rejected_raw_blender_and_continuity",
+        "releaseStatus": "user-requested-interim",
+        "finalVisualApproval": false
+      },
+      "sourceDuration": 29.708333333333332,
+      "sourceFrames": 713,
+      "clipIn": 0,
+      "walkingDuration": 31.25,
+      "scrollTimeMultiplier": 0.9506666666666667,
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
     },
     {
       "id": "farmer",
       "label": "농민의 이야기",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/570cb9dc-0dd0-42ff-886c-558e592c7cde.mp4",
-      "sourceDuration": 26.633333333333333,
-      "fps": 60,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_112727_1f2c40eb-3cc1-451a-bc92-206db7645fee.mp4",
+      "sourceDuration": 26.375,
+      "fps": 24.0,
       "mode": "dialogue",
       "speaker": 1,
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
-        "sourceRangeSeconds": [
-          6,
-          11.916666666666666
+        "generationId": "1f2c40eb-3cc1-451a-bc92-206db7645fee",
+        "nativeDimensions": [
+          1920,
+          1080
         ],
-        "postprocess": "Native1920x1080, CRF16, GOP6, silent;24fps motion-interpolated to60fps; exact character cuts and reversible hold retain original voice timing",
-        "deliveryFrameProvenance": "24fps source with motion-inferred60fps; no claim of native60fps capture"
+        "nativeSha256": "35a9d402df2de3e5d38e1e1b8bb6eb9137d53b35be07b2097dda4393641e87aa",
+        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
+        "reviewStatus": "generated_rejected_forehead_artifact_and_fidelity",
+        "releaseStatus": "user-requested-interim",
+        "finalVisualApproval": false
       },
       "neckSafeY": 0.53,
       "framing": {
@@ -134,42 +175,60 @@
         "minX": 0.425,
         "maxX": 0.565
       },
-      "sourceFrames": 1598
+      "sourceFrames": 633,
+      "clipIn": 0
     },
     {
       "id": "farmer-cook",
       "label": "찬모에게 이동",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_163832_6f46f062-0f98-4e28-92f5-d797d2c55e2e.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_162811_46718128-a75e-4dff-8ece-528660857303.png",
-      "duration": 6,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_103323_ea0627fc-5c36-4d20-a70d-37ffac734d3f.mp4",
+      "duration": 29.708333333333332,
       "fps": 24,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "6f46f062-0f98-4e28-92f5-d797d2c55e2e"
-      }
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "ea0627fc-5c36-4d20-a70d-37ffac734d3f",
+        "nativeDimensions": [
+          1920,
+          1080
+        ],
+        "nativeSha256": "b31cd5380fd4a39237ea8e06ceb134dee612f8307b411e33b7a1f77c0f36b530",
+        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
+        "reviewStatus": "generated_rejected_raw_blender_reference_and_camera",
+        "releaseStatus": "user-requested-interim",
+        "finalVisualApproval": false
+      },
+      "sourceDuration": 29.708333333333332,
+      "sourceFrames": 713,
+      "clipIn": 0,
+      "walkingDuration": 32.125,
+      "scrollTimeMultiplier": 0.9247730220492866,
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
     },
     {
       "id": "cook",
       "label": "찬모의 이야기",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/6360e925-bb63-4670-98e9-6f8d116856df.mp4",
-      "sourceDuration": 22.3,
-      "fps": 60,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_120302_239f0fd2-18b3-4d21-af33-95c5cfc03fa1.mp4",
+      "sourceDuration": 22.041666666666668,
+      "fps": 24.0,
       "mode": "dialogue",
       "speaker": 2,
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
-        "sourceRangeSeconds": [
-          11.916666666666666,
-          17.833333333333332
+        "generationId": "239f0fd2-18b3-4d21-af33-95c5cfc03fa1",
+        "nativeDimensions": [
+          1920,
+          1080
         ],
-        "postprocess": "Native1920x1080, CRF16, GOP6, silent;24fps motion-interpolated to60fps; exact character cuts and reversible hold retain original voice timing",
-        "deliveryFrameProvenance": "24fps source with motion-inferred60fps; no claim of native60fps capture"
+        "nativeSha256": "f2e20ea124664669aec37b3b22d75cfe04e38926b23a0a6278d3244635ee0d07",
+        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
+        "reviewStatus": "generated_rejected_background_contamination_and_identity",
+        "releaseStatus": "user-requested-interim",
+        "finalVisualApproval": false
       },
       "neckSafeY": 0.62,
       "framing": {
@@ -179,42 +238,67 @@
         "minX": 0.445,
         "maxX": 0.54
       },
-      "sourceFrames": 1338
+      "sourceFrames": 529,
+      "clipIn": 0,
+      "deliveryFraming": {
+        "headY": 0.18,
+        "chestY": 0.82,
+        "minX": 0.3,
+        "maxX": 0.69,
+        "cx": 0.495
+      }
     },
     {
       "id": "cook-trio",
       "label": "주민 삼총사에게 이동",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_164326_cd5aef99-5153-443c-b3b2-cf54415721d7.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_162814_7a1683d2-1665-4b84-9a62-95aa713d7d4a.png",
-      "duration": 6,
-      "fps": 24,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_093621_b4b42f3e-d530-4ac1-87d9-a2d92f22c45a.mp4",
+      "duration": 29.708333333333332,
+      "fps": 24.0,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "cd5aef99-5153-443c-b3b2-cf54415721d7"
-      }
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "b4b42f3e-d530-4ac1-87d9-a2d92f22c45a",
+        "nativeDimensions": [
+          1920,
+          1080
+        ],
+        "nativeSha256": "11c2a5c2e437b94c6835813e695704f43527aeccec9ae2adce06cc22b3cdf53c",
+        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
+        "reviewStatus": "generated_rejected_requires_full_scene_redraw",
+        "releaseStatus": "user-requested-interim",
+        "finalVisualApproval": false
+      },
+      "sourceDuration": 29.708333333333332,
+      "sourceFrames": 713,
+      "clipIn": 0,
+      "walkingDuration": 50.416666667,
+      "scrollTimeMultiplier": 0.5892561983432115,
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
     },
     {
       "id": "trio",
       "label": "주민 삼총사의 이야기",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/312fb4a1-b912-4806-99b3-a321869c9c03.mp4",
-      "sourceDuration": 29,
-      "fps": 60,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_123739_b09beb85-2faf-43f3-bac2-6ba80afb9fb5.mp4",
+      "sourceDuration": 28.708333333333332,
+      "fps": 24.0,
       "mode": "dialogue",
       "speaker": 3,
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
-        "sourceRangeSeconds": [
-          17.833333333333332,
-          23.708333333333332
+        "generationId": "b09beb85-2faf-43f3-bac2-6ba80afb9fb5",
+        "nativeDimensions": [
+          1920,
+          1080
         ],
-        "postprocess": "Native1920x1080, CRF16, GOP6, silent;24fps motion-interpolated to60fps; exact character cuts and reversible hold retain original voice timing",
-        "deliveryFrameProvenance": "24fps source with motion-inferred60fps; no claim of native60fps capture"
+        "nativeSha256": "fb9672f420ad98555258c5e0db029d644c85d0c3fbb1a53546bc0c35d1762469",
+        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
+        "reviewStatus": "generated_rejected_framing_and_identity",
+        "releaseStatus": "user-requested-interim",
+        "finalVisualApproval": false
       },
       "neckSafeY": 0.64,
       "framing": {
@@ -224,42 +308,67 @@
         "minX": 0.12,
         "maxX": 0.88
       },
-      "sourceFrames": 1740
+      "sourceFrames": 689,
+      "clipIn": 0,
+      "deliveryFraming": {
+        "headY": 0.1,
+        "chestY": 0.8,
+        "minX": 0,
+        "maxX": 1,
+        "cx": 0.5
+      }
     },
     {
       "id": "trio-woodcutter",
       "label": "나무꾼에게 이동",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_164326_36e407eb-2006-4d2f-8ac6-604bc1882f79.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_162806_85ef5f2e-80ad-4d2d-86e4-2f6d72371b92.png",
-      "duration": 6,
-      "fps": 24,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_094721_958670dd-156d-4687-b79e-3901f37106c8.mp4",
+      "duration": 29.708333333333332,
+      "fps": 24.0,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "36e407eb-2006-4d2f-8ac6-604bc1882f79"
-      }
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "958670dd-156d-4687-b79e-3901f37106c8",
+        "nativeDimensions": [
+          1920,
+          1080
+        ],
+        "nativeSha256": "ad8d4a795af9628a2f8ef25ae2df60dc1646fc639128957e8faddcdc3d532c05",
+        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
+        "reviewStatus": "generated_rejected_geometry_and_continuity",
+        "releaseStatus": "user-requested-interim",
+        "finalVisualApproval": false
+      },
+      "sourceDuration": 29.708333333333332,
+      "sourceFrames": 713,
+      "clipIn": 0,
+      "walkingDuration": 91.416666667,
+      "scrollTimeMultiplier": 0.3249772105731085,
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
     },
     {
       "id": "woodcutter",
       "label": "나무꾼의 이야기",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/bedec95f-0e4a-4dee-ae5f-b83ac893a15a.mp4",
-      "sourceDuration": 26,
-      "fps": 60,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_131338_bdf01b7f-ff69-47bd-b0ba-0f50a77bb7f7.mp4",
+      "sourceDuration": 25.708333333333332,
+      "fps": 24.0,
       "mode": "dialogue",
       "speaker": 4,
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
         "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "48b047d5-dbb6-4f0f-a618-ad8a4522ccfe",
-        "sourceRangeSeconds": [
-          23.708333333333332,
-          29.708333333333332
+        "generationId": "bdf01b7f-ff69-47bd-b0ba-0f50a77bb7f7",
+        "nativeDimensions": [
+          1920,
+          1080
         ],
-        "postprocess": "Native1920x1080, CRF16, GOP6, silent;24fps motion-interpolated to60fps; exact character cuts and reversible hold retain original voice timing",
-        "deliveryFrameProvenance": "24fps source with motion-inferred60fps; no claim of native60fps capture"
+        "nativeSha256": "40df894df5b656b857e0a295440d1bf78d73ef67e4cb44b10ee55451bea4c411",
+        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
+        "reviewStatus": "generated_rejected_identity_and_fine_ink",
+        "releaseStatus": "user-requested-interim",
+        "finalVisualApproval": false
       },
       "neckSafeY": 0.66,
       "framing": {
@@ -269,22 +378,37 @@
         "minX": 0.445,
         "maxX": 0.55
       },
-      "sourceFrames": 1560
+      "sourceFrames": 617,
+      "clipIn": 0
     },
     {
       "id": "return-lions",
       "label": "석사자에게 돌아가기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_164445_a65114ae-b7b2-4773-93a0-2c7164b0effd.mp4",
-      "image": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261014_162805_effdbabb-a0bf-4639-8742-bb21eb164774.png",
-      "duration": 6,
-      "fps": 24,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_095914_afee4a50-3e79-4a5f-8a17-a7070c7a214a.mp4",
+      "duration": 29.708333333333332,
+      "fps": 24.0,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "a65114ae-b7b2-4773-93a0-2c7164b0effd"
-      }
+        "model": "Seedance 2.5 Edit Unlimited",
+        "generationId": "afee4a50-3e79-4a5f-8a17-a7070c7a214a",
+        "nativeDimensions": [
+          1920,
+          1080
+        ],
+        "nativeSha256": "e97f68b8f3845b556d9fe764a4e14bc0ebc9632afecdc8118372b9795c6a7b71",
+        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
+        "reviewStatus": "generated_rejected_geometry_and_continuity",
+        "releaseStatus": "user-requested-interim",
+        "finalVisualApproval": false
+      },
+      "sourceDuration": 29.708333333333332,
+      "sourceFrames": 713,
+      "clipIn": 0,
+      "walkingDuration": 120.5,
+      "scrollTimeMultiplier": 0.24654218533886582,
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
     },
     {
       "id": "seasons",
@@ -313,7 +437,9 @@
   "review": {
     "geometryPass": false,
     "excludedIntermediateFrames": false,
-    "remaining": "Native continuous route replacements still under style and location review.",
-    "deliveryQuality": "Native source resolution preserved; reviewed60fps delivery for dialogue and modern scenes; whole ink-style replacement still pending"
+    "remaining": "Known CG remnants, reference/camera continuity and character defects remain. Modern zero-person regeneration and mountain connector are deferred.",
+    "deliveryQuality": "11 native1920x1080 24fps generated outputs included at explicit user request. Existing external voices, ambience and movement-triggered footsteps retained. This is not final60fps approval.",
+    "releaseStatus": "user-requested-interim",
+    "finalVisualApproval": false
   }
 }

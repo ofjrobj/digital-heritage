@@ -1,7 +1,7 @@
 import {createSceneLife} from './scene-life.js?v=quiet-life-rest-3';
 import {createSeasonAmbience} from './season-ambience.js?v=quiet-seasons-3';
-import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=bottom-safe-2';
-import {dialogueFrame} from './dialogue-framing.js?v=chest-fit-1';
+import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=interim-v4-cover-20261017';
+import {dialogueFrame} from './dialogue-framing.js?v=interim-v4-cover-20261017';
 import {seasonsFrame} from './seasons-framing.js?v=all-visitors-1';
 import {createStoryVoices} from './story-voices.js?v=voices-timing-3';
 import {createStoryMusic} from './story-audio-mix.js?v=bgm-audible-5';
@@ -13,14 +13,14 @@ const paperColor=createPaperColor();
 const introEffect=createIntroInkSpread({paper:PAPER_CSS});
 let normalizedVillage=null;
 const introPaintings=['./cover-reference.png','./test-render/intro-mountains.webp'].map(path=>{const im=new Image();im.src=new URL(path,import.meta.url).href;return im;});
-const introVillage=new Image();introVillage.src=new URL('./test-render/aerial-bridge-ink.webp?v=quality60-1',import.meta.url).href;
+const introVillage=new Image();introVillage.src=new URL('./test-render/aerial-bridge-v4.svg?v=interim-v4-cover-20261017',import.meta.url).href;
 introVillage.onerror=()=>{introVillage.dataset.failed='true';};
 const introAssetsReady=()=>[...introPaintings,introVillage].every(im=>im.complete&&im.naturalWidth);
 const introAssetsFailed=()=>[...introPaintings,introVillage].some(im=>im.dataset.failed==='true'||im.complete&&!im.naturalWidth);
 const $=id=>document.getElementById(id),stage=$('stage'),canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const PAPER=PAPER_CSS;
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
-const manifestURL=new URL('./test-render/manifest.json?v=welcome-entry-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
+const manifestURL=new URL('./test-render/manifest.json?v=interim-v4-cover-20261017',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
 const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=archive-paper-1',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
@@ -62,7 +62,7 @@ function draw(source){
  const sceneRecord=records.find(r=>r&&(r.video===source||r.image===source));
  const isIntro=sceneRecord?.scene.id==='intro'&&introAssetsReady();
  const graded=isIntro?source:paperColor.render(source);
- const seasonFit=sceneRecord?.scene.id==='seasons'&&width/height<1.55?seasonsFrame(width,height,sw,sh,seasonUiInsets()):null;
+ const seasonFit=null; // All scene images fill the viewport, including narrow windows.
  function paint(x,y,w,h){ctx.drawImage(graded,x,y,w,h);}
  if(isIntro){
   if(!normalizedVillage){const gradedVillage=paperColor.render(introVillage);normalizedVillage=document.createElement('canvas');normalizedVillage.width=introVillage.naturalWidth;normalizedVillage.height=introVillage.naturalHeight;normalizedVillage.getContext('2d').drawImage(gradedVillage,0,0,normalizedVillage.width,normalizedVillage.height);}
@@ -78,14 +78,7 @@ function draw(source){
   ctx.save();ctx.translate(fx,fy);ctx.scale(zoom,zoom);ctx.translate(-fx,-fy);paint(x,y,sw*scale,sh*scale);ctx.restore();
   ctx.save();ctx.globalAlpha=ease(clamp((t-18.5)/1.5));ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);ctx.restore();
  }else if(sceneRecord?.scene.mode==='dialogue'){
-  dialogueFit.update(sceneRecord.scene,source);
-  const r=dialogueFrame(sceneRecord.scene,width,height,sw,sh),layout=dialogueFit.proof();
-  // Keep the complete source lower edge beneath the dialogue panel, not floating
-  // in an empty paper band. Never erase the hands or torso with a bottom fade.
-  r.y+=layout?.portraitOffsetY||0;paint(r.x,r.y,r.w,r.h);
-  const fade=Math.min(36,height*.06);
-  if(r.y>0&&r.y<height){const g=ctx.createLinearGradient(0,r.y,0,r.y+fade);g.addColorStop(0,PAPER);g.addColorStop(1,'rgba(232,232,230,0)');ctx.fillStyle=g;ctx.fillRect(0,r.y,width,fade);}
-  for(const edge of ['left','right']){const x=edge==='left'?r.x:r.x+r.w;if(x>0&&x<width){const feather=Math.min(24,r.w*.025),g=ctx.createLinearGradient(x,0,x+(edge==='left'?feather:-feather),0);g.addColorStop(0,PAPER);g.addColorStop(1,'rgba(232,232,230,0)');ctx.fillStyle=g;ctx.fillRect(edge==='left'?x:x-feather,0,feather,height);}}
+  const r=dialogueFrame(sceneRecord.scene,width,height,sw,sh);paint(r.x,r.y,r.w,r.h);
  }else paint((width-sw*scale)/2,(height-sh*scale)/2,sw*scale,sh*scale);dialogueFit.update(sceneRecord?.scene,source);lastSource=source;hasFrame=true;
  renderedKind=source.tagName==='VIDEO'?'video':'image';renderedSource=source.currentSrc||source.src||'';return true;
 }
@@ -225,3 +218,4 @@ try{
  let saved=null;try{saved=JSON.parse(sessionStorage.getItem('test-render-resume'));sessionStorage.removeItem('test-render-resume');}catch{}
  requestScene(saved&&Number.isInteger(saved.index)?clamp(saved.index,0,scenes.length-1):0,Number(saved?.local)||0);
 }catch(error){status('장면을 불러오지 못했습니다. 새로고침해 주세요.');document.body.dataset.error=String(error);console.error(error);}
+
