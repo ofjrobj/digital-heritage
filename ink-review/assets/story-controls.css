@@ -115,3 +115,11 @@ body.test-render-media #stage .tr-archive-cta span {
 @media (prefers-reduced-motion: reduce) {
   body.test-render-media #stage .tr-archive-cta span { animation: none; }
 }
+
+/* Real fog has keyed transparency; the source's black and audio never reach the scene. */
+body.test-render-media #stage .tr-mist.tr-footage-active {background:none!important;opacity:0!important;}
+body.test-render-media #stage .tr-mist.tr-footage-active::before,
+body.test-render-media #stage .tr-mist.tr-footage-active::after {content:none;}
+body.test-render-media #stage :is(.tr-footage-fog,.tr-fog-dissolve) {position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;}
+body.test-render-media #stage .tr-fog-dissolve {z-index:2;}
+body.test-render-media #stage .tr-footage-fog {z-index:3;}

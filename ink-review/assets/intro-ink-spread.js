@@ -67,6 +67,7 @@ function paintMountainDepth(context,w,h,plates,progress,paper,village){
  plates.forEach((plate,i)=>context.drawImage(plate,(i===0?-1:1)*w*.56*pass,h*.10*pass,w,h));
 }
 
+export const introInkTiming=Object.freeze({sourceStart:.35,sourceSpan:5.65,spreadStart:.576,secondBurst:.876,burstGap:.30});
 export const maneOrigins=Object.freeze([[.23,.47,0],[.77,.51,.018],[.27,.66,.045],[.75,.70,.065],[.21,.77,.09],[.80,.85,.11]].map(Object.freeze));
 export function createIntroInkSpread(options={}){
  let c=null;
@@ -118,7 +119,14 @@ export function createIntroInkSpread(options={}){
   }
   let max=0;for(const d of field)max=Math.max(max,d);
   for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){const i=y*gw+x,n=(.45*Math.sin(x*.049+y*.026)+.25*Math.sin(x*.095-y*.13)+.14*Math.sin(x*.31+y*.19))*.055;field[i]=Math.max(0,field[i]+max*n*smooth(field[i]/20));}
-  max=0;for(const d of field)max=Math.max(max,d);for(let i=0;i<field.length;i++)field[i]/=max||1;
+  max=0;for(const d of field)max=Math.max(max,d);
+  // Let the left impact land first, then the right a half beat later. Express
+  // the delay in source seconds so it stays consistent across viewport sizes.
+  const burstDelay=introInkTiming.burstGap*1.065/(introInkTiming.sourceSpan*.94);
+  for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){
+   const i=y*gw+x,d=field[i]/(max||1),right=smooth((x/gw*w-r.x-r.w*.40)/(r.w*.20));
+   field[i]=d+burstDelay*right*(1-smooth((d-.65)/.25));
+  }
   const mask=canvas(gw,gh),mc=mask.getContext('2d'),wet=canvas(gw,gh),wc=wet.getContext('2d'),reveal=canvas(mountainSize.width,mountainSize.height),rc=cssContext(reveal,w,h);
   return{w,h,lion,mountains,budget,r,lionPlate,mountainPlate,mountainLayers,mountainScene,ms,field,mask,mc,wet,wc,pixels:mc.createImageData(gw,gh),wetPixels:wc.createImageData(gw,gh),reveal,rc,origins,last:-1};
  }
@@ -137,7 +145,7 @@ export function createIntroInkSpread(options={}){
   if(!c||c.w!==w||c.h!==h||c.lion!==lion||c.mountains!==mountains||c.budget.dpr!==budget.dpr||c.budget.pixels!==budget.pixels)c=prepare(w,h,lion,mountains,budget);if(!c)return false;
   const u=clamp((p-.04)/.94)*1.065,progressChanged=c.last!==p;
   if(progressChanged){
-   const d=c.pixels.data,wet=c.wetPixels.data,gain=smooth(p/.08)*(1-smooth((p-.78)/.22));
+   const d=c.pixels.data,wet=c.wetPixels.data,gain=smooth((p-.04)/.08)*(1-smooth((p-.78)/.22));
    for(let i=0;i<c.field.length;i++){const j=i*4,a=p>=1?1:smooth((u-c.field[i])/.065),front=smooth((u+.035-c.field[i])/.055)*(1-a)*gain;
     d[j]=d[j+1]=d[j+2]=255;d[j+3]=Math.round(a*255);wet[j]=93;wet[j+1]=101;wet[j+2]=95;wet[j+3]=Math.round(front*15);
    }

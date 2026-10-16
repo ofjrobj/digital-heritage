@@ -1,5 +1,5 @@
 {
-  "version": "interim-v4-cover-20261017",
+  "version": "interim-v4-ink-flight-20261017",
   "scenes": [
     {
       "id": "intro",
@@ -16,7 +16,7 @@
         "source": "original-lion-mane-and-mountains",
         "motion": "mane ink growth and 5 original mountain layers"
       },
-      "autoFrom": 2.375,
+      "autoFrom": 0.576,
       "footsteps": false
     },
     {
