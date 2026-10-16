@@ -1,12 +1,13 @@
-import {createSceneLife} from './scene-life.js?v=quiet-life-1';
+import {createSceneLife} from './scene-life.js?v=quiet-life-loop-2';
 import {createSeasonAmbience} from './season-ambience.js?v=quiet-seasons-3';
 import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=face-safe-7';
 import {dialogueFrame} from './dialogue-framing.js?v=portrait-fit-2';
+import {seasonsFrame} from './seasons-framing.js?v=all-visitors-1';
 import {createStoryVoices} from './story-voices.js?v=voices-timing-3';
 import {createStoryMusic} from './story-audio-mix.js?v=bgm-restore-4';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=quiet-steps-3';
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
-import {createIntroInkSpread} from './intro-ink-spread.js?v=archive-paper-1';
+import {createIntroInkSpread} from './intro-ink-spread.js?v=intro-dpr-20261016';
 import {createPaperColor, PAPER_CSS} from './paper-color.js?v=archive-paper-1';
 const paperColor=createPaperColor();
 const introEffect=createIntroInkSpread({paper:PAPER_CSS});
@@ -44,16 +45,33 @@ function scrollLimit(){const from=Number(scenes[index]?.autoFrom);return from>0?
 function scrollTimeMultiplier(){const value=Number(scenes[index]?.scrollTimeMultiplier);return Number.isFinite(value)&&value>0?value:1;}
 function status(text,retry=false){if(storyStarted&&text==='Loading...')text='';const node=$('loading');if(!node)return;const key=text+'|'+retry;if(key===lastStatus)return;lastStatus=key;node.replaceChildren(document.createTextNode(text));node.hidden=!text;if(retry){const button=document.createElement('button');button.textContent='다시 불러오기';button.onclick=()=>requestScene(transition?.to??Math.max(0,index),transition?.at??local);node.append(button);}}
 function voiceEnabled(value){if(value!==lastVoiceEnable){lastVoiceEnable=value;voices.setEnabled(value);}}
+function seasonUiInsets(){
+ const bounds=stage.getBoundingClientRect();let top=0,bottom=0;
+ for(const id of ['storyIndexBar','soundToggle','testTools']){
+  const node=$(id);if(!node||node.hidden)continue;
+  const r=node.getBoundingClientRect();if(!r.width||!r.height)continue;
+  // Reserve only visible controls at the upper and lower edges of the stage.
+  if(r.bottom<=bounds.top+height/2)top=Math.max(top,r.bottom-bounds.top+10);
+  else if(r.top>=bounds.top+height/2)bottom=Math.max(bottom,bounds.bottom-r.top+10);
+ }
+ return {top,bottom};
+}
 function draw(source){
  if(!source)return false;const sw=source.videoWidth||source.naturalWidth,sh=source.videoHeight||source.naturalHeight;if(!sw||!sh)return false;
  ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);const scale=Math.max(width/sw,height/sh);
  const sceneRecord=records.find(r=>r&&(r.video===source||r.image===source));
  const isIntro=sceneRecord?.scene.id==='intro'&&introAssetsReady();
  const graded=isIntro?source:paperColor.render(source);
+ const seasonFit=sceneRecord?.scene.id==='seasons'&&width/height<1.55?seasonsFrame(width,height,sw,sh,seasonUiInsets()):null;
  function paint(x,y,w,h){ctx.drawImage(graded,x,y,w,h);}
  if(isIntro){
   if(!normalizedVillage){const gradedVillage=paperColor.render(introVillage);normalizedVillage=document.createElement('canvas');normalizedVillage.width=introVillage.naturalWidth;normalizedVillage.height=introVillage.naturalHeight;normalizedVillage.getContext('2d').drawImage(gradedVillage,0,0,normalizedVillage.width,normalizedVillage.height);}
   const time=sceneRecord.video.currentTime;introEffect.draw(ctx,width,height,clamp((time-.35)/5),...introPaintings,normalizedVillage);
+ }else if(seasonFit){
+  const r=seasonFit;paint(r.x,r.y,r.w,r.h);
+  // Dissolve only the thin paper perimeter; do not crop or rescale subjects.
+  const fade=Math.min(16,r.h*.035);
+  for(const edge of ['top','bottom']){const y=edge==='top'?r.y:r.y+r.h;const g=ctx.createLinearGradient(0,y,0,y+(edge==='top'?fade:-fade));g.addColorStop(0,PAPER);g.addColorStop(1,'rgba(232,232,230,0)');ctx.fillStyle=g;ctx.fillRect(r.x,edge==='top'?y:y-fade,r.w,fade);}
  }else if(sceneRecord?.scene.id==='seasons'&&!sceneRecord.scene.motionBaked){
   const t=sceneRecord.video.currentTime,approach=ease(clamp((t-10)/8.5)),zoom=1+.12*approach;
   const x=(width-sw*scale)/2,y=(height-sh*scale)/2,fx=x+sw*scale*.52,fy=y+sh*scale*.66;
@@ -192,7 +210,7 @@ function frame(now){
  seasonAmbience.tick({active:seasonPlaying,time:local,sound,paused:paused||!seasonPlaying,hidden:document.hidden,transition:!!transition,dt});
  footsteps.tick();if($('run'))$('run').textContent=previewAuto?'이동 멈춤':'이동 재생';if($('chapter')&&index>=0)$('chapter').value=String(index);if($('progress'))$('progress').value=String((offset(index)+local)/Math.max(1,total));
  const deliveryVideo=current?.video,deliveryQuality=deliveryVideo?.getVideoPlaybackQuality?.();
- document.body.dataset.proof=JSON.stringify({engine:'test-render-media-v3',fit:'cover',dialogueFit:dialogueFit.proof(),paper:PAPER,paperColor:paperColor.proof(),storyStarted,startup:document.body.dataset.startup,loadingHiddenAt,firstSceneShownAt,firstSceneGapMs:firstSceneShownAt&&loadingHiddenAt?firstSceneShownAt-loadingHiddenAt:null,endingElapsed,scene:scenes[index]?.id,index,local,duration:duration(index),mode:scenes[index]?.mode,effectiveMode:current?.autoStarted?'auto':scenes[index]?.mode,autoFrom:scenes[index]?.autoFrom??null,autoStarted:!!current?.autoStarted,transition:transition?.phase||null,waiting:!!transition||!!current&&!current.loaded,renderedKind,renderedSource,imagePreview:renderedKind==='image',source:current?.scene.src||null,sourceTime:current?.video.currentTime||0,scrollTarget:target,sourcePaused:current?.video.paused??true,startDelay:scenes[index]?.startDelay||0,startElapsed:current?.startElapsed||0,interaction:document.body.dataset.interaction,scrollEnabled:canWalk(),sourceFps:current?.scene.fps??null,delivery:{width:deliveryVideo?.videoWidth||0,height:deliveryVideo?.videoHeight||0,playbackRate:deliveryVideo?.playbackRate??1,totalVideoFrames:deliveryQuality?.totalVideoFrames??null,droppedVideoFrames:deliveryQuality?.droppedVideoFrames??null},provenance:current?.scene.provenance??null,geometryVerified:false,voice:voices.proof(),seasonAmbience:seasonAmbience.proof(),musicVolume:music.volume,music:musicProof,sceneLife:sceneLife.proof(),footsteps:{active:foot.dataset.active,starts:Number(foot.dataset.starts||0)},finished});requestAnimationFrame(frame);
+ document.body.dataset.proof=JSON.stringify({engine:'test-render-media-v3',fit:'cover',dialogueFit:dialogueFit.proof(),introRendering:scenes[index]?.id==='intro'?introEffect.proof():null,paper:PAPER,paperColor:paperColor.proof(),storyStarted,startup:document.body.dataset.startup,loadingHiddenAt,firstSceneShownAt,firstSceneGapMs:firstSceneShownAt&&loadingHiddenAt?firstSceneShownAt-loadingHiddenAt:null,endingElapsed,scene:scenes[index]?.id,index,local,duration:duration(index),mode:scenes[index]?.mode,effectiveMode:current?.autoStarted?'auto':scenes[index]?.mode,autoFrom:scenes[index]?.autoFrom??null,autoStarted:!!current?.autoStarted,transition:transition?.phase||null,waiting:!!transition||!!current&&!current.loaded,renderedKind,renderedSource,imagePreview:renderedKind==='image',source:current?.scene.src||null,sourceTime:current?.video.currentTime||0,scrollTarget:target,sourcePaused:current?.video.paused??true,startDelay:scenes[index]?.startDelay||0,startElapsed:current?.startElapsed||0,interaction:document.body.dataset.interaction,scrollEnabled:canWalk(),sourceFps:current?.scene.fps??null,delivery:{width:deliveryVideo?.videoWidth||0,height:deliveryVideo?.videoHeight||0,playbackRate:deliveryVideo?.playbackRate??1,totalVideoFrames:deliveryQuality?.totalVideoFrames??null,droppedVideoFrames:deliveryQuality?.droppedVideoFrames??null},provenance:current?.scene.provenance??null,geometryVerified:false,voice:voices.proof(),seasonAmbience:seasonAmbience.proof(),musicVolume:music.volume,music:musicProof,sceneLife:sceneLife.proof(),footsteps:{active:foot.dataset.active,starts:Number(foot.dataset.starts||0)},finished});requestAnimationFrame(frame);
 }
 status('Loading...');requestAnimationFrame(frame);
 try{
