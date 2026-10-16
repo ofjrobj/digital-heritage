@@ -17,41 +17,53 @@ function cssContext(surface,w,h,read=false){
  const context=surface.getContext('2d',read?{willReadFrequently:true}:undefined);
  context.setTransform(surface.width/w,0,0,surface.height/h,0,0);return context;
 }
-const mountainRidges={nearLeft:[[0,.66],[.10,.62],[.23,.73],[.40,.94],[.55,1.12]],nearRight:[[.45,1.12],[.59,.99],[.72,.85],[.87,.66],[1,.60]],middleLeft:[[0,.41],[.10,.44],[.20,.51],[.31,.62],[.45,.80],[.57,.94]],middleRight:[[.43,.94],[.59,.80],[.73,.67],[.88,.48],[1,.43]]};
-const ridgeY=(points,x)=>{let i=1;while(i<points.length-1&&x>points[i][0])i++;const[a,b]=[points[i-1],points[i]],t=clamp((x-a[0])/(b[0]-a[0]));return a[1]+(b[1]-a[1])*t;};
 function splitMountainInk(plate,w,h,mw,mh,paper){
- const k=Math.max(w/mw,h/mh),ox=(w-mw*k)/2,oy=(h-mh*k)/2;
- const pw=plate.width,ph=plate.height,pc=plate.getContext('2d',{willReadFrequently:true});
- let source;try{source=pc.getImageData(0,0,pw,ph).data;}catch{return null;}
- // Reuse short scanline buffers instead of five additional full-size images.
- const bandHeight=Math.min(64,ph),plates=Array.from({length:5},()=>canvas(pw,ph)),contexts=plates.map(p=>p.getContext('2d')),pixels=contexts.map(p=>p.createImageData(pw,bandHeight));
- for(let top=0;top<ph;top+=bandHeight){
- const rows=Math.min(bandHeight,ph-top);pixels.forEach(p=>p.data.fill(0));
- for(let y=0;y<rows;y++)for(let x=0;x<pw;x++){
-  const u=((x+.5)/pw*w-ox)/(mw*k),v=((top+y+.5)/ph*h-oy)/(mh*k),i=(y*pw+x)*4,sourceIndex=((top+y)*pw+x)*4;
-  const left=1-smooth((u-.47)/.10),right=smooth((u-.43)/.10);
-  const masks=[left*smooth((v-ridgeY(mountainRidges.nearLeft,u)+.035)/.07),right*smooth((v-ridgeY(mountainRidges.nearRight,u)+.035)/.07),left*smooth((v-ridgeY(mountainRidges.middleLeft,u)+.045)/.09),right*smooth((v-ridgeY(mountainRidges.middleRight,u)+.045)/.09)];
-  const weights=[0,0,0,0,0];let remaining=1;
-  for(let j=0;j<4;j++){const weight=remaining*masks[j];weights[[3,4,1,2][j]]=weight;remaining-=weight;}weights[0]=remaining;
-  for(let j=0;j<5;j++){const d=pixels[j].data,a=weights[j];if(a<.0001)continue;for(let ch=0;ch<3;ch++)d[i+ch]=Math.round(255*Math.pow(clamp(source[sourceIndex+ch]/paper[ch]),a));d[i+3]=255;}
+ // Find the painted silhouette on a small raster, close gaps between strokes,
+ // and fill its enclosed paper. The mountain interior remains fully opaque.
+ const pw=plate.width,ph=plate.height,gw=Math.min(640,pw),gh=Math.round(ph*gw/pw);
+ const probe=canvas(gw,gh),pc=probe.getContext('2d',{willReadFrequently:true});pc.drawImage(plate,0,0,gw,gh);
+ let data;try{data=pc.getImageData(0,0,gw,gh).data;}catch{return null;}
+ let mask=new Uint8Array(gw*gh);
+ for(let i=0;i<mask.length;i++)mask[i]=Math.max(paper[0]-data[i*4],paper[1]-data[i*4+1],paper[2]-data[i*4+2])>10?1:0;
+ function morph(src,r,dilate){
+  const stride=gw+1,area=new Uint32Array(stride*(gh+1)),out=new Uint8Array(src.length);
+  for(let y=0;y<gh;y++){let row=0;for(let x=0;x<gw;x++){row+=src[y*gw+x];area[(y+1)*stride+x+1]=area[y*stride+x+1]+row;}}
+  for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){
+   const x0=Math.max(0,x-r),y0=Math.max(0,y-r),x1=Math.min(gw,x+r+1),y1=Math.min(gh,y+r+1);
+   const sum=area[y1*stride+x1]-area[y0*stride+x1]-area[y1*stride+x0]+area[y0*stride+x0];
+   out[y*gw+x]=dilate?+(sum>0):+(sum===(x1-x0)*(y1-y0));
+  }return out;
  }
- contexts.forEach((p,i)=>p.putImageData(pixels[i],0,top));
+ mask=morph(morph(mask,3,true),3,false);
+ const outside=new Uint8Array(mask.length),queue=new Int32Array(mask.length);let first=0,last=0;
+ function add(i){if(!mask[i]&&!outside[i]){outside[i]=1;queue[last++]=i;}}
+ for(let x=0;x<gw;x++){add(x);add((gh-1)*gw+x);}for(let y=0;y<gh;y++){add(y*gw);add(y*gw+gw-1);}
+ while(first<last){const i=queue[first++],x=i%gw,y=(i-x)/gw;if(x)add(i-1);if(x+1<gw)add(i+1);if(y)add(i-gw);if(y+1<gh)add(i+gw);}
+ for(let i=0;i<mask.length;i++)if(!outside[i])mask[i]=1;
+ const plates=[];
+ for(let side=0;side<2;side++){
+  const matte=canvas(gw,gh),mc=matte.getContext('2d'),pixels=mc.createImageData(gw,gh);
+  for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){const i=y*gw+x;if((x<gw/2)===(side===0)&&mask[i])pixels.data[i*4+3]=255;}
+  mc.putImageData(pixels,0,0);const layer=canvas(pw,ph),ctx=layer.getContext('2d');ctx.drawImage(plate,0,0);ctx.globalCompositeOperation='destination-in';ctx.drawImage(matte,0,0,pw,ph);plates.push(layer);
  }
  return plates;
 }
 function paintMountainDepth(context,w,h,plates,progress,paper,village){
  context.globalCompositeOperation='source-over';context.fillStyle=paper;context.fillRect(0,0,w,h);
- const land=smooth((progress-.50)/.45);
- if(village){const [vw,vh]=dims(village);if(vw&&vh){const zoom=1+.055*(1-land),k=Math.max(w/vw,h/vh)*zoom;context.globalAlpha=land;context.drawImage(village,(w-vw*k)/2+w*.028*(1-land),(h-vh*k)/2+h*.012*(1-land),vw*k,vh*k);context.globalAlpha=1;}}
- context.globalCompositeOperation='multiply';
- const near=smooth((progress-.40)/.60),middle=smooth((progress-.55)/.45);
- const offsets=[[0,0],[-w*.23*middle,h*.035*middle],[w*.23*middle,h*.035*middle],[-w*.57*near,h*.09*near],[w*.57*near,h*.09*near]];
- plates.forEach((plate,i)=>{const from=[.61,.72,.72,.83,.83][i];context.globalAlpha=village?1-smooth((progress-from)/(1-from)):1;context.drawImage(plate,offsets[i][0],offsets[i][1],w,h);});
- context.globalAlpha=1;context.globalCompositeOperation='source-over';
+ const approach=smooth((progress-.43)/.57),reveal=smooth((progress-.45)/.35);
+ if(village){const [vw,vh]=dims(village);if(vw&&vh){
+  // Only the distant village emerges. Solid mountain silhouettes stay in front.
+  const zoom=.94+.06*approach,k=Math.max(w/vw,h/vh)*zoom;
+  context.globalAlpha=reveal;context.drawImage(village,(w-vw*k)/2,(h-vh*k)/2,vw*k,vh*k);
+ }}
+ const pass=smooth((progress-.44)/.56);
+ context.globalAlpha=1;
+
  const veil=smooth((progress-.43)/.20)*(1-smooth((progress-.76)/.24));
  if(village&&veil>0){const drift=smooth((progress-.43)/.57);const banks=[[.18+.17*drift,.66-.09*drift,.62,.24,.76],[.87-.16*drift,.39+.12*drift,.59,.28,.80],[.48,.71-.10*drift,.70,.23,.56]];
   for(const[x,y,rx,ry,opacity]of banks){context.save();context.translate(w*x,h*y);context.scale(w*rx,h*ry);const fog=context.createRadialGradient(0,0,0,0,0,1);fog.addColorStop(0,'rgba(232,232,230,1)');fog.addColorStop(.35,'rgba(232,232,230,.91)');fog.addColorStop(1,'rgba(232,232,230,0)');context.globalAlpha=veil*opacity;context.fillStyle=fog;context.fillRect(-1,-1,2,2);context.restore();}}
  context.globalAlpha=1;context.globalCompositeOperation='source-over';
+ plates.forEach((plate,i)=>context.drawImage(plate,(i===0?-1:1)*w*.56*pass,h*.10*pass,w,h));
 }
 
 export const maneOrigins=Object.freeze([[.23,.47,0],[.77,.51,.018],[.27,.66,.045],[.75,.70,.065],[.21,.77,.09],[.80,.85,.11]].map(Object.freeze));
@@ -126,7 +138,7 @@ export function createIntroInkSpread(options={}){
   ctx.save();ctx.globalCompositeOperation='source-over';ctx.fillStyle=options.paper||PAPER_CSS;ctx.fillRect(0,0,w,h);
   ctx.drawImage(c.lionPlate,0,0,w,h);ctx.drawImage(c.wet,0,0,w,h);ctx.drawImage(c.reveal,0,0,w,h);ctx.restore();return true;
  }
- return{draw,reset(){c=null;},proof(){return c?{type:'local-mane-ink-growth',lionRect:c.r,cropBottom:options.lionCropBottom??.72,origins:c.origins,progress:c.last,sourceAssetsModified:false,mountainLayers:c.mountainLayers?5:1,spatialTransform:'original mountain painting; fixed far ridge and outward middle/near layers',rasterCache:{dpr:c.budget.dpr,maxPixelsPerPlate:c.budget.pixels,lion:[c.lionPlate.width,c.lionPlate.height],mountains:[c.mountainPlate.width,c.mountainPlate.height],mask:[c.mask.width,c.mask.height]}}:null;}};
+ return{draw,reset(){c=null;},proof(){return c?{type:'local-mane-ink-growth',lionRect:c.r,cropBottom:options.lionCropBottom??.72,origins:c.origins,progress:c.last,sourceAssetsModified:false,mountainLayers:c.mountainLayers?c.mountainLayers.length:1,spatialTransform:'opaque foreground ridges pass camera; village grows monotonically to first video frame',villageZoom:.94+.06*smooth((c.last-.43)/.57),mountainComposite:'source-over',mountainOpacity:1,rasterCache:{dpr:c.budget.dpr,maxPixelsPerPlate:c.budget.pixels,lion:[c.lionPlate.width,c.lionPlate.height],mountains:[c.mountainPlate.width,c.mountainPlate.height],mask:[c.mask.width,c.mask.height]}}:null;}};
 }
 const instances=new WeakMap();
 export function draw(ctx,w,h,progress,lion,mountains){let instance=instances.get(ctx);if(!instance){instance=createIntroInkSpread();instances.set(ctx,instance);}return instance.draw(ctx,w,h,progress,lion,mountains);}
