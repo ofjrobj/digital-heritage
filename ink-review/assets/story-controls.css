@@ -1,0 +1,20 @@
+/* Quiet paper navigation; no luminous halo over dark roofs. */
+body.test-render-media #stage #storyIndexBar::before {
+  background: rgba(211, 211, 206, .76);
+  box-shadow: none;
+  filter: none;
+}
+
+/* A clear walking cue against both pale ground and detailed scenery. */
+body.test-render-media #stage #hint {
+  color: #343a35;
+  font-size: clamp(14px, min(1.35vw, 2.3dvh), 18px) !important;
+  font-weight: 600 !important;
+  font-synthesis: weight !important;
+  letter-spacing: .045em !important;
+  text-shadow: none;
+}
+body.test-render-media #stage #hint::before {
+  width: 2px;
+  background: rgba(52, 58, 53, .85);
+}
