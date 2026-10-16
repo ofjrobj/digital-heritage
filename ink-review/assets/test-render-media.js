@@ -1,7 +1,7 @@
 import {createSceneLife} from './scene-life.js?v=quiet-life-loop-2';
 import {createSeasonAmbience} from './season-ambience.js?v=quiet-seasons-3';
-import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=face-safe-7';
-import {dialogueFrame} from './dialogue-framing.js?v=portrait-fit-2';
+import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=chest-safe-1';
+import {dialogueFrame} from './dialogue-framing.js?v=chest-fit-1';
 import {seasonsFrame} from './seasons-framing.js?v=all-visitors-1';
 import {createStoryVoices} from './story-voices.js?v=voices-timing-3';
 import {createStoryMusic} from './story-audio-mix.js?v=bgm-restore-4';
@@ -83,6 +83,7 @@ function draw(source){
   // needs the entire group to remain visible above the dialogue.
   const fade=Math.min(36,height*.06);
   for(const edge of ['top','bottom']){const y=edge==='top'?r.y:r.y+r.h;if(y>0&&y<height){const g=ctx.createLinearGradient(0,y,0,y+(edge==='top'?fade:-fade));g.addColorStop(0,PAPER);g.addColorStop(1,'rgba(232,232,230,0)');ctx.fillStyle=g;ctx.fillRect(0,edge==='top'?y:y-fade,width,fade);}}
+  for(const edge of ['left','right']){const x=edge==='left'?r.x:r.x+r.w;if(x>0&&x<width){const feather=Math.min(24,r.w*.025),g=ctx.createLinearGradient(x,0,x+(edge==='left'?feather:-feather),0);g.addColorStop(0,PAPER);g.addColorStop(1,'rgba(232,232,230,0)');ctx.fillStyle=g;ctx.fillRect(edge==='left'?x:x-feather,0,feather,height);}}
  }else paint((width-sw*scale)/2,(height-sh*scale)/2,sw*scale,sh*scale);dialogueFit.update(sceneRecord?.scene,source);lastSource=source;hasFrame=true;
  renderedKind=source.tagName==='VIDEO'?'video':'image';renderedSource=source.currentSrc||source.src||'';return true;
 }
@@ -222,4 +223,3 @@ try{
  let saved=null;try{saved=JSON.parse(sessionStorage.getItem('test-render-resume'));sessionStorage.removeItem('test-render-resume');}catch{}
  requestScene(saved&&Number.isInteger(saved.index)?clamp(saved.index,0,scenes.length-1):0,Number(saved?.local)||0);
 }catch(error){status('장면을 불러오지 못했습니다. 새로고침해 주세요.');document.body.dataset.error=String(error);console.error(error);}
-
