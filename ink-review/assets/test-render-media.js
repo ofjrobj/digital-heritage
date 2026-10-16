@@ -1,10 +1,10 @@
-import {createSceneLife} from './scene-life.js?v=quiet-life-loop-2';
+import {createSceneLife} from './scene-life.js?v=quiet-life-rest-3';
 import {createSeasonAmbience} from './season-ambience.js?v=quiet-seasons-3';
 import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=chest-safe-1';
 import {dialogueFrame} from './dialogue-framing.js?v=chest-fit-1';
 import {seasonsFrame} from './seasons-framing.js?v=all-visitors-1';
 import {createStoryVoices} from './story-voices.js?v=voices-timing-3';
-import {createStoryMusic} from './story-audio-mix.js?v=bgm-restore-4';
+import {createStoryMusic} from './story-audio-mix.js?v=bgm-audible-5';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=quiet-steps-3';
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
 import {createIntroInkSpread} from './intro-ink-spread.js?v=intro-forward-occlusion-1';
@@ -20,7 +20,7 @@ const introAssetsFailed=()=>[...introPaintings,introVillage].some(im=>im.dataset
 const $=id=>document.getElementById(id),stage=$('stage'),canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
 const PAPER=PAPER_CSS;
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
-const manifestURL=new URL('./test-render/manifest.json?v=archive-paper-1-quality60-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
+const manifestURL=new URL('./test-render/manifest.json?v=welcome-entry-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
 const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=archive-paper-1',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
@@ -203,7 +203,7 @@ function frame(now){
  if(finished){endingElapsed+=dt;mistAmount(ease(clamp(endingElapsed/2.2)));archiveCta.hidden=false;archiveCta.style.opacity=String(ease(clamp((endingElapsed-.3)/1.2)));}
 
  const musicScene=scenes[index],musicVoice=voices.proof();
- sceneLife.tick({src:musicScene?.ambience||'',time:current?.video.currentTime||0,active:!paused&&!compare&&!transition&&!finished&&!document.hidden&&!!current&&(scrollDriven()?now-lastScrollAt<220:!current.video.paused&&!current.video.seeking),sound,dt});
+ sceneLife.tick({src:musicScene?.ambience||'',time:current?.video.currentTime||0,active:!paused&&!compare&&!transition&&!finished&&!document.hidden&&!!current&&musicScene?.mode!=='dialogue',sound,dt});
  const musicDuck=transition?.record.scene.mode==='dialogue'||musicScene?.mode==='dialogue'&&!musicVoice.ended;
  storyMusic.tick({duck:musicDuck,paused:paused||compare,hidden:document.hidden,finished,endingTime:musicScene?.id==='seasons'?local:null,endingDuration:duration(index),dt});
  const musicProof=storyMusic.proof();if($('soundToggle'))$('soundToggle').title=musicProof.blocked?'화면을 눌러 소리 재생 다시 시도':sound?'소리 끄기':'소리 켜기';

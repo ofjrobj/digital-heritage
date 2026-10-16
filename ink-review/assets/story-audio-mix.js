@@ -43,7 +43,7 @@ export function createStoryMusic(audio){
   tick({duck=false,paused=false,hidden=false,finished=false,endingTime=null,endingDuration=20,dt=0}){
    suspended=paused||hidden;
    if(suspended){audio.pause();audio.volume=0;envelope.volume=0;return;}
-   fade(enabled&&!duck&&!finished ? .045 : 0,dt);
+   fade(enabled&&!duck&&!finished ? .28 : 0,dt);
    const gain=endingTime==null?1:endingMusicGain(endingTime,endingDuration);
    audio.volume=envelope.volume*gain;
    if(!enabled||finished&&audio.volume<.00001)audio.pause();else ensure();
