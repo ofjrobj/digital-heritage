@@ -1,4 +1,4 @@
-// User-supplied rolling fog: luminance keys preserve curls against pale paper.
+// White rolling fog: footage luminance shapes soft translucent banks.
 export function createFootageFog({stage,world,mist}){
  const video=document.createElement('video');video.className='tr-source';video.muted=true;video.defaultMuted=true;video.playsInline=true;video.preload='auto';video.setAttribute('aria-hidden','true');video.src=new URL('./fog-rolling-cloud.mp4',import.meta.url).href;stage.append(video);
  const surface=document.createElement('canvas');surface.className='tr-footage-fog';surface.setAttribute('aria-hidden','true');stage.append(surface);
@@ -22,15 +22,12 @@ export function createFootageFog({stage,world,mist}){
     vec2 bank=mat2(.978148,-.207912,.207912,.978148)*vec2((1.-p.x-.5)*.86,(p.y-.5)*.62)+vec2(.43,.58);
     bank+=vec2(drift*.65,(1.-amount)*.045);
     vec2 right=fog(bank);
-    float leftAlpha=smoothstep(.02,.70,pow(left.x,.72))*left.y;
-    float rightAlpha=smoothstep(.02,.70,pow(right.x,.72))*right.y*.66;
+    float leftAlpha=smoothstep(.02,.95,left.x)*left.y;
+    float rightAlpha=smoothstep(.02,.95,right.x)*right.y*.66;
     float coverage=leftAlpha+rightAlpha-leftAlpha*rightAlpha;
-    float alpha=coverage*amount*.98;
-    vec3 shadow=vec3(.65,.70,.67),highlight=vec3(.94,.95,.92);
-    vec3 leftColor=mix(shadow,highlight,smoothstep(.07,.95,left.x));
-    vec3 rightColor=mix(shadow,highlight,smoothstep(.07,.95,right.x));
-    vec3 inkPaper=(leftColor*leftAlpha+rightColor*rightAlpha*(1.-leftAlpha))/max(coverage,.0001);
-    gl_FragColor=vec4(inkPaper,alpha);
+    float alpha=coverage*amount*.90;
+    // Density affects transparency only; the fog itself stays neutral white.
+    gl_FragColor=vec4(vec3(1.),alpha);
    }`));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error('Fog shader link');gl.useProgram(program);
   const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);const pos=gl.getAttribLocation(program,'position');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
   texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);level=gl.getUniformLocation(program,'amount');aspect=gl.getUniformLocation(program,'aspect');

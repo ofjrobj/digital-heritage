@@ -1,4 +1,4 @@
-import {createFootageFog} from './footage-fog.js?v=rolling-fog-common-walk-1';
+import {createFootageFog} from './footage-fog.js?v=soft-white-fog-1';
 import {createSceneLife} from './scene-life.js?v=quiet-wind-4';
 import {createSeasonAmbience} from './season-ambience.js?v=quiet-wind-4';
 import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=flow-cover-sound-1';
