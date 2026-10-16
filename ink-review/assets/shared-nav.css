@@ -1,0 +1,83 @@
+/* Story and Index share viewport coordinates, type and quiet paper treatment. */
+:root {
+  --shared-nav-top: max(env(safe-area-inset-top, 0px), clamp(14px, 4.4dvh, 36px));
+  --shared-nav-font: clamp(8px, min(1.65vw, 2.7dvh), 23px);
+}
+
+body.test-render-media #stage #storyIndexBar,
+body .archive #archiveStoryIndexBar {
+  position: fixed !important;
+  top: var(--shared-nav-top) !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translateX(-50%) !important;
+  display: flex;
+  gap: 0 !important;
+  align-items: stretch;
+  width: max-content;
+  height: auto;
+  margin: 0;
+  padding: 0 !important;
+  border: 0;
+  border-radius: 0;
+  background: none !important;
+  isolation: isolate;
+  z-index: 6;
+  font-family: 'KoPubWorld Batang Light', serif;
+  font-size: var(--shared-nav-font) !important;
+  font-weight: 300 !important;
+  letter-spacing: .04em;
+  line-height: normal !important;
+}
+
+body.test-render-media #stage #storyIndexBar :is(a, button),
+body .archive #archiveStoryIndexBar :is(a, button) {
+  position: relative;
+  display: block;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: .32em 1.25em !important;
+  border: 0;
+  border-radius: 0;
+  color: #373734 !important;
+  background: transparent;
+  box-shadow: none;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: 300 !important;
+  font-synthesis: none !important;
+  line-height: normal !important;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  text-decoration: none;
+  text-shadow: none !important;
+}
+
+body.test-render-media #stage #storyIndexBar :is(a, button) + :is(a, button),
+body .archive #archiveStoryIndexBar :is(a, button) + :is(a, button) {
+  border-left: 1px solid rgba(30, 30, 28, .2);
+}
+
+body.test-render-media #stage #storyIndexBar [aria-current='page'],
+body .archive #archiveStoryIndexBar [aria-current='page'] {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: auto;
+}
+
+body.test-render-media #stage #storyIndexBar::before,
+body .archive #archiveStoryIndexBar::before {
+  content: '';
+  position: absolute;
+  inset: -.2em -.3em;
+  z-index: -1;
+  background: rgba(211, 211, 206, .76);
+  box-shadow: none;
+  filter: none;
+  opacity: var(--nav-paper, 1);
+  pointer-events: none;
+}

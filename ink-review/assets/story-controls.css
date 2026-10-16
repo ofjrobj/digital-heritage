@@ -8,13 +8,77 @@ body.test-render-media #stage #storyIndexBar::before {
 /* A clear walking cue against both pale ground and detailed scenery. */
 body.test-render-media #stage #hint {
   color: #343a35;
-  font-size: clamp(14px, min(1.35vw, 2.3dvh), 18px) !important;
+  font-size: clamp(8px, min(1.35vw, 2.3dvh), 18px) !important;
   font-weight: 600 !important;
   font-synthesis: weight !important;
   letter-spacing: .045em !important;
   text-shadow: none;
+  animation: scroll-cue-breathe 2.4s ease-in-out infinite;
 }
 body.test-render-media #stage #hint::before {
-  width: 2px;
+  width: .12em;
+  height: 2.2em;
+  margin-bottom: .5em;
   background: rgba(52, 58, 53, .85);
+}
+@keyframes scroll-cue-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.test-render-media #stage #hint { animation: none; opacity: .85; }
+}
+
+/* Dialogue keeps the image clear; navigation returns on the walking scenes. */
+body.test-render-media[data-dialogue="true"] #stage #storyIndexBar {
+  opacity: 0 !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+body.test-render-media #stage #soundToggle[data-blocked="true"]::after {
+  content: "소리 재생";
+  position: absolute;
+  right: 110%; top: 15%;
+  white-space: nowrap;
+  font: 500 clamp(11px,1vw,15px)/1.5 var(--story-serif);
+  color: #343a35;
+  background: rgba(232,232,230,.9);
+  padding: .15em .5em;
+}
+
+/* Soft, uneven banks move inward from opposite edges, then open outward. */
+body.test-render-media #stage .tr-mist {
+  inset: -6%;
+  background-color: transparent;
+  background-image: radial-gradient(ellipse at 48% 57%,
+    rgba(232,232,230,var(--veil,0)) 0 35%,
+    rgba(232,232,230,var(--veil,0)) 65%, transparent 100%);
+  transform: none;
+  filter: none;
+}
+body.test-render-media #stage .tr-mist::before,
+body.test-render-media #stage .tr-mist::after {
+  content: "";
+  position: absolute;
+  inset: -8% -18%;
+  filter: blur(clamp(9px,1.2vw,22px));
+  background-repeat: no-repeat;
+}
+body.test-render-media #stage .tr-mist::before {
+  background-image:
+    radial-gradient(ellipse at 4% 72%,#d6dad5 0 14%,rgba(232,232,230,.97) 30%,transparent 62%),
+    radial-gradient(ellipse at 27% 100%,#e8e8e6 0 15%,rgba(219,224,219,.85) 31%,transparent 62%),
+    radial-gradient(ellipse at 15% 6%,rgba(232,232,230,.95) 0 18%,transparent 52%);
+  transform: translate(calc((1 - var(--fog-progress,0)) * -30%),calc((1 - var(--fog-progress,0)) * 8%));
+}
+body.test-render-media #stage .tr-mist::after {
+  background-image:
+    radial-gradient(ellipse at 96% 24%,#e8e8e6 0 17%,rgba(214,221,215,.94) 33%,transparent 64%),
+    radial-gradient(ellipse at 78% 91%,rgba(232,232,230,.98) 0 21%,transparent 60%),
+    radial-gradient(ellipse at 72% 6%,rgba(232,232,230,.93) 0 12%,transparent 54%);
+  transform: translate(calc((1 - var(--fog-progress,0)) * 29%),calc((1 - var(--fog-progress,0)) * -7%));
+}
+@media (prefers-reduced-motion: reduce) {
+  body.test-render-media #stage .tr-mist::before,
+  body.test-render-media #stage .tr-mist::after { transform: none; }
 }

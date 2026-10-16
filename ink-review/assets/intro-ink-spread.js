@@ -2,6 +2,7 @@ import {normalizePaperPixels, samplePaperWhite, PAPER_RGB, PAPER_CSS} from './pa
 const clamp=v=>Math.max(0,Math.min(1,v));
 const smooth=v=>{v=clamp(v);return v*v*(3-2*v);};
 const dims=im=>[im.naturalWidth||im.videoWidth||im.width,im.naturalHeight||im.videoHeight||im.height];
+const dynamicFrame=im=>!!im&&(typeof im.getContext==='function'||typeof im.currentTime==='number');
 const canvas=(w,h)=>{const c=typeof document!=='undefined'?document.createElement('canvas'):new OffscreenCanvas(w,h);c.width=w;c.height=h;return c;};
 function rasterBudget(w,h){
  const ratio=Number(globalThis.devicePixelRatio),memory=Number(globalThis.navigator?.deviceMemory);
@@ -123,15 +124,27 @@ export function createIntroInkSpread(options={}){
  }
  function draw(ctx,w,h,progress,lion,mountains,village){
   if(!ctx||!(w>0&&h>0)||!lion||!mountains)return false;w=Math.round(w);h=Math.round(h);
+  const p=clamp(Number(progress)||0);
+  // At the hand-off, paint the live frame directly with the player's exact cover.
+  // No cached raster, mountain, ink mask, veil or residual opacity remains.
+  if(p>=1&&village){const[vw,vh]=dims(village);if(vw>0&&vh>0){
+   const k=Math.max(w/vw,h/vh);ctx.save();ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
+   ctx.fillStyle=options.paper||PAPER_CSS;ctx.fillRect(0,0,w,h);
+   ctx.drawImage(village,(w-vw*k)/2,(h-vh*k)/2,vw*k,vh*k);ctx.restore();
+   if(c){c.last=p;c.lastVillage=village;}return true;
+  }}
   const budget=rasterBudget(w,h);
   if(!c||c.w!==w||c.h!==h||c.lion!==lion||c.mountains!==mountains||c.budget.dpr!==budget.dpr||c.budget.pixels!==budget.pixels)c=prepare(w,h,lion,mountains,budget);if(!c)return false;
-  const p=clamp(Number(progress)||0),u=clamp((p-.04)/.94)*1.065;
-  if(c.last!==p||c.lastVillage!==village){
+  const u=clamp((p-.04)/.94)*1.065,progressChanged=c.last!==p;
+  if(progressChanged){
    const d=c.pixels.data,wet=c.wetPixels.data,gain=smooth(p/.08)*(1-smooth((p-.78)/.22));
    for(let i=0;i<c.field.length;i++){const j=i*4,a=p>=1?1:smooth((u-c.field[i])/.065),front=smooth((u+.035-c.field[i])/.055)*(1-a)*gain;
     d[j]=d[j+1]=d[j+2]=255;d[j+3]=Math.round(a*255);wet[j]=93;wet[j+1]=101;wet[j+2]=95;wet[j+3]=Math.round(front*15);
    }
    c.mc.putImageData(c.pixels,0,0);c.wc.putImageData(c.wetPixels,0,0);
+  }
+  // Canvas and video identity can stay unchanged while their pixels advance.
+  if(progressChanged||c.lastVillage!==village||dynamicFrame(village)){
    if(c.mountainLayers)paintMountainDepth(c.ms,w,h,c.mountainLayers,p,options.paper||PAPER_CSS,village);
    c.rc.clearRect(0,0,w,h);c.rc.drawImage(c.mountainLayers?c.mountainScene:c.mountainPlate,0,0,w,h);c.rc.globalCompositeOperation='destination-in';c.rc.drawImage(c.mask,0,0,w,h);c.rc.globalCompositeOperation='source-over';c.last=p;c.lastVillage=village;
   }
@@ -141,6 +154,6 @@ export function createIntroInkSpread(options={}){
  return{draw,reset(){c=null;},proof(){return c?{type:'local-mane-ink-growth',lionRect:c.r,cropBottom:options.lionCropBottom??.72,origins:c.origins,progress:c.last,sourceAssetsModified:false,mountainLayers:c.mountainLayers?c.mountainLayers.length:1,spatialTransform:'opaque foreground ridges pass camera; village grows monotonically to first video frame',villageZoom:.94+.06*smooth((c.last-.43)/.57),mountainComposite:'source-over',mountainOpacity:1,rasterCache:{dpr:c.budget.dpr,maxPixelsPerPlate:c.budget.pixels,lion:[c.lionPlate.width,c.lionPlate.height],mountains:[c.mountainPlate.width,c.mountainPlate.height],mask:[c.mask.width,c.mask.height]}}:null;}};
 }
 const instances=new WeakMap();
-export function draw(ctx,w,h,progress,lion,mountains){let instance=instances.get(ctx);if(!instance){instance=createIntroInkSpread();instances.set(ctx,instance);}return instance.draw(ctx,w,h,progress,lion,mountains);}
+export function draw(ctx,w,h,progress,lion,mountains,village){let instance=instances.get(ctx);if(!instance){instance=createIntroInkSpread();instances.set(ctx,instance);}return instance.draw(ctx,w,h,progress,lion,mountains,village);}
 
 
