@@ -15,15 +15,23 @@ export function createFootageFog({stage,world,mist}){
     vec2 edge=smoothstep(vec2(0.),vec2(.10),p)*smoothstep(vec2(0.),vec2(.10),vec2(1.)-p);
     return vec2(texture2D(footage,clamp(p,vec2(0.),vec2(1.))).r,edge.x*edge.y);
    }
+   float cornerReach(vec2 q,float reach,float bias){
+    float contour=length(q)+.045*sin(q.x*8.+q.y*3.+bias)+.035*sin(q.y*10.-q.x*4.+bias);
+    return 1.-smoothstep(reach,reach+.44,contour);
+   }
    void main(){vec2 p=uv;float nativeAspect=1.777778;
     if(aspect>nativeAspect)p.y=(p.y-.5)*nativeAspect/aspect+.5;else p.x=(p.x-.5)*aspect/nativeAspect+.5;
     float drift=(1.-amount)*.26;
-    vec2 left=fog(vec2(p.x+drift,p.y));
-    vec2 bank=mat2(.978148,-.207912,.207912,.978148)*vec2((1.-p.x-.5)*.86,(p.y-.5)*.62)+vec2(.43,.58);
-    bank+=vec2(drift*.65,(1.-amount)*.045);
+    // Distinct footage crops curl inward from opposite diagonal corners.
+    vec2 left=fog(vec2(p.x*.88+.03+drift,p.y*.76+.18-drift*.35));
+    vec2 bank=mat2(.951057,-.309017,.309017,.951057)*vec2((1.-p.x-.5)*.78,(1.-p.y-.5)*.68)+vec2(.42,.50);
+    bank+=vec2(drift*.70,-drift*.12);
     vec2 right=fog(bank);
-    float leftAlpha=smoothstep(.02,.95,left.x)*left.y;
-    float rightAlpha=smoothstep(.02,.95,right.x)*right.y*.66;
+    // Broad irregular falloffs guide the roll; the footage supplies its edges.
+    float upperLeft=cornerReach(vec2(uv.x*.92,(1.-uv.y)*1.12),.16+amount*.94,0.);
+    float lowerRight=cornerReach(vec2((1.-uv.x)*1.08,uv.y*.92),.12+amount*.88,1.8);
+    float leftAlpha=smoothstep(.02,.95,left.x)*left.y*upperLeft;
+    float rightAlpha=smoothstep(.02,.95,right.x)*right.y*lowerRight*.66;
     float coverage=leftAlpha+rightAlpha-leftAlpha*rightAlpha;
     float alpha=coverage*amount*.90;
     // Density affects transparency only; the fog itself stays neutral white.

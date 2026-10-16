@@ -29,9 +29,13 @@ body.test-render-media #stage #hint::before {
   body.test-render-media #stage #hint { animation: none; opacity: .85; }
 }
 
-/* Dialogue keeps the image clear; navigation returns on the walking scenes. */
-body.test-render-media[data-dialogue="true"] #stage #storyIndexBar {
-  opacity: 0 !important;
+/* Navigation shares the fog's timing and sits inside its white veil. */
+body.test-render-media #stage #storyIndexBar {
+  opacity: var(--story-nav-opacity, 1) !important;
+  transition: none !important;
+}
+body.test-render-media[data-nav-fog="true"] #stage #storyIndexBar { z-index: 2; }
+body.test-render-media[data-nav-hidden="true"] #stage #storyIndexBar {
   visibility: hidden;
   pointer-events: none;
 }
