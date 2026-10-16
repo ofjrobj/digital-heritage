@@ -27,12 +27,16 @@ export function walkingTargetDelta(duration, steps) {
     ? duration * steps / 6 : 0;
 }
 
-// A larger queued distance requests a proportionally faster rate, up to 1.6x.
+// The same fraction of each reference range advances at the same gentle pace.
+// Keep an untrimmed reference after an editorial cut so shorter footage stays shorter.
 // The brief response smooths acceleration/deceleration without a long catch-up tail.
 // Reverse movement remains caller-owned.
-export function walkingPlaybackRate(error, dt, currentRate = 0) {
+export function walkingPlaybackRate(error, dt, currentRate = 0, referenceDuration = 30) {
   if (!Number.isFinite(error) || error <= .008 || !Number.isFinite(dt) || dt <= 0) return 0;
-  const seconds = Math.min(dt, .25), maximum = 1.6, minimum = 1 / 16;
+  const reference = Number.isFinite(referenceDuration) && referenceDuration > 0 ? referenceDuration : 30;
+  const seconds = Math.min(dt, .25), minimum = 1 / 16;
+  // Browser media elements need a safe positive rate, including very short inputs.
+  const maximum = Math.max(minimum, 1.6 * reference / 30);
   const desired = Math.min(maximum, Math.max(minimum, error / .55));
   const previous = Number.isFinite(currentRate) ? Math.max(0, Math.min(maximum, currentRate)) : 0;
   const response = desired < previous ? .16 : .22;

@@ -1,5 +1,5 @@
 {
-  "version": "interim-v4-fog-fade-travel-20261017",
+  "version": "interim-v4-rolling-fog-common-walk-20261017",
   "scenes": [
     {
       "id": "intro",
@@ -78,8 +78,7 @@
       "caption": "마을에 오신 것을 환영합니다.\n길을 따라 걸으며 사람들이 전하는 두 사자의 이야기를 들어보세요.",
       "captionUntil": 0.15,
       "sourceFrames": 473,
-      "walkingDuration": 48.541666667,
-      "scrollTimeMultiplier": 0.19999999999862658
+      "walkingReferenceDuration": 9.708333333333332
     },
     {
       "id": "merchant",
@@ -140,9 +139,8 @@
       "sourceDuration": 29.708333333333332,
       "sourceFrames": 713,
       "clipIn": 0,
-      "walkingDuration": 31.25,
-      "scrollTimeMultiplier": 0.9506666666666667,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
+      "walkingReferenceDuration": 29.708333333333332
     },
     {
       "id": "farmer",
@@ -203,9 +201,8 @@
       "sourceDuration": 29.708333333333332,
       "sourceFrames": 713,
       "clipIn": 0,
-      "walkingDuration": 32.125,
-      "scrollTimeMultiplier": 0.9247730220492866,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
+      "walkingReferenceDuration": 29.708333333333332
     },
     {
       "id": "cook",
@@ -273,9 +270,8 @@
       "sourceDuration": 29.708333333333332,
       "sourceFrames": 713,
       "clipIn": 0,
-      "walkingDuration": 50.416666667,
-      "scrollTimeMultiplier": 0.5892561983432115,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
+      "walkingReferenceDuration": 29.708333333333332
     },
     {
       "id": "trio",
@@ -322,7 +318,7 @@
       "id": "trio-woodcutter",
       "label": "나무꾼에게 이동",
       "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_094721_958670dd-156d-4687-b79e-3901f37106c8.mp4",
-      "duration": 26.708333333333332,
+      "duration": 6.541666666666667,
       "fps": 24.0,
       "mode": "scroll",
       "footsteps": true,
@@ -342,10 +338,9 @@
       },
       "sourceDuration": 29.708333333333332,
       "sourceFrames": 713,
-      "clipIn": 3,
-      "walkingDuration": 82.18525011717672,
-      "scrollTimeMultiplier": 0.3249772105731085,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
+      "clipIn": 23.166666666666668,
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
+      "walkingReferenceDuration": 29.708333333333332
     },
     {
       "id": "woodcutter",
@@ -406,9 +401,8 @@
       "sourceDuration": 29.708333333333332,
       "sourceFrames": 713,
       "clipIn": 0,
-      "walkingDuration": 120.5,
-      "scrollTimeMultiplier": 0.24654218533886582,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3"
+      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
+      "walkingReferenceDuration": 29.708333333333332
     },
     {
       "id": "seasons",
