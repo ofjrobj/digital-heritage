@@ -10,7 +10,7 @@ import {createScrollFootsteps} from './scroll-footsteps.js?v=drag-arrival-audio-
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
 import {createIntroInkSpread,introVisualTime} from './intro-ink-spread.js?v=fog-fade-travel-1';
 import {createPaperColor, PAPER_CSS} from './paper-color.js?v=archive-paper-1';
-import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=fog-fade-travel-1';
+import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=gentle-forward-wheel-1';
 import {dialogueApproachGain,sceneArrivalDelay} from './dialogue-audio-flow.js?v=drag-arrival-audio-1';
 const walkingInput=createWalkingInput();
 let walkingRate=0,walkingDirection=1;
@@ -167,6 +167,8 @@ function canWalk(){return !!current&&!current.error&&!transition&&!paused&&!comp
 function manual(delta,fromDrag=false){
  if(!delta||!canWalk())return;
  previewAuto=false;walkingDirection=Math.sign(delta);lastScrollAt=performance.now();
+ // A reversed gesture cancels the old travel queue immediately.
+ if((target-local)*walkingDirection<-.008){target=local;walkingRate=0;current.video.pause();}
  const previousTarget=target;target=clamp(target+walkingTargetDelta(scrollLimit(),delta),0,scrollLimit());
  if(fromDrag&&target!==previousTarget){lastDragMoveAt=performance.now();footsteps.pulse();}
 }
