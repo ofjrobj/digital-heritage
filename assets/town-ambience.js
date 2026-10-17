@@ -1,0 +1,9 @@
+// Quiet diegetic sound only. Steps belong to nearby walking residents, never the camera.
+export function prepareTownAmbience(camera,walkers){
+ let ctx,bus,wind,lastStep=0,lastBird=0;const toggle=document.querySelector('#soundToggle');
+ function start(){if(!ctx){ctx=new AudioContext();bus=ctx.createGain();bus.gain.value=.11;bus.connect(ctx.destination);const b=ctx.createBuffer(1,ctx.sampleRate*3,ctx.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*.12;wind=ctx.createBufferSource();wind.buffer=b;wind.loop=true;const filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=400;const g=ctx.createGain();g.gain.value=.045;wind.connect(filter).connect(g).connect(bus);wind.start();}if(ctx.state==='suspended')ctx.resume();}
+ for(const ev of ['pointerdown','keydown'])document.addEventListener(ev,()=>{if(toggle?.getAttribute('aria-pressed')==='true')start();},{passive:true});
+ function stop(){if(ctx&&bus)bus.gain.setTargetAtTime(0,ctx.currentTime,.25);}
+ function tone(f,dur,gain,pan=0){const o=ctx.createOscillator(),g=ctx.createGain(),p=ctx.createStereoPanner();o.frequency.setValueAtTime(f,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(f*.72,ctx.currentTime+dur);g.gain.setValueAtTime(gain,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.00001,ctx.currentTime+dur);p.pan.value=pan;o.connect(g).connect(p).connect(bus);o.start();o.stop(ctx.currentTime+dur);}
+ return {stop,update(t){if(!ctx)return;if(toggle?.getAttribute('aria-pressed')!=='true'||document.hidden){stop();return;}bus.gain.setTargetAtTime(.11,ctx.currentTime,.5);if(t-lastStep>.63){const close=walkers.filter(w=>w.walking&&w.o.position.distanceTo(camera.position)<10);if(close.length){const w=close[0],distance=w.o.position.distanceTo(camera.position);tone(95,.07,.12*(1-distance/11),Math.max(-.8,Math.min(.8,(w.o.position.x-camera.position.x)/10)));}lastStep=t;}if(t-lastBird>16){tone(1800,.15,.025,-.5);lastBird=t;}}};
+}

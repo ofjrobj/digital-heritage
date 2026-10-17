@@ -1,8 +1,9 @@
 import {setDialogueMist,clearDialogueMist} from './dialogue-mist.js?v=71-40';
 import {cumulativeDistances,METRES_PER_SECOND,ARRIVAL_METRES,arrivalProgress} from './travel-distance.js?v=71-40';
-const travelCamera=await fetch('./assets/camera-v058.json?v=71-40').then(r=>r.json());
+const townCamera=await fetch('./assets/town-camera.json?v=74-town').then(r=>r.json());
+const travelCamera={tracks:townCamera.routes.map(r=>r.frames)};
 const travelLengths=travelCamera.tracks.map(t=>cumulativeDistances(t).at(-1));
-const travelSeconds=i=>travelLengths[i]/METRES_PER_SECOND;
+const travelSeconds=i=>townCamera.routes[i].seconds;
 let arrival=null;
 
 import {setCharacterVoice,stopCharacterVoice,voiceCaption,characterVoicePlaying,characterVoiceFinished} from './character-voices.js?v=71-40';

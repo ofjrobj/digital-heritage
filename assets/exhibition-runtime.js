@@ -11,7 +11,7 @@ function preloadVillage(){
  loading.innerHTML='풍경을 불러오는 중입니다…';
  if(document.body.dataset.experience&&!document.body.classList.contains('higgsfield-active'))loading.hidden=false;
  const attempt=spatialAttempt++;
- spatialPromise=import('./blender-spatial-view.js?v=71-43'+attempt).then(()=>{loading.hidden=true;}).catch(error=>{
+ spatialPromise=import('./blender-spatial-view.js?v=74-town'+attempt).then(()=>{loading.hidden=true;}).catch(error=>{
  spatialPromise=null;loading.hidden=false;loading.textContent='풍경을 불러오지 못했습니다. ';
  const retry=document.createElement('button');retry.textContent='다시 불러오기';retry.onclick=()=>location.reload();loading.append(retry);console.error(error);
  });return spatialPromise;
@@ -26,14 +26,14 @@ document.addEventListener('archive-open',()=>{document.body.classList.add('archi
 document.addEventListener('archive-story',()=>document.body.classList.remove('archive-active'));
 // Native Blender view; no generated media loaded.
 await import('./storyboard-opening.js?v=71-43');
-await import('./cinematic-story.js?v=71-43');
+await import('./cinematic-story.js?v=74-town');
 document.addEventListener('experience-selected',()=>{document.body.dataset.stage='intro';emit('exhibition-start');});
 document.querySelector('#coverIndex').onclick=()=>{document.querySelector('[data-experience="desktop"]').click();emit('archive-open');};
 // Keep first-visit cost small: no 3D village, ending model or unused videos before entry.
 
 await import('./museum-ui.js?v=71-43');
 
-await import('./background-music.js?v=71-43');
+// Quiet local ambience is provided by the Blender scene.
 
 // Prepare the village while the title is visible; no scan model in the opening.
 // Village loads during the first conversation, after the lightweight film entry.
