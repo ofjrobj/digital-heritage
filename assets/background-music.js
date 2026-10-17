@@ -1,11 +1,12 @@
 // One player. Music follows story movement, never the Index or dialogue hold.
 const music=document.createElement('audio');music.id='backgroundMusic';music.src=new URL('./voices/background-music.mp3',import.meta.url).href;music.loop=true;music.preload='none';music.volume=0;document.body.append(music);
-const toggle=document.querySelector('#soundToggle');
+let toggle=document.querySelector('#soundToggle');
 const MAX_VOLUME=.10;
 let endingSilent=false;
 let started=false,inArchive=false,proximity=0,dialogueHold=false,lastElapsed=null,lastKind=null,fade=0,targetVolume=0;
 function sync(){
- if(endingSilent||!started||toggle.getAttribute('aria-pressed')!=='true'||document.hidden||inArchive){music.pause();return;}
+ toggle ||= document.querySelector('#soundToggle');
+ if(endingSilent||!started||!toggle||toggle.getAttribute('aria-pressed')!=='true'||document.hidden||inArchive){music.pause();return;}
  if(music.paused)music.play().then(()=>delete music.dataset.blocked).catch(()=>{music.dataset.blocked='true';});
 }
 function volumeTo(target,milliseconds=1400){
@@ -18,7 +19,9 @@ function volumeTo(target,milliseconds=1400){
 }
 function reset(){endingSilent=false;cancelAnimationFrame(fade);music.volume=targetVolume=0;proximity=0;dialogueHold=false;lastElapsed=null;lastKind=null;}
 document.addEventListener('experience-selected',()=>{started=true;sync();});
-new MutationObserver(sync).observe(toggle,{attributes:true,attributeFilter:['aria-pressed']});
+const toggleObserver=new MutationObserver(sync);let watchedToggle;
+function watchToggle(){toggle ||= document.querySelector('#soundToggle');if(toggle&&toggle!==watchedToggle){toggleObserver.observe(toggle,{attributes:true,attributeFilter:['aria-pressed']});watchedToggle=toggle;}}
+watchToggle();document.addEventListener('DOMContentLoaded',watchToggle);document.addEventListener('experience-selected',watchToggle);
 for(const event of ['pointerdown','keydown'])window.addEventListener(event,()=>queueMicrotask(sync),{capture:true});
 document.addEventListener('visibilitychange',sync);
 document.addEventListener('blender-entry-frame',e=>{
