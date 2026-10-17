@@ -1,10 +1,11 @@
-// Shared vector guide: swap this layer for a text-free Higgsfield sequence later.
+// Preserve the approved brush drawing; its source pixels only received a colour correction.
 const art=document.querySelector('.cover-art');
-const guide=await fetch(new URL('./cover-ink-guide.svg',import.meta.url)).then(r=>r.text());
+const lionSource=new URL('./cover-lion-original-clear-20261018.png',import.meta.url).href;
+const guide=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900"><defs></defs><image href="${lionSource}" width="1600" height="900" preserveAspectRatio="xMidYMid meet"/></svg>`;
 const svg=guide.replace('<svg ', '<svg preserveAspectRatio="xMidYMid meet" aria-hidden="true" ');
 art.style.backgroundImage='radial-gradient(ellipse at 50% 25%,#faf7ed88,transparent 70%)';
 // Stationary artwork is revealed by an irregular absorption mask, never reshaped.
-const reveal=svg.replace('</defs>', '<filter id="coverBleed"><feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="3" seed="8" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="65"/><feGaussianBlur stdDeviation="5"/></filter><mask id="coverAbsorb"><rect width="1600" height="900" fill="black"/><g filter="url(#coverBleed)"><circle cx="800" cy="400" r="0" fill="white"/></g></mask></defs>').replace('<g filter="url(#ink)"', '<g mask="url(#coverAbsorb)" filter="url(#ink)"');
+const reveal=svg.replace('</defs>', '<filter id="coverBleed"><feTurbulence type="fractalNoise" baseFrequency=".018" numOctaves="3" seed="8" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="65"/><feGaussianBlur stdDeviation="5"/></filter><mask id="coverAbsorb"><rect width="1600" height="900" fill="black"/><g filter="url(#coverBleed)"><circle cx="800" cy="400" r="0" fill="white"/></g></mask></defs>').replace('<image ', '<image mask="url(#coverAbsorb)" ');
 art.insertAdjacentHTML('beforeend',reveal);
 const blot=art.querySelector('#coverAbsorb circle');let start=performance.now();
 function absorb(now){if(document.body.classList.contains('orientation-intro')){start=now;requestAnimationFrame(absorb);return;}const t=Math.min(1,(now-start)/2200);blot.setAttribute('r',String(1100*t*t*(3-2*t)));if(t<1)requestAnimationFrame(absorb);}

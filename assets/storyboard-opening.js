@@ -1,4 +1,4 @@
-import './ink-entry.js?v=71-39';
+import './ink-entry.js?v=original-brush-20261018';
 const copy=document.createElement('p');copy.id='villageOpeningCopy';copy.hidden=true;document.body.append(copy);
 const welcome='공주목 관아와 주변 읍치에 오신 것을 환영합니다.\n길을 따라 마을 사람들의 이야기를 만나보세요.';
 const intro='어느 옛날, 공주목 관아와 주변 읍치에는\n신묘한 두 사자에 대한 이야기가 떠돌고 있습니다.';
