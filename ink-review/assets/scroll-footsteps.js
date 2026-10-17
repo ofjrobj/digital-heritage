@@ -1,4 +1,4 @@
-// One grounded step at most every 720ms, only while pointer dragging continues.
+// One grounded step at most every 720ms, only while wheel or pointer movement continues.
 export function createScrollFootsteps(audio,allowed,clock=()=>performance.now()) {
  let deadline=0,nextStep=0,pending=false;
  audio.loop=false;audio.volume=.26;

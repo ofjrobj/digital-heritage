@@ -67,14 +67,14 @@ function paintMountainDepth(context,w,h,plates,progress,paper,village){
  plates.forEach((plate,i)=>context.drawImage(plate,(i===0?-1:1)*w*.56*pass,h*.10*pass,w,h));
 }
 
-export const introInkTiming=Object.freeze({sourceStart:.35,sourceSpan:5.65,spreadStart:.576,secondBurst:.876,burstGap:.30,duration:4.8,mountainTrimStart:1.8,handoff:4.75,aerialPreplay:3});
+export const introInkTiming=Object.freeze({sourceStart:.35,sourceSpan:5.65,spreadStart:.576,secondBurst:.946,thirdBurst:1.436,burstGap:.37,duration:4.8,mountainTrimStart:1.8,handoff:4.75,aerialPreplay:3});
 export function introVisualTime(time){
  const t=Math.max(0,Number(time)||0),start=introInkTiming.mountainTrimStart,end=introInkTiming.handoff;
- // Preserve the two ink impacts, then compress the mountain pass smoothly.
+ // Preserve the three ink impacts, then compress the mountain pass smoothly.
  // The last decoded frame is already the live aerial, before scene advance.
  return t+(6-end)*smooth((t-start)/(end-start));
 }
-export const maneOrigins=Object.freeze([[.23,.47,0],[.77,.51,.018],[.27,.66,.045],[.75,.70,.065],[.21,.77,.09],[.80,.85,.11]].map(Object.freeze));
+export const maneOrigins=Object.freeze([[.20,.48,0],[.79,.55,.37],[.49,.82,.86]].map(Object.freeze));
 export function createIntroInkSpread(options={}){
  let c=null;
  function prepare(w,h,lion,mountains,budget){
@@ -108,39 +108,52 @@ export function createIntroInkSpread(options={}){
   const probe=canvas(gw,gh),pc=probe.getContext('2d',{willReadFrequently:true});pc.drawImage(seedPlate,0,0,gw,gh);
   let rgb=null;try{rgb=pc.getImageData(0,0,gw,gh).data;}catch{}
   if(seedPlate!==lionPlate){seedPlate.width=1;seedPlate.height=1;}
-  const field=new Float32Array(gw*gh),cost=new Float32Array(gw*gh),origins=[];field.fill(1e6);
-  for(let y=0;y<gh;y++)for(let x=0;x<gw;x++)cost[y*gw+x]=.94+.16*(Math.sin(x*.36+Math.sin(y*.12)*2.7)+.5*Math.sin(y*.47+x*.17));
+  const field=new Float32Array(gw*gh),origins=[],drops=[];
+  // Three connected pigment blooms, each anchored to an existing painted mark.
+  // Their asymmetry comes from continuous lobes and paper-scale edge variation.
+  const shapes=[[1.08,.86,-.28,1.7],[.83,1.12,.35,3.6],[1.16,.79,-.14,5.2]];
   for(const[u,v,delay]of options.origins||maneOrigins){
-   const cx=(r.x+r.w*u)/w*gw,cy=(r.y+r.h*v)/h*gh,rx=Math.max(2,r.w/w*gw*.13),ry=Math.max(2,r.h/h*gh*.055);let found=0;
+   let cx=(r.x+r.w*u)/w*gw,cy=(r.y+r.h*v)/h*gh;
+   const rx=Math.max(2,r.w/w*gw*.06),ry=Math.max(2,r.h/h*gh*.12);let found=0,best=Infinity,inkX=cx,inkY=cy;
    for(let y=Math.max(0,Math.floor(cy-ry));y<=Math.min(gh-1,Math.ceil(cy+ry));y++)for(let x=Math.max(0,Math.floor(cx-rx));x<=Math.min(gw-1,Math.ceil(cx+rx));x++){
-    const d=((x-cx)/rx)**2+((y-cy)/ry)**2,i=y*gw+x,j=i*4;if(d>1)continue;
-    if(rgb&&rgb[j+3]>100&&(rgb[j]*.213+rgb[j+1]*.715+rgb[j+2]*.072)<190){field[i]=Math.min(field[i],delay*Math.min(gw,gh)*.4+d*2);found++;}
+    const d=((x-cx)/rx)**2+((y-cy)/ry)**2,j=(y*gw+x)*4;if(d>1)continue;
+    if(rgb&&rgb[j+3]>100&&(rgb[j]*.213+rgb[j+1]*.715+rgb[j+2]*.072)<190){found++;if(d<best){best=d;inkX=x;inkY=y;}}
    }
-   if(!found){const x=Math.max(0,Math.min(gw-1,Math.round(cx))),y=Math.max(0,Math.min(gh-1,Math.round(cy)));field[y*gw+x]=delay*Math.min(gw,gh)*.4;}
-   origins.push({x:cx/gw,y:cy/gh,detectedInkPixels:found});
+   cx=inkX;cy=inkY;
+   const shape=shapes[drops.length%shapes.length],[sx,sy,rotation,phase]=shape,cs=Math.cos(rotation),sn=Math.sin(rotation);
+   const radius=Math.max(2,Math.min(gw,gh)*.034)*(drops.length===1?.87:drops.length===2?1.12:1);
+   const distance=new Float32Array(field.length),core=new Float32Array(field.length);
+   for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){
+    const i=y*gw+x,dx=x-cx,dy=y-cy,px=(dx*cs+dy*sn)/sx,py=(-dx*sn+dy*cs)/sy;
+    const angle=Math.atan2(py,px),radial=Math.hypot(px,py);
+    const lobes=1+(.19*Math.sin(angle*3+phase)+.11*Math.sin(angle*5-phase)+.065*Math.sin(angle*9+phase*.7))*Math.exp(-radial/(radius*7));
+    const fiber=(.6*Math.sin(x*.73+y*.31+phase)+.4*Math.sin(y*.91-x*.27))*smooth(radial/(radius*2));
+    const tide=(Math.sin(x*.075+y*.042+phase)+.55*Math.sin(x*.14-y*.10+phase*.5))*Math.min(radial*.055,4.5);
+    const edge=radial/lobes+tide+fiber;
+    distance[i]=Math.max(0,edge-radius);
+    core[i]=1-smooth((edge/radius-.22)/.95);
+   }
+   drops.push({distance,core,delay:Math.max(0,Number(delay)||0),sourceStart:introInkTiming.spreadStart+Math.max(0,Number(delay)||0)});
+   origins.push({x:cx/gw,y:cy/gh,detectedInkPixels:found,delaySeconds:delay,shape:'irregular-pigment-bloom'});
   }
-  for(let pass=0;pass<3;pass++){
-   for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){const i=y*gw+x,t=cost[i];if(x)field[i]=Math.min(field[i],field[i-1]+t*.78);if(y)field[i]=Math.min(field[i],field[i-gw]+t*1.26);if(x&&y)field[i]=Math.min(field[i],field[i-gw-1]+t*1.48);if(x+1<gw&&y)field[i]=Math.min(field[i],field[i-gw+1]+t*1.48);}
-   for(let y=gh-1;y>=0;y--)for(let x=gw-1;x>=0;x--){const i=y*gw+x,t=cost[i];if(x+1<gw)field[i]=Math.min(field[i],field[i+1]+t*.78);if(y+1<gh)field[i]=Math.min(field[i],field[i+gw]+t*1.26);if(x+1<gw&&y+1<gh)field[i]=Math.min(field[i],field[i+gw+1]+t*1.48);if(x&&y+1<gh)field[i]=Math.min(field[i],field[i+gw-1]+t*1.48);}
-  }
-  let max=0;for(const d of field)max=Math.max(max,d);
-  for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){const i=y*gw+x,n=(.45*Math.sin(x*.049+y*.026)+.25*Math.sin(x*.095-y*.13)+.14*Math.sin(x*.31+y*.19))*.055;field[i]=Math.max(0,field[i]+max*n*smooth(field[i]/20));}
-  max=0;for(const d of field)max=Math.max(max,d);
-  // Let the left impact land first, then the right a half beat later. Express
-  // the delay in source seconds so it stays consistent across viewport sizes.
-  const burstDelay=introInkTiming.burstGap*1.065/(introInkTiming.sourceSpan*.94);
-  for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){
-   const i=y*gw+x,d=field[i]/(max||1),right=smooth((x/gw*w-r.x-r.w*.40)/(r.w*.20));
-   field[i]=d+burstDelay*right*(1-smooth((d-.65)/.25));
+  let max=0;
+  for(let i=0;i<field.length;i++){let nearest=Infinity;for(const drop of drops)nearest=Math.min(nearest,drop.distance[i]);max=Math.max(max,nearest);}
+  for(let i=0;i<field.length;i++){
+   let arrival=Infinity;
+   for(const drop of drops){
+    const distance=drop.distance[i]/(max||1),delay=drop.delay*1.065/(introInkTiming.sourceSpan*.94);
+    arrival=Math.min(arrival,distance+delay*(1-smooth((distance-.65)/.25)));
+   }
+   field[i]=arrival;
   }
   const mask=canvas(gw,gh),mc=mask.getContext('2d'),wet=canvas(gw,gh),wc=wet.getContext('2d'),reveal=canvas(mountainSize.width,mountainSize.height),rc=cssContext(reveal,w,h);
-  return{w,h,lion,mountains,budget,r,lionPlate,mountainPlate,mountainLayers,mountainScene,ms,field,mask,mc,wet,wc,pixels:mc.createImageData(gw,gh),wetPixels:wc.createImageData(gw,gh),reveal,rc,origins,last:-1};
+  return{w,h,lion,mountains,budget,r,lionPlate,mountainPlate,mountainLayers,mountainScene,ms,field,drops,mask,mc,wet,wc,pixels:mc.createImageData(gw,gh),wetPixels:wc.createImageData(gw,gh),reveal,rc,origins,last:-1};
  }
  function draw(ctx,w,h,progress,lion,mountains,village){
   if(!ctx||!(w>0&&h>0)||!lion||!mountains)return false;w=Math.round(w);h=Math.round(h);
   const sourceProgress=clamp(Number(progress)||0);
   const sourceTime=introInkTiming.sourceStart+sourceProgress*introInkTiming.sourceSpan;
-  const p=clamp((introVisualTime(sourceTime)-introInkTiming.sourceStart)/introInkTiming.sourceSpan);
+  const visualTime=introVisualTime(sourceTime),p=clamp((visualTime-introInkTiming.sourceStart)/introInkTiming.sourceSpan);
   // At the hand-off, paint the live frame directly with the player's exact cover.
   // No cached raster, mountain, ink mask, veil or residual opacity remains.
   if(p>=1&&village){const[vw,vh]=dims(village);if(vw>0&&vh>0){
@@ -154,8 +167,10 @@ export function createIntroInkSpread(options={}){
   const u=clamp((p-.04)/.94)*1.065,progressChanged=c.last!==p;
   if(progressChanged){
    const d=c.pixels.data,wet=c.wetPixels.data,gain=smooth((p-.04)/.08)*(1-smooth((p-.78)/.22));
+   const pulses=c.drops.map(drop=>{const age=visualTime-drop.sourceStart;return smooth(age/.065)*(1-smooth((age-.16)/.56));});
    for(let i=0;i<c.field.length;i++){const j=i*4,a=p>=1?1:smooth((u-c.field[i])/.065),front=smooth((u+.035-c.field[i])/.055)*(1-a)*gain;
-    d[j]=d[j+1]=d[j+2]=255;d[j+3]=Math.round(a*255);wet[j]=93;wet[j+1]=101;wet[j+2]=95;wet[j+3]=Math.round(front*15);
+    let pigment=0;for(let k=0;k<c.drops.length;k++)pigment=Math.max(pigment,c.drops[k].core[i]*pulses[k]);
+    d[j]=d[j+1]=d[j+2]=255;d[j+3]=Math.round(a*255);wet[j]=69;wet[j+1]=78;wet[j+2]=71;wet[j+3]=Math.round(front*15+pigment*130);
    }
    c.mc.putImageData(c.pixels,0,0);c.wc.putImageData(c.wetPixels,0,0);
   }
@@ -167,7 +182,7 @@ export function createIntroInkSpread(options={}){
   ctx.save();ctx.globalCompositeOperation='source-over';ctx.fillStyle=options.paper||PAPER_CSS;ctx.fillRect(0,0,w,h);
   ctx.drawImage(c.lionPlate,0,0,w,h);ctx.drawImage(c.wet,0,0,w,h);ctx.drawImage(c.reveal,0,0,w,h);ctx.restore();return true;
  }
- return{draw,reset(){c=null;},proof(){return c?{type:'local-mane-ink-growth',lionRect:c.r,cropBottom:options.lionCropBottom??.72,origins:c.origins,progress:c.last,sourceAssetsModified:false,mountainLayers:c.mountainLayers?c.mountainLayers.length:1,spatialTransform:'opaque foreground ridges pass camera; village grows monotonically to first video frame',villageZoom:.94+.06*smooth((c.last-.43)/.57),mountainComposite:'source-over',mountainOpacity:1,rasterCache:{dpr:c.budget.dpr,maxPixelsPerPlate:c.budget.pixels,lion:[c.lionPlate.width,c.lionPlate.height],mountains:[c.mountainPlate.width,c.mountainPlate.height],mask:[c.mask.width,c.mask.height]}}:null;}};
+ return{draw,reset(){c=null;},proof(){return c?{type:'local-mane-ink-growth',lionRect:c.r,cropBottom:options.lionCropBottom??.72,origins:c.origins,dropCount:c.drops.length,dropSourceTimes:c.drops.map(drop=>drop.sourceStart),progress:c.last,sourceAssetsModified:false,mountainLayers:c.mountainLayers?c.mountainLayers.length:1,spatialTransform:'opaque foreground ridges pass camera; village grows monotonically to first video frame',villageZoom:.94+.06*smooth((c.last-.43)/.57),mountainComposite:'source-over',mountainOpacity:1,rasterCache:{dpr:c.budget.dpr,maxPixelsPerPlate:c.budget.pixels,lion:[c.lionPlate.width,c.lionPlate.height],mountains:[c.mountainPlate.width,c.mountainPlate.height],mask:[c.mask.width,c.mask.height]}}:null;}};
 }
 const instances=new WeakMap();
 export function draw(ctx,w,h,progress,lion,mountains,village){let instance=instances.get(ctx);if(!instance){instance=createIntroInkSpread();instances.set(ctx,instance);}return instance.draw(ctx,w,h,progress,lion,mountains,village);}

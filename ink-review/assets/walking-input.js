@@ -37,9 +37,9 @@ export function walkingPlaybackRate(error, dt, currentRate = 0, referenceDuratio
   const seconds = Math.min(dt, .25), minimum = 1 / 16;
   // Browser media elements need a safe positive rate, including very short inputs.
   const maximum = Math.max(minimum, 1.6 * reference / 30);
-  const desired = Math.min(maximum, Math.max(minimum, error / .55));
+  const desired = Math.min(maximum, Math.max(minimum, error / .28));
   const previous = Number.isFinite(currentRate) ? Math.max(0, Math.min(maximum, currentRate)) : 0;
-  const response = desired < previous ? .16 : .22;
+  const response = desired < previous ? .10 : .12;
   const smoothed = previous + (desired - previous) * (1 - Math.exp(-seconds / response));
   const ceiling = Math.min(maximum, error / dt);
   // Zero means pause; avoid unsupported extremely small positive playback rates.
