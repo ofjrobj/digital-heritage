@@ -1,7 +1,9 @@
 // Public navigation shares the existing story/scan assets and resume state.
 // Derive the deployment prefix from this module so project Pages and local previews work.
-const storyURL = new URL('../../gongju-mok/', import.meta.url).href;
-const archiveURL = new URL('archive/', storyURL).href;
+const nativePage=new URLSearchParams(location.search).get('native');
+const nativeReturn=['play','review'].includes(nativePage);
+const storyURL = new URL(nativeReturn?'../../'+nativePage+'.html':'../../gongju-mok/', import.meta.url).href;
+const archiveURL = new URL('../../gongju-mok/archive/'+(nativeReturn?'?native='+nativePage:''),import.meta.url).href;
 const setLink = (element, href) => {
   if (element && element.href !== href) element.href = href;
 };

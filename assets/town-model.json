@@ -10,12 +10,12 @@
     "town-v074.glb.gz.part7"
   ],
   "houses": 59,
-  "residents": 51,
+  "residents": 69,
   "protectedChanged": 0,
   "source": "Gongju_v074_Web_Journey.blend",
-  "sourceSha256": "8cbfc32e0349df4b58e3af87bff6f15d3af7418f5b4b2c8773f5f62d849dc3c1",
-  "bytes": 147745728,
-  "gzipBytes": 58845020,
-  "motions": 200,
+  "sourceSha256": "88685beeb9f1f358d6137ba7e97846ee2ec7311041358cb599474b9c0bf66904",
+  "bytes": 148944156,
+  "gzipBytes": 59200306,
+  "motions": 272,
   "interpretation": "Major building geometry and positions preserved. Infill houses, roads, entrance placement and terrain remain interpretive."
 }

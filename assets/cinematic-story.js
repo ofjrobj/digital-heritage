@@ -1,7 +1,9 @@
+import {wheelPixels,gestureProgress,motionCosts,limitedProgress} from './journey-input.js?v=20261018-1';
 import {setDialogueMist,clearDialogueMist} from './dialogue-mist.js?v=71-40';
 import {cumulativeDistances,METRES_PER_SECOND,ARRIVAL_METRES,arrivalProgress} from './travel-distance.js?v=71-40';
-const townCamera=await fetch('./assets/town-camera.json?v=74-town').then(r=>r.json());
+const townCamera=await fetch('./assets/town-camera.json?v=74-route2').then(r=>r.json());
 const travelCamera={tracks:townCamera.routes.map(r=>r.frames)};
+const routeCosts=travelCamera.tracks.map(t=>motionCosts(t));
 const travelLengths=travelCamera.tracks.map(t=>cumulativeDistances(t).at(-1));
 const travelSeconds=i=>townCamera.routes[i].seconds;
 let arrival=null;
@@ -17,7 +19,7 @@ const fullStory=document.body.dataset.fullStory==='true';
 const dialogueSeconds=index=>Math.max(10,dialogueCopy[index].testimony.length/5);
 if(cameraTest){
  shot('landscape-expand',18);shot('travel',travelSeconds(0),{stop:{route:0}});
- for(let index=0;index<5;index++){if(index)shot('transfer',travelSeconds(index),{from:index-1,to:index});shot('dialogue-in',2.4,{stop:{route:index}});shot('dialogue',dialogueSeconds(index),{stop:{route:index}});shot('dialogue-out',2.4,{stop:{route:index},from:index,to:index+1});}
+ for(let index=0;index<5;index++){if(index)shot('transfer',travelSeconds(index),{from:index-1,to:index});shot('dialogue-in',2.4,{stop:{route:index}});shot('dialogue',dialogueSeconds(index),{stop:{route:index}});shot('dialogue-out',index<3?1.1:2.4,{stop:{route:index},from:index,to:index+1,continuous:index<3});}
  shot('transfer',travelSeconds(5),{from:4,to:5});shot('settle',2.6);shot('seasons',72);shot('fade',4.5);shot('explore',1);shot('archive',1);
 }else{
  shot('entry',4);shot('rotate',8);shot('female-click',2);shot('female-scan',28);shot('male-transition',2);shot('male-scan',28);shot('pair',3);
@@ -45,14 +47,14 @@ stop.onclick=()=>{manualSeeking=false;arrival=null;active=running=false;stopChar
 if(cameraTest&&!fullStory){
  const jump=document.createElement('select');jump.setAttribute('aria-label','카메라 테스트 장면');jump.style.cssText='max-width:190px;background:#18231e;color:#e8e5dc;border:1px solid #829184;padding:8px';
  const labels={'pair-reveal':'유물 · 두 석사자','head-push':'머리로 접근','crown-zoom':'정수리 갈기 클로즈업','relief-trace':'갈기 굴곡의 선','relief-landscape':'유물 → 마을','landscape-expand':'공주목 읍치 진입',pair:'유물 · 반측면 고정','back-zoom':'등 무늬로 접근',entry:'유물 등장',rotate:'유물 회전',motif:'유물 → 마을',travel:'읍치 → 인물 1',guesthouse:'객사터 석사자로 이동',settle:'석사자 앞 정지',seasons:'시대·계절 변화',fade:'가치해석으로',explore:'석사자상 탐구하기',archive:'가치해석 · 석사자의 결'};
- shots.forEach((q,i)=>{const option=document.createElement('option');option.value=i;option.textContent=q.kind==='dialogue-in'?`인물 ${q.stop.route+1} · 안개 진입`:q.kind==='dialogue-out'?`인물 ${q.stop.route+1} · 안개 퇴장`:q.kind==='dialogue'?`인물 ${q.stop.route+1} · ${titles[q.stop.route]}`:q.kind==='transfer'?(q.from===4?'객사 앞으로 귀환':`인물 ${q.from+1} → 인물 ${q.to+1}`):labels[q.kind];jump.append(option);});control.prepend(jump);
+ shots.forEach((q,i)=>{const option=document.createElement('option');option.value=i;option.textContent=q.kind==='dialogue-in'?`인물 ${q.stop.route+1} · 안개 진입`:q.kind==='dialogue-out'?`인물 ${q.stop.route+1} · ${q.continuous?'연속 출발':'안개 퇴장'}`:q.kind==='dialogue'?`인물 ${q.stop.route+1} · ${titles[q.stop.route]}`:q.kind==='transfer'?(q.from===4?'객사 앞으로 귀환':`인물 ${q.from+1} → 인물 ${q.to+1}`):labels[q.kind];jump.append(option);});control.prepend(jump);
  jump.onchange=()=>{reviewFrozen=true;const choice=Number(jump.value);if(!active){play.click();running=false;play.textContent='이어서 재생';}reviewFrozen=!['landscape-expand','dialogue-in','dialogue-out','settle','seasons','fade'].includes(shots[choice].kind);running=!reviewFrozen;play.textContent=running?'일시 정지':'이어서 재생';manualSeeking=false;arrival=null;elapsed=dragTarget=shots[choice].start;seek.value=elapsed;previous=null;renderStory();};
 }
 // The reference's quiet vertical index remains usable, rather than decorative.
 const chapterIndex=document.createElement('nav');chapterIndex.id='storySectionIndex';chapterIndex.setAttribute('aria-label','이야기 구간');
 const sections=[['형태','pair-reveal'],['무늬','crown-zoom'],['마을','travel'],['시간','settle'],['가치해석','archive']];
 sections.forEach(([label,kind],i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0')+'  '+label;b.onclick=()=>{const q=shots.find(s=>s.kind===kind);if(!q)return;if(!active)play.click();elapsed=dragTarget=q.start;seek.value=elapsed;previous=null;renderStory();};chapterIndex.append(b);});// Keep chapter bookkeeping off-screen; the story is advanced by dragging.
-const dragHint=document.createElement('div');dragHint.id='journeyDragHint';dragHint.setAttribute('role','img');dragHint.setAttribute('aria-label','위로 드래그하여 앞으로, 아래로 드래그하여 천천히 뒤로 이동합니다');dragHint.innerHTML='<span class="scroll-stem" aria-hidden="true"></span><span>Scroll</span>';document.body.append(dragHint);
+const dragHint=document.createElement('div');dragHint.id='journeyDragHint';dragHint.setAttribute('role','img');dragHint.setAttribute('aria-label','아래로 스크롤하거나 위로 드래그하여 앞으로 이동합니다. 인물 사이 이동은 약 5~8회입니다.');dragHint.innerHTML='<span class="scroll-stem" aria-hidden="true"></span><span>Scroll</span>';document.body.append(dragHint);
 let drag=null,autoRewinding=false,manualSeeking=false;
 const blocked=()=>document.body.classList.contains('archive-active')||document.body.classList.contains('orientation-intro');
 const isControl=target=>target.closest('button,a,input,select,textarea,nav,dialog,[role="dialog"]:not(#experienceChoice)');
@@ -61,52 +63,39 @@ function advance(amount){
  if(!amount)return;
  if(!active){if(amount<0)return;beginJourney();manualSeeking=false;reviewFrozen=false;renderStory();return;}
  // Once the final approach has taken over, input cannot scrub the seasons.
- if(active&&(arrival||['landscape-expand','dialogue-in','dialogue-out','settle','seasons','fade'].includes(currentShot().kind)))return;
+ if(active&&(arrival||['landscape-expand','dialogue-in','dialogue','dialogue-out','settle','seasons','fade'].includes(currentShot().kind)))return;
  if(active&&currentShot().kind==='explore'&&amount>0)return;
  arrival=null;autoRewinding=amount<0;amount*=amount<0?.5:1;
  beginJourney();manualSeeking=true;stopCharacterVoice();
  const base=Math.sign(amount)!==Math.sign(dragTarget-elapsed)?elapsed:dragTarget;
  const routeShot=currentShot();
  if(cameraTest&&['travel','transfer'].includes(routeShot.kind)){
-  // Scroll input uses the same 0.06 metres/pixel sensitivity on every route.
-  // Direct manipulation: no queued travel after the user stops input.
-  const step=amount/METRES_PER_SECOND;
-  const requested=Math.max(routeShot.start,Math.min(routeShot.end,elapsed+step));
-  if(step>0&&requested>=routeShot.end-2/METRES_PER_SECOND){
-   arrival={shot:routeShot,start:elapsed,time:0,duration:1.4};
-   dragTarget=elapsed;manualSeeking=false;reviewFrozen=false;running=false;renderStory();return;
-  }
-  elapsed=dragTarget=requested;
-  manualSeeking=false;running=false;
-  if(elapsed>=routeShot.end)reviewFrozen=false;
-  seek.value=elapsed;renderStory();
+  const requested=Math.max(routeShot.start,Math.min(routeShot.end,base+amount*(routeShot.end-routeShot.start)));
+  dragTarget=requested;reviewFrozen=false;running=false;renderStory();
   return;
  }
  const end=shots.find(s=>s.kind==='explore')?.start??duration;
  dragTarget=Math.max(0,Math.min(end,Math.max(elapsed-1.5,Math.min(elapsed+3,base+amount))));
 }
 window.addEventListener('pointerdown',e=>{if(blocked()||isControl(e.target)||e.button!==0)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,axis:null,budget:0,direction:0};document.documentElement.setPointerCapture(e.pointerId);e.preventDefault();e.stopImmediatePropagation();},{capture:true});
-window.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.axis){if(Math.hypot(dx,dy)<6)return;if(Math.abs(dy)<6)return;drag.axis='y';}const raw=-(drag.axis==='x'?dx:dy),direction=Math.sign(raw);if(direction!==drag.direction){drag.budget=0;drag.direction=direction;}const before=100*(1-Math.exp(-drag.budget/100));drag.budget+=Math.abs(raw);advance(direction*(100*(1-Math.exp(-drag.budget/100))-before)*.06);drag.x=e.clientX;drag.y=e.clientY;document.body.classList.add('journey-dragging');e.preventDefault();e.stopImmediatePropagation();},{capture:true});
+window.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.axis){if(Math.hypot(dx,dy)<6)return;if(Math.abs(dy)<6)return;drag.axis='y';}const raw=-(drag.axis==='x'?dx:dy),direction=Math.sign(raw);if(direction!==drag.direction){drag.budget=0;drag.direction=direction;}const before=gestureProgress(drag.budget,'drag');drag.budget+=Math.abs(raw);advance(direction*(gestureProgress(drag.budget,'drag')-before));drag.x=e.clientX;drag.y=e.clientY;document.body.classList.add('journey-dragging');e.preventDefault();e.stopImmediatePropagation();},{capture:true});
 function releaseDrag(e){if(drag?.id!==e.pointerId)return;drag=null;document.body.classList.remove('journey-dragging');if(document.documentElement.hasPointerCapture(e.pointerId))document.documentElement.releasePointerCapture(e.pointerId);e.stopImmediatePropagation();}
 window.addEventListener('pointerup',releaseDrag,{capture:true});window.addEventListener('pointercancel',releaseDrag,{capture:true});
 let wheelLast=-Infinity,wheelBudget=0,wheelDirection=0;
 window.addEventListener('wheel',e=>{if(blocked()||isControl(e.target))return;e.preventDefault();e.stopImmediatePropagation();
- const now=performance.now(),unit=e.deltaMode===1?16:e.deltaMode===2?innerHeight:1;
- const raw=(Math.abs(e.deltaY)>Math.abs(e.deltaX)?e.deltaY:e.deltaX)*unit,dir=Math.sign(raw);
- if(now-wheelLast>180||dir!==wheelDirection||e.deltaMode===1){wheelBudget=0;wheelDirection=dir;}
- wheelLast=now;
- // One continuous wheel/trackpad gesture cannot cover more than 6 metres.
- const before=100*(1-Math.exp(-wheelBudget/100));wheelBudget+=Math.abs(raw);
- const pixels=100*(1-Math.exp(-wheelBudget/100))-before;
- advance(dir*pixels*.06);
+ if(e.ctrlKey)return;
+ const now=performance.now(),raw=wheelPixels(e,innerHeight),dir=Math.sign(raw);
+ if(now-wheelLast>180||dir!==wheelDirection){wheelBudget=0;wheelDirection=dir;}
+ wheelLast=now;const before=gestureProgress(wheelBudget);wheelBudget+=Math.abs(raw);
+ advance(dir*(gestureProgress(wheelBudget)-before));
 },{capture:true,passive:false});
-window.addEventListener('keydown',e=>{if(blocked()||isControl(e.target))return;if(['ArrowDown','ArrowRight','ArrowUp','ArrowLeft'].includes(e.key)){e.preventDefault();advance(['ArrowDown','ArrowRight'].includes(e.key)?4:-4);}});
+window.addEventListener('keydown',e=>{if(blocked()||isControl(e.target))return;if(['ArrowDown','ArrowRight','ArrowUp','ArrowLeft'].includes(e.key)){e.preventDefault();advance(['ArrowDown','ArrowRight'].includes(e.key)?1/6:-1/6);}});
 function renderStory(){
  if(blocked()){explore.hidden=true;testFade.style.opacity='0';return;}
  const q=shots.find(s=>elapsed<s.end)||shots.at(-1),u=Math.min(1,(elapsed-q.start)/(q.end-q.start)),t=elapsed-q.start;const changed=previous!==q;previous=q;emit('higgsfield-frame',{kind:q.kind,index:q.stop?.route??-1,time:t,progress:u,elapsed});
  explore.hidden=q.kind!=='explore';
  if(cameraTest&&!fullStory)play.textContent=(!reviewFrozen&&(running||['landscape-expand','dialogue-in','dialogue','dialogue-out','settle','seasons','fade'].includes(q.kind)))?'일시 정지':'이어서 재생';
- if(['dialogue-in','dialogue-out'].includes(q.kind))setDialogueMist(q.kind,u);else clearDialogueMist();
+ if(q.kind==='dialogue-out'&&!q.continuous)setDialogueMist(q.kind,u);else clearDialogueMist();
  dragHint.style.visibility=(arrival||running||['explore','landscape-expand','dialogue-in','dialogue','dialogue-out','settle','seasons','fade','archive'].includes(q.kind))?'hidden':'visible';
  dragHint.setAttribute('aria-hidden',String(dragHint.style.visibility==='hidden'));
  if(q.kind==='dialogue'){running=false;if(!manualSeeking)dragTarget=elapsed;}else stopCharacterVoice();
@@ -122,7 +111,8 @@ function renderStory(){
  }else if(q.kind==='dialogue-in'||q.kind==='dialogue-out'){
  if(changed){emit('stage-navigate','terrain');emit('ink-landscape-frame',{index:0,progress:1});}
  const index=q.stop.route;
- if(q.kind==='dialogue-in')emit('blender-route-frame',{index,time:u<.48?149.999:150,opacity:1,dialogue:u>=.48});
+ if(q.kind==='dialogue-in')emit('blender-route-frame',{index,time:150,opacity:1,dialogue:u*u*(3-2*u)});
+ else if(q.continuous)emit('blender-route-frame',{index,time:150,opacity:1,dialogue:1-u*u*(3-2*u)});
  else if(u<.48)emit('blender-route-frame',{index,time:150,opacity:1,dialogue:true});
  else emit('blender-transfer-frame',{from:index,to:index+1,progress:0});
  }else if(q.kind==='transfer'){
@@ -132,7 +122,7 @@ function renderStory(){
   if(changed){emit('stage-navigate','terrain');if(q.stop)emit('capture-story-motif',q.stop);}
   const index=q.stop.route;
   if(q.kind==='motif'){emit('ink-landscape-frame',{index,progress:u*.235});emit('blender-route-frame',{index,time:0,opacity:u<.8?0:(u-.8)/.2});}
-  else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1,dialogue:q.kind==='dialogue'});if(q.kind==='dialogue'){panel.hidden=false;const copy=dialogueCopy[index];const names=['장사꾼','농민','찬모','주민 삼총사','나무꾼'];if(!cameraTest)setCharacterVoice(index);const content='<h2>'+names[index]+'</h2><p>'+copy.testimony+'</p><i class="hanji-corner tl"></i><i class="hanji-corner tr"></i><i class="hanji-corner br"></i><i class="hanji-corner bl"></i>';if(panel.dataset.speaker!==String(index)){panel.innerHTML=content+'<div class="dialogue-footer"></div>';panel.dataset.speaker=String(index);}const sound=document.querySelector('#soundToggle');if(sound)panel.querySelector('.dialogue-footer').append(sound);}}
+  else{emit('ink-landscape-frame',{index,progress:1});const time=q.kind==='travel'?u*150:q.kind==='dialogue'?150+u*24:174+u*30;emit('blender-route-frame',{index,time,opacity:1,dialogue:q.kind==='dialogue'});if(q.kind==='dialogue'){panel.hidden=false;const copy=dialogueCopy[index];const names=['장사꾼','농민','찬모','주민 삼총사','나무꾼'];if(!cameraTest||document.body.dataset.cleanPlay==='true')setCharacterVoice(index);const content='<h2>'+names[index]+'</h2><p>'+copy.testimony+'</p><i class="hanji-corner tl"></i><i class="hanji-corner tr"></i><i class="hanji-corner br"></i><i class="hanji-corner bl"></i>';if(panel.dataset.speaker!==String(index)){panel.innerHTML=content+'<div class="dialogue-footer"></div>';panel.dataset.speaker=String(index);}const sound=document.querySelector('#soundToggle');if(sound)document.body.append(sound);}}
  }else{
   if(changed){emit('stage-navigate','memory');emit('ink-landscape-frame',{index:0,progress:1});}
   const source=q.kind==='guesthouse'?u*70:q.kind==='settle'?70:q.kind==='seasons'?70+u*74:144;
@@ -147,6 +137,15 @@ function renderStory(){
 function tick(now){requestAnimationFrame(tick);const dt=last?Math.min(.1,(now-last)/1000)*(document.body.dataset.sourceCapture==='true'?2:1):0;last=now;if(!active||blocked()||document.hidden||(elapsed>=shots.find(s=>s.kind==='dialogue').end&&document.body.dataset.spatialReady!=='true'))return;
 if(document.body.dataset.sourceCapture==='true')running=true;
 const q=currentShot();
+if(manualSeeking&&cameraTest&&['travel','transfer'].includes(q.kind)){
+ if(document.body.dataset.spatialReady!=='true')return;
+ const i=q.kind==='travel'?q.stop.route:q.to,span=q.end-q.start,p=(elapsed-q.start)/span,dest=(dragTarget-q.start)/span;
+ const remaining=Math.abs(dest-p)*routeCosts[i].at(-1),ease=Math.min(1,remaining/.3);
+ const next=limitedProgress(routeCosts[i],p,dest,dt*ease);
+ elapsed=q.start+next*span;
+ if(Math.abs(dragTarget-elapsed)<.008){elapsed=dragTarget;manualSeeking=false;reviewFrozen=false;}
+ seek.value=elapsed;renderStory();return;
+}
 if(manualSeeking){
  emit('village-preload');emit('ending-preload');
  if(document.body.dataset.spatialReady!=='true')return;

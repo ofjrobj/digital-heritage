@@ -1,0 +1,104 @@
+body{--dialogue-floor:max(64px,calc(env(safe-area-inset-bottom) + 56px));--sound-floor:max(8px,env(safe-area-inset-bottom))}
+body #cinemaDialogue,body[data-camera-test] #cinemaDialogue{left:50%!important;transform:translateX(-50%)!important;bottom:max(64px,calc(var(--review-dock,0px) + 20px))!important;width:min(72vw,1080px)!important;max-width:calc(100vw - 32px)!important;display:flex;flex-direction:column;background:#e8e8e6!important;color:#4f645b!important;border:0!important;box-shadow:none!important;font-family:'KoPubWorldBatangLight','User KoPubWorld Light',serif!important}
+body #cinemaDialogue[hidden]{display:none!important}
+body #soundToggle{position:fixed!important;right:max(18px,env(safe-area-inset-right))!important;bottom:max(8px,calc(var(--review-dock,0px) + 4px))!important;top:auto!important;width:44px!important;height:44px!important;z-index:90!important;background:transparent!important;border:0!important;color:#3d4740!important;box-shadow:none!important;padding:10px!important}
+body #soundToggle::after,body #soundToggle .control-label{display:none!important}
+body #cinemaDialogue .dialogue-footer{display:none!important}
+body #storyIndexBar{z-index:70!important;font-family:'KoPubWorldBatangLight','User KoPubWorld Light',serif!important}
+body.archive-active #storyIndexBar,body.archive-active .gongju-corner-frame,body.archive-active #soundToggle{display:none!important}
+body #journeyDragHint{color:#343a35;font-size:clamp(8px,min(1.35vw,2.3dvh),18px)!important;text-shadow:none!important;animation:scroll-cue-breathe 2.4s ease-in-out infinite}
+@keyframes scroll-cue-breathe{0%,100%{opacity:1}50%{opacity:.4}}
+.gongju-corner-frame{position:fixed;inset:16px;z-index:71;pointer-events:none;color:#526359;opacity:.65}.gongju-corner-frame i{position:absolute;width:18px;height:18px;border:1px solid currentColor}.gongju-corner-frame .tl{left:0;top:0;border-right:0;border-bottom:0}.gongju-corner-frame .tr{right:0;top:0;border-left:0;border-bottom:0}.gongju-corner-frame .bl{left:0;bottom:0;border-right:0;border-top:0}.gongju-corner-frame .br{right:0;bottom:0;border-left:0;border-top:0}
+@media(max-width:700px){body #cinemaDialogue,body[data-camera-test] #cinemaDialogue{width:calc(100vw - 32px)!important}}
+@media(prefers-reduced-motion:reduce){body #journeyDragHint{animation:none}}
+
+/* Story and Index share viewport coordinates, type and quiet paper treatment. */
+:root {
+  --shared-nav-top: max(env(safe-area-inset-top, 0px), clamp(14px, 4.4dvh, 36px));
+  --shared-nav-font: clamp(8px, min(1.65vw, 2.7dvh), 23px);
+}
+
+html body[data-native-village] #storyIndexBar,
+body .archive #archiveStoryIndexBar {
+  position: fixed !important;
+  top: var(--shared-nav-top) !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translateX(-50%) !important;
+  display: flex;
+  gap: 0 !important;
+  align-items: stretch;
+  width: max-content;
+  height: auto;
+  margin: 0;
+  padding: 0 !important;
+  border: 0;
+  border-radius: 0;
+  background: none !important;
+  isolation: isolate;
+  z-index: 6;
+  font-family: 'KoPubWorld Batang Light', serif;
+  font-size: var(--shared-nav-font) !important;
+  font-weight: 300 !important;
+  letter-spacing: .04em;
+  line-height: normal !important;
+}
+
+html body[data-native-village] #storyIndexBar :is(a, button),
+body .archive #archiveStoryIndexBar :is(a, button) {
+  position: relative;
+  display: block;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: .32em 1.25em !important;
+  border: 0;
+  border-radius: 0;
+  color: #373734 !important;
+  background: transparent;
+  box-shadow: none;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: 300 !important;
+  font-synthesis: none !important;
+  line-height: normal !important;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  text-decoration: none;
+  text-shadow: none !important;
+}
+
+html body[data-native-village] #storyIndexBar :is(a, button) + :is(a, button),
+body .archive #archiveStoryIndexBar :is(a, button) + :is(a, button) {
+  border-left: 1px solid rgba(30, 30, 28, .2);
+}
+
+html body[data-native-village] #storyIndexBar [aria-current='page'],
+body .archive #archiveStoryIndexBar [aria-current='page'] {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: auto;
+}
+
+html body[data-native-village] #storyIndexBar::before {
+  content: '';
+  position: absolute;
+  inset: -.2em -.3em;
+  z-index: -1;
+  background: rgba(211, 211, 206, .76);
+  box-shadow: none;
+  filter: none;
+  opacity: var(--nav-paper, 1);
+  pointer-events: none;
+}
+
+/* The Index page already has a quiet paper background. */
+body .archive #archiveStoryIndexBar::before { content: none; }
+
+/* Keep compact/tall windows unchanged; large landscape views need quieter navigation. */
+@media (min-width: 1100px) and (min-aspect-ratio: 3/2) {
+  :root { --shared-nav-font: clamp(8px, min(1.4vw, 2.3dvh), 20px); }
+}
