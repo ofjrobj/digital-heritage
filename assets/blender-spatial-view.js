@@ -14,7 +14,7 @@ const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.se
 const scene=new THREE.Scene();scene.background=new THREE.Color('#dedfd1');scene.fog=new THREE.Fog('#dedfd1',95,360);
 const skyLight=new THREE.HemisphereLight(0xfff7e6,0x65705d,1.1);scene.add(skyLight);const sun=new THREE.DirectionalLight(0xfff2dd,1.65);sun.position.set(-50,100,25);scene.add(sun);
 const camera=new THREE.PerspectiveCamera(42,1,.08,1400);const daylight=prepareEndingDaylight(scene,camera,sun,skyLight,THREE);let route=0,mode='entry',lastPose=null,endingTime=0;
-const data=await fetch('./assets/town-camera.json?v=74-route4').then(r=>{if(!r.ok)throw Error('Camera data');return r.json();});
+const data=await fetch('./assets/town-camera.json?v=woodcutter-forward-20261018').then(r=>{if(!r.ok)throw Error('Camera data');return r.json();});
 const manifest=await fetch('./assets/town-model.json?v=74-route4').then(r=>{if(!r.ok)throw Error('Model manifest');return r.json();});
 const chunks=await Promise.all(manifest.parts.map(async p=>{const r=await fetch('./assets/'+p+'?v='+manifest.sourceSha256.slice(0,12));if(!r.ok)throw Error('Model part '+p);return new Uint8Array(await r.arrayBuffer());}));
 const packed=new Uint8Array(chunks.reduce((n,p)=>n+p.length,0));let offset=0;for(const p of chunks){packed.set(p,offset);offset+=p.length;}

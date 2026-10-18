@@ -11,7 +11,7 @@ function preloadVillage(){
  loading.innerHTML='풍경을 불러오는 중입니다…';
  if(document.body.dataset.experience&&!document.body.classList.contains('higgsfield-active'))loading.hidden=false;
  const attempt=spatialAttempt++;
- spatialPromise=import('./blender-spatial-view.js?v=74-route4'+attempt).then(()=>{loading.hidden=true;}).catch(error=>{
+ spatialPromise=import('./blender-spatial-view.js?v=woodcutter-forward-20261018-'+attempt).then(()=>{loading.hidden=true;}).catch(error=>{
  spatialPromise=null;loading.hidden=false;loading.textContent='풍경을 불러오지 못했습니다. ';
  const retry=document.createElement('button');retry.textContent='다시 불러오기';retry.onclick=()=>location.reload();loading.append(retry);console.error(error);
  });return spatialPromise;
