@@ -1,13 +1,23 @@
 // Roll a conventional Windows mouse wheel away/up to move forward (negative DOM delta).
 // Every accepted packet contributes distance.
-export function createWalkingInput({pixelsPerStep = 100} = {}) {
+export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = false, gestureIdleMs = 220} = {}) {
   const pixelStep = Number.isFinite(pixelsPerStep) && pixelsPerStep > 0 ? pixelsPerStep : 100;
+  const idle = Number.isFinite(gestureIdleMs) && gestureIdleMs > 0 ? gestureIdleMs : 220;
+  let lastPacketAt = -Infinity, lastDirection = 0;
 
   function wheelGestureSteps(event, now) {
     const y = Number(event.deltaY), x = Number(event.deltaX) || 0;
     if (event.ctrlKey || !Number.isFinite(now) || !Number.isFinite(y) ||
         y === 0 || Math.abs(x) > Math.abs(y)) return 0;
     const mode = Number(event.deltaMode) || 0;
+    if (mode !== 0 && mode !== 1 && mode !== 2) return 0;
+    if (oneStepPerGesture) {
+      const direction = -Math.sign(y);
+      const newGesture = now - lastPacketAt >= idle || direction !== lastDirection;
+      lastPacketAt = now;
+      lastDirection = direction;
+      return newGesture ? direction : 0;
+    }
     if (mode === 1) return -y / 3; // Common mouse setting: three lines per detent.
     if (mode === 2) return -y * 6; // A page is one complete six-step walking scene.
     if (mode !== 0) return 0;
@@ -17,7 +27,8 @@ export function createWalkingInput({pixelsPerStep = 100} = {}) {
     return -y / pixelStep;
   }
 
-  // Kept for scene-boundary callers; there is no accumulated gesture state to clear.
+  // Preserve the burst lock across scene changes: trackpad inertia must not
+  // spend another step in the next scene. A quiet interval rearms naturally.
   return {wheelGestureSteps, reset() {}};
 }
 

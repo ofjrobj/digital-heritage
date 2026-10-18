@@ -1,5 +1,5 @@
 {
-  "version": "three-journeys-20261019-v5",
+  "version": "gesture-budget-20261019-v6",
   "scenes": [
     {
       "id": "intro",
@@ -53,7 +53,8 @@
       "scrollSteps": 6,
       "maxPlaybackRate": 1,
       "exitTransitionSeconds": 0.65,
-      "nativeAudio": true
+      "nativeAudio": true,
+      "secondsPerScroll": 2.673611111111111
     },
     {
       "id": "merchant",
@@ -113,11 +114,12 @@
       "clipIn": 0,
       "ambience": "",
       "walkingReferenceDuration": 12.0,
-      "scrollSteps": 6,
+      "scrollSteps": 5,
       "maxPlaybackRate": 1,
       "transition": "none",
       "exitTransitionSeconds": 0.65,
-      "nativeAudio": true
+      "nativeAudio": true,
+      "secondsPerScroll": 2.673611111111111
     },
     {
       "id": "farmer",
@@ -177,11 +179,12 @@
       "clipIn": 0,
       "ambience": "",
       "walkingReferenceDuration": 17.041666666666668,
-      "scrollSteps": 6,
+      "scrollSteps": 7,
       "maxPlaybackRate": 1,
       "transition": "none",
       "exitTransitionSeconds": 0.65,
-      "nativeAudio": true
+      "nativeAudio": true,
+      "secondsPerScroll": 2.673611111111111
     },
     {
       "id": "cook",
@@ -250,7 +253,10 @@
       "sourceFrames": 713,
       "clipIn": 0,
       "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
-      "walkingReferenceDuration": 29.708333333333332
+      "walkingReferenceDuration": 29.708333333333332,
+      "secondsPerScroll": 2.673611111111111,
+      "scrollSteps": 12,
+      "maxPlaybackRate": 1
     },
     {
       "id": "trio",
@@ -319,7 +325,10 @@
       "sourceFrames": 713,
       "clipIn": 23.166666666666668,
       "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
-      "walkingReferenceDuration": 29.708333333333332
+      "walkingReferenceDuration": 29.708333333333332,
+      "secondsPerScroll": 2.673611111111111,
+      "scrollSteps": 3,
+      "maxPlaybackRate": 1
     },
     {
       "id": "woodcutter",
@@ -381,7 +390,10 @@
       "sourceFrames": 713,
       "clipIn": 0,
       "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
-      "walkingReferenceDuration": 29.708333333333332
+      "walkingReferenceDuration": 29.708333333333332,
+      "secondsPerScroll": 2.673611111111111,
+      "scrollSteps": 12,
+      "maxPlaybackRate": 1
     },
     {
       "id": "seasons",
