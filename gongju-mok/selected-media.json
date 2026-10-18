@@ -1,5 +1,5 @@
 {
-  "version": "merchant-16s-20261019-v1",
+  "version": "scroll-six-forward-20261019-v3",
   "scenes": [
     {
       "id": "intro",
@@ -50,7 +50,7 @@
       "walkingReferenceDuration": 16.041666666666668,
       "sourceFrames": 385,
       "fps": 24,
-      "scrollSteps": 8,
+      "scrollSteps": 6,
       "maxPlaybackRate": 1,
       "exitTransitionSeconds": 0.65,
       "nativeAudio": true
