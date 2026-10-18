@@ -1,5 +1,5 @@
 {
-  "version": "gesture-budget-20261019-v6",
+  "version": "scroll-position-stop-20261019-v7",
   "scenes": [
     {
       "id": "intro",
@@ -54,7 +54,8 @@
       "maxPlaybackRate": 1,
       "exitTransitionSeconds": 0.65,
       "nativeAudio": true,
-      "secondsPerScroll": 2.673611111111111
+      "secondsPerScroll": 2.673611111111111,
+      "scrollPlayback": "seek"
     },
     {
       "id": "merchant",
@@ -119,7 +120,8 @@
       "transition": "none",
       "exitTransitionSeconds": 0.65,
       "nativeAudio": true,
-      "secondsPerScroll": 2.673611111111111
+      "secondsPerScroll": 2.673611111111111,
+      "scrollPlayback": "seek"
     },
     {
       "id": "farmer",
@@ -184,7 +186,8 @@
       "transition": "none",
       "exitTransitionSeconds": 0.65,
       "nativeAudio": true,
-      "secondsPerScroll": 2.673611111111111
+      "secondsPerScroll": 2.673611111111111,
+      "scrollPlayback": "seek"
     },
     {
       "id": "cook",
@@ -256,7 +259,8 @@
       "walkingReferenceDuration": 29.708333333333332,
       "secondsPerScroll": 2.673611111111111,
       "scrollSteps": 12,
-      "maxPlaybackRate": 1
+      "maxPlaybackRate": 1,
+      "scrollPlayback": "seek"
     },
     {
       "id": "trio",
@@ -328,7 +332,8 @@
       "walkingReferenceDuration": 29.708333333333332,
       "secondsPerScroll": 2.673611111111111,
       "scrollSteps": 3,
-      "maxPlaybackRate": 1
+      "maxPlaybackRate": 1,
+      "scrollPlayback": "seek"
     },
     {
       "id": "woodcutter",
@@ -393,7 +398,8 @@
       "walkingReferenceDuration": 29.708333333333332,
       "secondsPerScroll": 2.673611111111111,
       "scrollSteps": 12,
-      "maxPlaybackRate": 1
+      "maxPlaybackRate": 1,
+      "scrollPlayback": "seek"
     },
     {
       "id": "seasons",
