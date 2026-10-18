@@ -46,6 +46,7 @@ let drag=null,lastDragMoveAt=-Infinity,lastWheelMoveAt=-Infinity;
 // A wheel gesture can start muted video even when the browser denies sound.
 // Keep that fallback across frames instead of immediately unmuting it again.
 let nativeAudioBlocked=false;
+let pendingIntroEntry=false;
 const footsteps=createScrollFootsteps(foot,()=>((!!drag&&performance.now()-lastDragMoveAt<200)||performance.now()-lastWheelMoveAt<200)&&Math.abs(target-local)>.008&&sound&&!paused&&!compare&&!previewAuto&&!transition&&!finished&&!document.hidden&&!!current&&!current.error&&scrollDriven()&&scenes[index]?.mode==='scroll'&&!replacementOpening&&scenes[index]?.footsteps===true&&(current.still||current.loaded||current.video.readyState>=2));
 const seasonAmbience=createSeasonAmbience(stage),sceneLife=createSceneLife(stage);
 const dialogueFit=createDialogueFaceSafe({stage,panel:$('cinemaDialogue'),tools:$('testTools'),sound:$('soundToggle')});
@@ -165,7 +166,7 @@ function requestScene(i,at=0){
  const exitFade=Number(scenes[index]?.exitTransitionSeconds);
  if(i<0||i>=scenes.length)return;if(at>=duration(i)&&i<scenes.length-1){i++;at=0;}
  walkingInput.reset();walkingRate=0;reverseElapsed=0;lastWheelMoveAt=-Infinity;footsteps.stop();drag=null;current?.video.pause();voices.select(-1);voiceEnabled(false);$('cinemaDialogue')?.setAttribute('hidden','');caption.hidden=true;archiveCta.hidden=true;finished=false;endingElapsed=0;endingPaper.style.opacity='0';archiveCta.inert=true;document.body.dataset.ending='false';if(archiveFrame){archiveFrame.style.opacity='0';archiveFrame.style.pointerEvents='none';archiveFrame.inert=true;archiveFrame.setAttribute('aria-hidden','true');}if($('hint'))$('hint').hidden=true;
- transition={fromDialogue:scenes[index]?.mode==='dialogue',to:i,at:clamp(at,0,duration(i)),record:preparedScene(i,at),phase:storyStarted?'in':'loading',initial:!storyStarted,elapsed:0,fade:storyStarted?(scenes[i].transition==='none'?0:Number.isFinite(exitFade)&&exitFade>=0?exitFade:scenes[i].mode==='dialogue'||scenes[index]?.mode==='dialogue'?2.4:1.6):.8};footageFog.start(!transition.initial&&transition.fade>0);status('Loading...');
+ transition={fromDialogue:scenes[index]?.mode==='dialogue',to:i,at:clamp(at,0,duration(i)),record:preparedScene(i,at),phase:storyStarted?'in':'loading',initial:!storyStarted,elapsed:0,fade:storyStarted?(scenes[i].transition==='none'?0:Number.isFinite(exitFade)&&exitFade>=0?exitFade:scenes[i].mode==='dialogue'||scenes[index]?.mode==='dialogue'?2.4:1.6):(replacementOpening?0:.8)};footageFog.start(!transition.initial&&transition.fade>0);status('Loading...');
 }
 function remember(){footageFog.stop();sceneLife.stop();seasonAmbience.stop();footsteps.stop();videos.forEach(v=>v.pause());voiceEnabled(false);music.pause();sessionStorage.setItem('test-render-resume',JSON.stringify({index,local}));sessionStorage.setItem('ink-pilot-return',location.pathname.endsWith('/test-render-clean.html')?'test-render-clean.html':'test-render.html');}
 if($('indexLink'))$('indexLink').onclick=remember;
@@ -177,15 +178,25 @@ if($('soundToggle'))$('soundToggle').onclick=()=>{if(sound&&(nativeAudioBlocked|
 for(const type of ['pointerdown','keydown','wheel'])stage.addEventListener(type,e=>{if(!e.target.closest('#soundToggle')){if(type!=='wheel'&&e.isTrusted)unlockNativeSound();retrySound();}},{passive:true});
 syncSoundButton();storyMusic.enable(sound&&!replacementOpening);
 function canWalk(){return !!current&&!current.error&&!transition&&!paused&&!compare&&!finished&&scrollDriven();}
+// The opening is an entrance screen: one forward input enters the village.
+// Accept it during initial media loading too, rather than losing the first gesture.
+function enterFromIntro(delta){
+ if(!replacementOpening||delta<=0||paused||compare||finished)return false;
+ if(!scenes.length){pendingIntroEntry=true;return true;}
+ const intro=transition?.record.scene||current?.scene||scenes[0];
+ if(intro.id!=='intro'||!intro.enterOnScroll)return false;
+ const next=scenes.indexOf(intro)+1;if(next>=scenes.length)return false;
+ pendingIntroEntry=false;previewAuto=false;requestScene(next);return true;
+}
 function manual(delta,fromDrag=false){
- if(!delta||!canWalk())return;
+ if(!delta||enterFromIntro(delta)||!canWalk())return;
  previewAuto=false;if(walkingDirection!==Math.sign(delta))reverseElapsed=0;walkingDirection=Math.sign(delta);lastScrollAt=performance.now();
  // A reversed gesture cancels the old travel queue immediately.
  if((target-local)*walkingDirection<-.008){target=local;walkingRate=0;current.video.pause();}
  const previousTarget=target;target=clamp(target+walkingTargetDelta(walkingInputRange(),delta),0,scrollLimit());
  if(fromDrag&&target!==previousTarget){lastDragMoveAt=performance.now();footsteps.pulse();}
 }
-stage.addEventListener('wheel',e=>{if(!canWalk()||e.ctrlKey||e.target.closest('#testTools,#cinemaDialogue,nav,button,a,input,select,textarea,[contenteditable]'))return;e.preventDefault();const before=target;manual(walkingInput.wheelGestureSteps(e,performance.now()));if(target!==before){lastWheelMoveAt=performance.now();footsteps.pulse();}},{passive:false});
+stage.addEventListener('wheel',e=>{if(e.ctrlKey||e.target.closest('#testTools,#cinemaDialogue,nav,button,a,input,select,textarea,[contenteditable]'))return;const delta=walkingInput.wheelGestureSteps(e,performance.now());if(!delta)return;if(enterFromIntro(delta)){e.preventDefault();return;}if(!canWalk())return;e.preventDefault();const before=target;manual(delta);if(target!==before){lastWheelMoveAt=performance.now();footsteps.pulse();}},{passive:false});
 canvas.addEventListener('pointerdown',e=>{if(!canWalk()||!e.isPrimary||e.pointerType==='mouse'&&e.button!==0)return;drag={x:e.clientX,y:e.clientY,pointerId:e.pointerId};canvas.setPointerCapture(e.pointerId);});
 canvas.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.pointerId)return;manual(((drag.y-e.clientY)+(e.clientX-drag.x)*.25)/90,true);drag={x:e.clientX,y:e.clientY,pointerId:e.pointerId};});
 function stopDragging(){drag=null;lastDragMoveAt=-Infinity;if(performance.now()-lastWheelMoveAt>=200)footsteps.stop();}
@@ -243,7 +254,7 @@ function frame(now){
     status('');loadingHiddenAt=now;t.phase='gap';t.elapsed=0;document.body.dataset.startup='gap';
    }
   }else if(t.phase==='gap'){
-   if(t.elapsed>=1){current=t.record;index=t.to;local=Math.min(t.at,duration(index));target=local;current.video.pause();t.phase='out';t.elapsed=0;firstSceneShownAt=now;document.body.dataset.startup='reveal';document.body.dataset.ready='true';draw(current.still?current.image:current.video);mistAmount(1);}
+   if(t.elapsed>=(replacementOpening?0:1)){current=t.record;index=t.to;local=Math.min(t.at,duration(index));target=local;current.video.pause();t.phase='out';t.elapsed=0;firstSceneShownAt=now;document.body.dataset.startup='reveal';document.body.dataset.ready='true';draw(current.still?current.image:current.video);mistAmount(t.fade?1:0);}
   }else if(t.phase==='in'){
    const p=t.fade?clamp(t.elapsed/t.fade):1;mistAmount(t.fade?ease(p):0);
    if(!hasFrame&&t.record.image){draw(t.record.image);status('Loading...');}
@@ -342,6 +353,7 @@ try{
  lengths=scenes.map(s=>s.mode==='dialogue'?voices.duration(s.speaker)+8:Math.max(.1,Number(s.duration)||Number(s.sourceDuration)||6));total=lengths.reduce((a,b)=>a+b,0);
  if($('chapter'))$('chapter').replaceChildren(...scenes.map((s,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=s.label||s.id;return o;}));
  let saved=null;try{saved=JSON.parse(sessionStorage.getItem('test-render-resume'));sessionStorage.removeItem('test-render-resume');}catch{}
- requestScene(saved&&Number.isInteger(saved.index)?clamp(saved.index,0,scenes.length-1):0,Number(saved?.local)||0);
+ if(pendingIntroEntry&&scenes[0].enterOnScroll&&scenes.length>1){pendingIntroEntry=false;requestScene(1);}
+ else requestScene(saved&&Number.isInteger(saved.index)?clamp(saved.index,0,scenes.length-1):0,Number(saved?.local)||0);
 }catch(error){status('장면을 불러오지 못했습니다. 새로고침해 주세요.');document.body.dataset.error=String(error);console.error(error);}
 
