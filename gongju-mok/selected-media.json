@@ -1,5 +1,5 @@
 {
-  "version": "intro-one-scroll-20261019-v4",
+  "version": "three-journeys-20261019-v5",
   "scenes": [
     {
       "id": "intro",
@@ -49,7 +49,7 @@
       "captionUntil": 0.15,
       "walkingReferenceDuration": 16.041666666666668,
       "sourceFrames": 385,
-      "fps": 24,
+      "fps": 24.0,
       "scrollSteps": 6,
       "maxPlaybackRate": 1,
       "exitTransitionSeconds": 0.65,
@@ -92,30 +92,32 @@
     {
       "id": "merchant-farmer",
       "label": "농민에게 이동",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_101504_fd2d070c-d2f3-4544-9c02-75e73c1b72fa.mp4",
-      "duration": 29.708333333333332,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261018_201404_dad90e5a-3c33-46dc-83b2-455593e4f770.mp4",
+      "duration": 12.0,
       "fps": 24.0,
       "mode": "scroll",
-      "footsteps": true,
+      "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "fd2d070c-d2f3-4544-9c02-75e73c1b72fa",
+        "generationId": "dad90e5a-3c33-46dc-83b2-455593e4f770",
+        "selection": "Explicit user attachment selected for public website placement on 2026-10-19",
+        "delivery": "Complete untrimmed original video and embedded audio; public source verified byte-identical to user attachment",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "24df808443a4abd423a46ca32a5a62e276e0c01ac6dc36de3ef8984e10bfdb93",
-        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
-        "reviewStatus": "generated_rejected_raw_blender_and_continuity",
-        "releaseStatus": "user-requested-interim",
-        "finalVisualApproval": false
+        "nativeSha256": "c5e96cf2fa1da9cba056dbcf932640db4dc0eb52b5bb161d962b75d1396a2102"
       },
-      "sourceDuration": 29.708333333333332,
-      "sourceFrames": 713,
+      "sourceDuration": 12.0,
+      "sourceFrames": 288,
       "clipIn": 0,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
-      "walkingReferenceDuration": 29.708333333333332
+      "ambience": "",
+      "walkingReferenceDuration": 12.0,
+      "scrollSteps": 6,
+      "maxPlaybackRate": 1,
+      "transition": "none",
+      "exitTransitionSeconds": 0.65,
+      "nativeAudio": true
     },
     {
       "id": "farmer",
@@ -154,30 +156,32 @@
     {
       "id": "farmer-cook",
       "label": "찬모에게 이동",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_103323_ea0627fc-5c36-4d20-a70d-37ffac734d3f.mp4",
-      "duration": 29.708333333333332,
-      "fps": 24,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261018_225157_cb87ff18-412d-4245-bd30-4382e384a45d.mp4",
+      "duration": 17.041666666666668,
+      "fps": 24.0,
       "mode": "scroll",
-      "footsteps": true,
+      "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "ea0627fc-5c36-4d20-a70d-37ffac734d3f",
+        "generationId": "cb87ff18-412d-4245-bd30-4382e384a45d",
+        "selection": "Explicit user attachment selected for public website placement on 2026-10-19",
+        "delivery": "Complete untrimmed original video and embedded audio; public source verified byte-identical to user attachment",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "b31cd5380fd4a39237ea8e06ceb134dee612f8307b411e33b7a1f77c0f36b530",
-        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
-        "reviewStatus": "generated_rejected_raw_blender_reference_and_camera",
-        "releaseStatus": "user-requested-interim",
-        "finalVisualApproval": false
+        "nativeSha256": "4c6333ced5c68465a60b5cfe3ac4621d6b252eaf66d66bf130a51e0aa8d78d46"
       },
-      "sourceDuration": 29.708333333333332,
-      "sourceFrames": 713,
+      "sourceDuration": 17.041666666666668,
+      "sourceFrames": 409,
       "clipIn": 0,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
-      "walkingReferenceDuration": 29.708333333333332
+      "ambience": "",
+      "walkingReferenceDuration": 17.041666666666668,
+      "scrollSteps": 6,
+      "maxPlaybackRate": 1,
+      "transition": "none",
+      "exitTransitionSeconds": 0.65,
+      "nativeAudio": true
     },
     {
       "id": "cook",
