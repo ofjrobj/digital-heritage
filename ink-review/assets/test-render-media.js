@@ -10,7 +10,7 @@ import {createScrollFootsteps} from './scroll-footsteps.js?v=three-drops-slow-in
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
 import {createIntroInkSpread,introVisualTime} from './intro-ink-spread.js?v=three-drops-slow-intro-1';
 import {createPaperColor, PAPER_CSS} from './paper-color.js?v=archive-paper-1';
-import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=responsive-walking-1';
+import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=merchant-16s-20261019-v1';
 import {dialogueApproachGain,sceneArrivalDelay} from './dialogue-audio-flow.js?v=drag-arrival-audio-1';
 const replacementOpening=document.body.dataset.mediaProfile==='selected-higgsfield';
 const walkingInput=createWalkingInput();
@@ -53,7 +53,11 @@ function scrollDriven(r=current){return r?.scene.mode==='scroll'&&!r.autoStarted
 function scrollLimit(){const from=Number(scenes[index]?.autoFrom);return from>0?Math.min(duration(index),from):duration(index);}
 // Use the same untrimmed walking scale so an editorial trim stays shorter.
 function walkingReference(){const s=scenes[index];return s?.mode==='scroll'&&s.footsteps?Math.max(.1,Number(s.walkingReferenceDuration)||duration(index)):30;}
-function walkingInputRange(){return replacementOpening?duration(index):scenes[index]?.footsteps?walkingReference():scrollLimit();}
+function walkingInputRange(){
+ const steps=Number(scenes[index]?.scrollSteps);
+ if(replacementOpening)return duration(index)*(Number.isFinite(steps)&&steps>0?6/steps:1);
+ return scenes[index]?.footsteps?walkingReference():scrollLimit();
+}
 function status(text,retry=false){if(storyStarted&&text==='Loading...')text='';const node=$('loading');if(!node)return;const key=text+'|'+retry;if(key===lastStatus)return;lastStatus=key;node.replaceChildren(document.createTextNode(text));node.hidden=!text;if(retry){const button=document.createElement('button');button.textContent='다시 불러오기';button.onclick=()=>requestScene(transition?.to??Math.max(0,index),transition?.at??local);node.append(button);}}
 function voiceEnabled(value){if(value!==lastVoiceEnable){lastVoiceEnable=value;voices.setEnabled(value);}}
 function seasonUiInsets(){
@@ -155,9 +159,10 @@ function openingCaption(scene,time){
  caption.hidden=!text||scene.mode==='dialogue';caption.style.opacity=String(opacity);
 }
 function requestScene(i,at=0){
+ const exitFade=Number(scenes[index]?.exitTransitionSeconds);
  if(i<0||i>=scenes.length)return;if(at>=duration(i)&&i<scenes.length-1){i++;at=0;}
  walkingInput.reset();walkingRate=0;reverseElapsed=0;lastWheelMoveAt=-Infinity;footsteps.stop();drag=null;current?.video.pause();voices.select(-1);voiceEnabled(false);$('cinemaDialogue')?.setAttribute('hidden','');caption.hidden=true;archiveCta.hidden=true;finished=false;endingElapsed=0;endingPaper.style.opacity='0';archiveCta.inert=true;document.body.dataset.ending='false';if(archiveFrame){archiveFrame.style.opacity='0';archiveFrame.style.pointerEvents='none';archiveFrame.inert=true;archiveFrame.setAttribute('aria-hidden','true');}if($('hint'))$('hint').hidden=true;
- transition={fromDialogue:scenes[index]?.mode==='dialogue',to:i,at:clamp(at,0,duration(i)),record:preparedScene(i,at),phase:storyStarted?'in':'loading',initial:!storyStarted,elapsed:0,fade:storyStarted?(scenes[i].transition==='none'?0:scenes[i].mode==='dialogue'||scenes[index]?.mode==='dialogue'?2.4:1.6):.8};footageFog.start(!transition.initial&&transition.fade>0);status('Loading...');
+ transition={fromDialogue:scenes[index]?.mode==='dialogue',to:i,at:clamp(at,0,duration(i)),record:preparedScene(i,at),phase:storyStarted?'in':'loading',initial:!storyStarted,elapsed:0,fade:storyStarted?(scenes[i].transition==='none'?0:Number.isFinite(exitFade)&&exitFade>=0?exitFade:scenes[i].mode==='dialogue'||scenes[index]?.mode==='dialogue'?2.4:1.6):.8};footageFog.start(!transition.initial&&transition.fade>0);status('Loading...');
 }
 function remember(){footageFog.stop();sceneLife.stop();seasonAmbience.stop();footsteps.stop();videos.forEach(v=>v.pause());voiceEnabled(false);music.pause();sessionStorage.setItem('test-render-resume',JSON.stringify({index,local}));sessionStorage.setItem('ink-pilot-return',location.pathname.endsWith('/test-render-clean.html')?'test-render-clean.html':'test-render.html');}
 if($('indexLink'))$('indexLink').onclick=remember;
@@ -261,11 +266,11 @@ function frame(now){
     local=clamp(v.currentTime-current.clipIn,0,d);
     const gap=target-local;
     if(gap>.008){
-     walkingRate=walkingPlaybackRate(gap,dt,walkingRate,walkingReference());
+     walkingRate=walkingPlaybackRate(gap,dt,walkingRate,walkingReference(),s.maxPlaybackRate);
      if(walkingRate){v.playbackRate=walkingRate;play(current);}else v.pause();
     }else if(gap<-.008&&walkingDirection<0){
      v.pause();const reverseDt=reverseElapsed;reverseElapsed=0;
-     walkingRate=walkingPlaybackRate(-gap,reverseDt,walkingRate,walkingReference());
+     walkingRate=walkingPlaybackRate(-gap,reverseDt,walkingRate,walkingReference(),s.maxPlaybackRate);
      if(walkingRate>0)v.currentTime=current.clipIn+Math.max(target,local-reverseDt*walkingRate);
     }else{v.pause();walkingRate=0;footsteps.stop();}
    }
@@ -298,6 +303,13 @@ function frame(now){
  footageFog.tick(now,paused||document.hidden);
  const musicScene=scenes[index],musicVoice=voices.proof();
  const approachGain=dialogueApproachGain(musicScene,scenes[index+1],local,duration(index));
+ // Only an explicitly selected scene uses its original embedded soundtrack.
+ // All other video slots remain muted; no ambient bed is layered on this clip.
+ for(const video of videos){
+  const nativeEnabled=video===current?.video&&musicScene?.nativeAudio===true&&sound&&!paused&&!compare&&!transition&&!finished&&!document.hidden&&walkingDirection>=0;
+  video.muted=!nativeEnabled;
+  video.volume=nativeEnabled?approachGain:0;
+ }
  sceneLife.tick({src:musicScene?.ambience||'',time:current?.video.currentTime||0,active:!paused&&!compare&&!previewAuto&&!transition&&!finished&&!document.hidden&&!!current&&(replacementOpening?!!current&&!current.video.paused:musicScene?.mode==='scroll'&&!!drag&&now-lastDragMoveAt<200&&Math.abs(target-local)>.008),sound,gain:approachGain,dt});
  const musicDuck=transition?.record.scene.mode==='dialogue'||musicScene?.mode==='dialogue'&&!musicVoice.ended;
  storyMusic.tick({duck:musicDuck,paused:paused||compare,hidden:document.hidden,finished,endingTime:musicScene?.id==='seasons'?local:null,endingDuration:duration(index),sceneGain:approachGain,dt});
@@ -306,7 +318,7 @@ function frame(now){
  seasonAmbience.tick({active:seasonPlaying,time:local,sound,paused:paused||!seasonPlaying,hidden:document.hidden,transition:!!transition,dt});
  footsteps.tick();if($('run'))$('run').textContent=previewAuto?'이동 멈춤':'이동 재생';if($('chapter')&&index>=0)$('chapter').value=String(index);if($('progress'))$('progress').value=String((offset(index)+local)/Math.max(1,total));
  const deliveryVideo=current?.video,deliveryQuality=deliveryVideo?.getVideoPlaybackQuality?.();
- document.body.dataset.proof=JSON.stringify({engine:'test-render-media-v3',fit:'cover',dialogueFit:dialogueFit.proof(),fog:footageFog.proof(),navigation:{opacity:navOpacity,underFog:document.body.dataset.navFog==='true'},introRendering:scenes[index]?.id==='intro'?introEffect.proof():null,paper:PAPER,paperColor:paperColor.proof(),storyStarted,startup:document.body.dataset.startup,loadingHiddenAt,firstSceneShownAt,firstSceneGapMs:firstSceneShownAt&&loadingHiddenAt?firstSceneShownAt-loadingHiddenAt:null,endingElapsed,scene:scenes[index]?.id,index,local,duration:duration(index),mode:scenes[index]?.mode,effectiveMode:current?.autoStarted?'auto':scenes[index]?.mode,autoFrom:scenes[index]?.autoFrom??null,autoStarted:!!current?.autoStarted,transition:transition?.phase||null,waiting:!!transition||!!current&&!current.loaded,renderedKind,renderedSource,imagePreview:renderedKind==='image',source:current?.scene.src||null,sourceTime:current?.video.currentTime||0,scrollTarget:target,sourcePaused:current?.video.paused??true,startDelay:sceneArrivalDelay(scenes[index]),startElapsed:current?.startElapsed||0,interaction:document.body.dataset.interaction,scrollEnabled:canWalk(),walkingReferenceDuration:scenes[index]?.footsteps?walkingReference():null,sourceFps:current?.scene.fps??null,delivery:{width:deliveryVideo?.videoWidth||0,height:deliveryVideo?.videoHeight||0,playbackRate:deliveryVideo?.playbackRate??1,totalVideoFrames:deliveryQuality?.totalVideoFrames??null,droppedVideoFrames:deliveryQuality?.droppedVideoFrames??null},provenance:current?.scene.provenance??null,geometryVerified:false,voice:voices.proof(),seasonAmbience:seasonAmbience.proof(),musicVolume:music.volume,music:musicProof,sceneLife:sceneLife.proof(),footsteps:{active:foot.dataset.active,starts:Number(foot.dataset.starts||0),dragging:!!drag,input:'wheel-and-drag',wheelActive:now-lastWheelMoveAt<200,source:foot.currentSrc||foot.src},dialogueApproachGain:approachGain,finished});requestAnimationFrame(frame);
+ document.body.dataset.proof=JSON.stringify({engine:'test-render-media-v3',fit:'cover',dialogueFit:dialogueFit.proof(),fog:footageFog.proof(),navigation:{opacity:navOpacity,underFog:document.body.dataset.navFog==='true'},introRendering:scenes[index]?.id==='intro'?introEffect.proof():null,paper:PAPER,paperColor:paperColor.proof(),storyStarted,startup:document.body.dataset.startup,loadingHiddenAt,firstSceneShownAt,firstSceneGapMs:firstSceneShownAt&&loadingHiddenAt?firstSceneShownAt-loadingHiddenAt:null,endingElapsed,scene:scenes[index]?.id,index,local,duration:duration(index),mode:scenes[index]?.mode,effectiveMode:current?.autoStarted?'auto':scenes[index]?.mode,autoFrom:scenes[index]?.autoFrom??null,autoStarted:!!current?.autoStarted,transition:transition?.phase||null,waiting:!!transition||!!current&&!current.loaded,renderedKind,renderedSource,imagePreview:renderedKind==='image',source:current?.scene.src||null,sourceTime:current?.video.currentTime||0,scrollTarget:target,sourcePaused:current?.video.paused??true,startDelay:sceneArrivalDelay(scenes[index]),startElapsed:current?.startElapsed||0,interaction:document.body.dataset.interaction,scrollEnabled:canWalk(),walkingReferenceDuration:scenes[index]?.walkingReferenceDuration??null,scrollSteps:scenes[index]?.scrollSteps??6,maxPlaybackRate:scenes[index]?.maxPlaybackRate??null,nativeAudio:{selected:scenes[index]?.nativeAudio===true,muted:deliveryVideo?.muted??true,volume:deliveryVideo?.volume??0},sourceFps:current?.scene.fps??null,delivery:{width:deliveryVideo?.videoWidth||0,height:deliveryVideo?.videoHeight||0,playbackRate:deliveryVideo?.playbackRate??1,totalVideoFrames:deliveryQuality?.totalVideoFrames??null,droppedVideoFrames:deliveryQuality?.droppedVideoFrames??null},provenance:current?.scene.provenance??null,geometryVerified:false,voice:voices.proof(),seasonAmbience:seasonAmbience.proof(),musicVolume:music.volume,music:musicProof,sceneLife:sceneLife.proof(),footsteps:{active:foot.dataset.active,starts:Number(foot.dataset.starts||0),dragging:!!drag,input:'wheel-and-drag',wheelActive:now-lastWheelMoveAt<200,source:foot.currentSrc||foot.src},dialogueApproachGain:approachGain,finished});requestAnimationFrame(frame);
 }
 status('Loading...');requestAnimationFrame(frame);
 try{

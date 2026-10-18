@@ -1,5 +1,5 @@
 {
-  "version": "selected-higgsfield-opening-20261018",
+  "version": "merchant-16s-20261019-v1",
   "scenes": [
     {
       "id": "intro",
@@ -25,24 +25,35 @@
     {
       "id": "entry-merchant",
       "label": "입구 → 장사꾼 · 연속 이동",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261017_103322_c6af6ff5-0eb1-4fbc-a5bc-1ca3bb294572.mp4",
-      "duration": 24,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261018_191416_5777e732-6953-4033-bbf4-f049344f7e9a.mp4",
+      "duration": 16.041666666666668,
       "mode": "scroll",
       "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
-        "generationId": "c6af6ff5-0eb1-4fbc-a5bc-1ca3bb294572",
-        "shareURL": "https://higgsfield.ai/s/GlkjxnJIHx4",
-        "selection": "Explicit user selection 2026-10-18",
-        "delivery": "Complete 24-second video, untrimmed"
+        "generationId": "5777e732-6953-4033-bbf4-f049344f7e9a",
+        "shareURL": "https://higgsfield.ai/s/ZvcTG_neQpQ",
+        "selection": "Explicit user attachment selected for website replacement on 2026-10-19",
+        "delivery": "Complete untrimmed 385-frame original; original embedded audio; public URL verified byte-identical to user attachment",
+        "nativeDimensions": [
+          1920,
+          1080
+        ],
+        "nativeSha256": "29c5d87c9d3aa5f93dfdeadd51c46455c33aa29e6aa8ed0cbc4ad7bb332f02d4"
       },
       "clipIn": 0,
-      "sourceDuration": 24,
+      "sourceDuration": 16.041666666666668,
       "transition": "none",
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
+      "ambience": "",
       "caption": "마을에 오신 것을 환영합니다.\n길을 따라 걸으며 사람들이 전하는 두 사자의 이야기를 들어보세요.",
       "captionUntil": 0.15,
-      "walkingReferenceDuration": 24
+      "walkingReferenceDuration": 16.041666666666668,
+      "sourceFrames": 385,
+      "fps": 24,
+      "scrollSteps": 8,
+      "maxPlaybackRate": 1,
+      "exitTransitionSeconds": 0.65,
+      "nativeAudio": true
     },
     {
       "id": "merchant",
