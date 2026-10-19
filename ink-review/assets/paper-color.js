@@ -34,17 +34,29 @@ export function normalizePaperPixels(context,w,h,white,target=PAPER_RGB){
  context.putImageData(pixels,0,0);
 }
 
+export function gradePixel(rgb,grade={}){
+ const c=rgb.map(v=>v/255),l=luminance(c),weight=smooth(.04,.16,l)*(1-smooth(.72,.92,l));
+ const shadow=1-smooth(.2,.65,l);
+ return c.map((v,ch)=>{
+  let tone=(l+(v-l)*(grade.saturation??1))*(grade.gain?.[ch]??1);
+  tone=tone*(1+((grade.shadowGain?.[ch]??1)-1)*shadow)+(grade.shadowLift?.[ch]??0)*shadow;
+  return Math.max(0,Math.min(255,(v+(tone-v)*weight)*255));
+ });
+}
+
 export function createPaperColor(){
  const surface=document.createElement('canvas'),profiles=new Map(),stillCache=new WeakMap();
  let gl,program,texture,lastKey='',lastTime=-1,lastWhite=null,backend='initializing';
  const vertex='attribute vec2 position; varying vec2 uv; void main(){uv=(position+1.0)*.5;gl_Position=vec4(position,0.,1.);}';
  const fragment=`precision highp float;
- varying vec2 uv; uniform sampler2D source; uniform vec3 white; uniform vec3 paper; uniform vec3 gradeGain; uniform float gradeSaturation; uniform float preserveSource;
+ varying vec2 uv; uniform sampler2D source; uniform vec3 white; uniform vec3 paper; uniform vec3 gradeGain; uniform float gradeSaturation; uniform float preserveSource; uniform vec3 shadowGain; uniform vec3 shadowLift;
  void main(){
   vec4 c=texture2D(source,uv);
   float sourceLight=dot(c.rgb,vec3(.2126,.7152,.0722));
   float gradeWeight=smoothstep(.04,.16,sourceLight)*(1.-smoothstep(.72,.92,sourceLight));
   vec3 tone=mix(vec3(sourceLight),c.rgb,gradeSaturation)*gradeGain;
+  float shadowWeight=1.-smoothstep(.2,.65,sourceLight);
+  tone=tone*mix(vec3(1.),shadowGain,shadowWeight)+shadowLift*shadowWeight;
   c.rgb=mix(c.rgb,tone,gradeWeight);
   if(preserveSource>.5){gl_FragColor=c;return;}
   vec3 relative=c.rgb/white;
@@ -80,12 +92,12 @@ export function createPaperColor(){
     if(lastKey===key&&lastTime===time)return surface;
     if(surface.width!==w||surface.height!==h){surface.width=w;surface.height=h;gl.viewport(0,0,w,h);}
     gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);
-    gl.uniform3fv(gl.getUniformLocation(program,'gradeGain'),grade?.gain||[1,1,1]);gl.uniform1f(gl.getUniformLocation(program,'gradeSaturation'),grade?.saturation??1);gl.uniform1f(gl.getUniformLocation(program,'preserveSource'),preserveSource?1:0);gl.uniform3fv(whiteUniform,white.map(v=>v/255));gl.drawArrays(gl.TRIANGLES,0,6);lastKey=source.seeking?'':key;lastTime=time;return surface;
+    gl.uniform3fv(gl.getUniformLocation(program,'shadowGain'),grade?.shadowGain||[1,1,1]);gl.uniform3fv(gl.getUniformLocation(program,'shadowLift'),grade?.shadowLift||[0,0,0]);gl.uniform3fv(gl.getUniformLocation(program,'gradeGain'),grade?.gain||[1,1,1]);gl.uniform1f(gl.getUniformLocation(program,'gradeSaturation'),grade?.saturation??1);gl.uniform1f(gl.getUniformLocation(program,'preserveSource'),preserveSource?1:0);gl.uniform3fv(whiteUniform,white.map(v=>v/255));gl.drawArrays(gl.TRIANGLES,0,6);lastKey=source.seeking?'':key;lastTime=time;return surface;
    }
    backend='canvas';
    if(source.tagName!=='VIDEO'&&stillCache.has(source))return stillCache.get(source);
    if(lastKey===key&&lastTime===time)return fallback;
-   const scale=Math.min(1,1920/w);fallback.width=Math.round(w*scale);fallback.height=Math.round(h*scale);fc.drawImage(source,0,0,fallback.width,fallback.height);if(grade){const pixels=fc.getImageData(0,0,fallback.width,fallback.height),d=pixels.data;for(let i=0;i<d.length;i+=4){const c=[d[i],d[i+1],d[i+2]],l=luminance(c),w=smooth(.04,.16,l/255)*(1-smooth(.72,.92,l/255));for(let ch=0;ch<3;ch++)d[i+ch]=c[ch]+(((l+(c[ch]-l)*(grade.saturation??1))*(grade.gain?.[ch]??1))-c[ch])*w;}fc.putImageData(pixels,0,0);}if(!preserveSource)normalizePaperPixels(fc,fallback.width,fallback.height,white);
+   const scale=Math.min(1,1920/w);fallback.width=Math.round(w*scale);fallback.height=Math.round(h*scale);fc.drawImage(source,0,0,fallback.width,fallback.height);if(grade){const pixels=fc.getImageData(0,0,fallback.width,fallback.height),d=pixels.data;for(let i=0;i<d.length;i+=4){const c=gradePixel([d[i],d[i+1],d[i+2]],grade);for(let ch=0;ch<3;ch++)d[i+ch]=c[ch];}fc.putImageData(pixels,0,0);}if(!preserveSource)normalizePaperPixels(fc,fallback.width,fallback.height,white);
    lastKey=source.seeking?'':key;lastTime=time;
    if(source.tagName!=='VIDEO'){const copy=document.createElement('canvas');copy.width=fallback.width;copy.height=fallback.height;copy.getContext('2d').drawImage(fallback,0,0);stillCache.set(source,copy);return copy;}return fallback;
   }catch{backend='source-fallback';return source;}

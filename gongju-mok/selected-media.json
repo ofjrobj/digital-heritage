@@ -1,5 +1,5 @@
 {
-  "version": "colour-joins-20261020-v26",
+  "version": "automatic-approach-20261020-v27",
   "scenes": [
     {
       "id": "intro",
@@ -187,7 +187,15 @@
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
       "scrollBraking": 0.65,
-      "scrollRateResponse": 0.24
+      "scrollRateResponse": 0.24,
+      "dialogueApproach": {
+        "start": 13.1,
+        "fadeFrom": 13.85,
+        "end": 15.5,
+        "cruiseRate": 0.7,
+        "arrivalRate": 0.44
+      },
+      "uniformInputDistance": true
     },
     {
       "id": "merchant",
@@ -340,7 +348,15 @@
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
       "scrollBraking": 0.65,
-      "scrollRateResponse": 0.24
+      "scrollRateResponse": 0.24,
+      "dialogueApproach": {
+        "start": 9.2,
+        "fadeFrom": 9.95,
+        "end": 11.6,
+        "cruiseRate": 0.7,
+        "arrivalRate": 0.44
+      },
+      "uniformInputDistance": true
     },
     {
       "id": "farmer",
@@ -568,7 +584,15 @@
           "time": 4.3,
           "rate": 1
         }
-      ]
+      ],
+      "dialogueApproach": {
+        "start": 11.166667,
+        "fadeFrom": 11.916667,
+        "end": 13.566667,
+        "cruiseRate": 0.7,
+        "arrivalRate": 0.44
+      },
+      "uniformInputDistance": true
     },
     {
       "id": "cook",
@@ -609,12 +633,17 @@
       "preserveSourceColor": true,
       "colorGrade": {
         "gain": [
-          1.04,
-          1.025,
-          1
+          1.055,
+          1.015,
+          0.99
         ],
-        "saturation": 1.04,
-        "scope": "midtones only; preserve pale paper and dark ink"
+        "saturation": 1.06,
+        "scope": "midtones only; preserve pale paper and dark ink",
+        "shadowGain": [
+          0.96,
+          0.92,
+          0.87
+        ]
       }
     },
     {
@@ -760,7 +789,15 @@
           "y": 0,
           "brightness": 1
         }
-      ]
+      ],
+      "dialogueApproach": {
+        "start": 8.6,
+        "fadeFrom": 9.35,
+        "end": 11.0,
+        "cruiseRate": 0.7,
+        "arrivalRate": 0.44
+      },
+      "uniformInputDistance": true
     },
     {
       "id": "trio",
@@ -804,9 +841,15 @@
           1.015,
           1.018
         ],
-        "saturation": 0.9,
-        "scope": "midtones only; preserve pale paper and dark ink"
-      }
+        "saturation": 0.85,
+        "scope": "midtones only; preserve pale paper and dark ink",
+        "shadowLift": [
+          0.105,
+          0.105,
+          0.105
+        ]
+      },
+      "preserveSourceColor": true
     },
     {
       "id": "trio-woodcutter",
@@ -905,7 +948,15 @@
       "scrollArrivalRate": 0.38,
       "scrollArrivalZone": 3.2,
       "scrollBraking": 0.48,
-      "scrollRateResponse": 0.3
+      "scrollRateResponse": 0.3,
+      "dialogueApproach": {
+        "start": 9.241667,
+        "fadeFrom": 9.991667,
+        "end": 11.641667,
+        "cruiseRate": 0.7,
+        "arrivalRate": 0.44
+      },
+      "uniformInputDistance": true
     },
     {
       "id": "woodcutter",
@@ -1071,7 +1122,8 @@
         "offsetY": 0,
         "blendStart": 0.3,
         "alignmentFraction": 0.3
-      }
+      },
+      "uniformInputDistance": true
     },
     {
       "id": "seasons",
