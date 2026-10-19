@@ -1,10 +1,11 @@
+import {createScrollTween,sampleScrollTween} from './scroll-motion.js?v=gentle-stop-20261019-v1';
 import {createFootageFog} from './footage-fog.js?v=soft-dialogue-fog-20261019-v12';
 import {createSceneLife} from './scene-life.js?v=quiet-wind-4';
 import {createSeasonAmbience} from './season-ambience.js?v=quiet-wind-4';
 import {createDialogueFaceSafe} from './dialogue-face-safe.js?v=arrival-hold-20261019-v1';
 import {dialogueFrame} from './dialogue-framing.js?v=arrival-hold-20261019-v1';
 import {seasonsFrame} from './seasons-framing.js?v=all-visitors-1';
-import {createStoryVoices} from './story-voices.js?v=voices-timing-3';
+import {createStoryVoices} from './story-voices.js?v=shorter-dialogue-tail-20261019-v15';
 import {createStoryMusic} from './story-audio-mix.js?v=drag-arrival-audio-1';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=three-drops-slow-intro-1';
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
@@ -39,7 +40,7 @@ const archiveCta=document.createElement('a');archiveCta.className='tr-archive-ct
 let archiveFrame=null,endingElapsed=0,storyStarted=false,loadingHiddenAt=null,firstSceneShownAt=null;
 function prepareArchive(){if(archiveFrame)return;archiveFrame=document.createElement('iframe');archiveFrame.className='tr-archive';archiveFrame.title='석사자 아카이브';archiveFrame.src=$('indexLink')?.href||'archive/index.html';archiveFrame.setAttribute('aria-hidden','true');archiveFrame.inert=true;archiveFrame.onload=()=>{archiveFrame.dataset.loaded='true';try{archiveFrame.contentDocument.querySelectorAll('[data-story-return]').forEach(a=>a.target='_top');}catch{}};stage.append(archiveFrame);}
 const videos=[0,1].map(()=>{const v=document.createElement('video');v.muted=true;v.crossOrigin='anonymous';v.playsInline=true;v.preload='auto';v.className='tr-source';v.setAttribute('aria-hidden','true');stage.append(v);return v;});
-const records=[null,null],voices=createStoryVoices(stage),music=$('music');music.volume=0;const storyMusic=createStoryMusic(music);
+const records=[null,null],voices=createStoryVoices(stage,{tailSeconds:3.5}),music=$('music');music.volume=0;const storyMusic=createStoryMusic(music);
 const foot=document.createElement('audio');foot.id='scrollFootsteps';foot.preload='auto';foot.src=new URL('./footstep-single-v2.mp3',import.meta.url).href;stage.append(foot);
 const names=['장사꾼','농민','찬모','주민 삼총사','나무꾼'];
 let scenes=[],lengths=[],total=0,index=-1,current=null,transition=null,local=0,target=0,sound=true,paused=false,previewAuto=false,compare=false,motion=true,last=performance.now(),width=1,height=1,lastScrollAt=-Infinity,lastSource=null,hasFrame=false,finished=false,lastVoiceEnable=null,lastStatus='',renderedKind='none',renderedSource='';
@@ -252,9 +253,9 @@ function canWalk(){return !!current&&!current.error&&!transition&&!paused&&!comp
 function scrollPositionAt(record,time,now){
  const tween=record.scrubTween;
  if(!tween||tween.to!==time)return time;
- const progress=clamp((now-tween.started)/tween.duration);
- if(progress>=1){record.scrubTween=null;return time;}
- return tween.from+(tween.to-tween.from)*ease(progress);
+ const motion=sampleScrollTween(tween,now);
+ if(motion.done){record.scrubTween=null;return time;}
+ return motion.position;
 }
 function seekScrollPosition(record,time){
  const video=record.video;video.pause();
@@ -290,7 +291,7 @@ function manual(delta,fromDrag=false){
  if(scenes[index]?.scrollPlayback==='seek'){
   current.video.pause();
   const smoothing=Number(scenes[index].scrollSmoothingMs)||0;
-  if(target!==previousTarget)current.scrubTween=smoothing>0?{from:local,to:target,started:lastScrollAt,duration:smoothing}:null;
+  if(target!==previousTarget)current.scrubTween=smoothing>0?createScrollTween(local,target,lastScrollAt,smoothing,current.scrubTween):null;
  }
  if(fromDrag&&target!==previousTarget){lastDragMoveAt=performance.now();footsteps.pulse();}
 }
@@ -471,7 +472,7 @@ try{
  const response=await fetch(manifestURL,{cache:'no-store'});if(!response.ok)throw Error('manifest '+response.status);const manifest=await response.json();scenes=Array.isArray(manifest)?manifest:manifest.scenes;
  if(!Array.isArray(scenes)||!scenes.length)throw Error('장면 목록이 비어 있습니다.');
  for(const s of scenes){if(!['scroll','auto','dialogue'].includes(s.mode))throw Error('장면 모드 확인: '+s.id);if(s.mode==='dialogue'&&(!Number.isInteger(s.speaker)||s.speaker<0||s.speaker>4))throw Error('대사 인물 확인: '+s.id);}
- lengths=scenes.map(s=>s.mode==='dialogue'?voices.duration(s.speaker)+8:Math.max(.1,Number(s.duration)||Number(s.sourceDuration)||6));total=lengths.reduce((a,b)=>a+b,0);
+ lengths=scenes.map(s=>s.mode==='dialogue'?voices.sceneDuration(s.speaker):Math.max(.1,Number(s.duration)||Number(s.sourceDuration)||6));total=lengths.reduce((a,b)=>a+b,0);
  if($('chapter'))$('chapter').replaceChildren(...scenes.map((s,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=s.label||s.id;return o;}));
  let saved=null;try{saved=JSON.parse(sessionStorage.getItem('test-render-resume'));sessionStorage.removeItem('test-render-resume');}catch{}
  if(pendingIntroEntry&&scenes[0].playOnScroll){requestScene(0);transition.record.autoStarted=true;transition.record.autoRate=1;pendingIntroEntry=false;}

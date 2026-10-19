@@ -1,5 +1,5 @@
 {
-  "version": "walking-ending-20261019-v14",
+  "version": "scroll-soft-20261019-v15",
   "scenes": [
     {
       "id": "intro",
@@ -134,7 +134,7 @@
       "nativeAudio": true,
       "secondsPerScroll": 2.673611111111111,
       "scrollPlayback": "seek",
-      "scrollSmoothingMs": 360
+      "scrollSmoothingMs": 600
     },
     {
       "id": "merchant",
@@ -210,7 +210,7 @@
       "nativeAudio": true,
       "secondsPerScroll": 2.673611111111111,
       "scrollPlayback": "seek",
-      "scrollSmoothingMs": 360
+      "scrollSmoothingMs": 600
     },
     {
       "id": "farmer",
@@ -286,7 +286,7 @@
       "nativeAudio": true,
       "secondsPerScroll": 2.673611111111111,
       "scrollPlayback": "seek",
-      "scrollSmoothingMs": 360
+      "scrollSmoothingMs": 600
     },
     {
       "id": "cook",
@@ -359,7 +359,7 @@
       "scrollSteps": 6,
       "maxPlaybackRate": 1,
       "scrollPlayback": "seek",
-      "scrollSmoothingMs": 360,
+      "scrollSmoothingMs": 600,
       "nativeAudio": true,
       "transition": "none",
       "exitTransitionSeconds": 0.65
@@ -435,7 +435,7 @@
       "scrollSteps": 5,
       "maxPlaybackRate": 1,
       "scrollPlayback": "seek",
-      "scrollSmoothingMs": 360,
+      "scrollSmoothingMs": 600,
       "nativeAudio": true,
       "transition": "none",
       "exitTransitionSeconds": 0.65
@@ -511,7 +511,7 @@
       "scrollSteps": 6,
       "maxPlaybackRate": 1,
       "scrollPlayback": "seek",
-      "scrollSmoothingMs": 360,
+      "scrollSmoothingMs": 600,
       "nativeAudio": true,
       "transition": "none",
       "exitTransitionSeconds": 0.65,
