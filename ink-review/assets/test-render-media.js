@@ -1,6 +1,6 @@
 import {approachState,shouldStartApproach} from './dialogue-approach.js?v=arrival-20261020-v27';
 import {createAdaptiveNavPaper} from './adaptive-nav-paper.js?v=adaptive-paper-20261019-v25';
-import {createQuietAmbience} from './quiet-ambience.js?v=continuous-bed-v28';
+import {createQuietAmbience} from './quiet-ambience.js?v=gradual-return-v29';
 import {continuousScrollRate,createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop} from './scroll-motion.js?v=uniform-distance-20261020-v27';
 import {createFootageFog} from './footage-fog.js?v=edge-dissolve-20261019-v24';
 import {createSceneLife} from './scene-life.js?v=sound-fade-20261019-v17';
@@ -589,7 +589,8 @@ try{
  for(const s of scenes){if(!['scroll','auto','dialogue'].includes(s.mode))throw Error('장면 모드 확인: '+s.id);if(s.mode==='dialogue'&&(!Number.isInteger(s.speaker)||s.speaker<0||s.speaker>4))throw Error('대사 인물 확인: '+s.id);}
  lengths=scenes.map(s=>s.mode==='dialogue'?voices.sceneDuration(s.speaker):Math.max(.1,Number(s.duration)||Number(s.sourceDuration)||6));total=lengths.reduce((a,b)=>a+b,0);
  if($('chapter'))$('chapter').replaceChildren(...scenes.map((s,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=s.label||s.id;return o;}));
- let saved=null;try{saved=JSON.parse(sessionStorage.getItem('test-render-resume'));sessionStorage.removeItem('test-render-resume');}catch{}
+ const freshIntro=new URLSearchParams(location.search).get('start')==='intro';
+ let saved=null;try{if(!freshIntro)saved=JSON.parse(sessionStorage.getItem('test-render-resume'));sessionStorage.removeItem('test-render-resume');if(freshIntro)sessionStorage.removeItem('ink-pilot-return');}catch{}
  if(pendingIntroEntry&&scenes[0].playOnScroll){requestScene(0);transition.record.autoStarted=true;transition.record.autoRate=1;pendingIntroEntry=false;}
  else if(pendingIntroEntry&&scenes[0].enterOnScroll&&scenes.length>1){pendingIntroEntry=false;requestScene(1);} 
  else requestScene(saved&&Number.isInteger(saved.index)?clamp(saved.index,0,scenes.length-1):0,Number(saved?.local)||0);

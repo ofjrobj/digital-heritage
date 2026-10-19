@@ -24,11 +24,11 @@ export function createQuietAmbience(stage) {
     audio.id='quietAmbience-'+key;audio.preload='auto';audio.loop=['forest','village','townDetail','lionDetail'].includes(key);audio.volume=0;
     audio.setAttribute('aria-hidden','true');
     audio.src=new URL('../../gongju-mok/media/v24/'+file,import.meta.url).href;stage.append(audio);
-    const track={audio,target:0,pending:false,blocked:false,error:null,serial:0,unlocked:false};
+    const track={audio,target:0,gainTarget:0,rise:null,pending:false,blocked:false,error:null,serial:0,unlocked:false};
     audio.addEventListener('error',()=>{track.error='MediaError';track.blocked=true;});
     return [key,track];
   }));
-  let previousScene=null,sessionElapsed=0;
+  let previousScene=null;
   function ensure(track,prime=false) {
     const a=track.audio;
     if(track.pending||track.blocked||(!prime&&track.target<=0)||!a.paused||document.hidden)return;
@@ -38,12 +38,15 @@ export function createQuietAmbience(stage) {
       .finally(()=>{if(serial===track.serial){track.pending=false;if(track.target<=0)a.pause();}});
   }
   function stop() {
-    for(const t of Object.values(tracks)){t.serial++;t.pending=false;t.target=0;t.audio.volume=0;t.audio.pause();}
+    for(const t of Object.values(tracks)){t.serial++;t.pending=false;t.target=0;t.gainTarget=0;t.rise=null;t.audio.volume=0;t.audio.pause();}
   }
   return {
     // Unlock each element silently during a real click/key gesture. Safari can
     // require this per element even when a different track played earlier.
-    retry(){for(const t of Object.values(tracks)){if(t.error!=='MediaError'){t.blocked=false;t.error=null;ensure(t,!t.unlocked&&!!navigator.userActivation?.isActive);}}},
+    retry(){for(const t of Object.values(tracks)){if(t.error!=='MediaError'){
+      if(t.blocked){t.audio.volume=0;if(t.rise){t.rise.from=0;t.rise.elapsed=0;}}
+      t.blocked=false;t.error=null;ensure(t,!t.unlocked&&!!navigator.userActivation?.isActive);
+    }}},
     stop,
     tick(state) {
       if(!state.sound||state.paused||state.hidden||state.finished){stop();return;}
@@ -53,13 +56,25 @@ export function createQuietAmbience(stage) {
         (previousScene!=='seasons'||Math.abs(seasonal.currentTime-state.time)>.30)) {
         seasonal.currentTime=Math.max(0,Math.min(state.time,19.98));
       }
-      if(state.scene?.id==='intro'&&previousScene!=='intro')sessionElapsed=0;
-      if(state.active)sessionElapsed+=dt;
+      if(state.scene?.id==='intro'&&previousScene!=='intro'){
+        tracks.forest.audio.volume=0;tracks.forest.gainTarget=0;tracks.forest.rise=null;
+      }
       previousScene=state.scene?.id;
       for(const [key,t] of Object.entries(tracks)) {
-        t.target=target[key]*(key==='forest'?smooth(sessionElapsed/6):1);
-        const a=t.audio,tau=t.target<a.volume ? 1.0 : key==='village'?2.4:1.5;
-        a.volume=clamp(a.volume+(t.target-a.volume)*(1-Math.exp(-dt/tau)));
+        t.target=target[key];
+        const a=t.audio;
+        if(t.target>t.gainTarget+.000001){
+          // Count the fade from audible playback, never while autoplay is blocked.
+          t.rise={from:a.volume,elapsed:0,duration:state.scene?.id==='intro'?10:6};
+        }else if(t.target<t.gainTarget-.000001)t.rise=null;
+        t.gainTarget=t.target;
+        if(t.rise){
+          if(!a.paused&&!t.blocked&&a.readyState>=3)t.rise.elapsed+=dt;
+          a.volume=clamp(t.rise.from+(t.target-t.rise.from)*smooth(t.rise.elapsed/t.rise.duration));
+          if(t.rise.elapsed>=t.rise.duration)t.rise=null;
+        }else{
+          a.volume=clamp(a.volume+(t.target-a.volume)*(1-Math.exp(-dt)));
+        }
         // The final gain is a ceiling: smoothing may never delay the picture's fade.
         if(key==='seasons'&&state.scene?.id==='seasons')a.volume=Math.min(a.volume,.72*clamp(state.endingGain));
         if(!t.target&&a.volume<.0001){a.volume=0;a.pause();}else ensure(t);
@@ -67,7 +82,8 @@ export function createQuietAmbience(stage) {
     },
     proof(){return Object.fromEntries(Object.entries(tracks).map(([key,t])=>[key,{
       source:t.audio.currentSrc||t.audio.src,volume:t.audio.volume,target:t.target,
-      paused:t.audio.paused,blocked:t.blocked,error:t.error,time:t.audio.currentTime
+      paused:t.audio.paused,blocked:t.blocked,error:t.error,time:t.audio.currentTime,
+      rise:t.rise?{elapsed:t.rise.elapsed,duration:t.rise.duration}:null
     }]));},
     blocked(){return Object.values(tracks).some(t=>t.target>0&&t.blocked);}
   };
