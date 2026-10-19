@@ -28,10 +28,10 @@ export function createInspectionFraming(THREE,{camera,controls,element,key,fill}
   const rotation=new THREE.Matrix4().lookAt(direction,zero,up).transpose();
   return {index,part,target,direction,points:points.map(p=>p.clone().sub(target).applyMatrix4(rotation))};
  }
- function projected(spec,distance){
+ function projected(spec,distance,aspect=camera.aspect){
   const k=Math.tan(THREE.MathUtils.degToRad(camera.fov)/2)/camera.zoom;
   let left=Infinity,right=-Infinity,bottom=Infinity,top=-Infinity;
-  for(const p of spec.points){const depth=distance-p.z,x=p.x/(depth*k*camera.aspect),y=p.y/(depth*k);left=Math.min(left,x);right=Math.max(right,x);bottom=Math.min(bottom,y);top=Math.max(top,y);}
+  for(const p of spec.points){const depth=distance-p.z,x=p.x/(depth*k*aspect),y=p.y/(depth*k);left=Math.min(left,x);right=Math.max(right,x);bottom=Math.min(bottom,y);top=Math.max(top,y);}
   return {width:right-left,height:top-bottom,left,right,bottom,top};
  }
  function distanceFor(spec,r){
@@ -39,7 +39,7 @@ export function createInspectionFraming(THREE,{camera,controls,element,key,fill}
   const height=spec.part?r.height*(spec.part.height??.86):Math.min(r.height*.82,innerHeight*.42);
   let near=.05;for(const p of spec.points)near=Math.max(near,p.z+.05);let far=50;
   for(let i=0;i<22;i++){
-   const d=(near+far)/2,b=projected(spec,d);
+   const d=(near+far)/2,b=projected(spec,d,r.width/r.height);
    if(b.width*r.width/2<=width&&b.height*r.height/2<=height&&Math.max(Math.abs(b.left),Math.abs(b.right),Math.abs(b.top),Math.abs(b.bottom))<=.94)far=d;else near=d;
   }
   return far;
@@ -79,5 +79,13 @@ export function createInspectionFraming(THREE,{camera,controls,element,key,fill}
   if(key.position.distanceTo(lightGoal.key)<.002&&fill.position.distanceTo(lightGoal.fill)<.002){key.position.copy(lightGoal.key);fill.position.copy(lightGoal.fill);lightGoal=null;}
   return true;
  }
- return {bind,resize,focus,updateLights};
+ function reference(index,width,height){
+  if(!bounds)return null;
+  const spec=view(index),referenceCamera=new THREE.PerspectiveCamera(camera.fov,width/height,camera.near,camera.far);
+  referenceCamera.zoom=camera.zoom;referenceCamera.updateProjectionMatrix();
+  referenceCamera.position.copy(spec.target).addScaledVector(spec.direction,distanceFor(spec,{width,height}));
+  referenceCamera.lookAt(spec.target);referenceCamera.updateMatrixWorld(true);
+  return referenceCamera;
+ }
+ return {bind,resize,focus,updateLights,reference};
 }
