@@ -34,7 +34,9 @@ document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
 const footageFog=createFootageFog({stage,world:canvas,mist});
 stage.style.setProperty('--nav-paper','0');
-const caption=document.createElement('p');caption.className='tr-caption';caption.hidden=true;stage.append(caption);
+// Opacity follows video time directly; a CSS transition here carries the old
+// title opacity into the narration and produces a visible dip/flash at the swap.
+const caption=document.createElement('p');caption.className='tr-caption';caption.hidden=true;caption.style.transition='none';stage.append(caption);
 const endingPaper=document.createElement('div');endingPaper.className='tr-ending-paper';endingPaper.setAttribute('aria-hidden','true');stage.append(endingPaper);
 const archiveCta=document.createElement('a');archiveCta.className='tr-archive-cta';const archiveCtaLabel=document.createElement('span');archiveCtaLabel.textContent='아카이브로 탐색';archiveCta.append(archiveCtaLabel);archiveCta.href=$('indexLink')?.href||'archive/index.html';archiveCta.hidden=true;stage.append(archiveCta);archiveCta.onclick=()=>remember();
 let archiveFrame=null,endingElapsed=0,storyStarted=false,loadingHiddenAt=null,firstSceneShownAt=null;
@@ -222,7 +224,7 @@ function openingPlaybackRate(scene,time,d){
  return Math.max(.18,glide*(1-.78*ease(clamp((time-(d-3.1))/3.1))));
 }
 function openingCaption(scene,time){
- let text=scene.caption||'',opacity=scene.captionUntil==null?1:1-clamp((time-scene.captionUntil)/.6),title=scene.id==='intro';
+ let text=scene.caption||'',opacity=scene.captionUntil==null?1:1-ease(clamp((time-scene.captionUntil)/(Number(scene.captionFadeSeconds)||.6))),title=scene.id==='intro';
  const opening=scenes.find(s=>s.id==='aerial-entry'),welcome=scenes.find(s=>s.id==='entry-merchant');
  if(scene.id==='intro'&&replacementOpening&&scene.narrationCaption&&time>=scene.narrationCaption.start){const n=scene.narrationCaption;text=n.text;title=false;opacity=ease(clamp((time-n.start)/n.fadeIn))*(1-ease(clamp((time-n.holdUntil)/(n.end-n.holdUntil))));}
  if(scene.id==='intro'&&!replacementOpening&&time>3.9){text=opening?.caption||'';opacity=ease(clamp((time-4)/1.2));title=false;}

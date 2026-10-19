@@ -1,5 +1,5 @@
 {
-  "version": "mountain-rush-20261019-v23",
+  "version": "title-caption-20261019-v24",
   "scenes": [
     {
       "id": "intro",
@@ -8,7 +8,7 @@
       "duration": 19.433333333333334,
       "mode": "scroll",
       "caption": "돌에 새긴 선, 풍경이 되다",
-      "captionUntil": 2.6,
+      "captionUntil": 0.9,
       "transition": "none",
       "provenance": {
         "provider": "User approved edited film",
@@ -37,7 +37,7 @@
       "openingFraming": {
         "focalX": 0.474,
         "holdUntil": 0.8,
-        "releaseAt": 3.0
+        "releaseAt": 3
       },
       "narrationCaption": {
         "text": "어느 옛날, 공주목과 그 주변 고을에는\n신비로운 두 사자의 이야기가 떠돌고 있습니다.",
@@ -45,7 +45,8 @@
         "fadeIn": 0.7,
         "holdUntil": 16,
         "end": 17.2
-      }
+      },
+      "captionFadeSeconds": 0.9
     },
     {
       "id": "entry-merchant",
@@ -212,7 +213,7 @@
       "id": "merchant-farmer",
       "label": "농민에게 이동",
       "src": "./media/v17/merchant-farmer.mp4",
-      "duration": 12.0,
+      "duration": 12,
       "fps": 30,
       "mode": "scroll",
       "footsteps": true,
@@ -230,17 +231,17 @@
         "delivery": "Frame-exact scene extraction from supplied composite; H.264 CRF 17, half-second keyframes for smooth seeking; no regenerated frames",
         "deliverySha256": "6dfcb72fa5757f1f6f6d63cc37f00a1911336214103f03b699ab294f53d1f6da"
       },
-      "sourceDuration": 12.0,
+      "sourceDuration": 12,
       "sourceFrames": 360,
       "clipIn": 0,
       "ambience": "",
-      "walkingReferenceDuration": 12.0,
+      "walkingReferenceDuration": 12,
       "scrollSteps": 6,
       "maxPlaybackRate": 1,
       "transition": "none",
       "exitTransitionSeconds": 0.65,
       "nativeAudio": false,
-      "secondsPerScroll": 2.0,
+      "secondsPerScroll": 2,
       "scrollPlayback": "continuous",
       "scrollSmoothingMs": 1900,
       "footstepInput": "manual-movement",
@@ -256,7 +257,7 @@
         5.983333,
         7.65,
         10.316667,
-        12.0
+        12
       ],
       "dragStopTimes": [
         0.016667,
@@ -299,7 +300,7 @@
         10.983333,
         11.316667,
         11.716667,
-        12.0
+        12
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
       "scrollCruiseRate": 0.95,
@@ -931,7 +932,7 @@
       "id": "seasons",
       "label": "석사자의 사계절과 현재",
       "src": "./media/v17/seasons.mp4",
-      "duration": 20.0,
+      "duration": 20,
       "fps": 30,
       "mode": "auto",
       "footsteps": false,
@@ -949,7 +950,7 @@
         "delivery": "Frame-exact scene extraction from supplied composite; H.264 CRF 17, half-second keyframes for smooth seeking; no regenerated frames",
         "deliverySha256": "3a3c921547d41e3346202a572f5634a6893b9ef4fcc1d343afedb1b46d138df8"
       },
-      "sourceDuration": 20.0,
+      "sourceDuration": 20,
       "motionBaked": true,
       "ambience": "",
       "startDelay": 1.6,
