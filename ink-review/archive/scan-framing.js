@@ -1,10 +1,10 @@
 const LEVEL={male:[-.078247699,.032765705],female:[-.103479210,-.003594774]};
 const PARTS=[
- {band:[.80,1],direction:[-.20,1,.10],key:[-4,2,4],fill:[3,-1,4]},
- {band:[.37,.79],direction:[1,-.08,.06],key:[-4,-1,4],fill:[3,2,4],width:.80,height:.80},
- {all:true,direction:[-.002,1,.00001],key:[-4,1,3],fill:[3,2,5],height:.9},
- {band:[.46,1],direction:[1,.025,.22],femaleDirection:[1,.025,-.10],key:[-3,3,5],fill:[3,-1,4],width:.80,height:.84},
- {band:[.64,.94],direction:[1,.015,.04],key:[-5,1,2],fill:[3,1,4]}
+ {band:[.80,1],direction:[-.20,1,.10]},
+ {band:[.37,.79],direction:[1,-.08,.06],width:.80,height:.80},
+ {all:true,direction:[-.002,1,.00001],height:.9},
+ {band:[.46,1],direction:[1,.025,.22],femaleDirection:[1,.025,-.10],width:.80,height:.84},
+ {band:[.64,.94],direction:[1,.015,.04]}
 ];
 export function levelScan(THREE,scan,{yaw,targetSize,sex}){
  scan.rotation.y=yaw;
@@ -16,9 +16,9 @@ export function levelScan(THREE,scan,{yaw,targetSize,sex}){
  root.position.sub(new THREE.Box3().setFromObject(root).getCenter(new THREE.Vector3()));
  return root;
 }
-export function createInspectionFraming(THREE,{camera,controls,element,key,fill}){
+export function createInspectionFraming(THREE,{camera,controls,element}){
  const up=new THREE.Vector3(0,1,0),zero=new THREE.Vector3(),all=[];
- let bounds=null,current=null,fitted=0,lastRect=null,pending=null,lightGoal=null;
+ let bounds=null,current=null,fitted=0,lastRect=null,pending=null;
  function view(index){
   const part=Number.isInteger(index)?PARTS[index]:null,size=bounds.getSize(new THREE.Vector3());
   const selected=part&&!part.all?all.filter(p=>p.x>=bounds.min.x+size.x*.65&&p.y>=bounds.min.y+size.y*part.band[0]&&p.y<=bounds.min.y+size.y*part.band[1]):all;
@@ -71,13 +71,7 @@ export function createInspectionFraming(THREE,{camera,controls,element,key,fill}
  function focus(index){
   pending=index;if(!bounds)return null;current=view(index);
   const r=lastRect??element.getBoundingClientRect();fitted=distanceFor(current,r);publish(r);
-  lightGoal={key:new THREE.Vector3(...current.part.key),fill:new THREE.Vector3(...current.part.fill)};
   return {position:current.target.clone().addScaledVector(current.direction,fitted),target:current.target.clone()};
- }
- function updateLights(){
-  if(!lightGoal)return false;key.position.lerp(lightGoal.key,.12);fill.position.lerp(lightGoal.fill,.12);
-  if(key.position.distanceTo(lightGoal.key)<.002&&fill.position.distanceTo(lightGoal.fill)<.002){key.position.copy(lightGoal.key);fill.position.copy(lightGoal.fill);lightGoal=null;}
-  return true;
  }
  function reference(index,width,height){
   if(!bounds)return null;
@@ -87,5 +81,5 @@ export function createInspectionFraming(THREE,{camera,controls,element,key,fill}
   referenceCamera.lookAt(spec.target);referenceCamera.updateMatrixWorld(true);
   return referenceCamera;
  }
- return {bind,resize,focus,updateLights,reference};
+ return {bind,resize,focus,reference};
 }

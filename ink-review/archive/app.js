@@ -1,5 +1,4 @@
-import {levelScan,createInspectionFraming} from './scan-framing.js?v=ink-reference-1';
-import {createFeatureInk} from './feature-ink.js?v=fitted-rings-2';
+import {levelScan,createInspectionFraming} from './scan-framing.js?v=fixed-light-20261019';
 import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=inspection-relief-2';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -15,11 +14,6 @@ const from=new URLSearchParams(location.search).get('from');
 const returnPage=storyPages[from]??sessionStorage.getItem('ink-pilot-return');
 const storyPage=[...Object.values(storyPages),'review.html','review.html?candidate=720p'].includes(returnPage)?returnPage:'play.html';
 returnLink.href='../'+storyPage;
-const traceLocks=new Set();
-function setInkLock(id,locked){
- if(locked)traceLocks.add(id);else traceLocks.delete(id);
- for(const viewer of Object.values(viewers))viewer.setInteractionEnabled(traceLocks.size===0);
-}
 
 function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, displayZoom = 1 }) {
   const scene = new THREE.Scene();
@@ -37,6 +31,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   inspectionRoot.matrixAutoUpdate = false;
   scene.add(inspectionRoot);
   element.dataset.lighting = "fixed-neutral-key-chin-fill";
+  element.dataset.interaction = "enabled";
   element.dataset.displayZoom = String(displayZoom);
   const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -60,14 +55,8 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   // Wheel zoom updates synchronously inside OrbitControls, before the next RAF.
   controls.addEventListener('change',()=>{dirty=true;});
   const surface = createSurfaceView(THREE,scene,element,()=>{dirty=true;});
-  const framing=createInspectionFraming(THREE,{camera,controls,element,key,fill});
-  const ink=createFeatureInk(THREE,{renderer,root:inspectionRoot,framing,element,invalidate:()=>{dirty=true;},onInteractionLock:locked=>setInkLock(element.id,locked)});
-  function setInteractionEnabled(enabled){
-    controls.enabled=enabled;
-    element.dataset.interaction=enabled?'enabled':'locked';
-    renderer.domElement.style.cursor=enabled?'grab':'default';
-  }
-  renderer.domElement.addEventListener('wheel',event=>{if(!controls.enabled)event.preventDefault();},{passive:false});
+  const framing=createInspectionFraming(THREE,{camera,controls,element});
+  renderer.domElement.style.cursor="grab";
   const frame = () => {
     const r = element.getBoundingClientRect();
     if (!r.width || !r.height) return;
@@ -82,10 +71,9 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
     const model=levelScan(THREE,gltf.scene,{yaw,targetSize,sex:element.id==='male-scene'?'male':'female'});
     model.traverse(n=>{if(n.isMesh){n.material.roughness=.95;n.material.metalness=0;n.material.map && (n.material.map.anisotropy=renderer.capabilities.getMaxAnisotropy());}});
     model.traverse(n=>{if(n.isMesh&&n.material.map)element.dataset.colorTextureResolution=`${n.material.map.image.width}x${n.material.map.image.height}`;});
-    framing.bind(model);surface.bind(model);inspectionRoot.add(model);ink.bind(model);ready=true;frame();dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
+    framing.bind(model);surface.bind(model);inspectionRoot.add(model);ready=true;frame();dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
     element.dataset.loaded='true';
   }).catch(error => {
-    ink.stop();
     console.error(error);loading.textContent='모델을 불러오지 못했습니다. 새로고침해 주세요.';element.dataset.loaded='error';
   });
   function focus(index){goal=framing.focus(index);dirty=true;}
@@ -93,8 +81,6 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   function animate(){
     requestAnimationFrame(animate);
     if(document.hidden)return;
-    if(ink.update(performance.now()))dirty=true;
-    if(framing.updateLights())dirty=true;
     if(goal){camera.position.lerp(goal.position,.1);controls.target.lerp(goal.target,.1);dirty=true;if(camera.position.distanceTo(goal.position)<.002){camera.position.copy(goal.position);controls.target.copy(goal.target);goal=null;}}
     if(controls.update())dirty=true;
     if(dirty){
@@ -109,7 +95,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
       dirty=false;
     }
   }
-  animate();return {focus,loaded,setColor:surface.setColor,trace:ink.play,stopTrace:ink.stop,setInteractionEnabled};
+  animate();return {focus,loaded,setColor:surface.setColor};
 }
 const viewers = {
  male:createViewer({element:document.querySelector('#male-scene'),loading:document.querySelector('#male-loading'),modelUrl:'models/male-continuous.glb',targetSize:1.83,yaw:-3.902609*Math.PI/180}),
@@ -120,7 +106,6 @@ mountSurfaceToggle(viewers);
 // Keep the local GLB projection settings above: the remote archive used different OBJ axes.
 const detail = document.querySelector('.detail-card');
 const panels = [...document.querySelectorAll('.info-panel')];
-let selectedObservation=null;
 const sourceNote = '출처 · 공주대학교 박물관 소장 (디지털 변환: 사자성어 팀)';
 const descriptions = [
  '스캔 데이터를 통해 정수리 부분의 곱슬거리는 털 표현의 미세한 음각 양각을 입체적으로 관찰할 수 있습니다.',
@@ -132,8 +117,6 @@ const descriptions = [
 function setPanelOpen(panel, open) {
  panel.classList.toggle('is-open', open);
  panel.querySelector('.panel-toggle').setAttribute('aria-expanded', String(open));
- const viewer=panel.classList.contains('left-panel')?viewers.male:viewers.female;
- if(open)viewer.trace(selectedObservation);else viewer.stopTrace();
 }
 function updatePanel(panel, objectName, column, point, note) {
  panel.querySelector('.panel-kicker').textContent=`OBJECT ${column===2?'01':'02'} · ${point} ${note.label}`;
@@ -148,7 +131,6 @@ function updatePanel(panel, objectName, column, point, note) {
  panel.querySelector('.panel-content').scrollTop=0;
 }
 function showObservation(index, focus=false) {
- selectedObservation=index;
  const note=measurements[index],point=String(index+1).padStart(2,'0');
  document.querySelectorAll('.hotspot').forEach(button=>{
   const selected=button.dataset.point===point;
