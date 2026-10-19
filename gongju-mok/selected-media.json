@@ -1,5 +1,5 @@
 {
-  "version": "dialogue-fog-20261019-v12",
+  "version": "dialogue-arrival-20261019-v13",
   "scenes": [
     {
       "id": "intro",
@@ -63,7 +63,7 @@
       "captionUntil": 0.15,
       "walkingReferenceDuration": 16.041666666666668,
       "sourceFrames": 385,
-      "fps": 24.0,
+      "fps": 24,
       "scrollSteps": 6,
       "maxPlaybackRate": 1,
       "exitTransitionSeconds": 0.65,
@@ -83,23 +83,23 @@
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
+        "model": "Seedance 2.5",
         "generationId": "6528607e-1c57-4842-ad4c-c2e90bd52f65",
-        "selection": "User supplied character 1 dialogue clip on 2026-10-19",
-        "delivery": "Original silent 673-frame video with existing external character 1 narration retained; public bytes verified",
+        "selection": "User-requested arrival-matched dialogue motion generated 2026-10-19",
+        "delivery": "Silent native 1920x1080 24fps video; existing external testimony retained",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "a96cd0be476040ad358535b119a572b97afffc5bccaa742e7e96f60913e0b157"
+        "nativeSha256": "a96cd0be476040ad358535b119a572b97afffc5bccaa742e7e96f60913e0b157",
+        "referenceMediaId": "10ad9485-32ca-4f40-b1da-8d7f38f58f88",
+        "referenceSceneId": "entry-merchant",
+        "referenceFrame": 384,
+        "referenceFrameIndexing": "zero-based",
+        "generationDirection": "Closed relaxed mouth, no lip sync, subtle natural gestures, fixed camera and unchanged appearance/background",
+        "technicalVerification": "Decoded frame count, dimensions, frame rate and absent audio streams checked"
       },
       "neckSafeY": 0.42,
-      "framing": {
-        "cx": 0.486,
-        "headY": 0.095,
-        "neckY": 0.42,
-        "minX": 0.29,
-        "maxX": 0.67
-      },
       "sourceFrames": 673,
       "clipIn": 0,
       "nativeAudio": false,
@@ -108,17 +108,19 @@
       "deliveryFraming": {
         "cx": 0.486,
         "headY": 0.095,
+        "neckY": 0.42,
         "chestY": 0.62,
         "minX": 0.29,
         "maxX": 0.67
-      }
+      },
+      "preserveArrivalFraming": true
     },
     {
       "id": "merchant-farmer",
       "label": "농민에게 이동",
       "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261018_201404_dad90e5a-3c33-46dc-83b2-455593e4f770.mp4",
-      "duration": 12.0,
-      "fps": 24.0,
+      "duration": 12,
+      "fps": 24,
       "mode": "scroll",
       "footsteps": false,
       "provenance": {
@@ -132,11 +134,11 @@
         ],
         "nativeSha256": "c5e96cf2fa1da9cba056dbcf932640db4dc0eb52b5bb161d962b75d1396a2102"
       },
-      "sourceDuration": 12.0,
+      "sourceDuration": 12,
       "sourceFrames": 288,
       "clipIn": 0,
       "ambience": "",
-      "walkingReferenceDuration": 12.0,
+      "walkingReferenceDuration": 12,
       "scrollSteps": 5,
       "maxPlaybackRate": 1,
       "transition": "none",
@@ -157,23 +159,23 @@
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
+        "model": "Seedance 2.5",
         "generationId": "90e4bb7d-c6a9-4319-b297-f848693f9090",
-        "selection": "User supplied character 2 dialogue clip on 2026-10-19",
-        "delivery": "Original silent 649-frame video with existing external farmer narration retained; public bytes verified",
+        "selection": "User-requested arrival-matched dialogue motion generated 2026-10-19",
+        "delivery": "Silent native 1920x1080 24fps video; existing external testimony retained",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "b912a8c5ade4be52a43117f4983d94bfb3004de36f84db956edff575a7702748"
+        "nativeSha256": "b912a8c5ade4be52a43117f4983d94bfb3004de36f84db956edff575a7702748",
+        "referenceMediaId": "649b63a9-f60f-4e88-9385-2b37af595b86",
+        "referenceSceneId": "merchant-farmer",
+        "referenceFrame": 287,
+        "referenceFrameIndexing": "zero-based",
+        "generationDirection": "Closed relaxed mouth, no lip sync, subtle natural gestures, fixed camera and unchanged appearance/background",
+        "technicalVerification": "Decoded frame count, dimensions, frame rate and absent audio streams checked"
       },
       "neckSafeY": 0.43,
-      "framing": {
-        "cx": 0.482,
-        "headY": 0.095,
-        "neckY": 0.43,
-        "minX": 0.28,
-        "maxX": 0.69
-      },
       "sourceFrames": 649,
       "clipIn": 0,
       "nativeAudio": false,
@@ -182,17 +184,19 @@
       "deliveryFraming": {
         "cx": 0.482,
         "headY": 0.095,
+        "neckY": 0.43,
         "chestY": 0.65,
         "minX": 0.28,
         "maxX": 0.69
-      }
+      },
+      "preserveArrivalFraming": true
     },
     {
       "id": "farmer-cook",
       "label": "찬모에게 이동",
       "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261018_225157_cb87ff18-412d-4245-bd30-4382e384a45d.mp4",
       "duration": 17.041666666666668,
-      "fps": 24.0,
+      "fps": 24,
       "mode": "scroll",
       "footsteps": false,
       "provenance": {
@@ -223,43 +227,45 @@
     {
       "id": "cook",
       "label": "찬모의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_120302_239f0fd2-18b3-4d21-af33-95c5cfc03fa1.mp4",
-      "sourceDuration": 22.041666666666668,
-      "fps": 24.0,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_013045_e7072004-a5bd-4398-b22a-185f0ddc0c49.mp4",
+      "sourceDuration": 23.041666666666668,
+      "fps": 24,
       "mode": "dialogue",
       "speaker": 2,
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "239f0fd2-18b3-4d21-af33-95c5cfc03fa1",
+        "model": "Seedance 2.5",
+        "generationId": "e7072004-a5bd-4398-b22a-185f0ddc0c49",
+        "selection": "User-requested arrival-matched dialogue motion generated 2026-10-19",
+        "delivery": "Silent native 1920x1080 24fps video; existing external testimony retained",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "f2e20ea124664669aec37b3b22d75cfe04e38926b23a0a6278d3244635ee0d07",
-        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
-        "reviewStatus": "generated_rejected_background_contamination_and_identity",
-        "releaseStatus": "user-requested-interim",
-        "finalVisualApproval": false
+        "nativeSha256": "31e0d6429879f9c00e4319f0c5b9a7c7f82a92223959d71878796f300b0f3aae",
+        "referenceMediaId": "fe492e44-94b5-467c-b2fe-9100903e7c3c",
+        "referenceSceneId": "farmer-cook",
+        "referenceFrame": 408,
+        "referenceFrameIndexing": "zero-based",
+        "generationDirection": "Closed relaxed mouth, no lip sync, subtle natural gestures, fixed camera and unchanged appearance/background",
+        "technicalVerification": "Decoded frame count, dimensions, frame rate and absent audio streams checked"
       },
-      "neckSafeY": 0.62,
-      "framing": {
-        "cx": 0.492,
-        "headY": 0.4,
-        "neckY": 0.68,
-        "minX": 0.445,
-        "maxX": 0.54
-      },
-      "sourceFrames": 529,
+      "neckSafeY": 0.48,
+      "sourceFrames": 553,
       "clipIn": 0,
       "deliveryFraming": {
-        "headY": 0.18,
-        "chestY": 0.82,
-        "minX": 0.3,
-        "maxX": 0.69,
-        "cx": 0.495
-      }
+        "cx": 0.5,
+        "headY": 0.29,
+        "neckY": 0.48,
+        "chestY": 0.66,
+        "minX": 0.32,
+        "maxX": 0.63
+      },
+      "nativeAudio": false,
+      "ambience": "",
+      "footsteps": false,
+      "preserveArrivalFraming": true
     },
     {
       "id": "cook-trio",
@@ -297,50 +303,52 @@
     {
       "id": "trio",
       "label": "주민 삼총사의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_123739_b09beb85-2faf-43f3-bac2-6ba80afb9fb5.mp4",
-      "sourceDuration": 28.708333333333332,
-      "fps": 24.0,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_013525_a75b646e-146c-425d-b2b9-ab989910479b.mp4",
+      "sourceDuration": 28.041666666666668,
+      "fps": 24,
       "mode": "dialogue",
       "speaker": 3,
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "b09beb85-2faf-43f3-bac2-6ba80afb9fb5",
+        "model": "Seedance 2.5",
+        "generationId": "a75b646e-146c-425d-b2b9-ab989910479b",
+        "selection": "User-requested arrival-matched dialogue motion generated 2026-10-19",
+        "delivery": "Silent native 1920x1080 24fps video; existing external testimony retained",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "fb9672f420ad98555258c5e0db029d644c85d0c3fbb1a53546bc0c35d1762469",
-        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
-        "reviewStatus": "generated_rejected_framing_and_identity",
-        "releaseStatus": "user-requested-interim",
-        "finalVisualApproval": false
+        "nativeSha256": "0f2c8507d555fc7e08a58cac96d3e1584d5f32bdefea1c23baeb4a8af24fc0a0",
+        "referenceMediaId": "b12cbdd0-f551-4ddd-9eb2-a07be5b7ea34",
+        "referenceSceneId": "cook-trio",
+        "referenceFrame": 336,
+        "referenceFrameIndexing": "zero-based",
+        "generationDirection": "Closed relaxed mouth, no lip sync, restrained natural gestures, fixed camera and unchanged appearance/background",
+        "technicalVerification": "Decoded frame count, dimensions, frame rate and absent audio streams checked"
       },
-      "neckSafeY": 0.64,
-      "framing": {
-        "cx": 0.5,
-        "headY": 0.35,
-        "neckY": 0.66,
-        "minX": 0.12,
-        "maxX": 0.88
-      },
-      "sourceFrames": 689,
+      "neckSafeY": 0.52,
+      "sourceFrames": 673,
       "clipIn": 0,
       "deliveryFraming": {
-        "headY": 0.1,
-        "chestY": 0.8,
-        "minX": 0,
-        "maxX": 1,
-        "cx": 0.5
-      }
+        "cx": 0.5,
+        "headY": 0.28,
+        "neckY": 0.52,
+        "chestY": 0.69,
+        "minX": 0.1,
+        "maxX": 0.86
+      },
+      "nativeAudio": false,
+      "ambience": "",
+      "footsteps": false,
+      "preserveArrivalFraming": true
     },
     {
       "id": "trio-woodcutter",
       "label": "나무꾼에게 이동",
       "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_094721_958670dd-156d-4687-b79e-3901f37106c8.mp4",
       "duration": 6.541666666666667,
-      "fps": 24.0,
+      "fps": 24,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
@@ -371,36 +379,45 @@
     {
       "id": "woodcutter",
       "label": "나무꾼의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_131338_bdf01b7f-ff69-47bd-b0ba-0f50a77bb7f7.mp4",
-      "sourceDuration": 25.708333333333332,
-      "fps": 24.0,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_013531_1b41e842-21e5-4d09-95e5-c5fd653cf4ff.mp4",
+      "sourceDuration": 26.041666666666668,
+      "fps": 24,
       "mode": "dialogue",
       "speaker": 4,
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "bdf01b7f-ff69-47bd-b0ba-0f50a77bb7f7",
+        "model": "Seedance 2.5",
+        "generationId": "1b41e842-21e5-4d09-95e5-c5fd653cf4ff",
+        "selection": "User-requested arrival-matched dialogue motion generated 2026-10-19",
+        "delivery": "Silent native 1920x1080 24fps video; existing external testimony retained",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "40df894df5b656b857e0a295440d1bf78d73ef67e4cb44b10ee55451bea4c411",
-        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
-        "reviewStatus": "generated_rejected_identity_and_fine_ink",
-        "releaseStatus": "user-requested-interim",
-        "finalVisualApproval": false
+        "nativeSha256": "47f2bbdbe441933aea06bea1327a7800bbab8753dd5bcc724eff14ab14ae0b97",
+        "referenceMediaId": "b1a1a830-2fa8-45d2-8262-036f67c61ac1",
+        "referenceSceneId": "trio-woodcutter",
+        "referenceFrame": 712,
+        "referenceFrameIndexing": "zero-based",
+        "generationDirection": "Closed relaxed mouth, no lip sync, restrained natural gestures, fixed camera and unchanged appearance/background",
+        "technicalVerification": "Decoded frame count, dimensions, frame rate and absent audio streams checked"
       },
-      "neckSafeY": 0.66,
-      "framing": {
+      "neckSafeY": 0.45,
+      "sourceFrames": 625,
+      "clipIn": 0,
+      "nativeAudio": false,
+      "ambience": "",
+      "footsteps": false,
+      "preserveArrivalFraming": true,
+      "deliveryFraming": {
         "cx": 0.5,
-        "headY": 0.34,
-        "neckY": 0.68,
-        "minX": 0.445,
-        "maxX": 0.55
-      },
-      "sourceFrames": 617,
-      "clipIn": 0
+        "headY": 0.17,
+        "neckY": 0.45,
+        "chestY": 0.65,
+        "minX": 0.3,
+        "maxX": 0.69
+      }
     },
     {
       "id": "return-lions",

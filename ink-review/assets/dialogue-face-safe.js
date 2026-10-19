@@ -1,4 +1,4 @@
-import {dialogueFrame} from './dialogue-framing.js?v=flow-cover-sound-1';
+import {dialogueFrame} from './dialogue-framing.js?v=arrival-hold-20261019-v1';
 const bound=(v,a,b)=>Math.max(a,Math.min(b,v));
 const NECK=[.77,.77,.67,.69,.71];
 export function createDialogueFaceSafe({stage,panel,tools,sound}){

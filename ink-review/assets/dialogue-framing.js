@@ -10,9 +10,9 @@ const LANDMARKS={
 export function dialogueFrame(scene,W,H,sw,sh){
  const f=scene.deliveryFraming||LANDMARKS[scene.id]||scene.framing||{cx:.5,headY:.2,chestY:.75};
  const scale=Math.max(W/sw,H/sh),w=sw*scale,h=sh*scale;
- const x=clamp(W*.5-(f.cx||.5)*w,W-w,0);
- const y=clamp(H*.13-(f.headY||0)*h,H-h,0);
+ const x=scene.preserveArrivalFraming?(W-w)/2:clamp(W*.5-(f.cx||.5)*w,W-w,0);
+ const y=scene.preserveArrivalFraming?(H-h)/2:clamp(H*.13-(f.headY||0)*h,H-h,0);
  const chest=Number(f.chestY)||Math.min(.98,(f.neckY||.6)+.17);
  return {x,y,w,h,headY:y+(f.headY||0)*h,chestY:y+chest*h,
-  neckY:y+(scene.framing?.neckY||f.neckY||chest-.15)*h,framing:'viewport-cover-1'};
+  neckY:y+(scene.framing?.neckY||f.neckY||chest-.15)*h,framing:scene.preserveArrivalFraming?'arrival-cover-1':'viewport-cover-1'};
 }
