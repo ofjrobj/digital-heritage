@@ -52,3 +52,16 @@ export function sourcePlaybackRate(curve,time){
   }
   return curve[curve.length-1].rate;
 }
+
+// Walking gestures land on reviewed frames rather than arbitrary equal timestamps.
+export function nextScrollStop(scene,time,direction,end){
+  const stops=[0,...(scene.scrollStops||[])].filter(t=>Number.isFinite(t)&&t>=0&&t<=end);
+  if(stops.length<2)return Math.max(0,Math.min(end,time+direction*(Number(scene.secondsPerScroll)||2)));
+  return direction>0?(stops.find(t=>t>time+.025)??end):([...stops].reverse().find(t=>t<time-.025)??0);
+}
+
+// Dragging keeps its continuous movement; release makes only a small local correction.
+export function nearestSharpStop(scene,time,end){
+  const stops=[0,...(scene.dragStopTimes||scene.scrollStops||[]),end];
+  return stops.reduce((best,t)=>Math.abs(t-time)<Math.abs(best-time)?t:best,stops[0]);
+}
