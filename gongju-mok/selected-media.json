@@ -1,5 +1,5 @@
 {
-  "version": "smooth-scroll-stop-20261019-v8",
+  "version": "two-more-videos-20261019-v9",
   "scenes": [
     {
       "id": "intro",
@@ -236,35 +236,35 @@
     {
       "id": "cook-trio",
       "label": "주민 삼총사에게 이동",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_093621_b4b42f3e-d530-4ac1-87d9-a2d92f22c45a.mp4",
-      "duration": 29.708333333333332,
-      "fps": 24.0,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_001010_c9e6a89c-c532-47bc-ae08-a4a043eb5583.mp4",
+      "duration": 14.041666666666666,
+      "fps": 24,
       "mode": "scroll",
-      "footsteps": true,
+      "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "b4b42f3e-d530-4ac1-87d9-a2d92f22c45a",
+        "generationId": "c9e6a89c-c532-47bc-ae08-a4a043eb5583",
+        "selection": "Explicit user attachment selected for public website placement on 2026-10-19",
+        "delivery": "Complete untrimmed 337-frame original and embedded audio; public source verified byte-identical to user attachment",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "11c2a5c2e437b94c6835813e695704f43527aeccec9ae2adce06cc22b3cdf53c",
-        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
-        "reviewStatus": "generated_rejected_requires_full_scene_redraw",
-        "releaseStatus": "user-requested-interim",
-        "finalVisualApproval": false
+        "nativeSha256": "040b3479d95ffa0a74c3328be7d9ea55b7d23abb47f1198b9621219e1965557c"
       },
-      "sourceDuration": 29.708333333333332,
-      "sourceFrames": 713,
+      "sourceDuration": 14.041666666666666,
+      "sourceFrames": 337,
       "clipIn": 0,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
-      "walkingReferenceDuration": 29.708333333333332,
+      "ambience": "",
+      "walkingReferenceDuration": 14.041666666666666,
       "secondsPerScroll": 2.673611111111111,
-      "scrollSteps": 12,
+      "scrollSteps": 6,
       "maxPlaybackRate": 1,
       "scrollPlayback": "seek",
-      "scrollSmoothingMs": 360
+      "scrollSmoothingMs": 360,
+      "nativeAudio": true,
+      "transition": "none",
+      "exitTransitionSeconds": 0.65
     },
     {
       "id": "trio",
@@ -377,35 +377,35 @@
     {
       "id": "return-lions",
       "label": "석사자에게 돌아가기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_095914_afee4a50-3e79-4a5f-8a17-a7070c7a214a.mp4",
-      "duration": 29.708333333333332,
-      "fps": 24.0,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_000812_b8fbb75d-f4ba-4d73-b440-ec44f7a07b21.mp4",
+      "duration": 14.041666666666666,
+      "fps": 24,
       "mode": "scroll",
-      "footsteps": true,
+      "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "afee4a50-3e79-4a5f-8a17-a7070c7a214a",
+        "generationId": "b8fbb75d-f4ba-4d73-b440-ec44f7a07b21",
+        "selection": "Explicit user attachment selected for public website placement on 2026-10-19",
+        "delivery": "Complete untrimmed 337-frame original and embedded audio; public source verified byte-identical to user attachment",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "e97f68b8f3845b556d9fe764a4e14bc0ebc9632afecdc8118372b9795c6a7b71",
-        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
-        "reviewStatus": "generated_rejected_geometry_and_continuity",
-        "releaseStatus": "user-requested-interim",
-        "finalVisualApproval": false
+        "nativeSha256": "1b5df5bea562b931a91895e997719d3e4eee85adc6ad6d11659aa5d7888bb840"
       },
-      "sourceDuration": 29.708333333333332,
-      "sourceFrames": 713,
+      "sourceDuration": 14.041666666666666,
+      "sourceFrames": 337,
       "clipIn": 0,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
-      "walkingReferenceDuration": 29.708333333333332,
+      "ambience": "",
+      "walkingReferenceDuration": 14.041666666666666,
       "secondsPerScroll": 2.673611111111111,
-      "scrollSteps": 12,
+      "scrollSteps": 6,
       "maxPlaybackRate": 1,
       "scrollPlayback": "seek",
-      "scrollSmoothingMs": 360
+      "scrollSmoothingMs": 360,
+      "nativeAudio": true,
+      "transition": "none",
+      "exitTransitionSeconds": 0.65
     },
     {
       "id": "seasons",
