@@ -3,7 +3,7 @@
 export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = false, gestureIdleMs = 220} = {}) {
   const pixelStep = Number.isFinite(pixelsPerStep) && pixelsPerStep > 0 ? pixelsPerStep : 100;
   const idle = Number.isFinite(gestureIdleMs) && gestureIdleMs > 0 ? gestureIdleMs : 220;
-  let lastPacketAt = -Infinity, lastDirection = 0;
+  let lastPacketAt = -Infinity, lastDirection = 0, lastStepAt = -Infinity, heldPixels = 0, lastMagnitude = 0;
 
   function wheelGestureSteps(event, now) {
     const y = Number(event.deltaY), x = Number(event.deltaX) || 0;
@@ -12,11 +12,19 @@ export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = fal
     const mode = Number(event.deltaMode) || 0;
     if (mode !== 0 && mode !== 1 && mode !== 2) return 0;
     if (oneStepPerGesture) {
-      const direction = -Math.sign(y);
+      const direction = -Math.sign(y), magnitude = Math.abs(y);
       const newGesture = now - lastPacketAt >= idle || direction !== lastDirection;
-      lastPacketAt = now;
-      lastDirection = direction;
-      return newGesture ? direction : 0;
+      // Discrete wheel notches must not be swallowed by the trackpad burst lock.
+      const detent = mode !== 0 || x === 0 && (magnitude === 100 || magnitude === 120);
+      if (newGesture) heldPixels = 0;
+      const held = magnitude >= 12 && magnitude >= lastMagnitude * .9;
+      heldPixels = held ? heldPixels + magnitude : 0;
+      const continuing = held && now - lastStepAt >= 420 && heldPixels >= 180;
+      lastPacketAt = now;lastDirection = direction;lastMagnitude = magnitude;
+      if (newGesture || detent || continuing) {
+        lastStepAt = now;heldPixels = 0;return direction;
+      }
+      return 0;
     }
     if (mode === 1) return -y / 3; // Common mouse setting: three lines per detent.
     if (mode === 2) return -y * 6; // A page is one complete six-step walking scene.

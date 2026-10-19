@@ -1,4 +1,4 @@
-import {createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop} from './scroll-motion.js?v=sharp-stops-20261019-v19';
+import {continuousScrollRate,createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop} from './scroll-motion.js?v=continuous-scroll-20261019-v22';
 import {createFootageFog} from './footage-fog.js?v=soft-dialogue-fog-20261019-v12';
 import {createSceneLife} from './scene-life.js?v=sound-fade-20261019-v17';
 import {createSeasonAmbience} from './season-ambience.js?v=sound-fade-20261019-v17';
@@ -11,7 +11,7 @@ import {createScrollFootsteps} from './scroll-footsteps.js?v=manual-movement-202
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
 import {createIntroInkSpread,introVisualTime} from './intro-ink-spread.js?v=three-drops-slow-intro-1';
 import {createPaperColor, PAPER_CSS} from './paper-color.js?v=native-hd-20261019-v17';
-import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=gesture-budget-20261019-v6';
+import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=continuous-scroll-20261019-v22';
 import {dialogueApproachGain,sceneArrivalDelay} from './dialogue-audio-flow.js?v=drag-arrival-audio-1';
 const replacementOpening=document.body.dataset.mediaProfile==='selected-higgsfield';
 const reviewWindow=document.body.dataset.reviewWindow==='true';
@@ -49,7 +49,7 @@ let drag=null,lastDragMoveAt=-Infinity,lastWheelMoveAt=-Infinity;
 // Keep that fallback across frames instead of immediately unmuting it again.
 let nativeAudioBlocked=false;
 let pendingIntroEntry=false,sceneJoin=null,openingLayout=null,lastSceneTransition=null,endingFadeAmount=0,seamMatch=null;
-const footsteps=createScrollFootsteps(foot,()=>Math.abs(target-local)>.008&&(!!current?.scrubTween||!current?.video.paused)&&sound&&!paused&&!compare&&!previewAuto&&!transition&&!finished&&!document.hidden&&!!current&&!current.error&&scrollDriven()&&scenes[index]?.mode==='scroll'&&scenes[index]?.footsteps===true&&(current.still||current.loaded||current.video.readyState>=2),()=>performance.now(),()=>dialogueApproachGain(scenes[index],scenes[index+1],local,duration(index))*(current?.scrubTween?Math.min(1,Math.abs(sampleScrollTween(current.scrubTween,performance.now()).velocity)/1.2):1));
+const footsteps=createScrollFootsteps(foot,()=>Math.abs(target-local)>.008&&(!!current?.scrubTween||!current?.video.paused)&&sound&&!paused&&!compare&&!previewAuto&&!transition&&!finished&&!document.hidden&&!!current&&!current.error&&scrollDriven()&&scenes[index]?.mode==='scroll'&&scenes[index]?.footsteps===true&&(current.still||current.loaded||current.video.readyState>=2),()=>performance.now(),()=>dialogueApproachGain(scenes[index],scenes[index+1],local,duration(index))*(current?.scrubTween?Math.min(1,Math.abs(sampleScrollTween(current.scrubTween,performance.now()).velocity)/1.2):current?.scene.scrollPlayback==='continuous'?Math.min(1,walkingRate/.75):1));
 // Public film audio is authored separately: no embedded or extracted ambience.
 const seasonAmbience=replacementOpening?null:createSeasonAmbience(stage),sceneLife=replacementOpening?null:createSceneLife(stage);
 const disabledAmbience={enabled:false,source:"",volume:0,paused:true,muted:true};
@@ -315,7 +315,7 @@ function stopDragging(){
  if(wasDragging&&canWalk()&&scenes[index]?.dragStopTimes?.length){
   target=nearestSharpStop(scenes[index],target,scrollLimit());
   const now=performance.now(),ms=scrollTweenDuration(scenes[index],local,target,duration(index),true);
-  current.scrubTween=ms>0?createScrollTween(local,target,now,ms,current.scrubTween):null;
+  if(scenes[index]?.scrollPlayback!=='continuous')current.scrubTween=ms>0?createScrollTween(local,target,now,ms,current.scrubTween):null;
  }
 }
 ['pointerup','pointercancel','lostpointercapture'].forEach(t=>canvas.addEventListener(t,stopDragging));
@@ -402,7 +402,7 @@ function frame(now){
   const arrivalHold=current.startElapsed<delay;
   if(dialogue&&!arrivalHold&&!current.dialogueEnded&&$('cinemaDialogue')?.hidden)showText();
   document.body.dataset.interaction=finished?'finished':arrivalHold?'arrival':scroll?'walking':dialogue?'dialogue':'automatic';
-  if(!allowed){reverseElapsed=0;if(!current.still)v.pause();}
+  if(!allowed){reverseElapsed=0;walkingRate=0;if(!current.still)v.pause();}
   const run=allowed&&!arrivalHold&&(!scroll||previewAuto||Math.abs(target-local)>.008),active=run&&ready&&!current.error;
   if(current.error)status(current.error+' Story를 눌러 다시 시작할 수도 있습니다.',true);
   else if(!ready&&!scroll)status('Loading...');else status(compare?(current.image?'이미지 비교':'비교 이미지가 없습니다.'):current.still?'이미지 미리보기':'');
@@ -416,7 +416,28 @@ function frame(now){
    else if(current.loaded&&!v.seeking&&v.readyState>=2){
     local=clamp(v.currentTime-current.clipIn,0,d);
     const gap=target-local;
-    if(s.scrollPlayback==='seek'&&!previewAuto){
+    if(s.scrollPlayback==='continuous'&&!previewAuto){
+     // Decode forward in order. Repeated input extends the target without
+     // pausing or restarting the velocity envelope at every wheel packet.
+     current.scrubTween=null;
+     const tolerance=.012;
+     if(Math.abs(gap)<=tolerance||gap<0&&walkingDirection>=0){
+      v.pause();walkingRate=0;reverseElapsed=0;footsteps.stop();
+      // One final frame-exact settle, never a stream of forward seeks.
+      seekScrollPosition(current,target);
+     }else if(gap>0){
+      reverseElapsed=0;
+      walkingRate=continuousScrollRate(gap,dt,walkingRate,s,d-local);
+      if(walkingRate){v.playbackRate=walkingRate;play(current);}else{v.pause();seekScrollPosition(current,target);}
+     }else{
+      // HTML video has no portable reverse playback. Keep one seek in flight
+      // and use decoded progress, rather than a wall-clock tween that skips ahead.
+      v.pause();const reverseDt=reverseElapsed;reverseElapsed=0;
+      walkingRate=continuousScrollRate(-gap,reverseDt,walkingRate,s,local);
+      if(walkingRate)seekScrollPosition(current,Math.max(target,local-reverseDt*walkingRate));
+      else seekScrollPosition(current,target);
+     }
+    }else if(s.scrollPlayback==='seek'&&!previewAuto){
      // Ease the selected step briefly, without starting native autoplay or
      // leaving a playback queue after the bounded transition has settled.
      walkingRate=0;reverseElapsed=0;seekScrollPosition(current,scrollPositionAt(current,target,now));
@@ -445,7 +466,7 @@ function frame(now){
   openingCaption(s,visualTime);stage.style.setProperty('--nav-paper',String(s.id==='intro'?ease(clamp((visualTime-4.2)/1.5)):1));
   voiceEnabled(sound&&allowed&&ready&&!arrivalHold&&!current.error);if(dialogue&&allowed&&ready&&!arrivalHold&&!current.error)voices.tick(dt);
   if(dialogue&&!current.dialogueEnded&&(voices.proof().ended||!sound&&local>=3+voices.duration(s.speaker)))finishDialoguePanel();
-  if(allowed&&local>=d-.025&&(!scroll||target>=d-.008)&&(!dialogue||voices.canFinish()&&!(sound&&voices.proof().failed)))advance();
+  if(allowed&&local>=d-.025&&(!scroll||target>=d-.008)&&(!scroll||s.scrollPlayback!=='continuous'||v.paused&&Math.abs(target-local)<=.012)&&(!dialogue||voices.canFinish()&&!(sound&&voices.proof().failed)))advance();
   if(!transition&&$('hint'))$('hint').hidden=finished||!scroll||previewAuto||paused;
  }
  if(finished){

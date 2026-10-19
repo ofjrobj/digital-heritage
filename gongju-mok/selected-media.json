@@ -1,5 +1,5 @@
 {
-  "version": "separate-audio-20261019-v20",
+  "version": "continuous-scroll-20261019-v22",
   "scenes": [
     {
       "id": "intro",
@@ -115,7 +115,7 @@
       "exitTransitionSeconds": 0.65,
       "nativeAudio": false,
       "secondsPerScroll": 1.9875,
-      "scrollPlayback": "seek",
+      "scrollPlayback": "continuous",
       "scrollSmoothingMs": 1900,
       "footstepInput": "manual-movement",
       "arrivalSmoothingMs": 3400,
@@ -191,7 +191,12 @@
         15.55,
         15.9
       ],
-      "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded"
+      "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
+      "scrollCruiseRate": 0.95,
+      "scrollArrivalRate": 0.48,
+      "scrollArrivalZone": 2.4,
+      "scrollBraking": 0.65,
+      "scrollRateResponse": 0.24
     },
     {
       "id": "merchant",
@@ -269,7 +274,7 @@
       "exitTransitionSeconds": 0.65,
       "nativeAudio": false,
       "secondsPerScroll": 2.0,
-      "scrollPlayback": "seek",
+      "scrollPlayback": "continuous",
       "scrollSmoothingMs": 1900,
       "footstepInput": "manual-movement",
       "arrivalSmoothingMs": 3400,
@@ -329,7 +334,12 @@
         11.716667,
         12.0
       ],
-      "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded"
+      "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
+      "scrollCruiseRate": 0.95,
+      "scrollArrivalRate": 0.48,
+      "scrollArrivalZone": 2.4,
+      "scrollBraking": 0.65,
+      "scrollRateResponse": 0.24
     },
     {
       "id": "farmer",
@@ -437,7 +447,7 @@
       "exitTransitionSeconds": 0.65,
       "nativeAudio": false,
       "secondsPerScroll": 1.7111111111111112,
-      "scrollPlayback": "seek",
+      "scrollPlayback": "continuous",
       "scrollSmoothingMs": 1900,
       "footstepInput": "manual-movement",
       "arrivalSmoothingMs": 3400,
@@ -503,7 +513,12 @@
         14.916667,
         15.4
       ],
-      "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded"
+      "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
+      "scrollCruiseRate": 0.95,
+      "scrollArrivalRate": 0.48,
+      "scrollArrivalZone": 2.4,
+      "scrollBraking": 0.65,
+      "scrollRateResponse": 0.24
     },
     {
       "id": "cook",
@@ -594,7 +609,7 @@
       "secondsPerScroll": 1.8285714285714287,
       "scrollSteps": 7,
       "maxPlaybackRate": 1,
-      "scrollPlayback": "seek",
+      "scrollPlayback": "continuous",
       "scrollSmoothingMs": 1900,
       "nativeAudio": false,
       "transition": "none",
@@ -657,7 +672,12 @@
         12.35,
         12.8
       ],
-      "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded"
+      "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
+      "scrollCruiseRate": 0.95,
+      "scrollArrivalRate": 0.48,
+      "scrollArrivalZone": 2.4,
+      "scrollBraking": 0.65,
+      "scrollRateResponse": 0.24
     },
     {
       "id": "trio",
@@ -723,7 +743,7 @@
       "secondsPerScroll": 2.006944444444444,
       "scrollSteps": 6,
       "maxPlaybackRate": 1,
-      "scrollPlayback": "seek",
+      "scrollPlayback": "continuous",
       "scrollSmoothingMs": 1900,
       "nativeAudio": false,
       "transition": "none",
@@ -787,7 +807,12 @@
         11.729167,
         12.041666666666666
       ],
-      "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded"
+      "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
+      "scrollCruiseRate": 0.85,
+      "scrollArrivalRate": 0.38,
+      "scrollArrivalZone": 3.2,
+      "scrollBraking": 0.48,
+      "scrollRateResponse": 0.3
     },
     {
       "id": "woodcutter",
@@ -856,7 +881,7 @@
       "secondsPerScroll": 2.0047619047619047,
       "scrollSteps": 7,
       "maxPlaybackRate": 1,
-      "scrollPlayback": "seek",
+      "scrollPlayback": "continuous",
       "scrollSmoothingMs": 1900,
       "nativeAudio": false,
       "transition": "none",
@@ -928,7 +953,12 @@
         13.65,
         14.033333333333333
       ],
-      "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded"
+      "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
+      "scrollCruiseRate": 0.95,
+      "scrollArrivalRate": 0.48,
+      "scrollArrivalZone": 2.4,
+      "scrollBraking": 0.65,
+      "scrollRateResponse": 0.24
     },
     {
       "id": "seasons",
