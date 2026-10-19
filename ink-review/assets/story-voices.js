@@ -1,5 +1,5 @@
 import {dialogueAudio} from './dialogue-audio/manifest.js?v=mature-timbre-v17';
-export function createStoryVoices(stage,{tailSeconds=5}={}) {
+export function createStoryVoices(stage,{tailSeconds=5,onEnded=()=>{}}={}) {
  const audio=document.createElement('audio');
  audio.id='storyVoice';audio.preload='auto';audio.volume=.9;stage.append(audio);
  let index=-1,enabled=false,pending=false,failed=false,token=0,leadElapsed=0,tailElapsed=0;
@@ -19,6 +19,7 @@ export function createStoryVoices(stage,{tailSeconds=5}={}) {
  }
  function setEnabled(value){enabled=value;if(!enabled)audio.pause();else{failed=false;play();}}
  audio.addEventListener('error',()=>{failed=true;});
+ audio.addEventListener('ended',()=>{if(index>=0)onEnded(index);});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)audio.pause();else play();});
  addEventListener('pagehide',()=>audio.pause());
  function tick(dt){if(index<0||document.hidden)return;leadElapsed+=Math.max(0,dt);if(audio.ended)tailElapsed+=Math.max(0,dt);play();}

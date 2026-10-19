@@ -19,16 +19,28 @@ export function sampleScrollTween(tween,now){
   return {position:tween.from+span*progress,velocity:span*slope/(tween.duration/1000),done:false};
 }
 
-// Keep each gesture's distance fixed; ease longer into people or the lions.
+// Fixed short gestures; start slowing three steps before the destination.
+// A linear minimum duration also bounds speed when several gestures are queued.
 export function scrollTweenDuration(scene,from,to,end,drag=false){
   const gap=Math.abs(to-from);
   if(gap<.0001)return 0;
-  if(drag)return Math.max(180,Math.min(650,Number(scene.dragSmoothingMs)||420));
-  const step=Number(scene.secondsPerScroll)||2.67;
-  const arrival=to>=end-.04||to<=.04;
+  const step=Number(scene.secondsPerScroll)||2;
+  const remaining=to>=from?end-to:to;
+  const zone=Math.min(end*.45,step*(Number(scene.arrivalSlowdownSteps)||3));
+  const u=Math.max(0,Math.min(1,1-remaining/Math.max(.01,zone)));
+  const approach=u*u*(3-2*u);
+  const cruise=Number(scene.scrollSmoothingMs)||1900;
+  const arrival=Number(scene.arrivalSmoothingMs)||3400;
   const departure=from<.04||from>=end-.04;
-  const base=arrival?(Number(scene.arrivalSmoothingMs)||2100):departure?(Number(scene.departureSmoothingMs)||1500):(Number(scene.scrollSmoothingMs)||1250);
-  return base*Math.max(.65,Math.min(2.8,Math.sqrt(gap/step)));
+  let base=cruise+(arrival-cruise)*approach;
+  if(departure)base=Math.max(base,Number(scene.departureSmoothingMs)||2200);
+  if(drag)base=Math.max(220,Math.min(900,(Number(scene.dragSmoothingMs)||520)*(1+.6*approach)));
+  const cruiseRate=Number(scene.scrollMaxRate)||2.4;
+  const arrivalRate=Number(scene.arrivalMaxRate)||1.35;
+  const rateLimit=cruiseRate+(arrivalRate-cruiseRate)*approach;
+  // 2.5 bounds the Hermite derivative, including a carried starting velocity.
+  const boundedDuration=gap*2500/Math.max(.1,rateLimit);
+  return Math.max(drag?base:base*Math.max(.55,Math.sqrt(gap/step)),boundedDuration);
 }
 
 export function sourcePlaybackRate(curve,time){
