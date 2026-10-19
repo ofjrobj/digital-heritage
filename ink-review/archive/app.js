@@ -1,5 +1,5 @@
 import {levelScan,createInspectionFraming} from './scan-framing.js?v=ink-reference-1';
-import {createFeatureInk} from './feature-ink.js?v=white-brush-1';
+import {createFeatureInk} from './feature-ink.js?v=fitted-rings-2';
 import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=inspection-relief-2';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -15,6 +15,11 @@ const from=new URLSearchParams(location.search).get('from');
 const returnPage=storyPages[from]??sessionStorage.getItem('ink-pilot-return');
 const storyPage=[...Object.values(storyPages),'review.html','review.html?candidate=720p'].includes(returnPage)?returnPage:'play.html';
 returnLink.href='../'+storyPage;
+const traceLocks=new Set();
+function setInkLock(id,locked){
+ if(locked)traceLocks.add(id);else traceLocks.delete(id);
+ for(const viewer of Object.values(viewers))viewer.setInteractionEnabled(traceLocks.size===0);
+}
 
 function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, displayZoom = 1 }) {
   const scene = new THREE.Scene();
@@ -56,7 +61,13 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   controls.addEventListener('change',()=>{dirty=true;});
   const surface = createSurfaceView(THREE,scene,element,()=>{dirty=true;});
   const framing=createInspectionFraming(THREE,{camera,controls,element,key,fill});
-  const ink=createFeatureInk(THREE,{renderer,root:inspectionRoot,framing,element,invalidate:()=>{dirty=true;}});
+  const ink=createFeatureInk(THREE,{renderer,root:inspectionRoot,framing,element,invalidate:()=>{dirty=true;},onInteractionLock:locked=>setInkLock(element.id,locked)});
+  function setInteractionEnabled(enabled){
+    controls.enabled=enabled;
+    element.dataset.interaction=enabled?'enabled':'locked';
+    renderer.domElement.style.cursor=enabled?'grab':'default';
+  }
+  renderer.domElement.addEventListener('wheel',event=>{if(!controls.enabled)event.preventDefault();},{passive:false});
   const frame = () => {
     const r = element.getBoundingClientRect();
     if (!r.width || !r.height) return;
@@ -74,6 +85,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
     framing.bind(model);surface.bind(model);inspectionRoot.add(model);ink.bind(model);ready=true;frame();dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
     element.dataset.loaded='true';
   }).catch(error => {
+    ink.stop();
     console.error(error);loading.textContent='모델을 불러오지 못했습니다. 새로고침해 주세요.';element.dataset.loaded='error';
   });
   function focus(index){goal=framing.focus(index);dirty=true;}
@@ -97,7 +109,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
       dirty=false;
     }
   }
-  animate();return {focus,loaded,setColor:surface.setColor,trace:ink.play,stopTrace:ink.stop};
+  animate();return {focus,loaded,setColor:surface.setColor,trace:ink.play,stopTrace:ink.stop,setInteractionEnabled};
 }
 const viewers = {
  male:createViewer({element:document.querySelector('#male-scene'),loading:document.querySelector('#male-loading'),modelUrl:'models/male-continuous.glb',targetSize:1.83,yaw:-3.902609*Math.PI/180}),

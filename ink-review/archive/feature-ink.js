@@ -1,8 +1,8 @@
-import {TRACE_FRAME,FEATURE_PATHS} from './feature-ink-paths.js?v=white-brush-1';
+import {TRACE_FRAME,FEATURE_PATHS} from './feature-ink-paths.js?v=fitted-rings-2';
 
 // Render a depth map once per feature, then lift the authored trace onto the scan.
 // The resulting ribbon lives in scan coordinates and remains attached when rotated.
-export function createFeatureInk(THREE,{renderer,root,framing,element,invalidate}){
+export function createFeatureInk(THREE,{renderer,root,framing,element,invalidate,onInteractionLock=()=>{}}){
  const sex=element.id==='male-scene'?'male':'female',cache=new Map(),group=new THREE.Group();
  group.name='surface-ink-guides';root.add(group);group.visible=false;
  const material=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false,depthTest:true,toneMapped:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
@@ -41,7 +41,7 @@ export function createFeatureInk(THREE,{renderer,root,framing,element,invalidate
    return new THREE.Vector3((px+.5)/rw*2-1,(py+.5)/rh*2-1,depth*2-1).unproject(camera);
   }
   const strokes=FEATURE_PATHS[sex][index].map((path,strokeIndex)=>{
-   const curve=new THREE.CatmullRomCurve3(path.map(([x,y])=>new THREE.Vector3(x-TRACE_FRAME.left[sex],y-TRACE_FRAME.top,0)),false,'centripetal');
+   const curve=new THREE.CatmullRomCurve3(path.map(([x,y])=>new THREE.Vector3(x-TRACE_FRAME.left[sex],y-TRACE_FRAME.top,0)),index===0,'centripetal');
    const samples=72,points=[];
    for(let i=0;i<=samples;i++){
     const p=curve.getPoint(i/samples),world=point(p.x,p.y);
@@ -72,15 +72,19 @@ export function createFeatureInk(THREE,{renderer,root,framing,element,invalidate
  }
  function stop(){
   generation++;requested=null;active=null;group.visible=false;material.opacity=0;
+  onInteractionLock(false);
   element.dataset.inkState='idle';element.dataset.inkCount='0';invalidate();
  }
  function play(index){
   stop();if(!Number.isInteger(index))return;
+  onInteractionLock(true);
   requested=index;const token=generation;
   // Let the information panel settle before preparing a feature, so opening remains responsive.
   setTimeout(()=>{
    if(token!==generation||!model)return;
-   const strokes=projectPaths(index);if(token!==generation)return;
+   let strokes;
+   try{strokes=projectPaths(index);}catch(error){stop();console.error('Unable to map ink guide',error);return;}
+   if(token!==generation)return;
    for(const entries of cache.values())entries.forEach(s=>{s.mesh.visible=false;s.mesh.geometry.setDrawRange(0,0);});
    strokes.forEach(s=>s.mesh.visible=true);active=strokes;group.visible=true;startAt=performance.now()+120;
    element.dataset.inkFeature=String(index+1);element.dataset.inkTotal=String(strokes.length);element.dataset.inkState='drawing';requested=null;invalidate();
@@ -96,7 +100,7 @@ export function createFeatureInk(THREE,{renderer,root,framing,element,invalidate
   });
   material.opacity=.88*(1-smooth((elapsed-3)/.85));
   element.dataset.inkCount=String(count);element.dataset.inkState=elapsed<drawSeconds?'drawing':elapsed<3?'holding':'fading';
-  if(elapsed>=3.85){active=null;group.visible=false;material.opacity=0;element.dataset.inkState='finished';}
+  if(elapsed>=3.85){active=null;group.visible=false;material.opacity=0;element.dataset.inkState='finished';onInteractionLock(false);}
   return true;
  }
  return {bind,play,stop,update};
