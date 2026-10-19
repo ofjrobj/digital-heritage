@@ -69,15 +69,15 @@ export function nearestSharpStop(scene,time,end){
 // Native forward decoding, with a bounded acceleration and braking envelope.
 // All distances are source seconds; the target remains the authored sharp stop.
 export function continuousScrollRate(gap,dt,previous,scene={},remaining=Infinity){
- if(!Number.isFinite(gap)||gap<=.012||!Number.isFinite(dt)||dt<=0)return 0;
- const step=Math.min(dt,.25),floor=1/16;
+ if(!Number.isFinite(gap)||gap<=1/(Number(scene.fps)||30)+.004||!Number.isFinite(dt)||dt<=0)return 0;
+ const step=Math.min(dt,.25),floor=.25;
  const cruise=Number(scene.scrollCruiseRate)||.95;
  const arrival=Number(scene.scrollArrivalRate)||.48;
  const zone=Number(scene.scrollArrivalZone)||2.4;
  const u=Math.max(0,Math.min(1,1-remaining/zone));
  const cap=cruise+(arrival-cruise)*u*u*(3-2*u);
  const braking=Number(scene.scrollBraking)||.65;
- const desired=Math.min(cap,Math.sqrt(2*braking*Math.max(0,gap-.012)),gap/.55);
+ const desired=Math.min(cap,Math.sqrt(2*braking*Math.max(0,gap-.012)),gap/.24);
  const response=desired<previous?.16:(Number(scene.scrollRateResponse)||.24);
  const rate=Math.max(0,Number(previous)||0)+(desired-Math.max(0,Number(previous)||0))*(1-Math.exp(-step/response));
  // Keep the next frame within the target even after a delayed animation frame.

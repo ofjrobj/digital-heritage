@@ -1,5 +1,5 @@
 {
-  "version": "title-caption-20261019-v24",
+  "version": "center-nav-scroll-20261019-v25",
   "scenes": [
     {
       "id": "intro",
@@ -21,7 +21,7 @@
           1920,
           1080
         ],
-        "delivery": "Bitstream copy, no recompression; visible frames 0–582 match approved video exactly. Guard packets retained after the authored end for B-frame decoding; playback stops at 19.433333s. Speed ramp baked into video; runtime playback remains 1x. No audio.",
+        "delivery": "Bitstream copy, no recompression. Visible frames 0–582 match approved video. Runtime 0.90x only through the mountain passage, returning to 1x by 9.3s. Source video is silent; a separate extracted drum cue is mixed beneath narration.",
         "deliverySha256": "001746587660b767a72ff46bd455ddc0e51ac11e633d21dfd489471730abe25c",
         "paperColor": "#E8E8E6"
       },
@@ -35,7 +35,7 @@
       "playOnScroll": true,
       "exitCrossfadeSeconds": 0,
       "openingFraming": {
-        "focalX": 0.474,
+        "focalX": 0.49,
         "holdUntil": 0.8,
         "releaseAt": 3
       },
@@ -43,10 +43,32 @@
         "text": "어느 옛날, 공주목과 그 주변 고을에는\n신비로운 두 사자의 이야기가 떠돌고 있습니다.",
         "start": 3.4,
         "fadeIn": 0.7,
-        "holdUntil": 16,
-        "end": 17.2
+        "holdUntil": 6.0,
+        "end": 7.8
       },
-      "captionFadeSeconds": 0.9
+      "captionFadeSeconds": 0.9,
+      "playbackCurve": [
+        {
+          "time": 0,
+          "rate": 1
+        },
+        {
+          "time": 2.8,
+          "rate": 1
+        },
+        {
+          "time": 3.6,
+          "rate": 0.9
+        },
+        {
+          "time": 8.3,
+          "rate": 0.9
+        },
+        {
+          "time": 9.3,
+          "rate": 1
+        }
+      ]
     },
     {
       "id": "entry-merchant",
@@ -78,11 +100,11 @@
       "walkingReferenceDuration": 15.9,
       "sourceFrames": 477,
       "fps": 30,
-      "scrollSteps": 8,
+      "scrollSteps": 9,
       "maxPlaybackRate": 1,
       "exitTransitionSeconds": 0.65,
       "nativeAudio": false,
-      "secondsPerScroll": 1.9875,
+      "secondsPerScroll": 1.8,
       "scrollPlayback": "continuous",
       "scrollSmoothingMs": 1900,
       "footstepInput": "manual-movement",
@@ -95,11 +117,12 @@
       "scrollStops": [
         1.883333,
         3.55,
-        6.383333,
-        7.716667,
-        10.383333,
-        11.55,
-        14.216667,
+        5.383333,
+        7.216667,
+        9.05,
+        10.883333,
+        12.716667,
+        14.583333,
         15.9
       ],
       "dragStopTimes": [
@@ -236,12 +259,12 @@
       "clipIn": 0,
       "ambience": "",
       "walkingReferenceDuration": 12,
-      "scrollSteps": 6,
+      "scrollSteps": 7,
       "maxPlaybackRate": 1,
       "transition": "none",
       "exitTransitionSeconds": 0.65,
       "nativeAudio": false,
-      "secondsPerScroll": 2,
+      "secondsPerScroll": 1.8,
       "scrollPlayback": "continuous",
       "scrollSmoothingMs": 1900,
       "footstepInput": "manual-movement",
@@ -253,10 +276,11 @@
       "arrivalMaxRate": 1.35,
       "scrollStops": [
         1.65,
-        4.15,
-        5.983333,
-        7.65,
-        10.316667,
+        3.483333,
+        5.316667,
+        7.316667,
+        8.983333,
+        10.816667,
         12
       ],
       "dragStopTimes": [
@@ -414,7 +438,7 @@
       "transition": "none",
       "exitTransitionSeconds": 0.65,
       "nativeAudio": false,
-      "secondsPerScroll": 1.7111111111111112,
+      "secondsPerScroll": 1.8,
       "scrollPlayback": "continuous",
       "scrollSmoothingMs": 1900,
       "footstepInput": "manual-movement",
@@ -425,14 +449,14 @@
       "scrollMaxRate": 2.4,
       "arrivalMaxRate": 1.35,
       "scrollStops": [
-        0.316667,
-        3.416667,
+        0.483333,
+        3.716667,
         5.35,
-        6.916667,
-        8.75,
-        10.25,
-        11.75,
-        13.25,
+        7.25,
+        8.883333,
+        10.75,
+        12.75,
+        14.283333,
         15.4
       ],
       "dragStopTimes": [
@@ -486,7 +510,46 @@
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
       "scrollBraking": 0.65,
-      "scrollRateResponse": 0.24
+      "scrollRateResponse": 0.24,
+      "preserveSourceColor": true,
+      "connectionLook": [
+        {
+          "time": 11.4,
+          "scale": 1,
+          "x": 0,
+          "y": 0,
+          "brightness": 1
+        },
+        {
+          "time": 15.366667,
+          "scale": 1.28,
+          "x": -0.15,
+          "y": -0.27,
+          "brightness": 0.9
+        }
+      ],
+      "walkingRateCurve": [
+        {
+          "time": 0,
+          "rate": 1
+        },
+        {
+          "time": 0.4,
+          "rate": 0.9
+        },
+        {
+          "time": 0.9,
+          "rate": 0.6
+        },
+        {
+          "time": 3.5,
+          "rate": 0.6
+        },
+        {
+          "time": 4.3,
+          "rate": 1
+        }
+      ]
     },
     {
       "id": "cook",
@@ -523,7 +586,8 @@
       "nativeAudio": false,
       "ambience": "",
       "footsteps": false,
-      "preserveArrivalFraming": true
+      "preserveArrivalFraming": true,
+      "preserveSourceColor": true
     },
     {
       "id": "cook-trio",
@@ -574,7 +638,7 @@
       "clipIn": 0,
       "ambience": "",
       "walkingReferenceDuration": 12.8,
-      "secondsPerScroll": 1.8285714285714287,
+      "secondsPerScroll": 1.8,
       "scrollSteps": 7,
       "maxPlaybackRate": 1,
       "scrollPlayback": "continuous",
@@ -590,12 +654,12 @@
       "scrollMaxRate": 2.4,
       "arrivalMaxRate": 1.35,
       "scrollStops": [
-        0.616667,
-        4.083333,
-        5.483333,
-        7.316667,
-        8.783333,
-        11.45,
+        1.15,
+        3.45,
+        5.45,
+        7.283333,
+        9.116667,
+        10.783333,
         12.8
       ],
       "dragStopTimes": [
@@ -645,7 +709,31 @@
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
       "scrollBraking": 0.65,
-      "scrollRateResponse": 0.24
+      "scrollRateResponse": 0.24,
+      "preserveSourceColor": true,
+      "connectionLook": [
+        {
+          "time": 0,
+          "scale": 1.28,
+          "x": -0.15,
+          "y": -0.27,
+          "brightness": 0.89
+        },
+        {
+          "time": 0.6,
+          "scale": 1.28,
+          "x": -0.15,
+          "y": -0.27,
+          "brightness": 0.89
+        },
+        {
+          "time": 3.6,
+          "scale": 1,
+          "x": 0,
+          "y": 0,
+          "brightness": 1
+        }
+      ]
     },
     {
       "id": "trio",
@@ -708,8 +796,8 @@
       "clipIn": 0,
       "ambience": "",
       "walkingReferenceDuration": 12.041666666666666,
-      "secondsPerScroll": 2.006944444444444,
-      "scrollSteps": 6,
+      "secondsPerScroll": 1.8,
+      "scrollSteps": 7,
       "maxPlaybackRate": 1,
       "scrollPlayback": "continuous",
       "scrollSmoothingMs": 1900,
@@ -724,11 +812,12 @@
       "scrollMaxRate": 2.4,
       "arrivalMaxRate": 1.35,
       "scrollStops": [
-        1.979167,
-        4.1875,
-        6.395833,
-        8.0625,
-        10.0625,
+        1.770833,
+        3.729167,
+        5.395833,
+        7.229167,
+        9.020833,
+        10.770833,
         12.041666666666666
       ],
       "dragStopTimes": [
@@ -846,8 +935,8 @@
       "clipIn": 0,
       "ambience": "",
       "walkingReferenceDuration": 14.033333333333333,
-      "secondsPerScroll": 2.0047619047619047,
-      "scrollSteps": 7,
+      "secondsPerScroll": 1.8,
+      "scrollSteps": 8,
       "maxPlaybackRate": 1,
       "scrollPlayback": "continuous",
       "scrollSmoothingMs": 1900,
@@ -862,12 +951,13 @@
       "scrollMaxRate": 2.4,
       "arrivalMaxRate": 1.35,
       "scrollStops": [
-        1.916667,
-        4.016667,
-        5.65,
-        7.983333,
-        9.65,
-        12.216667,
+        1.783333,
+        3.716667,
+        5.316667,
+        7.25,
+        8.85,
+        10.75,
+        12.716667,
         14.033333333333333
       ],
       "dragStopTimes": [
@@ -926,7 +1016,17 @@
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
       "scrollBraking": 0.65,
-      "scrollRateResponse": 0.24
+      "scrollRateResponse": 0.24,
+      "exitMatch": {
+        "target": "seasons",
+        "seconds": 1.1,
+        "scaleX": 1,
+        "scaleY": 1,
+        "offsetX": 0,
+        "offsetY": 0,
+        "blendStart": 0.3,
+        "alignmentFraction": 0.3
+      }
     },
     {
       "id": "seasons",
@@ -953,7 +1053,7 @@
       "sourceDuration": 20,
       "motionBaked": true,
       "ambience": "",
-      "startDelay": 1.6,
+      "startDelay": 0.25,
       "transition": "none",
       "sourceFrames": 600,
       "clipIn": 0,
