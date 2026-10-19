@@ -2,6 +2,7 @@ export const dialogueAudio = [
   {
     "role": "merchant",
     "file": "merchant-v2.mp3",
+    "url": "../../gongju-mok/media/v17/merchant-mature.mp3",
     "duration": 19.644083333333334,
     "source": "1.장사꾼_ver2.mp3",
     "sourceSha256": "a72170aa650dd43f73b07a9c8d6df1743731581785e61abbffb0d7eaef668cdb"
@@ -30,6 +31,7 @@ export const dialogueAudio = [
   {
     "role": "woodcutter",
     "file": "woodcutter-v2.mp3",
+    "url": "../../gongju-mok/media/v17/woodcutter-mature.mp3",
     "duration": 17.475916666666667,
     "source": "5.나무꾼_ver2.mp3",
     "sourceSha256": "0a8074f6e58df3176a6976a11a49da34f39d6d40b62b39a166c6a183a26c4cd9"

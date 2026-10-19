@@ -8,7 +8,7 @@ export function createSceneLife(stage){
   tick({src='',time=0,active=false,sound=false,gain=1,dt=0}){
    if(src!==source){audio.pause();source=src;audio.volume=0;blocked=false;request++;pending=false;if(src){audio.src=src;audio.load();}else{audio.removeAttribute('src');audio.load();}}
    const wanted=!!src&&active&&sound;wantedNow=wanted;
-   if(!wanted){request++;pending=false;audio.pause();audio.volume=0;return;}
+   if(!wanted){audio.volume=Math.max(0,audio.volume-Math.max(0,dt)*.6);if(audio.volume<.001){request++;pending=false;audio.pause();audio.volume=0;}return;}
    // Keep wind behind the supplied dialogue and music.
    const target=.16*Math.max(0,Math.min(1,gain));
    audio.volume=target<audio.volume?target:Math.min(target,audio.volume+Math.max(0,dt)*.18);

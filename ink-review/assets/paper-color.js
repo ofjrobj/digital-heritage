@@ -38,7 +38,7 @@ export function createPaperColor(){
  const surface=document.createElement('canvas'),profiles=new Map(),stillCache=new WeakMap();
  let gl,program,texture,lastKey='',lastTime=-1,lastWhite=null,backend='initializing';
  const vertex='attribute vec2 position; varying vec2 uv; void main(){uv=(position+1.0)*.5;gl_Position=vec4(position,0.,1.);}';
- const fragment=`precision mediump float;
+ const fragment=`precision highp float;
  varying vec2 uv; uniform sampler2D source; uniform vec3 white; uniform vec3 paper;
  void main(){
   vec4 c=texture2D(source,uv);vec3 relative=c.rgb/white;
@@ -78,7 +78,7 @@ export function createPaperColor(){
    backend='canvas';
    if(source.tagName!=='VIDEO'&&stillCache.has(source))return stillCache.get(source);
    if(lastKey===key&&lastTime===time)return fallback;
-   const scale=Math.min(1,960/w);fallback.width=Math.round(w*scale);fallback.height=Math.round(h*scale);fc.drawImage(source,0,0,fallback.width,fallback.height);normalizePaperPixels(fc,fallback.width,fallback.height,white);
+   const scale=Math.min(1,1920/w);fallback.width=Math.round(w*scale);fallback.height=Math.round(h*scale);fc.drawImage(source,0,0,fallback.width,fallback.height);normalizePaperPixels(fc,fallback.width,fallback.height,white);
    lastKey=source.seeking?'':key;lastTime=time;
    if(source.tagName!=='VIDEO'){const copy=document.createElement('canvas');copy.width=fallback.width;copy.height=fallback.height;copy.getContext('2d').drawImage(fallback,0,0);stillCache.set(source,copy);return copy;}return fallback;
   }catch{backend='source-fallback';return source;}

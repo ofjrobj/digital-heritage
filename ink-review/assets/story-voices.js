@@ -1,4 +1,4 @@
-import {dialogueAudio} from './dialogue-audio/manifest.js?v=voices-2';
+import {dialogueAudio} from './dialogue-audio/manifest.js?v=mature-timbre-v17';
 export function createStoryVoices(stage,{tailSeconds=5}={}) {
  const audio=document.createElement('audio');
  audio.id='storyVoice';audio.preload='auto';audio.volume=.9;stage.append(audio);
@@ -14,7 +14,7 @@ export function createStoryVoices(stage,{tailSeconds=5}={}) {
   if(next===index)return;
   token++;pending=false;audio.pause();index=next;failed=false;leadElapsed=0;tailElapsed=0;
   if(index<0){audio.removeAttribute('src');audio.load();return;}
-  audio.src=new URL('./dialogue-audio/'+dialogueAudio[index].file,import.meta.url).href;
+  audio.src=new URL(dialogueAudio[index].url||('./dialogue-audio/'+dialogueAudio[index].file),import.meta.url).href;
   audio.load();play();
  }
  function setEnabled(value){enabled=value;if(!enabled)audio.pause();else{failed=false;play();}}
