@@ -12,7 +12,7 @@ import {createStoryMusic} from './story-audio-mix.js?v=drag-arrival-audio-1';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=manual-movement-20261019-v19';
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
 import {createIntroInkSpread,introVisualTime} from './intro-ink-spread.js?v=three-drops-slow-intro-1';
-import {createPaperColor, PAPER_CSS} from './paper-color.js?v=native-hd-20261019-v17';
+import {createPaperColor, PAPER_CSS} from './paper-color.js?v=matched-dialogue-20261020-v26';
 import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=continuous-scroll-20261019-v22';
 import {dialogueApproachGain,sceneArrivalDelay} from './dialogue-audio-flow.js?v=drag-arrival-audio-1';
 const replacementOpening=document.body.dataset.mediaProfile==='selected-higgsfield';
@@ -148,7 +148,7 @@ function draw(source){
  const sceneRecord=records.find(r=>r&&(r.video===source||r.image===source));
  const isIntro=sceneRecord?.scene.id==='intro'&&!replacementOpening&&introAssetsReady();
  const match=exitMatchState(sceneRecord,Math.max(0,(source.currentTime||0)-(sceneRecord?.clipIn||0)));
- const graded=isIntro||sceneRecord?.scene.preserveSourceColor?source:paperColor.render(source);
+ const graded=isIntro?source:paperColor.render(source,sceneRecord?.scene.colorGrade,!!sceneRecord?.scene.preserveSourceColor);
  const look=connectionLook(sceneRecord?.scene,Math.max(0,(source.currentTime||0)-(sceneRecord?.clipIn||0)));
  openingLayout=null;
  const seasonFit=null; // All scene images fill the viewport, including narrow windows.

@@ -1,5 +1,5 @@
 {
-  "version": "center-nav-scroll-20261019-v25",
+  "version": "colour-joins-20261020-v26",
   "scenes": [
     {
       "id": "intro",
@@ -230,7 +230,16 @@
         "minX": 0.29,
         "maxX": 0.67
       },
-      "preserveArrivalFraming": true
+      "preserveArrivalFraming": true,
+      "colorGrade": {
+        "gain": [
+          1.015,
+          1.008,
+          1
+        ],
+        "saturation": 1.01,
+        "scope": "midtones only; preserve pale paper and dark ink"
+      }
     },
     {
       "id": "merchant-farmer",
@@ -374,13 +383,22 @@
         "minX": 0.28,
         "maxX": 0.69
       },
-      "preserveArrivalFraming": true
+      "preserveArrivalFraming": true,
+      "colorGrade": {
+        "gain": [
+          1.006,
+          1.006,
+          1.002
+        ],
+        "saturation": 0.98,
+        "scope": "midtones only; preserve pale paper and dark ink"
+      }
     },
     {
       "id": "farmer-cook",
       "label": "찬모에게 이동",
       "src": "./media/v19/farmer-cook.mp4",
-      "duration": 15.4,
+      "duration": 13.966667,
       "fps": 30,
       "mode": "scroll",
       "footsteps": true,
@@ -426,14 +444,19 @@
           "reason": "Remove visibly ghosted transition portions; direct cuts without blended frames",
           "deliverySha256": "68d71a3bfa1d99abe3d1fc75b082f05ae822b236db58545af32e592997479316"
         },
-        "previousDeliverySha256": "0a2d4f873fcd776b5b0fee33ffeda0724880c76db41e051d0d5c0ac3f5ccb3c0"
+        "previousDeliverySha256": "0a2d4f873fcd776b5b0fee33ffeda0724880c76db41e051d0d5c0ac3f5ccb3c0",
+        "runtimeTrim": {
+          "start": 0,
+          "endExclusive": 14,
+          "reason": "Exclude the final 42 frames of the bright inserted cook close-up."
+        }
       },
       "sourceDuration": 15.4,
       "sourceFrames": 462,
       "clipIn": 0,
       "ambience": "",
-      "walkingReferenceDuration": 15.4,
-      "scrollSteps": 9,
+      "walkingReferenceDuration": 13.966667,
+      "scrollSteps": 8,
       "maxPlaybackRate": 1,
       "transition": "none",
       "exitTransitionSeconds": 0.65,
@@ -456,8 +479,7 @@
         8.883333,
         10.75,
         12.75,
-        14.283333,
-        15.4
+        13.966667
       ],
       "dragStopTimes": [
         0.016667,
@@ -500,10 +522,7 @@
         13.25,
         13.583333,
         13.816667,
-        14.283333,
-        14.616667,
-        14.916667,
-        15.4
+        13.966667
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
       "scrollCruiseRate": 0.95,
@@ -514,18 +533,18 @@
       "preserveSourceColor": true,
       "connectionLook": [
         {
-          "time": 11.4,
+          "time": 10.5,
           "scale": 1,
           "x": 0,
           "y": 0,
           "brightness": 1
         },
         {
-          "time": 15.366667,
-          "scale": 1.28,
-          "x": -0.15,
-          "y": -0.27,
-          "brightness": 0.9
+          "time": 13.966667,
+          "scale": 1.68,
+          "x": -0.34,
+          "y": -0.44,
+          "brightness": 1
         }
       ],
       "walkingRateCurve": [
@@ -587,13 +606,22 @@
       "ambience": "",
       "footsteps": false,
       "preserveArrivalFraming": true,
-      "preserveSourceColor": true
+      "preserveSourceColor": true,
+      "colorGrade": {
+        "gain": [
+          1.04,
+          1.025,
+          1
+        ],
+        "saturation": 1.04,
+        "scope": "midtones only; preserve pale paper and dark ink"
+      }
     },
     {
       "id": "cook-trio",
       "label": "주민 삼총사에게 이동",
       "src": "./media/v19/cook-trio.mp4",
-      "duration": 12.8,
+      "duration": 11.4,
       "fps": 30,
       "mode": "scroll",
       "footsteps": true,
@@ -631,13 +659,18 @@
           "reason": "Remove visibly ghosted transition portions; direct cuts without blended frames",
           "deliverySha256": "86146cc8b14ac53fed1b2d5a18c83d3d4f53ddd04aa32e82ba80f3259d905761"
         },
-        "previousDeliverySha256": "67577f339c5ef9c1199e8b40656e8e0148cea792d9af1884dfba2bcb9ef871e6"
+        "previousDeliverySha256": "67577f339c5ef9c1199e8b40656e8e0148cea792d9af1884dfba2bcb9ef871e6",
+        "runtimeTrim": {
+          "start": 1.4,
+          "endExclusive": 12.8,
+          "reason": "Exclude the first 42 frames of the same bright inserted cook close-up."
+        }
       },
       "sourceDuration": 12.8,
       "sourceFrames": 384,
-      "clipIn": 0,
+      "clipIn": 1.4,
       "ambience": "",
-      "walkingReferenceDuration": 12.8,
+      "walkingReferenceDuration": 11.4,
       "secondsPerScroll": 1.8,
       "scrollSteps": 7,
       "maxPlaybackRate": 1,
@@ -654,55 +687,49 @@
       "scrollMaxRate": 2.4,
       "arrivalMaxRate": 1.35,
       "scrollStops": [
-        1.15,
-        3.45,
-        5.45,
-        7.283333,
-        9.116667,
-        10.783333,
-        12.8
+        1.716667,
+        3.683333,
+        5.55,
+        7.05,
+        9.05,
+        10.716667,
+        11.4
       ],
       "dragStopTimes": [
-        0.016667,
-        0.216667,
-        0.516667,
-        0.616667,
-        0.85,
-        1.15,
-        2.95,
-        3.116667,
-        3.45,
-        3.783333,
+        1.55,
+        1.716667,
+        2.05,
+        2.383333,
+        2.683333,
+        3.05,
+        3.383333,
+        3.683333,
+        4.05,
         4.083333,
-        4.45,
-        4.783333,
-        5.083333,
-        5.45,
-        5.483333,
-        5.65,
-        5.95,
-        6.283333,
-        6.583333,
-        6.95,
-        7.283333,
-        7.316667,
-        7.583333,
-        7.783333,
-        8.116667,
-        8.45,
-        8.783333,
-        9.116667,
-        9.45,
-        9.783333,
-        10.116667,
-        10.45,
-        10.783333,
-        11.116667,
-        11.45,
-        11.783333,
-        12.116667,
-        12.35,
-        12.8
+        4.25,
+        4.55,
+        4.883333,
+        5.183333,
+        5.55,
+        5.883333,
+        5.916667,
+        6.183333,
+        6.383333,
+        6.716667,
+        7.05,
+        7.383333,
+        7.716667,
+        8.05,
+        8.383333,
+        8.716667,
+        9.05,
+        9.383333,
+        9.716667,
+        10.05,
+        10.383333,
+        10.716667,
+        10.95,
+        11.4
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
       "scrollCruiseRate": 0.95,
@@ -714,20 +741,20 @@
       "connectionLook": [
         {
           "time": 0,
-          "scale": 1.28,
-          "x": -0.15,
-          "y": -0.27,
-          "brightness": 0.89
+          "scale": 1.48,
+          "x": -0.455,
+          "y": -0.365,
+          "brightness": 1
         },
         {
-          "time": 0.6,
-          "scale": 1.28,
-          "x": -0.15,
-          "y": -0.27,
-          "brightness": 0.89
+          "time": 0.35,
+          "scale": 1.48,
+          "x": -0.455,
+          "y": -0.365,
+          "brightness": 1
         },
         {
-          "time": 3.6,
+          "time": 3.0,
           "scale": 1,
           "x": 0,
           "y": 0,
@@ -770,7 +797,16 @@
       "nativeAudio": false,
       "ambience": "",
       "footsteps": false,
-      "preserveArrivalFraming": true
+      "preserveArrivalFraming": true,
+      "colorGrade": {
+        "gain": [
+          1.02,
+          1.015,
+          1.018
+        ],
+        "saturation": 0.9,
+        "scope": "midtones only; preserve pale paper and dark ink"
+      }
     },
     {
       "id": "trio-woodcutter",
@@ -906,6 +942,15 @@
         "chestY": 0.65,
         "minX": 0.3,
         "maxX": 0.69
+      },
+      "colorGrade": {
+        "gain": [
+          1.045,
+          1.04,
+          1.035
+        ],
+        "saturation": 0.96,
+        "scope": "midtones only; preserve pale paper and dark ink"
       }
     },
     {
