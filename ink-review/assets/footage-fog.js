@@ -1,7 +1,7 @@
 import {PAPER_RGB} from './paper-color.js?v=archive-paper-1';
 
 // Broad, softly advecting mist. Opacity, not a separate scene fade, hides the cut.
-export function createFootageFog({stage,world,mist}){
+export function createFootageFog({stage,world,mist,subtle=false}){
  let surface=document.createElement('canvas');surface.className='tr-footage-fog';surface.setAttribute('aria-hidden','true');stage.append(surface);
  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
  const clamp=v=>Math.max(0,Math.min(1,v));
@@ -12,7 +12,7 @@ export function createFootageFog({stage,world,mist}){
   const shader=(type,text)=>{const s=gl.createShader(type);gl.shaderSource(s,text);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;};
   program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,'attribute vec2 position;varying vec2 uv;void main(){uv=position*.5+.5;gl_Position=vec4(position,0.,1.);}'));
   gl.attachShader(program,shader(gl.FRAGMENT_SHADER,`precision highp float;
-   varying vec2 uv;uniform float amount;uniform float aspect;uniform float time;uniform vec3 paper;
+   varying vec2 uv;uniform float amount;uniform float aspect;uniform float time;uniform vec3 paper;uniform float subtleMode;
    float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
    float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*f*(f*(f*6.-15.)+10.);return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.)),f.x),f.y);}
    float fbm(vec2 p){float value=0.,weight=.55;mat2 turn=mat2(.8,-.6,.6,.8);for(int i=0;i<4;i++){value+=weight*noise(p);p=turn*p*1.95+vec2(13.4,7.1);weight*=.48;}return value;}
@@ -27,12 +27,15 @@ export function createFootageFog({stage,world,mist}){
     float haze=amount*.18;
     float alpha=(haze+(1.-haze)*cloud)*smoothstep(0.,.10,amount);
     // The entire frame is covered at the cut, in the site's exact paper colour.
-    alpha=mix(alpha,1.,smoothstep(.84,1.,amount));
+    if(subtleMode>.5){
+     float edge=max(smoothstep(.18,.52,abs(uv.x-.5)),smoothstep(.24,.53,abs(uv.y-.5))*.7);
+     alpha=amount*(.015+.20*edge)*(.45+.55*field);
+    }else alpha=mix(alpha,1.,smoothstep(.84,1.,amount));
     gl_FragColor=vec4(paper,alpha);
    }`));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error('Mist shader link');gl.useProgram(program);
   const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
   const pos=gl.getAttribLocation(program,'position');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
-  level=gl.getUniformLocation(program,'amount');aspect=gl.getUniformLocation(program,'aspect');time=gl.getUniformLocation(program,'time');gl.uniform3fv(gl.getUniformLocation(program,'paper'),PAPER_RGB.map(v=>v/255));
+  level=gl.getUniformLocation(program,'amount');aspect=gl.getUniformLocation(program,'aspect');time=gl.getUniformLocation(program,'time');gl.uniform3fv(gl.getUniformLocation(program,'paper'),PAPER_RGB.map(v=>v/255));gl.uniform1f(gl.getUniformLocation(program,'subtleMode'),subtle?1:0);
  }catch{
   gl=null;const fallback=document.createElement('canvas');fallback.className=surface.className;fallback.setAttribute('aria-hidden','true');surface.replaceWith(fallback);surface=fallback;ctx=surface.getContext('2d');
  }
@@ -45,6 +48,14 @@ export function createFootageFog({stage,world,mist}){
  function suspend(){suspended=true;lastTime=null;}
  function fallbackDraw(){
   const w=surface.width,h=surface.height;ctx.clearRect(0,0,w,h);const rgb=PAPER_RGB.join(',');
+  if(subtle){
+   for(const x of [-.12,1.12]){
+    const drift=reduced.matches?0:Math.sin(elapsed*.7)*.025;
+    const g=ctx.createRadialGradient((x+drift)*w,.7*h,0,(x+drift)*w,.7*h,Math.max(w,h)*.65);
+    g.addColorStop(0,`rgba(${rgb},${amount*.20})`);g.addColorStop(.5,`rgba(${rgb},${amount*.07})`);g.addColorStop(1,`rgba(${rgb},0)`);ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+   }
+   return;
+  }
   ctx.fillStyle=`rgba(${rgb},${amount*.32})`;ctx.fillRect(0,0,w,h);
   for(const [x,y,r] of [[-.1,.7,.85],[.7,-.1,.95],[1.05,.85,.8]]){
    const dx=reduced.matches?0:Math.sin(elapsed*.12+x)*.035;
@@ -63,5 +74,5 @@ export function createFootageFog({stage,world,mist}){
   surface.style.opacity='1';draws++;
  }
  document.addEventListener('visibilitychange',()=>{if(document.hidden)suspend();});addEventListener('pagehide',stop);
- return{start,midpoint,update,tick,stop,suspend,proof:()=>({active,amount,phase,backdropOpacity:1,ready:true,started:active&&draws>0,failed:false,muted:true,paused:suspended,backend:gl?'webgl':'canvas',style:'soft-layered-mist',color:PAPER_RGB,elapsed,draws,reduced:reduced.matches})};
+ return{start,midpoint,update,tick,stop,suspend,proof:()=>({active,amount,phase,backdropOpacity:1,ready:true,started:active&&draws>0,failed:false,muted:true,paused:suspended,backend:gl?'webgl':'canvas',style:subtle?'edge-mist-dissolve':'soft-layered-mist',maximumOpacity:subtle?.215:1,color:PAPER_RGB,elapsed,draws,reduced:reduced.matches})};
 }

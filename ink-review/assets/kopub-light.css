@@ -4,3 +4,6 @@
 body,button,input,select,textarea{font-family:var(--story-serif);font-synthesis:none}
 body:has(.archive){font-family:var(--sans)}
 body *,body #cinemaDialogue h2,body #cinemaDialogue p,body #storyIndexBar :is(button,a),body #hint,body .tr-caption,body .tr-archive-cta{font-weight:300!important;font-synthesis:none!important}
+
+/* The story-control rule otherwise overrides the requested Light weight. */
+body.test-render-media[data-media-profile="selected-higgsfield"] #stage #hint,body.test-render-media[data-media-profile="selected-higgsfield"] #stage #hint *{font-family:var(--story-serif)!important;font-weight:300!important;font-synthesis:none!important}
