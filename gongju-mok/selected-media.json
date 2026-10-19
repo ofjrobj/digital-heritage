@@ -1,26 +1,35 @@
 {
-  "version": "two-more-videos-20261019-v9",
+  "version": "intro-merchant-review-20261019-v10",
   "scenes": [
     {
       "id": "intro",
       "label": "사자 일러스트 → 먹 번짐 → 산과 안개 → 마을 입구",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261017_094443_5e96f4e6-e166-4d95-b8b8-aa2f76569e77.mp4",
-      "duration": 30.08,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261018_232609_00b9cdc6-0bb5-4588-a56a-a96b4737b351.mp4",
+      "duration": 25.041666666666668,
       "mode": "scroll",
       "caption": "돌에 새긴 선, 풍경이 되다",
       "captionUntil": 4,
       "transition": "none",
       "provenance": {
         "provider": "Higgsfield",
-        "generationId": "5e96f4e6-e166-4d95-b8b8-aa2f76569e77",
-        "shareURL": "https://higgsfield.ai/s/WJ4NaYn9Cjs",
-        "selection": "Explicit user selection 2026-10-18",
-        "delivery": "Native video, no frame interpolation or overlaid replacement illustration"
+        "generationId": "00b9cdc6-0bb5-4588-a56a-a96b4737b351",
+        "selection": "Explicit user attachment selected 2026-10-19",
+        "delivery": "Original 601-frame silent video; first forward gesture starts full playback then holds village entrance",
+        "nativeDimensions": [
+          1920,
+          1080
+        ],
+        "nativeSha256": "164d3c23e0b02a5e8f8de1e0b6952f0f70ff6cfd2aa3e280209d0b6b2f1a1d44"
       },
       "footsteps": false,
-      "sourceDuration": 30.08,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
-      "enterOnScroll": true
+      "sourceDuration": 25.041666666666668,
+      "ambience": "",
+      "sourceFrames": 601,
+      "fps": 24,
+      "clipIn": 0,
+      "nativeAudio": false,
+      "playOnScroll": true,
+      "exitCrossfadeSeconds": 0.35
     },
     {
       "id": "entry-merchant",
@@ -61,36 +70,43 @@
     {
       "id": "merchant",
       "label": "장사꾼의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_105456_d43b97d0-2ffa-41e4-abbc-3cde720f0042.mp4",
-      "sourceDuration": 27.708333333333332,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_004850_6528607e-1c57-4842-ad4c-c2e90bd52f65.mp4",
+      "sourceDuration": 28.041666666666668,
       "fps": 24,
       "mode": "dialogue",
       "speaker": 0,
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "d43b97d0-2ffa-41e4-abbc-3cde720f0042",
+        "generationId": "6528607e-1c57-4842-ad4c-c2e90bd52f65",
+        "selection": "User supplied character 1 dialogue clip on 2026-10-19",
+        "delivery": "Original silent 673-frame video with existing external character 1 narration retained; public bytes verified",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "89653bef4e620e79a6c3f1bff4c12e7d82cc7f084c1f5a5575f46846fb1fea0a",
-        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
-        "reviewStatus": "generated_rejected_insufficient_redraw",
-        "releaseStatus": "user-requested-interim",
-        "finalVisualApproval": false
+        "nativeSha256": "a96cd0be476040ad358535b119a572b97afffc5bccaa742e7e96f60913e0b157"
       },
-      "neckSafeY": 0.75,
+      "neckSafeY": 0.42,
       "framing": {
         "cx": 0.486,
-        "headY": 0.43,
-        "neckY": 0.78,
-        "minX": 0.43,
-        "maxX": 0.545
+        "headY": 0.095,
+        "neckY": 0.42,
+        "minX": 0.29,
+        "maxX": 0.67
       },
-      "sourceFrames": 665,
-      "clipIn": 0
+      "sourceFrames": 673,
+      "clipIn": 0,
+      "nativeAudio": false,
+      "ambience": "",
+      "footsteps": false,
+      "deliveryFraming": {
+        "cx": 0.486,
+        "headY": 0.095,
+        "chestY": 0.62,
+        "minX": 0.29,
+        "maxX": 0.67
+      }
     },
     {
       "id": "merchant-farmer",
