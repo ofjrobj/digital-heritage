@@ -1,5 +1,5 @@
 {
-  "version": "intro-merchant-review-20261019-v10",
+  "version": "intro-centered-20261019-v11",
   "scenes": [
     {
       "id": "intro",
@@ -29,7 +29,12 @@
       "clipIn": 0,
       "nativeAudio": false,
       "playOnScroll": true,
-      "exitCrossfadeSeconds": 0.35
+      "exitCrossfadeSeconds": 0.35,
+      "openingFraming": {
+        "focalX": 0.474,
+        "holdUntil": 0.8,
+        "releaseAt": 3.2
+      }
     },
     {
       "id": "entry-merchant",
@@ -144,36 +149,43 @@
     {
       "id": "farmer",
       "label": "농민의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_112727_1f2c40eb-3cc1-451a-bc92-206db7645fee.mp4",
-      "sourceDuration": 26.375,
-      "fps": 24.0,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_010330_90e4bb7d-c6a9-4319-b297-f848693f9090.mp4",
+      "sourceDuration": 27.041666666666668,
+      "fps": 24,
       "mode": "dialogue",
       "speaker": 1,
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "1f2c40eb-3cc1-451a-bc92-206db7645fee",
+        "generationId": "90e4bb7d-c6a9-4319-b297-f848693f9090",
+        "selection": "User supplied character 2 dialogue clip on 2026-10-19",
+        "delivery": "Original silent 649-frame video with existing external farmer narration retained; public bytes verified",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "35a9d402df2de3e5d38e1e1b8bb6eb9137d53b35be07b2097dda4393641e87aa",
-        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
-        "reviewStatus": "generated_rejected_forehead_artifact_and_fidelity",
-        "releaseStatus": "user-requested-interim",
-        "finalVisualApproval": false
+        "nativeSha256": "b912a8c5ade4be52a43117f4983d94bfb3004de36f84db956edff575a7702748"
       },
-      "neckSafeY": 0.53,
+      "neckSafeY": 0.43,
       "framing": {
-        "cx": 0.498,
-        "headY": 0.1,
-        "neckY": 0.53,
-        "minX": 0.425,
-        "maxX": 0.565
+        "cx": 0.482,
+        "headY": 0.095,
+        "neckY": 0.43,
+        "minX": 0.28,
+        "maxX": 0.69
       },
-      "sourceFrames": 633,
-      "clipIn": 0
+      "sourceFrames": 649,
+      "clipIn": 0,
+      "nativeAudio": false,
+      "ambience": "",
+      "footsteps": false,
+      "deliveryFraming": {
+        "cx": 0.482,
+        "headY": 0.095,
+        "chestY": 0.65,
+        "minX": 0.28,
+        "maxX": 0.69
+      }
     },
     {
       "id": "farmer-cook",
