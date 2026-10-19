@@ -1,5 +1,5 @@
 {
-  "version": "scroll-soft-20261019-v15",
+  "version": "dialogue-replacement-20261019-v16",
   "scenes": [
     {
       "id": "intro",
@@ -291,7 +291,7 @@
     {
       "id": "cook",
       "label": "찬모의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_013045_e7072004-a5bd-4398-b22a-185f0ddc0c49.mp4",
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_070048_875d96d1-3d9f-470b-a68f-fa5806cf20e5.mp4",
       "sourceDuration": 23.041666666666668,
       "fps": 24,
       "mode": "dialogue",
@@ -299,21 +299,15 @@
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "e7072004-a5bd-4398-b22a-185f0ddc0c49",
-        "selection": "User-requested arrival-matched dialogue motion generated 2026-10-19",
-        "delivery": "Silent native 1920x1080 24fps video; existing external testimony retained",
+        "generationId": "875d96d1-3d9f-470b-a68f-fa5806cf20e5",
+        "selection": "Latest user-supplied dialogue replacement on 2026-10-19",
+        "delivery": "Unmodified silent native 1920x1080 24fps source; existing separate testimony and 3.5-second post-speech pause retained",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "31e0d6429879f9c00e4319f0c5b9a7c7f82a92223959d71878796f300b0f3aae",
-        "referenceMediaId": "fe492e44-94b5-467c-b2fe-9100903e7c3c",
-        "referenceSceneId": "farmer-cook",
-        "referenceFrame": 408,
-        "referenceFrameIndexing": "zero-based",
-        "generationDirection": "Closed relaxed mouth, no lip sync, subtle natural gestures, fixed camera and unchanged appearance/background",
-        "technicalVerification": "Decoded frame count, dimensions, frame rate and absent audio streams checked"
+        "nativeSha256": "16100697897cdc27a22187cbe1388edf7b11aa0e7d371a3291661ad4937c1ff9",
+        "technicalVerification": "All video frames decoded; public CDN bytes match the supplied local attachment"
       },
       "neckSafeY": 0.48,
       "sourceFrames": 553,
@@ -367,7 +361,7 @@
     {
       "id": "trio",
       "label": "주민 삼총사의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_013525_a75b646e-146c-425d-b2b9-ab989910479b.mp4",
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_070142_7a01b8ec-134e-40b8-a144-84f07efa0742.mp4",
       "sourceDuration": 28.041666666666668,
       "fps": 24,
       "mode": "dialogue",
@@ -375,21 +369,15 @@
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "a75b646e-146c-425d-b2b9-ab989910479b",
-        "selection": "User-requested arrival-matched dialogue motion generated 2026-10-19",
-        "delivery": "Silent native 1920x1080 24fps video; existing external testimony retained",
+        "generationId": "7a01b8ec-134e-40b8-a144-84f07efa0742",
+        "selection": "Latest user-supplied dialogue replacement on 2026-10-19",
+        "delivery": "Unmodified silent native 1920x1080 24fps source; existing separate testimony and 3.5-second post-speech pause retained",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "0f2c8507d555fc7e08a58cac96d3e1584d5f32bdefea1c23baeb4a8af24fc0a0",
-        "referenceMediaId": "b12cbdd0-f551-4ddd-9eb2-a07be5b7ea34",
-        "referenceSceneId": "cook-trio",
-        "referenceFrame": 336,
-        "referenceFrameIndexing": "zero-based",
-        "generationDirection": "Closed relaxed mouth, no lip sync, restrained natural gestures, fixed camera and unchanged appearance/background",
-        "technicalVerification": "Decoded frame count, dimensions, frame rate and absent audio streams checked"
+        "nativeSha256": "4b5333bceb17c9c04652f496a2e3e333a1dff8dda916e41ff477b5e0dc6d01dd",
+        "technicalVerification": "All video frames decoded; public CDN bytes match the supplied local attachment"
       },
       "neckSafeY": 0.52,
       "sourceFrames": 673,
@@ -443,7 +431,7 @@
     {
       "id": "woodcutter",
       "label": "나무꾼의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_013531_1b41e842-21e5-4d09-95e5-c5fd653cf4ff.mp4",
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_070047_735e00e3-97c7-406b-99b4-3338f2450c40.mp4",
       "sourceDuration": 26.041666666666668,
       "fps": 24,
       "mode": "dialogue",
@@ -451,21 +439,15 @@
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "1b41e842-21e5-4d09-95e5-c5fd653cf4ff",
-        "selection": "User-requested arrival-matched dialogue motion generated 2026-10-19",
-        "delivery": "Silent native 1920x1080 24fps video; existing external testimony retained",
+        "generationId": "735e00e3-97c7-406b-99b4-3338f2450c40",
+        "selection": "Latest user-supplied dialogue replacement on 2026-10-19",
+        "delivery": "Unmodified silent native 1920x1080 24fps source; existing separate testimony and 3.5-second post-speech pause retained",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "47f2bbdbe441933aea06bea1327a7800bbab8753dd5bcc724eff14ab14ae0b97",
-        "referenceMediaId": "b1a1a830-2fa8-45d2-8262-036f67c61ac1",
-        "referenceSceneId": "trio-woodcutter",
-        "referenceFrame": 712,
-        "referenceFrameIndexing": "zero-based",
-        "generationDirection": "Closed relaxed mouth, no lip sync, restrained natural gestures, fixed camera and unchanged appearance/background",
-        "technicalVerification": "Decoded frame count, dimensions, frame rate and absent audio streams checked"
+        "nativeSha256": "03f143a1eb98b6aa91d1bcc2618da8a3c4b6df9b28ec3ce874597462b33b6c79",
+        "technicalVerification": "All video frames decoded; public CDN bytes match the supplied local attachment"
       },
       "neckSafeY": 0.45,
       "sourceFrames": 625,
