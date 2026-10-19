@@ -1,33 +1,34 @@
 {
-  "version": "continuous-scroll-20261019-v22",
+  "version": "mountain-rush-20261019-v23",
   "scenes": [
     {
       "id": "intro",
       "label": "사자 일러스트 → 먹 번짐 → 산과 안개 → 마을 입구",
-      "src": "./media/v17/intro.mp4",
-      "duration": 25.133333333333333,
+      "src": "./media/v23/intro-mountain-rush.mp4",
+      "duration": 19.433333333333334,
       "mode": "scroll",
       "caption": "돌에 새긴 선, 풍경이 되다",
-      "captionUntil": 4,
+      "captionUntil": 2.6,
       "transition": "none",
       "provenance": {
-        "provider": "User supplied edited film",
-        "selection": "2026-10-19 1080p 30fps composite attachment",
-        "sourceFile": "공주목_인물4까지_대사제외_1080p_30fps.mp4",
-        "sourceSha256": "f1d108e4c2fe3b780feb4588004ec5ad5fc1122c4a112ba6b7f584850959c5fd",
+        "provider": "User approved edited film",
+        "selection": "2026-10-19 mountain speed ramp v4, using the exact Desktop opening correction",
+        "sourceFile": "gongju-character4-mountain-rush-1080p-30fps-silent.mp4",
+        "originalOpeningFile": "앞부분 수정.mp4",
         "sourceStartFrame": 0,
-        "sourceEndFrameExclusive": 754,
+        "sourceEndFrameExclusive": 583,
         "nativeDimensions": [
           1920,
           1080
         ],
-        "delivery": "Frame-exact scene extraction from supplied composite; H.264 CRF 17, half-second keyframes for smooth seeking; no regenerated frames",
-        "deliverySha256": "d7cc1dd8ec18a80ab5c233cd72e131f401173b3bf1d6a0946083ae22a66b61b2"
+        "delivery": "Bitstream copy, no recompression; visible frames 0–582 match approved video exactly. Guard packets retained after the authored end for B-frame decoding; playback stops at 19.433333s. Speed ramp baked into video; runtime playback remains 1x. No audio.",
+        "deliverySha256": "001746587660b767a72ff46bd455ddc0e51ac11e633d21dfd489471730abe25c",
+        "paperColor": "#E8E8E6"
       },
       "footsteps": false,
-      "sourceDuration": 25.133333333333333,
+      "sourceDuration": 20,
       "ambience": "",
-      "sourceFrames": 754,
+      "sourceFrames": 600,
       "fps": 30,
       "clipIn": 0,
       "nativeAudio": false,
@@ -36,48 +37,14 @@
       "openingFraming": {
         "focalX": 0.474,
         "holdUntil": 0.8,
-        "releaseAt": 3.2
+        "releaseAt": 3.0
       },
-      "playbackCurve": [
-        {
-          "time": 0,
-          "rate": 1
-        },
-        {
-          "time": 3,
-          "rate": 1.1
-        },
-        {
-          "time": 9,
-          "rate": 2.4
-        },
-        {
-          "time": 11,
-          "rate": 2.4
-        },
-        {
-          "time": 14,
-          "rate": 1.1
-        },
-        {
-          "time": 20,
-          "rate": 1.1
-        },
-        {
-          "time": 23,
-          "rate": 0.85
-        },
-        {
-          "time": 25.133333,
-          "rate": 0.65
-        }
-      ],
       "narrationCaption": {
         "text": "어느 옛날, 공주목과 그 주변 고을에는\n신비로운 두 사자의 이야기가 떠돌고 있습니다.",
-        "start": 4.6,
-        "fadeIn": 1.0,
-        "holdUntil": 18.8,
-        "end": 20.3
+        "start": 3.4,
+        "fadeIn": 0.7,
+        "holdUntil": 16,
+        "end": 17.2
       }
     },
     {
