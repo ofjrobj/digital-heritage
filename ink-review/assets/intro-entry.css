@@ -1,0 +1,47 @@
+/* Keep the loader identical before and after the video renderer initializes. */
+body[data-media-profile="selected-higgsfield"] #stage #loading{
+  position:absolute!important;inset:auto!important;top:50%!important;left:50%!important;
+  transform:translate(-50%,-50%)!important;width:max-content!important;
+  max-width:calc(100% - 40px)!important;padding:7px 12px!important;
+  font-size:14px!important;font-weight:400!important;line-height:1.6!important;
+  text-align:center;letter-spacing:0;background:#e8e8e6!important;
+}
+body[data-intro-entry="loading"] #stage>:not(#loading),
+body[data-intro-entry="ready"] #stage>:not(#introWelcome){visibility:hidden!important}
+#introWelcome{
+  position:absolute;inset:0;z-index:200;display:grid;place-items:center;
+  background:#e8e8e6;color:#373734;opacity:1;transition:opacity .7s ease;
+}
+#introWelcome[hidden]{display:none!important}
+#introEnter{
+  display:flex;align-items:center;gap:1.4em;padding:14px 22px;min-height:48px;
+  border:1px solid #77776b;background:transparent;border-radius:0;color:inherit;
+  font:400 clamp(16px,1.6vw,22px)/1.5 var(--story-serif,serif);letter-spacing:.08em;
+  cursor:pointer;animation:intro-button-appear .55s ease both;
+}
+#introEnter:hover{background:rgba(255,255,255,.28)}
+#introEnter:focus-visible{outline:1px solid #373734;outline-offset:6px}
+#introEnter span{font:300 1.2em/1 serif}
+#projectAbout{
+  position:absolute;right:max(22px,env(safe-area-inset-right));top:max(22px,env(safe-area-inset-top));
+  z-index:12;width:38px;height:38px;display:grid;place-items:center;color:#4d4d47;
+  opacity:0;visibility:hidden;pointer-events:none;text-decoration:none;
+  transition:opacity .65s ease,visibility 0s linear .65s;
+}
+#projectAbout svg{width:23px;height:23px;display:block}
+#projectAbout:focus-visible{outline:1px solid currentColor;outline-offset:3px}
+body[data-intro-entry="cover"][data-journey-started="false"]:not([data-leaving-intro="true"]) #projectAbout{
+  opacity:.8;visibility:visible;pointer-events:auto;transition:opacity .65s ease,visibility 0s;
+}
+body[data-leaving-intro="true"] #projectAbout{transition:opacity .35s ease,visibility 0s linear .35s}
+body[data-intro-entry="cover"] #introWelcome{opacity:0;pointer-events:none}
+body[data-media-profile="selected-higgsfield"] #soundToggle{
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity 1.4s ease,visibility 0s linear 1.4s!important;
+}
+body[data-media-profile="selected-higgsfield"][data-journey-started="true"] #soundToggle{
+  opacity:1;visibility:visible;pointer-events:auto;
+  transition:opacity 1.4s ease,visibility 0s linear 0s!important;
+}
+@keyframes intro-button-appear{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){#introEnter{animation:none}#introWelcome{transition:none}body[data-media-profile="selected-higgsfield"] #soundToggle{transition:none!important}}
