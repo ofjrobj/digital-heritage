@@ -35,8 +35,9 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   return {width:right-left,height:top-bottom,left,right,bottom,top};
  }
  function distanceFor(spec,r){
-  const width=r.width*(spec.part?(spec.part.width??(spec.part.all ? .78 : .83)):.76);
-  const height=spec.part?r.height*(spec.part.height??.86):Math.min(r.height*.82,innerHeight*.42);
+  const expanded=document.documentElement.dataset.archiveOverview==='expanded';
+  const width=r.width*(spec.part?(spec.part.width??(spec.part.all ? .78 : .83)):expanded?.88:.76);
+  const height=spec.part?r.height*(spec.part.height??.86):Math.min(r.height*(expanded?.90:.82),innerHeight*(expanded?.57:.42));
   let near=.05;for(const p of spec.points)near=Math.max(near,p.z+.05);let far=50;
   for(let i=0;i<22;i++){
    const d=(near+far)/2,b=projected(spec,d,r.width/r.height);

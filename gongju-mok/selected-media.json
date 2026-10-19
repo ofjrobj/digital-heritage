@@ -1,5 +1,5 @@
 {
-  "version": "automatic-approach-20261020-v27",
+  "version": "continuous-turns-20261020-v28",
   "scenes": [
     {
       "id": "intro",
@@ -190,7 +190,7 @@
       "scrollRateResponse": 0.24,
       "dialogueApproach": {
         "start": 13.1,
-        "fadeFrom": 13.85,
+        "fadeFrom": 14.2,
         "end": 15.5,
         "cruiseRate": 0.7,
         "arrivalRate": 0.44
@@ -351,7 +351,7 @@
       "scrollRateResponse": 0.24,
       "dialogueApproach": {
         "start": 9.2,
-        "fadeFrom": 9.95,
+        "fadeFrom": 10.299999999999999,
         "end": 11.6,
         "cruiseRate": 0.7,
         "arrivalRate": 0.44
@@ -413,65 +413,32 @@
     {
       "id": "farmer-cook",
       "label": "찬모에게 이동",
-      "src": "./media/v19/farmer-cook.mp4",
-      "duration": 13.966667,
-      "fps": 30,
+      "src": "./media/v28/farmer-cook-original-24fps.mp4",
+      "duration": 15,
+      "fps": 24,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
-        "provider": "User supplied edited film",
-        "selection": "2026-10-19 1080p 30fps composite attachment",
-        "sourceFile": "공주목_인물4까지_대사제외_1080p_30fps.mp4",
-        "sourceSha256": "f1d108e4c2fe3b780feb4588004ec5ad5fc1122c4a112ba6b7f584850959c5fd",
-        "sourceStartFrame": 1591,
-        "sourceEndFrameExclusive": 2101,
+        "provider": "User supplied original generation",
+        "sourceFile": "hf_20261018_225157_cb87ff18-412d-4245-bd30-4382e384a45d.mp4",
+        "selection": "v28 continuous original motion, without composite jump cuts",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "delivery": "Direct frame cuts from supplied composite; H.264 CRF 17, half-second keyframes; no crossfaded or regenerated frames",
-        "deliverySha256": "68d71a3bfa1d99abe3d1fc75b082f05ae822b236db58545af32e592997479316",
-        "cleanup": {
-          "removedFrames": [
-            [
-              96,
-              123
-            ],
-            [
-              447,
-              468
-            ]
-          ],
-          "retainedFrames": [
-            [
-              0,
-              96
-            ],
-            [
-              123,
-              447
-            ],
-            [
-              468,
-              510
-            ]
-          ],
-          "fps": 30,
-          "reason": "Remove visibly ghosted transition portions; direct cuts without blended frames",
-          "deliverySha256": "68d71a3bfa1d99abe3d1fc75b082f05ae822b236db58545af32e592997479316"
-        },
-        "previousDeliverySha256": "0a2d4f873fcd776b5b0fee33ffeda0724880c76db41e051d0d5c0ac3f5ccb3c0",
         "runtimeTrim": {
           "start": 0,
-          "endExclusive": 14,
-          "reason": "Exclude the final 42 frames of the bright inserted cook close-up."
-        }
+          "endExclusive": 15
+        },
+        "delivery": "Continuous native 24 fps frames from user original, H.264 CRF17 for browser compatibility, half-second keyframes; no interior cuts or optical interpolation; no audio stream.",
+        "originalUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261018_225157_cb87ff18-412d-4245-bd30-4382e384a45d.mp4",
+        "deliverySha256": "80c217bc6b667a35ccde2721162670e08835dd22279780779c2cc6a1571f2667"
       },
-      "sourceDuration": 15.4,
-      "sourceFrames": 462,
+      "sourceDuration": 15,
+      "sourceFrames": 409,
       "clipIn": 0,
       "ambience": "",
-      "walkingReferenceDuration": 13.966667,
+      "walkingReferenceDuration": 15,
       "scrollSteps": 8,
       "maxPlaybackRate": 1,
       "transition": "none",
@@ -549,50 +516,47 @@
       "preserveSourceColor": true,
       "connectionLook": [
         {
-          "time": 10.5,
+          "time": 11.4,
           "scale": 1,
           "x": 0,
           "y": 0,
           "brightness": 1
         },
         {
-          "time": 13.966667,
+          "time": 15,
           "scale": 1.68,
           "x": -0.34,
           "y": -0.44,
           "brightness": 1
         }
       ],
-      "walkingRateCurve": [
-        {
-          "time": 0,
-          "rate": 1
-        },
-        {
-          "time": 0.4,
-          "rate": 0.9
-        },
-        {
-          "time": 0.9,
-          "rate": 0.6
-        },
-        {
-          "time": 3.5,
-          "rate": 0.6
-        },
-        {
-          "time": 4.3,
-          "rate": 1
-        }
-      ],
       "dialogueApproach": {
-        "start": 11.166667,
-        "fadeFrom": 11.916667,
-        "end": 13.566667,
+        "start": 12.2,
+        "fadeFrom": 13.299999999999999,
+        "end": 14.6,
         "cruiseRate": 0.7,
         "arrivalRate": 0.44
       },
-      "uniformInputDistance": true
+      "uniformInputDistance": true,
+      "autoTurnUntil": 4.5,
+      "autoTurnCurve": [
+        {
+          "time": 0,
+          "rate": 0.8
+        },
+        {
+          "time": 0.8,
+          "rate": 0.7
+        },
+        {
+          "time": 3.5,
+          "rate": 0.7
+        },
+        {
+          "time": 4.5,
+          "rate": 0.6
+        }
+      ]
     },
     {
       "id": "cook",
@@ -649,55 +613,30 @@
     {
       "id": "cook-trio",
       "label": "주민 삼총사에게 이동",
-      "src": "./media/v19/cook-trio.mp4",
+      "src": "./media/v28/cook-trio-original-24fps.mp4",
       "duration": 11.4,
-      "fps": 30,
+      "fps": 24,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
-        "provider": "User supplied edited film",
-        "selection": "2026-10-19 1080p 30fps composite attachment",
-        "sourceFile": "공주목_인물4까지_대사제외_1080p_30fps.mp4",
-        "sourceSha256": "f1d108e4c2fe3b780feb4588004ec5ad5fc1122c4a112ba6b7f584850959c5fd",
-        "sourceStartFrame": 2101,
-        "sourceEndFrameExclusive": 2521,
+        "provider": "User supplied original generation",
+        "sourceFile": "hf_20261019_001010_c9e6a89c-c532-47bc-ae08-a4a043eb5583.mp4",
+        "selection": "v28 continuous original motion, without composite jump cuts",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "delivery": "Direct frame cuts from supplied composite; H.264 CRF 17, half-second keyframes; no crossfaded or regenerated frames",
-        "deliverySha256": "86146cc8b14ac53fed1b2d5a18c83d3d4f53ddd04aa32e82ba80f3259d905761",
-        "cleanup": {
-          "removedFrames": [
-            [
-              42,
-              78
-            ]
-          ],
-          "retainedFrames": [
-            [
-              0,
-              42
-            ],
-            [
-              78,
-              420
-            ]
-          ],
-          "fps": 30,
-          "reason": "Remove visibly ghosted transition portions; direct cuts without blended frames",
-          "deliverySha256": "86146cc8b14ac53fed1b2d5a18c83d3d4f53ddd04aa32e82ba80f3259d905761"
-        },
-        "previousDeliverySha256": "67577f339c5ef9c1199e8b40656e8e0148cea792d9af1884dfba2bcb9ef871e6",
         "runtimeTrim": {
-          "start": 1.4,
-          "endExclusive": 12.8,
-          "reason": "Exclude the first 42 frames of the same bright inserted cook close-up."
-        }
+          "start": 2.6,
+          "endExclusive": 14.0
+        },
+        "delivery": "Continuous native 24 fps frames from user original, H.264 CRF17 for browser compatibility, half-second keyframes; no interior cuts or optical interpolation; no audio stream.",
+        "originalUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_001010_c9e6a89c-c532-47bc-ae08-a4a043eb5583.mp4",
+        "deliverySha256": "5919a9e0bd0ea107e14c148a6a84570225db80b2233d95eb544d55fa7cc2fca8"
       },
-      "sourceDuration": 12.8,
-      "sourceFrames": 384,
-      "clipIn": 1.4,
+      "sourceDuration": 11.4,
+      "sourceFrames": 337,
+      "clipIn": 0,
       "ambience": "",
       "walkingReferenceDuration": 11.4,
       "secondsPerScroll": 1.8,
@@ -791,13 +730,41 @@
         }
       ],
       "dialogueApproach": {
-        "start": 8.6,
-        "fadeFrom": 9.35,
+        "start": 8.600000000000001,
+        "fadeFrom": 9.7,
         "end": 11.0,
         "cruiseRate": 0.7,
         "arrivalRate": 0.44
       },
-      "uniformInputDistance": true
+      "uniformInputDistance": true,
+      "autoTurnUntil": 4.9,
+      "autoTurnCurve": [
+        {
+          "time": 0,
+          "rate": 0.8
+        },
+        {
+          "time": 0.8,
+          "rate": 0.7
+        },
+        {
+          "time": 3.9000000000000004,
+          "rate": 0.7
+        },
+        {
+          "time": 4.9,
+          "rate": 0.6
+        }
+      ],
+      "departureGrade": {
+        "until": 3.8,
+        "gain": [
+          0.96,
+          0.97,
+          0.98
+        ],
+        "saturation": 0.94
+      }
     },
     {
       "id": "trio",
@@ -951,7 +918,7 @@
       "scrollRateResponse": 0.3,
       "dialogueApproach": {
         "start": 9.241667,
-        "fadeFrom": 9.991667,
+        "fadeFrom": 10.341667,
         "end": 11.641667,
         "cruiseRate": 0.7,
         "arrivalRate": 0.44
@@ -1185,7 +1152,12 @@
     "seasonAmbience": false,
     "enabledTracks": [
       "dialogue",
-      "footsteps"
-    ]
+      "footsteps",
+      "continuous-nature",
+      "quiet-village",
+      "seasons"
+    ],
+    "introPeople": false,
+    "shortDetailLoops": false
   }
 }

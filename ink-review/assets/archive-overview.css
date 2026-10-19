@@ -1,0 +1,17 @@
+/* Overview keeps the focus on the pair; feature selection restores detail UI. */
+html body .archive:not(:has(.hotspot.is-active)) .info-panel {
+ opacity:0 !important; visibility:hidden !important; pointer-events:none !important;
+}
+html body .archive .info-panel { transition:opacity .4s ease, visibility .4s; }
+html[data-archive-overview="hint"] body .archive:not(:has(.hotspot.is-active)) .detail-card {
+ animation: archive-guide-pulse 2s ease-in-out 2;
+}
+html body .archive .detail-card { transition:opacity .65s ease,max-height .8s ease,padding .8s ease; max-height:220px; }
+html[data-archive-overview="expanded"] body .archive:not(:has(.hotspot.is-active)) .detail-card {
+ opacity:0;max-height:0;padding-top:0;padding-bottom:0;border-width:0;overflow:hidden;pointer-events:none;
+}
+html[data-archive-overview="expanded"] body .archive:not(:has(.hotspot.is-active)) .object-stage { row-gap:0; }
+@keyframes archive-guide-pulse {0%,100%{opacity:1}50%{opacity:.38}}
+@media(prefers-reduced-motion:reduce){
+ html body .archive .detail-card{animation:none!important;transition:none!important;}
+}
