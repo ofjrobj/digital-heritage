@@ -47,7 +47,7 @@ let drag=null,lastDragMoveAt=-Infinity,lastWheelMoveAt=-Infinity;
 // A wheel gesture can start muted video even when the browser denies sound.
 // Keep that fallback across frames instead of immediately unmuting it again.
 let nativeAudioBlocked=false;
-let pendingIntroEntry=false,sceneJoin=null,openingLayout=null,lastSceneTransition=null;
+let pendingIntroEntry=false,sceneJoin=null,openingLayout=null,lastSceneTransition=null,endingFadeAmount=0,seamMatch=null;
 const footsteps=createScrollFootsteps(foot,()=>((!!drag&&performance.now()-lastDragMoveAt<200)||performance.now()-lastWheelMoveAt<200)&&Math.abs(target-local)>.008&&sound&&!paused&&!compare&&!previewAuto&&!transition&&!finished&&!document.hidden&&!!current&&!current.error&&scrollDriven()&&scenes[index]?.mode==='scroll'&&!replacementOpening&&scenes[index]?.footsteps===true&&(current.still||current.loaded||current.video.readyState>=2));
 const seasonAmbience=createSeasonAmbience(stage),sceneLife=createSceneLife(stage);
 const dialogueFit=createDialogueFaceSafe({stage,panel:$('cinemaDialogue'),tools:$('testTools'),sound:$('soundToggle')});
@@ -86,15 +86,56 @@ function openingFrame(scene,W,H,sw,sh,time){
  const scale=Math.max(W/(sw*2*Math.min(focalX,1-focalX)),H/sh),w=sw*scale,h=sh*scale;
  return {x:W*.5-focalX*w,y:(H-h)/2,w,h,focalX,amount,centerX:W*.5};
 }
+// Fade the final source frames into the same paper color as the page.
+// Complete on the last decodable frame so finishing never flashes the image back.
+function sourceEndFade(scene,time){
+ const seconds=Number(scene?.endFadeSeconds)||0;
+ if(seconds<=0)return 0;
+ const end=Math.max(0,(Number(scene.sourceDuration)||Number(scene.duration)||0)-(Number(scene.clipIn)||0));
+ const lastFrame=Math.max(0,end-1/(Number(scene.fps)||24));
+ const start=Math.max(0,end-seconds);
+ return ease(clamp((time-start)/Math.max(.001,lastFrame-start)));
+}
+// Blend toward the actual following video's first frame before switching sources.
+// The landing image and subsequent playback therefore share the exact same frame.
+function exitMatchState(record,time){
+ const spec=record?.scene.exitMatch;
+ if(!spec)return null;
+ const fromIndex=scenes.indexOf(record.scene),next=scenes[fromIndex+1];
+ if(!next||next.id!==spec.target)return null;
+ const to=records.find(r=>r?.scene===next&&r.loaded&&!r.error&&!r.video.seeking&&r.video.readyState>=2);
+ const end=duration(fromIndex)-1/(Number(record.scene.fps)||24);
+ const progress=clamp((time-(end-spec.seconds))/spec.seconds);
+ if(!to||progress<=0)return null;
+ if(!to.joinImage){
+  const v=to.video,graded=paperColor.render(v),image=document.createElement('canvas');
+  image.width=v.videoWidth;image.height=v.videoHeight;image.getContext('2d').drawImage(graded,0,0,image.width,image.height);to.joinImage=image;
+ }
+ // Track gate landmarks while the source camera is still moving, then dissolve
+ // only after both posts and the crossbeam have reached the following framing.
+ let framing=spec;
+ if(spec.keyframes?.length){
+  const keys=spec.keyframes;let a=keys[0],b=keys[keys.length-1];
+  for(let i=1;i<keys.length;i++){if(time<=keys[i].time){a=keys[i-1];b=keys[i];break;}a=keys[i];}
+  const t=clamp((time-a.time)/Math.max(.001,b.time-a.time));framing={};
+  for(const key of ['scaleX','scaleY','offsetX','offsetY'])framing[key]=a[key]+(b[key]-a[key])*t;
+ }
+ const blendStart=spec.blendStart??.2;
+ return {spec:framing,to,image:to.joinImage,progress,alignment:ease(clamp(progress/(spec.alignmentFraction??.6))),blend:ease(clamp((progress-blendStart)/(1-blendStart)))};
+}
 function draw(source){
  if(!source)return false;const sw=source.videoWidth||source.naturalWidth,sh=source.videoHeight||source.naturalHeight;if(!sw||!sh)return false;
  ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);const scale=Math.max(width/sw,height/sh);
  const sceneRecord=records.find(r=>r&&(r.video===source||r.image===source));
  const isIntro=sceneRecord?.scene.id==='intro'&&!replacementOpening&&introAssetsReady();
+ const match=exitMatchState(sceneRecord,Math.max(0,(source.currentTime||0)-(sceneRecord?.clipIn||0)));
  const graded=isIntro?source:paperColor.render(source);
  openingLayout=null;
  const seasonFit=null; // All scene images fill the viewport, including narrow windows.
- function paint(x,y,w,h){ctx.drawImage(graded,x,y,w,h);}
+ function paint(x,y,w,h){
+  if(match){ctx.drawImage(graded,x,y,w,h);const p=match.alignment,m=match.spec;x+=(Number(m.offsetX)||0)*w*p;y+=(Number(m.offsetY)||0)*h*p;w*=1+((Number(m.scaleX)||1)-1)*p;h*=1+((Number(m.scaleY)||1)-1)*p;}
+  ctx.drawImage(graded,x,y,w,h);
+ }
  if(isIntro){
   if(!normalizedVillage){const gradedVillage=paperColor.render(introVillage);normalizedVillage=document.createElement('canvas');normalizedVillage.width=introVillage.naturalWidth;normalizedVillage.height=introVillage.naturalHeight;normalizedVillage.getContext('2d').drawImage(gradedVillage,0,0,normalizedVillage.width,normalizedVillage.height);}
   const time=sceneRecord.video.currentTime;
@@ -116,6 +157,10 @@ function draw(source){
  }else if(sceneRecord?.scene.mode==='dialogue'){
   const r=dialogueFrame(sceneRecord.scene,width,height,sw,sh,source.currentTime||0);paint(r.x,r.y,r.w,r.h);
  }else paint((width-sw*scale)/2,(height-sh*scale)/2,sw*scale,sh*scale);dialogueFit.update(sceneRecord?.scene,source);lastSource=source;hasFrame=true;
+ seamMatch=match?{from:sceneRecord.scene.id,to:match.to.scene.id,progress:match.progress,blend:match.blend}:null;
+ if(match){const im=match.image,k=Math.max(width/im.width,height/im.height);ctx.save();ctx.globalAlpha=match.blend;ctx.drawImage(im,(width-im.width*k)/2,(height-im.height*k)/2,im.width*k,im.height*k);ctx.restore();}
+ endingFadeAmount=sourceEndFade(sceneRecord?.scene,Math.max(0,(source.currentTime||0)-(sceneRecord?.clipIn||0)));
+ if(endingFadeAmount>0){ctx.save();ctx.globalAlpha=endingFadeAmount;ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);ctx.restore();}
  renderedKind=source.tagName==='VIDEO'?'video':'image';renderedSource=source.currentSrc||source.src||'';return true;
 }
 function resize(){const d=Math.min(devicePixelRatio||1,2);width=Math.max(1,stage.clientWidth);height=Math.max(1,stage.clientHeight);canvas.width=Math.round(width*d);canvas.height=Math.round(height*d);ctx.setTransform(d,0,0,d,0,0);hasFrame=false;ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);draw(lastSource);}
@@ -261,6 +306,7 @@ function reviewJump(i){paused=false;previewAuto=false;compare=false;requestScene
 if($('reviewPrev'))$('reviewPrev').onclick=()=>reviewJump(index-1);
 if($('reviewNext'))$('reviewNext').onclick=()=>reviewJump(index+1);
 if($('reviewRestart'))$('reviewRestart').onclick=()=>reviewJump(Math.max(0,index));
+if($('reviewTime'))$('reviewTime').oninput=e=>{if(scenes[index]?.mode==='dialogue')return;paused=true;previewAuto=false;const at=Math.min(duration(index)-1/(Number(scenes[index]?.fps)||24),Number(e.target.value)/1000*duration(index));requestScene(index,Math.max(0,at),true);};
 if($('reviewPause'))$('reviewPause').onclick=()=>{paused=!paused;footsteps.stop();};
 if($('reviewTransition'))$('reviewTransition').onclick=()=>{if(index<0||index>=scenes.length-1)return;paused=false;previewAuto=false;requestScene(index+1);};
 if($('chapter'))$('chapter').onchange=e=>reviewJump(Number(e.target.value));
@@ -396,6 +442,8 @@ function frame(now){
  }
  if($('reviewPause'))$('reviewPause').textContent=paused?'계속 재생':'일시 정지';
  if($('reviewTransition'))$('reviewTransition').disabled=!!transition||scenes[index]?.mode!=='dialogue';
+ if($('reviewTime'))$('reviewTime').disabled=!!transition||scenes[index]?.mode==='dialogue';
+ if($('reviewTime')&&document.activeElement!==$('reviewTime'))$('reviewTime').value=String(Math.round(local/duration(index)*1000));
  if($('reviewReadout'))$('reviewReadout').textContent=`${Math.max(0,index)+1} / ${scenes.length} · ${local.toFixed(1)} / ${duration(index).toFixed(1)}초`;
  updateStoryNavigation();
  footageFog.tick(now,paused||document.hidden);
@@ -416,7 +464,7 @@ function frame(now){
  seasonAmbience.tick({active:seasonPlaying,time:local,sound,paused:paused||!seasonPlaying,hidden:document.hidden,transition:!!transition,dt});
  footsteps.tick();if($('run'))$('run').textContent=previewAuto?'이동 멈춤':'이동 재생';if($('chapter')&&index>=0)$('chapter').value=String(index);if($('progress'))$('progress').value=String((offset(index)+local)/Math.max(1,total));
  const deliveryVideo=current?.video,deliveryQuality=deliveryVideo?.getVideoPlaybackQuality?.();
- document.body.dataset.proof=JSON.stringify({engine:'test-render-media-v3',fit:'cover',dialogueFit:dialogueFit.proof(),fog:footageFog.proof(),navigation:{opacity:navOpacity,underFog:document.body.dataset.navFog==='true'},introRendering:scenes[index]?.id==='intro'?introEffect.proof():null,paper:PAPER,paperColor:paperColor.proof(),openingLayout,storyStarted,startup:document.body.dataset.startup,loadingHiddenAt,firstSceneShownAt,firstSceneGapMs:firstSceneShownAt&&loadingHiddenAt?firstSceneShownAt-loadingHiddenAt:null,endingElapsed,sceneJoin:sceneJoin?{elapsed:sceneJoin.elapsed,duration:sceneJoin.duration}:null,paused,scene:scenes[index]?.id,index,local,duration:duration(index),mode:scenes[index]?.mode,effectiveMode:current?.autoStarted?'auto':scenes[index]?.mode,autoFrom:scenes[index]?.autoFrom??null,autoStarted:!!current?.autoStarted,transition:transition?.phase||null,transitionDetails:transition?{from:transition.from,to:transition.record.scene.id,elapsed:transition.elapsed,cover:transition.fade,reveal:transition.reveal,hold:transition.hold}:null,lastSceneTransition,waiting:!!transition||!!current&&!current.loaded,renderedKind,renderedSource,imagePreview:renderedKind==='image',source:current?.scene.src||null,sourceTime:current?.video.currentTime||0,scrollTarget:target,sourcePaused:current?.video.paused??true,startDelay:sceneArrivalDelay(scenes[index]),startElapsed:current?.startElapsed||0,interaction:document.body.dataset.interaction,scrollEnabled:canWalk(),walkingReferenceDuration:scenes[index]?.walkingReferenceDuration??null,scrollSteps:scenes[index]?.scrollSteps??6,secondsPerScroll:scenes[index]?.secondsPerScroll??null,scrollPlayback:scenes[index]?.scrollPlayback??'play',scrollSmoothingMs:scenes[index]?.scrollSmoothingMs??0,scrollTween:current?.scrubTween??null,maxPlaybackRate:scenes[index]?.maxPlaybackRate??null,nativeAudio:{blocked:nativeAudioBlocked,selected:scenes[index]?.nativeAudio===true,muted:deliveryVideo?.muted??true,volume:deliveryVideo?.volume??0},sourceFps:current?.scene.fps??null,delivery:{width:deliveryVideo?.videoWidth||0,height:deliveryVideo?.videoHeight||0,playbackRate:deliveryVideo?.playbackRate??1,totalVideoFrames:deliveryQuality?.totalVideoFrames??null,droppedVideoFrames:deliveryQuality?.droppedVideoFrames??null},provenance:current?.scene.provenance??null,geometryVerified:false,voice:voices.proof(),seasonAmbience:seasonAmbience.proof(),musicVolume:music.volume,music:musicProof,sceneLife:sceneLife.proof(),footsteps:{active:foot.dataset.active,starts:Number(foot.dataset.starts||0),dragging:!!drag,input:'wheel-and-drag',wheelActive:now-lastWheelMoveAt<200,source:foot.currentSrc||foot.src},dialogueApproachGain:approachGain,finished});requestAnimationFrame(frame);
+ document.body.dataset.proof=JSON.stringify({engine:'test-render-media-v3',fit:'cover',dialogueFit:dialogueFit.proof(),fog:footageFog.proof(),navigation:{opacity:navOpacity,underFog:document.body.dataset.navFog==='true'},introRendering:scenes[index]?.id==='intro'?introEffect.proof():null,paper:PAPER,paperColor:paperColor.proof(),openingLayout,storyStarted,startup:document.body.dataset.startup,loadingHiddenAt,firstSceneShownAt,firstSceneGapMs:firstSceneShownAt&&loadingHiddenAt?firstSceneShownAt-loadingHiddenAt:null,endingElapsed,endingFadeAmount,seamMatch,sceneJoin:sceneJoin?{elapsed:sceneJoin.elapsed,duration:sceneJoin.duration}:null,paused,scene:scenes[index]?.id,index,local,duration:duration(index),mode:scenes[index]?.mode,effectiveMode:current?.autoStarted?'auto':scenes[index]?.mode,autoFrom:scenes[index]?.autoFrom??null,autoStarted:!!current?.autoStarted,transition:transition?.phase||null,transitionDetails:transition?{from:transition.from,to:transition.record.scene.id,elapsed:transition.elapsed,cover:transition.fade,reveal:transition.reveal,hold:transition.hold}:null,lastSceneTransition,waiting:!!transition||!!current&&!current.loaded,renderedKind,renderedSource,imagePreview:renderedKind==='image',source:current?.scene.src||null,sourceTime:current?.video.currentTime||0,scrollTarget:target,sourcePaused:current?.video.paused??true,startDelay:sceneArrivalDelay(scenes[index]),startElapsed:current?.startElapsed||0,interaction:document.body.dataset.interaction,scrollEnabled:canWalk(),walkingReferenceDuration:scenes[index]?.walkingReferenceDuration??null,scrollSteps:scenes[index]?.scrollSteps??6,secondsPerScroll:scenes[index]?.secondsPerScroll??null,scrollPlayback:scenes[index]?.scrollPlayback??'play',scrollSmoothingMs:scenes[index]?.scrollSmoothingMs??0,scrollTween:current?.scrubTween??null,maxPlaybackRate:scenes[index]?.maxPlaybackRate??null,nativeAudio:{blocked:nativeAudioBlocked,selected:scenes[index]?.nativeAudio===true,muted:deliveryVideo?.muted??true,volume:deliveryVideo?.volume??0},sourceFps:current?.scene.fps??null,delivery:{width:deliveryVideo?.videoWidth||0,height:deliveryVideo?.videoHeight||0,playbackRate:deliveryVideo?.playbackRate??1,totalVideoFrames:deliveryQuality?.totalVideoFrames??null,droppedVideoFrames:deliveryQuality?.droppedVideoFrames??null},provenance:current?.scene.provenance??null,geometryVerified:false,voice:voices.proof(),seasonAmbience:seasonAmbience.proof(),musicVolume:music.volume,music:musicProof,sceneLife:sceneLife.proof(),footsteps:{active:foot.dataset.active,starts:Number(foot.dataset.starts||0),dragging:!!drag,input:'wheel-and-drag',wheelActive:now-lastWheelMoveAt<200,source:foot.currentSrc||foot.src},dialogueApproachGain:approachGain,finished});requestAnimationFrame(frame);
 }
 status('Loading...');requestAnimationFrame(frame);
 try{
@@ -430,4 +478,5 @@ try{
  else if(pendingIntroEntry&&scenes[0].enterOnScroll&&scenes.length>1){pendingIntroEntry=false;requestScene(1);} 
  else requestScene(saved&&Number.isInteger(saved.index)?clamp(saved.index,0,scenes.length-1):0,Number(saved?.local)||0);
 }catch(error){status('장면을 불러오지 못했습니다. 새로고침해 주세요.');document.body.dataset.error=String(error);console.error(error);}
+
 

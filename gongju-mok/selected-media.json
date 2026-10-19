@@ -1,5 +1,5 @@
 {
-  "version": "dialogue-arrival-20261019-v13",
+  "version": "walking-ending-20261019-v14",
   "scenes": [
     {
       "id": "intro",
@@ -29,11 +29,75 @@
       "clipIn": 0,
       "nativeAudio": false,
       "playOnScroll": true,
-      "exitCrossfadeSeconds": 0.35,
+      "exitCrossfadeSeconds": 0,
       "openingFraming": {
         "focalX": 0.474,
         "holdUntil": 0.8,
         "releaseAt": 3.2
+      },
+      "exitMatch": {
+        "seconds": 1.8,
+        "target": "entry-merchant",
+        "alignmentFraction": 0.45,
+        "blendStart": 0.45,
+        "keyframes": [
+          {
+            "time": 23.25,
+            "scaleX": 1.1946902654867257,
+            "scaleY": 1.21875,
+            "offsetX": -0.08424363938053099,
+            "offsetY": -0.24574652777777778
+          },
+          {
+            "time": 23.5,
+            "scaleX": 1.151877133105802,
+            "scaleY": 1.1729323308270676,
+            "offsetX": -0.06410649530716724,
+            "offsetY": -0.18799081035923138
+          },
+          {
+            "time": 23.75,
+            "scaleX": 1.115702479338843,
+            "scaleY": 1.1386861313868613,
+            "offsetX": -0.04626162190082646,
+            "offsetY": -0.13976074614760745
+          },
+          {
+            "time": 24,
+            "scaleX": 1.0887096774193548,
+            "scaleY": 1.1063829787234043,
+            "offsetX": -0.0337071572580645,
+            "offsetY": -0.10041371158392434
+          },
+          {
+            "time": 24.25,
+            "scaleX": 1.0613207547169812,
+            "scaleY": 1.0909090909090908,
+            "offsetX": -0.020526238207547197,
+            "offsetY": -0.07247474747474744
+          },
+          {
+            "time": 24.5,
+            "scaleX": 1.0416666666666667,
+            "scaleY": 1.0684931506849316,
+            "offsetX": -0.011881510416666696,
+            "offsetY": -0.04684170471841706
+          },
+          {
+            "time": 24.75,
+            "scaleX": 1.0305343511450382,
+            "scaleY": 1.054054054054054,
+            "offsetX": -0.006917938931297707,
+            "offsetY": -0.026426426426426394
+          },
+          {
+            "time": 25,
+            "scaleX": 1.0180995475113122,
+            "scaleY": 1.04,
+            "offsetX": -0.00012372737556560766,
+            "offsetY": -0.00944444444444446
+          }
+        ]
       }
     },
     {
@@ -346,35 +410,35 @@
     {
       "id": "trio-woodcutter",
       "label": "나무꾼에게 이동",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261016_094721_958670dd-156d-4687-b79e-3901f37106c8.mp4",
-      "duration": 6.541666666666667,
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_013441_cb8ef66c-5673-49da-81de-f190f8629a68.mp4",
+      "duration": 12.041666666666666,
       "fps": 24,
       "mode": "scroll",
-      "footsteps": true,
+      "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5 Edit Unlimited",
-        "generationId": "958670dd-156d-4687-b79e-3901f37106c8",
+        "generationId": "cb8ef66c-5673-49da-81de-f190f8629a68",
+        "selection": "User supplied replacement walking clip on 2026-10-19",
+        "delivery": "Complete untrimmed 289-frame original with embedded audio; public bytes verified identical to user attachment",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "ad8d4a795af9628a2f8ef25ae2df60dc1646fc639128957e8faddcdc3d532c05",
-        "deliveryFrameProvenance": "Unmodified native24fps output; no upscale or interpolation",
-        "reviewStatus": "generated_rejected_geometry_and_continuity",
-        "releaseStatus": "user-requested-interim",
-        "finalVisualApproval": false
+        "nativeSha256": "0441e64a4655453e521757ff11f4edd308a8c161f2c1a5fc287803dc5fc51714"
       },
-      "sourceDuration": 29.708333333333332,
-      "sourceFrames": 713,
-      "clipIn": 23.166666666666668,
-      "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/5e3e8110-99d0-453c-99e3-162d728a9c9f.mp3",
-      "walkingReferenceDuration": 29.708333333333332,
+      "sourceDuration": 12.041666666666666,
+      "sourceFrames": 289,
+      "clipIn": 0,
+      "ambience": "",
+      "walkingReferenceDuration": 12.041666666666666,
       "secondsPerScroll": 2.673611111111111,
-      "scrollSteps": 3,
+      "scrollSteps": 5,
       "maxPlaybackRate": 1,
       "scrollPlayback": "seek",
-      "scrollSmoothingMs": 360
+      "scrollSmoothingMs": 360,
+      "nativeAudio": true,
+      "transition": "none",
+      "exitTransitionSeconds": 0.65
     },
     {
       "id": "woodcutter",
@@ -450,30 +514,40 @@
       "scrollSmoothingMs": 360,
       "nativeAudio": true,
       "transition": "none",
-      "exitTransitionSeconds": 0.65
+      "exitTransitionSeconds": 0.65,
+      "exitMatch": {
+        "seconds": 1.35,
+        "target": "seasons"
+      }
     },
     {
       "id": "seasons",
-      "label": "사계절과 시간 · 한국화",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/cd4dba34-5a80-44f2-8468-79af1b6fedca.mp4",
-      "duration": 22.083333333333332,
-      "fps": 60,
+      "label": "석사자의 사계절과 현재",
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_014125_7c7dc58b-9697-49bc-af8a-60d6997386e6.mp4",
+      "duration": 20,
+      "fps": 24,
       "mode": "auto",
       "footsteps": false,
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Genjutsu Custom Style",
-        "generationId": "7e9c5ae1-bf76-4732-8441-d8e782952f22",
-        "postprocess": "Native1280x720, CRF16, GOP6, silent;24fps motion-interpolated to60fps after continuous2x slowdown past18s; original four-person ending and fade preserved",
-        "review": "Interim ink-style improvement; four researchers and two lions within a distinct gravel bed. Gravel boundary differs from628; source seasonal time-lapse remains.",
-        "deliveryFrameProvenance": "24fps source with motion-inferred60fps; no claim of native60fps capture"
+        "generationId": "7c7dc58b-9697-49bc-af8a-60d6997386e6",
+        "selection": "User supplied ending clip on 2026-10-19 with requested final fade",
+        "delivery": "Original silent 1920x1080 24fps video; final 3-second smooth fade to #E8E8E6 applied by website renderer",
+        "nativeDimensions": [
+          1920,
+          1080
+        ],
+        "nativeSha256": "90b7d010cd3093e62dd0c823a247e46553c4c2959ea678f4f2f1af8d5ae5a00e"
       },
-      "sourceDuration": 22.083333333333332,
+      "sourceDuration": 20,
       "motionBaked": true,
       "ambience": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/41cc0b31-4bd2-4e4f-9bd8-bd10e193c0b7.mp3",
       "startDelay": 2,
       "transition": "none",
-      "sourceFrames": 1325
+      "sourceFrames": 480,
+      "clipIn": 0,
+      "nativeAudio": false,
+      "endFadeSeconds": 3
     }
   ],
   "review": {
