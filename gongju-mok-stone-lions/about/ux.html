@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>웹 이용 흐름 설계 — 봉황동 석사자</title>
+  <meta name="description" content="Story의 이동·재생과 Index의 회전·확대·비교 기능을 정리한 웹 이용 흐름 설계.">
+  <link rel="stylesheet" href="./assets/fonts/fonts.css">
+  <link rel="stylesheet" href="./about.css?v=planning-pages-v46">
+  <link rel="stylesheet" href="./storyline.css?v=simple-sketch-v3">
+  <link rel="stylesheet" href="./ux.css?v=ux-detail-v1">
+  <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/ux.html">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="봉황동 석사자">
+  <meta property="og:title" content="웹 이용 흐름 설계 — 봉황동 석사자">
+  <meta property="og:description" content="Story의 이동·재생과 Index의 회전·확대·비교 기능을 정리한 웹 이용 흐름 설계.">
+  <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/ux.html">
+  <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/archive-comparison.png">
+  <meta property="og:image:secure_url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/archive-comparison.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="2704">
+  <meta property="og:image:height" content="1454">
+  <meta property="og:image:alt" content="두 석사자의 같은 부위를 나란히 비교하는 Index 화면">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="웹 이용 흐름 설계 — 봉황동 석사자">
+  <meta name="twitter:description" content="Story의 이동·재생과 Index의 회전·확대·비교 기능을 정리한 웹 이용 흐름 설계.">
+  <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/archive-comparison.png">
+</head>
+<body class="storyline-page ux-page">
+  <a class="skip" href="#ux">본문으로 건너뛰기</a>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="../?start=intro"><span class="brand-mark" aria-hidden="true">石</span><span>봉황동 석사자</span></a>
+      <a class="story-back" href="./#evolution">기획과 제작으로</a>
+    </header>
+    <main id="ux">
+      <header class="ux-hero">
+        <p class="eyebrow">웹 이용 흐름 · UX DESIGN</p>
+        <h1>페이지 이동과<br>화면 조작</h1>
+        <p class="story-lead">Story의 이동·재생과 Index의 회전·확대·비교 기능을 정리했습니다.</p>
+      </header>
+      <nav class="story-contents" aria-label="웹 이용 흐름 목차">
+        <a href="#story-experience"><span>01</span> Story · 이동과 재생</a>
+        <a href="#index-experience"><span>02</span> Index · 회전과 비교</a>
+      </nav>
+      <section class="story-section ux-experiences" aria-label="Story와 Index의 화면과 이용 흐름">
+        <div class="experience-editorial">
+          <article id="story-experience" aria-labelledby="story-experience-title">
+            <figure><img src="./assets/story-figma-ui.png" width="2704" height="1696" alt="Story의 화면 구성과 이용 흐름을 정리한 Figma 설계 자료" loading="lazy" decoding="async"><figcaption>Story · 화면 구성과 이용 흐름 설계</figcaption></figure>
+            <h2 id="story-experience-title">이동과 재생</h2>
+            <p>시작 화면에 들어온 뒤 첫 전진 스크롤이나 드래그로 도입이 재생됩니다. 길에서는 직접 이동하고, 멈추면 해당 화면에 머뭅니다.</p>
+            <p>대화와 장면 전환 구간은 자동으로 재생됩니다. 자막·대사는 반투명 패널에 표시하고, 대화가 끝나면 패널이 사라집니다. 소리는 음소거 버튼으로 켜고 끕니다.</p>
+          </article>
+          <article id="index-experience" aria-labelledby="index-experience-title">
+            <figure><img src="./assets/archive-comparison.png" width="2704" height="1454" alt="두 석사자를 나란히 놓고 같은 부위를 비교하는 Index 화면" loading="lazy" decoding="async"><figcaption>Index · 두 석사자의 형태를 나란히 관찰</figcaption></figure>
+            <h2 id="index-experience-title">회전과 비교</h2>
+            <p>Story 마지막의 ‘아카이브 탐색’을 누르면 Index로 이동합니다.</p>
+            <p>두 스캔을 각각 돌리고 확대하며 갈기·수염·무늬·이목구비·눈매를 비교합니다. 무채색으로 굴곡을 보고, 원본 표면색을 켜서 함께 살펴볼 수 있습니다.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+    <footer class="story-footer">
+      <div><p>돌에 새긴 선, 풍경이 되다<br>디지털헤리티지큐레이터 3기 · 가치해석 1팀 사자성어</p><a href="./#evolution">기획과 제작으로 돌아가기</a></div>
+      <p class="story-copyright">© 2026 가치해석 1팀 사자성어. 본 사이트의 자체 제작 콘텐츠에 대한 저작권은 사자성어 팀에 있습니다.</p>
+    </footer>
+  </div>
+</body>
+</html>

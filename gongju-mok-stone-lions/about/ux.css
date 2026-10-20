@@ -1,0 +1,14 @@
+.ux-hero { padding: 80px 0 54px; }
+.ux-hero .eyebrow { margin: 0 0 22px; }
+.ux-hero h1 { margin: 0; font-size: clamp(34px, 4.5vw, 56px); line-height: 1.45; letter-spacing: -.04em; font-weight: 400; }
+.ux-hero .story-lead { max-width: 45em; }
+.ux-experiences { padding-top: 48px; }
+.ux-page .experience-editorial h2 { margin: 28px 0 15px; font-size: 24px; font-weight: 400; }
+@media (max-width: 760px) {
+  .ux-hero { padding: 48px 0 36px; }
+  .ux-experiences { padding-top: 34px; }
+  .ux-page .experience-editorial h2 { font-size: 21px; }
+}
+@media (max-width: 560px) {
+  .ux-page .experience-editorial h2 { margin-top: 21px; font-size: 23px; }
+}

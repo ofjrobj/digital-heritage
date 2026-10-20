@@ -119,7 +119,8 @@
 .timeline-tabs [role="tab"][aria-selected="true"]{border-bottom-color:transparent;color:#373734}
 .timeline-tabs [role="tab"]:hover{color:#785b43}
 .timeline-tabs [role="tab"]:focus-visible{outline:1px solid currentColor;outline-offset:4px}
-.process-timeline{max-width:100%;margin:20px 0 0 3px;padding:0;border-left:1px solid var(--line);list-style:none}
+.process-timeline{max-width:100%;margin:20px 0 0 3px;padding:0;border-left:1px solid var(--line);list-style:none;scrollbar-width:none}
+.process-timeline::-webkit-scrollbar{display:none}
 .process-timeline>li{position:relative}
 .process-timeline>li::before{content:"";position:absolute;left:-3px;top:50%;width:5px;height:5px;border:1px solid #a6a69c;border-radius:50%;background:#e8e8e6;transform:translateY(-50%)}
 .process-timeline a{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:baseline;min-height:40px;padding:9px 8px 9px 17px;color:#77776c;text-decoration:none;font-size:14px;line-height:1.6}
@@ -134,12 +135,14 @@
 @media(max-width:760px){
  .process-heading{position:static}
  .timeline-tabs{margin-top:22px}
- .process-timeline{display:flex;gap:0;margin:14px 0 0;padding:3px 0 5px;border-left:0;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#b2b2a8 transparent}
- .process-timeline>li{flex:none;border-top:1px solid var(--line)}
+ .process-timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 16px;margin:14px 0 0;padding:3px 0 5px;border-left:0}
+ .process-timeline>li{min-width:0;border-top:1px solid var(--line)}
  .process-timeline>li::before{left:0;top:0;transform:translateY(-50%)}
- .process-timeline a{grid-template-columns:auto auto;gap:7px;min-height:44px;padding:12px 24px 8px 0;font-size:13px;white-space:nowrap}
- .process-timeline>li:last-child a{padding-right:4px}
+ .process-timeline a{grid-template-columns:auto minmax(0,1fr);gap:7px;min-height:44px;padding:12px 6px 8px 0;font-size:13px;white-space:normal;overflow-wrap:anywhere}
  .process-timeline>li.is-current{border-top-color:#77776c}
  .process-timeline a:focus-visible{outline-offset:-2px}
  .production-list>li[id]{scroll-margin-top:20px}
+}
+@media(max-width:560px){
+ .process-timeline{grid-template-columns:repeat(2,minmax(0,1fr))}
 }

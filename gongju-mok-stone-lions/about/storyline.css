@@ -90,31 +90,25 @@
   color: #77776c;
   font: 12px/1.9 var(--story-sans, sans-serif);
 }
-.sequence-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .46fr); gap: 42px; align-items: start; }
+.sequence-layout { width: 100%; }
 .scene-flow {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 26px;
+  display: block;
   list-style: none;
-  margin: 0;
+  margin: 0 0 0 1px;
   padding: 0;
+  border-left: 1px solid var(--line);
 }
 .scene-flow > li {
   display: grid;
-  grid-template-columns: 21px minmax(0, 1fr);
-  gap: 10px;
-  padding: 17px 0 21px;
-  border-top: 1px solid var(--line);
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 18px;
+  padding: 0 0 30px 24px;
   min-width: 0;
 }
-.scene-number { padding-top: 1px; color: #77776c; font: 11px/1.6 var(--story-sans, sans-serif); }
-.scene-mode { display: block; color: #77776c; font: 10px/1.6 var(--story-sans, sans-serif); }
-.scene-flow h3 { margin: 7px 0; font-size: 17px; font-weight: 400; line-height: 1.7; }
-.scene-flow p { margin: 0; font-size: 14px; line-height: 1.85; color: #66665d; }
-.frame-sheet { position: sticky; top: 30px; }
-.frame-sheet img { width: 100%; }
-.frame-sheet a { display: block; }
-.frame-sheet figcaption a { display: inline-block; padding: 7px 0; }
+.scene-flow > li:last-child { padding-bottom: 0; }
+.scene-number { padding-top: 5px; color: #77776c; font: 12px/1.6 var(--story-sans, sans-serif); }
+.scene-flow h3 { margin: 0 0 5px; font-size: 20px; font-weight: 400; line-height: 1.7; }
+.scene-flow p { margin: 0; font-size: 15px; line-height: 1.85; color: #66665d; }
 .voice {
   display: grid;
   grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
@@ -133,13 +127,12 @@
 .voice-copy { min-width: 0; }
 .voice-copy .meta { margin: 0 0 10px; font-size: 11px; letter-spacing: .07em; }
 .voice-copy h3 { margin: 0 0 18px; font-size: 30px; font-weight: 400; }
+.voice-description { margin: 0 0 7px; color: #66665d; font: 14px/1.9 var(--story-sans, sans-serif); }
 .voice-direction { margin: 0 0 24px; color: #77776c; font: 13px/1.9 var(--story-sans, sans-serif); }
 .dialogue { margin: 0; padding: 0 0 0 22px; border-left: 1px solid #96968b; }
 .dialogue p { margin: 0; font-size: 20px; line-height: 1.95; letter-spacing: -.015em; }
-.voice-clue { margin: 22px 0 0; color: #77776c; font: 11px/1.8 var(--story-sans, sans-serif); }
 .sound-section { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 64px; }
 .sound-section .story-section-heading { display: block; margin: 0; }
-.sound-section .story-section-heading > p { margin-top: 24px; }
 .sound-list { margin: 0; }
 .sound-list > div { display: grid; grid-template-columns: 118px minmax(0, 1fr); gap: 20px; border-top: 1px solid var(--line); padding: 22px 0; }
 .sound-list > div:last-child { padding-bottom: 0; }
@@ -150,11 +143,7 @@
 .experience-editorial figure img { width: 100%; aspect-ratio: 16 / 10; object-fit: contain; background: #deded966; }
 .experience-editorial h3 { margin: 28px 0 15px; font-size: 24px; font-weight: 400; }
 .experience-editorial p { margin: 0 0 14px; font-size: 16px; line-height: 1.95; color: #66665d; }
-.story-destinations { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 44px; margin-top: 34px; }
-.story-destinations a { display: grid; gap: 10px; padding: 22px 0 4px; border-top: 1px solid var(--line); font-size: 22px; line-height: 1.5; }
-.story-destinations .meta { font-size: 10px; }
 .story-footer { padding: 28px 0 32px; color: #77776c; font: 11px/1.9 var(--story-sans, sans-serif); }
-.story-footer > p:first-child { margin: 0 0 28px; max-width: 70em; }
 .story-footer > div { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
 .story-footer p { margin: 0; }
 .story-footer a { padding: 10px 0; }
@@ -164,8 +153,6 @@
   .story-hero h1 { font-size: 44px; }
   .story-lead { font-size: 16px; }
   .story-section-heading { gap: 36px; }
-  .sequence-layout { grid-template-columns: minmax(0, 1fr) minmax(0, .38fr); gap: 28px; }
-  .scene-flow { column-gap: 20px; }
   .voice { gap: 32px; }
   .dialogue p { font-size: 18px; }
   .sound-section { gap: 36px; }
@@ -185,8 +172,6 @@
   .story-section-heading > p { margin-top: 21px; font-size: 15px; }
   .opening-copy { padding: 23px; gap: 24px; margin-bottom: 34px; }
   .opening-caption blockquote p { font-size: 18px; }
-  .sequence-layout { grid-template-columns: 1fr; gap: 28px; }
-  .frame-sheet { position: static; width: min(100%, 440px); justify-self: center; }
   .voice,
   .voice:nth-of-type(even) { grid-template-columns: minmax(0, .7fr) minmax(0, 1fr); gap: 24px; padding: 30px 0; }
   .voice:nth-of-type(even) .voice-image,
@@ -201,8 +186,6 @@
   .experience-editorial { gap: 26px; }
   .experience-editorial h3 { font-size: 21px; }
   .experience-editorial p { font-size: 15px; }
-  .story-destinations { gap: 26px; }
-  .story-destinations a { font-size: 19px; }
 }
 @media (max-width: 560px) {
   .story-back { font-size: 11px; }
@@ -211,11 +194,9 @@
   .opening-copy { grid-template-columns: 1fr; padding: 22px 20px; }
   .opening-caption + .opening-caption { border-top: 1px solid var(--line); padding-top: 22px; }
   .opening-caption blockquote p { font-size: 19px; }
-  .scene-flow { grid-template-columns: 1fr; }
-  .scene-flow > li { grid-template-columns: 27px minmax(0, 1fr); gap: 12px; padding: 19px 0; }
-  .scene-flow h3 { font-size: 18px; margin: 6px 0; }
+  .scene-flow > li { grid-template-columns: 36px minmax(0, 1fr); gap: 12px; padding: 0 0 26px 18px; }
+  .scene-flow h3 { font-size: 18px; }
   .scene-flow p { font-size: 14px; }
-  .frame-sheet { width: min(100%, 360px); }
   .voice,
   .voice:nth-of-type(even) { grid-template-columns: 1fr; gap: 26px; padding: 34px 0; }
   .voice-image { width: min(100%, 320px); justify-self: center; }
@@ -225,13 +206,10 @@
   .voice-copy h3 { font-size: 28px; margin-bottom: 14px; }
   .voice-direction { font-size: 13px; margin-bottom: 20px; }
   .dialogue p { font-size: 19px; }
-  .voice-clue { margin-top: 18px; }
   .sound-list > div { grid-template-columns: 1fr; gap: 8px; padding: 19px 0; }
   .sound-list dt { font-size: 19px; }
   .sound-list dd { font-size: 15px; }
   .experience-editorial { grid-template-columns: 1fr; gap: 32px; }
   .experience-editorial h3 { margin-top: 21px; font-size: 23px; }
-  .story-destinations { grid-template-columns: 1fr; gap: 22px; margin-top: 28px; }
-  .story-destinations a { font-size: 21px; }
   .story-footer > div { align-items: flex-start; flex-direction: column; gap: 12px; }
 }
