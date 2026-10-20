@@ -10,7 +10,7 @@
 
   notice.hidden = false;
   notice.classList.add('is-visible');
-  const timer = setTimeout(hide, 3000);
+  const timer = setTimeout(hide, 2000);
   window.addEventListener('pagehide', () => {
     clearTimeout(timer);
     hide();

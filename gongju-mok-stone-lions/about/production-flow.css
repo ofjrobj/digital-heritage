@@ -1,11 +1,10 @@
 .making-flow{min-width:0}
 .making-shared{position:relative;width:70%;margin:0 auto;padding:20px 0;text-align:center;border-block:1px solid var(--line)}
-.making-shared .meta{font-size:11px}
-.making-shared h3{margin:6px 0 0;font-size:23px;font-weight:300}
+.making-shared h3{margin:0;font-size:23px;font-weight:300}
 .making-shared .production-trigger{justify-content:center}
 .making-shared::after{content:"";position:absolute;top:100%;left:50%;height:28px;border-left:1px solid var(--line)}
-.making-branches{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px;margin:56px 0}
-.making-branches::before,.making-branches::after{content:"";position:absolute;left:25%;right:25%;height:28px;border:1px solid var(--line)}
+.making-branches{--branch-gap:36px;--branch-center:calc((100% - var(--branch-gap))/4);position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--branch-gap);margin:56px 0}
+.making-branches::before,.making-branches::after{content:"";position:absolute;left:var(--branch-center);right:var(--branch-center);height:29px;border:1px solid var(--line)}
 .making-branches::before{bottom:100%;border-bottom:0}
 .making-branches::after{top:100%;border-top:0}
 .making-branch{min-width:0;display:flex;flex-direction:column}
@@ -20,5 +19,5 @@
 .making-finish::after{display:none}
 .process-grid{row-gap:32px}
 .process-grid p{font-size:15px;color:#62625a}
-@media(max-width:760px){.making-shared{width:76%}.making-shared h3{font-size:21px}.making-branches{gap:24px}.making-steps a{font-size:16px;padding:15px 0}}
-@media(max-width:420px){.making-branches{gap:18px}.making-steps a{grid-template-columns:16px minmax(0,1fr);gap:6px;font-size:15px}.making-shared{width:86%}}
+@media(max-width:760px){.making-shared{width:76%}.making-shared h3{font-size:21px}.making-branches{--branch-gap:24px}.making-steps a{font-size:16px;padding:15px 0}}
+@media(max-width:420px){.making-branches{--branch-gap:18px}.making-steps a{grid-template-columns:16px minmax(0,1fr);gap:6px;font-size:15px}.making-shared{width:86%}}

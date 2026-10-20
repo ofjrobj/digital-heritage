@@ -6,7 +6,7 @@
   <title>AI 협업 구조 설계 — 봉황동 석사자</title>
   <meta name="description" content="Story와 Index의 공통 제작 시작점. 사람과 AI의 역할, 영상·음성·3D 스캔·웹 구현의 도구별 입력과 검토 기준.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
-  <link rel="stylesheet" href="./about.css?v=planning-pages-v46">
+  <link rel="stylesheet" href="./about.css?v=planning-pages-v49">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
   <link rel="stylesheet" href="./collaboration.css?v=collaboration-v1">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/prompt.html">
@@ -31,9 +31,9 @@
     </header>
     <main id="material">
       <header class="material-header">
-        <p class="eyebrow">공통 · 시작</p>
+        
         <h1>AI 협업 구조 설계</h1>
-        <p class="material-intro">Story·Index의 공통 제작 기준과 역할 분담. 이후 영상·공간 제작과 스캔·3D 웹 구현으로 분기.</p>
+        <p class="material-intro">Story와 Index의 제작 도구, 역할과 검토 기준.</p>
         <nav class="material-references" aria-label="관련 원본 자료">
           <a href="https://www.figma.com/board/5bWhFaY63IrDFhjK0M632d/Prompt-for-Higgsfield?node-id=0-1&amp;t=KYYqoagI8gjfBk5s-1" target="_blank" rel="noopener noreferrer" aria-label="Figma에서 프롬프트 보기 (새 탭)">Figma에서 프롬프트 보기</a>
         </nav>
@@ -42,18 +42,18 @@
         <p class="number">01 / ROLES</p>
         <h2 id="collaboration-roles">사람이 정할 것과 AI에 요청할 것</h2>
         <div class="collaboration-pair">
-          <article><h3>팀의 판단</h3><p>출처·해석 범위와 장면 순서 결정. 원본 스캔의 형상·표면, 생성 결과와 웹 동작 검토.</p></article>
-          <article><h3>AI와의 협업</h3><p>지시문 정리, Story의 이미지·영상·음성 후보 제작. 두 페이지의 UI·입력 동작 코드 작성·수정 지원.</p></article>
+          <article><h3>팀의 판단</h3><p>출처와 해석 범위, 장면 순서를 정한다. 원본 스캔과 제작 결과를 대조하고 웹 동작을 확인한다.</p></article>
+          <article><h3>AI와의 협업</h3><p>제작 지시를 다듬고 이미지·영상·음성과 웹 코드의 초안을 만든다.</p></article>
         </div>
       </section>
       <section class="collaboration-section" aria-labelledby="collaboration-sequence">
         <p class="number">02 / WORKFLOW</p>
         <h2 id="collaboration-sequence">기획을 제작으로 옮기는 순서</h2>
         <ol class="collaboration-flow">
-          <li><span>#01</span><div><h3>입력 자료 묶기</h3><p>조사 자료·원본 스캔·서체·색감·UI·인물 설정·대사·스토리보드·UX 정리.</p></div></li>
-          <li><span>#02</span><div><h3>고정할 조건과 바꿀 조건 나누기</h3><p>공통: 석사자 형상·표면색·서체·UI. Story: 옷차림·건축 배치 고정, 시점·동작·빛·이동 속도 조정.</p></div></li>
-          <li><span>#03</span><div><h3>두 제작 흐름으로 분기</h3><p>Story는 장면·카메라·대사, Index는 스캔 후처리·관찰 방향·회전·확대로 제작 지시 구분.</p></div></li>
-          <li><span>#04</span><div><h3>결과를 비교하고 다시 수정하기</h3><p>원본·기준 이미지와 장면 사이의 형태·구도·움직임 대조. Story 재생과 Index 회전·확대 검증.</p></div></li>
+          <li><span>#01</span><div><h3>입력 자료</h3><p>조사 자료·원본 스캔, 서체·색감·UI, 인물·대사·스토리보드·UX.</p></div></li>
+          <li><span>#02</span><div><h3>고정할 조건과 바꿀 조건</h3><p>고정: 석사자 형상·표면색, 서체·UI, 옷차림·건축 배치.<br>조정: 시점·동작·빛·이동 속도.</p></div></li>
+          <li><span>#03</span><div><h3>Story와 Index의 작업 구분</h3><p>Story: 장면·카메라·대사.<br>Index: 스캔 후처리·관찰 방향·회전·확대.</p></div></li>
+          <li><span>#04</span><div><h3>결과 검토</h3><p>원본과의 형태 차이, 장면 사이의 구도·움직임, Story 재생과 Index 회전·확대.</p></div></li>
         </ol>
       </section>
       <section class="collaboration-section" aria-labelledby="collaboration-tools">
@@ -61,9 +61,9 @@
         <h2 id="collaboration-tools">도구별 입력과 결과</h2>
         <dl class="collaboration-handoffs">
           <div><dt>Story · Blender</dt><dd>고지도·공간 배치·스토리보드 → 지형·건물·카메라 경로·렌더 프레임</dd></div>
-          <div><dt>Story · ChatGPT·Higgsfield·ElevenLabs</dt><dd>인물 설정·무드·기준 프레임·대사 → 어셋·스타일 프레임·영상·음성 후보. 팀이 형태·연속성·발음 검토.</dd></div>
-          <div><dt>Index · Artec Studio·ZBrush</dt><dd>원본 스캔 → 모델·텍스처 정리와 누락 하부 보완. 형상·보완 범위는 원본과 대조해 직접 검토.</dd></div>
-          <div><dt>공통 · Figma·Codex</dt><dd>공통 UI·UX와 영상·음성·3D 모델 → HTML·CSS·JavaScript 구현, Three.js 기반 Index 조작. AI 작성 코드는 실제 입력으로 검증.</dd></div>
+          <div><dt>Story · ChatGPT·Higgsfield·ElevenLabs</dt><dd>인물 설정·무드·기준 프레임·대사 → 어셋·스타일 프레임·영상·음성.<br>팀 검토: 형태·장면 연결·발음.</dd></div>
+          <div><dt>Index · Artec Studio·ZBrush</dt><dd>원본 스캔 → 모델·텍스처 정리, 스캔되지 않은 하부 보완.<br>팀 검토: 원본 형상과 보완 범위.</dd></div>
+          <div><dt>공통 · Figma·Codex</dt><dd>UI·UX, 영상·음성·3D 모델 → HTML·CSS·JavaScript와 Three.js 구현.<br>팀 검토: 클릭·드래그·스크롤 등 실제 조작.</dd></div>
         </dl>
       </section>
       <div class="material-gallery">

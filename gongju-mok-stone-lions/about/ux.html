@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>웹 이용 흐름 설계 — 봉황동 석사자</title>
-  <meta name="description" content="Story·Index의 화면·영상·음성·3D 설계. 단계별 제작 도구, 조작 방식과 예상 시간.">
+  <meta name="description" content="Story와 Index의 화면·조작 설계. 제작 도구와 예상 시간.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
-  <link rel="stylesheet" href="./about.css?v=planning-pages-v46">
+  <link rel="stylesheet" href="./about.css?v=planning-pages-v49">
   <link rel="stylesheet" href="./storyline.css?v=character-detail-v4">
   <link rel="stylesheet" href="./ux.css?v=ux-plan-v3">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/ux.html">
@@ -14,7 +14,7 @@
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="웹 이용 흐름 설계 — 봉황동 석사자">
-  <meta property="og:description" content="Story의 재생·정지와 Index의 회전·확대·비교. 제작 도구와 예상 시간을 정리한 여덟 단계.">
+  <meta property="og:description" content="Story의 이동·재생과 Index의 회전·확대·비교를 설계한 여덟 단계.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/ux.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
   <meta property="og:image:secure_url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
@@ -24,7 +24,7 @@
   <meta property="og:image:alt" content="돌에 새긴 선, 풍경이 되다 — 봉황동 석사자">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="웹 이용 흐름 설계 — 봉황동 석사자">
-  <meta name="twitter:description" content="Story의 재생·정지와 Index의 회전·확대·비교. 제작 도구와 예상 시간을 정리한 여덟 단계.">
+  <meta name="twitter:description" content="Story의 이동·재생과 Index의 회전·확대·비교를 설계한 여덟 단계.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
 </head>
 <body class="storyline-page ux-page">
@@ -39,14 +39,14 @@
         <p class="eyebrow">05 · UX DESIGN</p>
         <h1>화면과 조작 설계</h1>
         <dl class="ux-tools" aria-label="제작 도구와 역할">
-          <div><dt>화면 설계</dt><dd>Figma · 메뉴·패널·화면 크기 설계</dd></div>
-          <div><dt>공간·카메라</dt><dd>Blender · 지형·건축·동선 구성, 카메라 블로킹·렌더</dd></div>
+          <div><dt>화면 설계</dt><dd>Figma · 메뉴·대사 패널·반응형 화면</dd></div>
+          <div><dt>공간·카메라</dt><dd>Blender · 지형·건축 배치, 카메라 위치·동선 확인과 렌더링</dd></div>
           <div><dt>영상</dt><dd>Higgsfield · 스타일 프레임·장면 영상 생성</dd></div>
-          <div><dt>대사 음성</dt><dd>ElevenLabs · 확정 대사 기반 인물별 음성 생성</dd></div>
-          <div><dt>스캔·후처리</dt><dd>Artec Studio · ZBrush · 데이터 정렬·텍스처·분리·밑면 보완</dd></div>
+          <div><dt>대사 음성</dt><dd>ElevenLabs · 확정 대사로 인물별 음성 제작</dd></div>
+          <div><dt>스캔·후처리</dt><dd>Artec Studio · ZBrush · 스캔 정렬·텍스처 정리·개체 분리·밑면 보완</dd></div>
           <div><dt>웹 구현</dt><dd>Codex · HTML · CSS · JavaScript · Three.js</dd></div>
         </dl>
-        <p class="ux-time-key">제작·관람 시간은 설계용 예상치. 실제 관람 시간은 이동·정지·탐색 속도에 따라 변화.</p>
+        <p class="ux-time-key">제작·관람 시간은 예상치. 실제 관람 시간은 이동·탐색 속도에 따라 달라짐.</p>
       </header>
 
       <nav class="story-contents" aria-label="웹 이용 흐름 목차">
@@ -64,9 +64,9 @@
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>Figma · Codex · HTML · CSS</dd></div>
                 <div><dt>제작물</dt><dd>Story·Index 메뉴, 대사 패널, PC·모바일 화면</dd></div>
-                <div><dt>연결</dt><dd>메뉴 선택 → 화면 이동 / 화면 폭 → 패널·글자 크기 조절</dd></div>
+                <div><dt>동작</dt><dd>메뉴 선택 → Story·Index 이동 / 화면 폭에 맞춰 패널·글자 크기 조절</dd></div>
                 <div><dt>제작 예상</dt><dd>0.5–1일</dd></div>
-                <div><dt>관람 예상</dt><dd>시간 제한 없는 메뉴 선택</dd></div>
+                <div><dt>관람 예상</dt><dd>메뉴 선택 시간 제한 없음</dd></div>
               </dl>
             </div>
             <figure class="ux-sketch"><img src="./assets/ux-flow-sketch-v1.png" width="1536" height="1024" alt="Story와 Index 두 화면의 이동 경로를 표현한 단순한 흑백 스케치" decoding="async"></figure>
@@ -77,10 +77,10 @@
               <h3>영상 이동 · 정지</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>Blender · Higgsfield · Codex · JavaScript</dd></div>
-                <div><dt>제작물</dt><dd>공간·카메라 블로킹과 렌더 → 스타일 프레임 → 장면 영상</dd></div>
-                <div><dt>연결</dt><dd>스크롤·드래그 → 영상 위치 / 입력 정지 → 원본 한 프레임 고정</dd></div>
-                <div><dt>제작 예상</dt><dd>구성·생성 2–4일 / 렌더 약 2일</dd></div>
-                <div><dt>관람 예상</dt><dd>전체 영상 분량 약 250초 / 이동 구간 자유 조절</dd></div>
+                <div><dt>제작물</dt><dd>공간·카메라 동선 확인과 렌더링 → 스타일 프레임 → 장면 영상</dd></div>
+                <div><dt>동작</dt><dd>스크롤·드래그한 만큼 영상 이동 / 손을 멈추면 해당 프레임 유지</dd></div>
+                <div><dt>제작 예상</dt><dd>구성·생성 2–4일 / 렌더링 약 2일</dd></div>
+                <div><dt>관람 예상</dt><dd>전체 영상 약 250초 / 이동 구간은 속도 조절 가능</dd></div>
               </dl>
             </div>
             <figure class="ux-sketch"><img src="./assets/ux-story-scroll-sketch-v1.png" width="1536" height="1024" alt="스크롤 이동과 한 프레임 정지를 표현한 단순한 흑백 스케치" loading="lazy" decoding="async"></figure>
@@ -91,8 +91,8 @@
               <h3>대사 재생 · 종료</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>ElevenLabs · HTML Audio · JavaScript · CSS</dd></div>
-                <div><dt>제작물</dt><dd>확정 대사 기반 다섯 인물 음성, 반투명 대사 패널</dd></div>
-                <div><dt>연결</dt><dd>인물 도착 → 패널·음성 재생 / 음성 종료 → 패널 닫기</dd></div>
+                <div><dt>제작물</dt><dd>확정 대사로 만든 다섯 장면의 인물 음성, 반투명 대사 패널</dd></div>
+                <div><dt>동작</dt><dd>인물 앞에 도착 → 패널 표시·음성 재생 / 대사가 끝나면 패널 닫기</dd></div>
                 <div><dt>제작 예상</dt><dd>0.5–1일</dd></div>
                 <div><dt>관람 예상</dt><dd>인물별 약 15–30초</dd></div>
               </dl>
@@ -106,9 +106,9 @@
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>Codex · HTML Audio · JavaScript</dd></div>
                 <div><dt>제작물</dt><dd>장소별 환경음, 발소리, 계절 전환 음향</dd></div>
-                <div><dt>연결</dt><dd>이동 → 발소리 / 정지 → 발소리 종료 / 대사 중 배경음 감소 / 음소거·탭 이탈 → 재생 정지</dd></div>
+                <div><dt>동작</dt><dd>이동할 때만 발소리 재생 / 대사 중 배경음 줄이기 / 음소거하거나 다른 탭으로 이동하면 소리 정지</dd></div>
                 <div><dt>제작 예상</dt><dd>0.5–1일</dd></div>
-                <div><dt>관람 예상</dt><dd>장소 체류 동안 반복 / 계절 전환 약 15–30초</dd></div>
+                <div><dt>관람 예상</dt><dd>한 장소에 머무는 동안 반복 / 계절 전환 약 15–30초</dd></div>
               </dl>
             </div>
           </li>
@@ -121,13 +121,13 @@
           <li class="ux-step ux-step-text" id="ux-05">
             <span class="ux-step-number">#05</span>
             <div class="ux-step-copy">
-              <h3>스캔 취득 · 후처리</h3>
+              <h3>스캔 · 후처리</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>Artec Studio · ZBrush · Blender · Three.js</dd></div>
                 <div><dt>제작물</dt><dd>스캔 정렬·정합 / 텍스처 정리·개체 분리·밑면 보완 / 웹용 GLB</dd></div>
-                <div><dt>연결</dt><dd>두 개체 → 나란한 3D 화면 / 화면 폭 → 모델 배치·크기 조절</dd></div>
-                <div><dt>제작 예상</dt><dd>데이터 취득·정리 2–4일</dd></div>
-                <div><dt>관람 예상</dt><dd>첫 전체 관찰 약 20–40초</dd></div>
+                <div><dt>동작</dt><dd>두 석사자를 나란히 배치 / 화면 폭에 맞춰 모델 위치·크기 조절</dd></div>
+                <div><dt>제작 예상</dt><dd>스캔·정리 2–4일</dd></div>
+                <div><dt>관람 예상</dt><dd>전체 모습 둘러보기 약 20–40초</dd></div>
               </dl>
             </div>
           </li>
@@ -137,8 +137,8 @@
               <h3>회전 · 확대</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>Three.js · OrbitControls · JavaScript</dd></div>
-                <div><dt>제작물</dt><dd>개체별 회전·확대 조작, 고정 조명</dd></div>
-                <div><dt>연결</dt><dd>드래그 → 회전 / 스크롤·핀치 → 확대·축소 / 두 개체 독립 조작</dd></div>
+                <div><dt>제작물</dt><dd>두 석사자를 각각 돌리고 확대하는 화면, 고정 조명</dd></div>
+                <div><dt>동작</dt><dd>드래그 → 회전 / 스크롤·핀치 → 확대·축소 / 두 석사자를 각각 조작</dd></div>
                 <div><dt>제작 예상</dt><dd>0.5–1일</dd></div>
                 <div><dt>관람 예상</dt><dd>개체별 약 30–60초 / 시간 제한 없음</dd></div>
               </dl>
@@ -151,10 +151,10 @@
               <h3>부위 선택 · 비교</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>Figma · Three.js · JavaScript</dd></div>
-                <div><dt>제작물</dt><dd>갈기·수염·무늬·이목구비·눈매 선택과 설명·기록값</dd></div>
-                <div><dt>연결</dt><dd>항목 선택 → 두 개체의 해당 구도 / 공통 설명·개체별 치수·개수 연결</dd></div>
+                <div><dt>제작물</dt><dd>갈기·수염·무늬·이목구비·눈매 메뉴, 부위별 설명과 치수·개수</dd></div>
+                <div><dt>동작</dt><dd>부위 선택 → 두 석사자의 시점을 맞추고 설명·치수·개수 표시</dd></div>
                 <div><dt>제작 예상</dt><dd>0.5–1일</dd></div>
-                <div><dt>관람 예상</dt><dd>항목별 약 10–20초 / 자유 순서</dd></div>
+                <div><dt>관람 예상</dt><dd>항목별 약 10–20초 / 순서 제한 없음</dd></div>
               </dl>
             </div>
           </li>
@@ -164,8 +164,8 @@
               <h3>표면색 · 굴곡</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>ZBrush · Three.js · JavaScript</dd></div>
-                <div><dt>제작물</dt><dd>같은 스캔의 원본 표면색과 무채색 표현</dd></div>
-                <div><dt>연결</dt><dd>버튼 선택 → 두 개체의 표면색 켜기·끄기 / 형상·관찰 구도 유지</dd></div>
+                <div><dt>제작물</dt><dd>같은 스캔을 표면색·무채색으로 보여주는 두 방식</dd></div>
+                <div><dt>동작</dt><dd>버튼으로 두 석사자의 표면색 켜기·끄기 / 형태와 시점은 그대로 유지</dd></div>
                 <div><dt>제작 예상</dt><dd>0.5–1일</dd></div>
                 <div><dt>관람 예상</dt><dd>비교 약 20–40초 / 시간 제한 없음</dd></div>
               </dl>
