@@ -1,5 +1,0 @@
-/* Balance baked yellow pigment in the artwork, independently of the UI. */
-body #picture{filter:url('#inkPaperTone');background:#f6f6f2}
-body #stage{background:#f6f6f2}
-/* Keep the entire establishing composition visible on narrow desktop panes. */
-#stage[data-scene=intro] #picture video{object-fit:contain;object-position:center}
