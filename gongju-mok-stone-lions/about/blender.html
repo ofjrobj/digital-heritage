@@ -4,24 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Blender 공간과 애니메이션 — 봉황동 석사자</title>
-  <meta name="description" content="공주목 지형·건축물을 만들고, 카메라·인물·건물의 움직임을 시험했습니다.">
+  <meta name="description" content="공주목 고지도, 제작용 배치도, Blender 모형과 일러스트, 인물을 향한 카메라 동선.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v46">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
+  <link rel="stylesheet" href="./blender.css?v=space-process-v1">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/blender.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="Blender 공간과 애니메이션 — 봉황동 석사자">
-  <meta property="og:description" content="공주목 지형·건축물을 만들고, 카메라·인물·건물의 움직임을 시험했습니다.">
+  <meta property="og:description" content="공주목 고지도, 제작용 배치도, Blender 모형과 일러스트, 인물을 향한 카메라 동선.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/blender.html">
-  <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/blender-labelled-overview.png">
+  <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/blender-model-overview.webp">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Blender 공간과 애니메이션 — 봉황동 석사자">
-  <meta name="twitter:description" content="공주목 지형·건축물을 만들고, 카메라·인물·건물의 움직임을 시험했습니다.">
-  <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/blender-labelled-overview.png">
+  <meta name="twitter:description" content="공주목 고지도, 제작용 배치도, Blender 모형과 일러스트, 인물을 향한 카메라 동선.">
+  <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/blender-model-overview.webp">
 </head>
-<body class="materials-page">
+<body class="materials-page blender-page">
   <a class="skip" href="#material">본문으로 건너뛰기</a>
   <div class="wrap">
     <header class="top">
@@ -32,29 +33,65 @@
       <header class="material-header">
         <p class="eyebrow">Story · 02</p>
         <h1>Blender 공간과 애니메이션</h1>
-        <p class="material-intro">공주목 지형·건축물을 만들고, 카메라·인물·건물의 움직임을 시험했습니다.</p>
+        <p class="material-intro">고지도에서 공간 배치, 3D 모형과 카메라 동선까지.</p>
         <nav class="material-references" aria-label="관련 원본 자료">
           <a href="https://drive.google.com/drive/folders/1g5X3ODks65-j8ZViJ4QxDTkiP70TWpK2" target="_blank" rel="noopener noreferrer" aria-label="Blender 제작 자료 (새 탭)">Blender 제작 자료</a>
         </nav>
       </header>
-      <div class="material-gallery">
-        <figure class="material-figure">
-          <a class="material-image" href="./assets/blender-labelled-overview.png" target="_blank" rel="noopener noreferrer" aria-label="주요 지형과 건물 이름을 표시한 Blender 조감도 · 원본 크게 보기 (새 탭)"><img src="./assets/blender-labelled-overview.png" width="2800" height="2180" alt="주요 지형과 건물 이름을 표시한 Blender 조감도" loading="eager" decoding="async"></a>
-          <figcaption>강과 산, 주요 건축물과 민가의 상대 위치를 정리한 Blender 작업 모형입니다.</figcaption>
+      <section class="blender-stage" aria-labelledby="oldmap-title">
+        <header class="blender-stage-heading">
+          <span class="number">01 · MAP</span>
+          <div><h2 id="oldmap-title">공주목 고지도</h2><p>강과 산, 성곽과 읍치의 관계</p></div>
+        </header>
+        <figure class="blender-figure">
+          <a class="material-image" href="./assets/blender-oldmap-1872.webp" target="_blank" rel="noopener noreferrer" aria-label="1872년 공주목지도 · 원본 크게 보기 (새 탭)"><img src="./assets/blender-oldmap-1872.webp" width="1575" height="896" alt="공산성과 공주목의 지형·건축물을 그린 1872년 공주목지도" loading="eager" decoding="async"></a>
+          <figcaption>1872년 공주목지도 <span class="blender-credit"><a href="https://commons.wikimedia.org/wiki/File:Gongju_1872.PNG" target="_blank" rel="noopener noreferrer">Wikimedia Commons 원본</a> · Public Domain</span></figcaption>
         </figure>
-        <figure class="material-figure">
-          <a class="material-image" href="./assets/space-blender.png" target="_blank" rel="noopener noreferrer" aria-label="공주목의 지형과 주요 건축물을 배치한 Blender 조감도 · 원본 크게 보기 (새 탭)"><img src="./assets/space-blender.png" width="2048" height="1595" alt="공주목의 지형과 주요 건축물을 배치한 Blender 조감도" loading="lazy" decoding="async"></a>
-          <figcaption>금강과 제민천, 공산성, 객사와 민가의 상대적인 배치를 정리한 3D 공간입니다.</figcaption>
+      </section>
+      <section class="blender-stage" aria-labelledby="layout-title">
+        <header class="blender-stage-heading">
+          <span class="number">02 · PLAN</span>
+          <div><h2 id="layout-title">공간 배치도</h2><p>수계·지형·건물의 상대 배치를 선으로 정리</p></div>
+        </header>
+        <figure class="blender-figure">
+          <a class="material-image" href="./assets/blender-layout-plan-v1.svg" target="_blank" rel="noopener noreferrer" aria-label="공주목 제작용 공간 배치도 · 크게 보기 (새 탭)"><img src="./assets/blender-layout-plan-v1.svg" width="1536" height="1024" alt="강과 성곽, 관아와 객사, 민가의 관계를 단순한 흑백 선으로 정리한 제작용 공간 배치도" loading="lazy" decoding="async"></a>
+          <figcaption>공간 배치·거리·높이의 제작용 재구성</figcaption>
         </figure>
-        <figure class="material-figure">
-          <a class="material-image" href="./assets/space-illustration.png" target="_blank" rel="noopener noreferrer" aria-label="공주목 공간을 수묵화풍으로 표현한 조감도 · 원본 크게 보기 (새 탭)"><img src="./assets/space-illustration.png" width="1422" height="1106" alt="공주목 공간을 수묵화풍으로 표현한 조감도" loading="lazy" decoding="async"></a>
-          <figcaption>공간 배치를 바탕으로 그림체와 풍경의 분위기를 확인한 이미지입니다.</figcaption>
+      </section>
+      <section class="blender-stage" aria-labelledby="comparison-title">
+        <header class="blender-stage-heading">
+          <span class="number">03 · MODEL</span>
+          <div><h2 id="comparison-title">Blender 모형과 일러스트</h2><p>같은 공간 배치의 입체 모형과 회화적 표현</p></div>
+        </header>
+        <div class="blender-comparison">
+          <figure class="blender-figure">
+            <a class="material-image" href="./assets/blender-model-overview.webp" target="_blank" rel="noopener noreferrer" aria-label="Blender 공간 모형 · 원본 크게 보기 (새 탭)"><img src="./assets/blender-model-overview.webp" width="1800" height="1400" alt="강과 공산성, 관아와 객사, 민가를 배치한 Blender 공간 모형" loading="lazy" decoding="async"></a>
+            <figcaption>Blender · 지형과 건축물 배치</figcaption>
+          </figure>
+          <figure class="blender-figure">
+            <a class="material-image" href="./assets/space-illustration.png" target="_blank" rel="noopener noreferrer" aria-label="공주목 공간 일러스트 · 원본 크게 보기 (새 탭)"><img src="./assets/space-illustration.png" width="1422" height="1106" alt="Blender 공간 배치를 바탕으로 종이빛과 잉크 선으로 표현한 공주목 조감도" loading="lazy" decoding="async"></a>
+            <figcaption>일러스트 · 선과 색, 풍경의 질감</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section class="blender-stage" aria-labelledby="camera-title">
+        <header class="blender-stage-heading">
+          <span class="number">04 · CAMERA</span>
+          <div><h2 id="camera-title">인물을 향한 카메라 동선</h2><p>입구에서 다섯 인물을 거쳐 두 석사자까지</p></div>
+        </header>
+        <figure class="blender-figure">
+          <a class="material-image" href="./assets/blender-camera-route-v1.svg" target="_blank" rel="noopener noreferrer" aria-label="공주목 인물 방문 순서와 카메라 동선 · 크게 보기 (새 탭)"><img src="./assets/blender-camera-route-v1.svg" width="1536" height="1024" alt="장사꾼, 농민, 찬모, 주민 삼총사, 나무꾼과 두 석사자를 잇는 카메라 이동 순서의 개념도" loading="lazy" decoding="async"></a>
+          <figcaption>인물 방문 순서와 이동 경로 · 제작용 개념도. 점선은 마지막 석사자 장면으로의 연결</figcaption>
         </figure>
-        <figure class="material-figure material-figure--wide">
-          <a class="material-image" href="./assets/merchant-blockout.jpeg" target="_blank" rel="noopener noreferrer" aria-label="장사꾼 대화 장면의 Blender 초기 화면 · 원본 크게 보기 (새 탭)"><img src="./assets/merchant-blockout.jpeg" width="1280" height="720" alt="장사꾼 대화 장면의 Blender 초기 화면" loading="lazy" decoding="async"></a>
-          <figcaption>같은 대화 장면의 초기 3D 구성입니다. 인물 크기와 화면 위치, 건축물과 대사 영역의 관계를 확인했습니다.</figcaption>
-        </figure>
-      </div>
+        <ol class="blender-route">
+          <li><span class="route-number">01</span><div><h3>입구·제금루</h3><p>장사꾼에게 접근</p></div></li>
+          <li><span class="route-number">02</span><div><h3>동헌·혜의당</h3><p>관아 마당의 농민</p></div></li>
+          <li><span class="route-number">03</span><div><h3>객사</h3><p>방향 전환 후 찬모에게 접근</p></div></li>
+          <li><span class="route-number">04</span><div><h3>민가</h3><p>골목의 주민 삼총사</p></div></li>
+          <li><span class="route-number">05</span><div><h3>봉황산</h3><p>산길을 따라 나무꾼에게 접근</p></div></li>
+          <li><span class="route-number">06</span><div><h3>객사터</h3><p>두 석사자 앞에 도착</p></div></li>
+        </ol>
+      </section>
     </main>
     <footer class="material-footer">
       <a href="./#step-space">기획과 제작으로 돌아가기</a>

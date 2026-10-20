@@ -1,0 +1,22 @@
+.frame-overview,.frame-opening,.frame-sequence{padding:54px 0;border-top:1px solid var(--line,rgba(55,55,52,.2))}
+.frame-overview h2,.frame-opening h2,.frame-section-title h2{font-size:clamp(26px,3vw,36px);font-weight:300;margin:0 0 30px}
+.frame-comparison,.frame-step-body{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start}
+.opening-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.frame-overview figure,.frame-opening figure,.frame-step figure{margin:0;min-width:0}
+.frame-overview img,.frame-opening img,.frame-step img{width:100%;height:auto;display:block}
+.frame-overview figcaption,.frame-opening figcaption,.frame-step figcaption{font-family:var(--story-sans);font-size:15px;line-height:1.7;color:#66665f;margin-top:15px}
+.frame-section-title>p{font-family:var(--story-sans);font-size:16px;line-height:1.9;color:#66665f;max-width:820px;margin-bottom:44px}
+.frame-step{padding:45px 0 54px;border-top:1px solid var(--line,rgba(55,55,52,.2));scroll-margin-top:30px}
+.frame-step-heading{display:flex;align-items:baseline;gap:24px;margin-bottom:28px}
+.frame-step-heading h2{font-size:clamp(25px,2.5vw,33px);font-weight:300;margin:0}
+.frame-number{font-family:var(--story-sans);color:#77776d;font-size:17px;flex:none}
+.frame-notes{display:grid;grid-template-columns:48px 1fr;gap:14px 18px;margin:0;font-size:20px;line-height:1.9}
+.frame-notes dt{font-family:var(--story-sans);font-size:15px;color:#77776d;padding-top:5px}
+.frame-notes dd{margin:0}
+.frame-source{font-family:var(--story-sans);font-size:14px;color:#77776d;line-height:1.8;margin:24px 0}
+.frame-prompt{border-top:1px solid var(--line,rgba(55,55,52,.2));padding-top:17px}
+.frame-prompt summary{cursor:pointer;font-family:var(--story-sans);font-size:16px;line-height:1.8}
+.frame-prompt summary:hover{color:#785b43}
+.frame-prompt summary:focus-visible{outline:1px solid currentColor;outline-offset:6px}
+.frame-prompt pre{white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--story-sans);font-size:16px;line-height:1.85;margin:24px 0 0}
+@media(max-width:760px){.frame-step-body{grid-template-columns:1fr;gap:25px}.frame-comparison{gap:18px}.opening-strip{grid-template-columns:1fr}.frame-step-heading{gap:15px}.frame-notes{font-size:18px}.frame-overview,.frame-opening,.frame-sequence{padding:38px 0}}
