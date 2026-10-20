@@ -14,14 +14,21 @@ body[data-intro-entry="ready"] #stage>:not(#introWelcome){visibility:hidden!impo
 }
 #introWelcome[hidden]{display:none!important}
 #introEnter{
-  display:flex;align-items:center;gap:1.4em;padding:14px 22px;min-height:48px;
-  border:1px solid #77776b;background:transparent;border-radius:0;color:inherit;
-  font:400 clamp(16px,1.6vw,22px)/1.5 var(--story-serif,serif);letter-spacing:.08em;
-  cursor:pointer;animation:intro-button-appear .55s ease both;
+  display:flex;flex-direction:column;align-items:center;gap:19px;padding:20px 28px;
+  border:0;background:transparent;border-radius:0;color:inherit;
+  font:300 clamp(16px,1.5vw,20px)/1.5 var(--story-serif,serif);letter-spacing:.035em;
+  cursor:pointer;animation:intro-button-appear .7s ease both;
+  -webkit-tap-highlight-color:transparent;
 }
-#introEnter:hover{background:rgba(255,255,255,.28)}
-#introEnter:focus-visible{outline:1px solid #373734;outline-offset:6px}
-#introEnter span{font:300 1.2em/1 serif}
+#introEnter .entry-orb{
+  width:64px;height:64px;border:1px solid #858579;border-radius:50%;
+  display:grid;place-items:center;animation:intro-invitation-pulse 2.8s ease-in-out .7s infinite;
+}
+#introEnter .entry-orb svg{width:25px;height:25px;display:block}
+#introEnter .entry-label{animation:intro-invitation-pulse 2.8s ease-in-out .7s infinite}
+#introEnter:hover .entry-orb,#introEnter:hover .entry-label{animation:none;opacity:1}
+#introEnter:focus-visible{outline:none}
+#introEnter:focus-visible .entry-label{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px}
 #projectAbout{
   position:absolute;right:max(22px,env(safe-area-inset-right));top:max(22px,env(safe-area-inset-top));
   z-index:12;width:38px;height:38px;display:grid;place-items:center;color:#4d4d47;
@@ -44,4 +51,5 @@ body[data-media-profile="selected-higgsfield"][data-journey-started="true"] #sou
   transition:opacity 1.4s ease,visibility 0s linear 0s!important;
 }
 @keyframes intro-button-appear{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-@media(prefers-reduced-motion:reduce){#introEnter{animation:none}#introWelcome{transition:none}body[data-media-profile="selected-higgsfield"] #soundToggle{transition:none!important}}
+@keyframes intro-invitation-pulse{0%,100%{opacity:1}50%{opacity:.42}}
+@media(prefers-reduced-motion:reduce){#introEnter,#introEnter .entry-orb,#introEnter .entry-label{animation:none}#introWelcome{transition:none}body[data-media-profile="selected-higgsfield"] #soundToggle{transition:none!important}}
