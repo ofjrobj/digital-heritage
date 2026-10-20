@@ -126,9 +126,12 @@
 .voice-image-wide img { max-height: 340px; }
 .voice-copy { min-width: 0; }
 .voice-copy .meta { margin: 0 0 10px; font-size: 11px; letter-spacing: .07em; }
-.voice-copy h3 { margin: 0 0 18px; font-size: 30px; font-weight: 400; }
-.voice-description { margin: 0 0 7px; color: #66665d; font: 14px/1.9 var(--story-sans, sans-serif); }
-.voice-direction { margin: 0 0 24px; color: #77776c; font: 13px/1.9 var(--story-sans, sans-serif); }
+.voice-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin-bottom: 18px; }
+.voice-copy h3 { margin: 0; font-size: 30px; font-weight: 400; }
+.voice-heading .voice-age { margin: 0; color: #77776c; font: 13px/1.8 var(--story-sans, sans-serif); white-space: nowrap; }
+.voice-profile { margin: 0 0 26px; color: #66665d; font: 14px/1.95 var(--story-sans, sans-serif); word-break: keep-all; overflow-wrap: break-word; }
+.voice-profile p { margin: 0; }
+.voice-profile p + p { margin-top: 9px; }
 .dialogue { margin: 0; padding: 0 0 0 22px; border-left: 1px solid #96968b; }
 .dialogue p { margin: 0; font-size: 20px; line-height: 1.95; letter-spacing: -.015em; }
 .sound-section { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 64px; }
@@ -178,7 +181,6 @@
   .voice:nth-of-type(even) .voice-copy { grid-column: auto; grid-row: auto; }
   .voice-image img { max-height: 350px; }
   .voice-copy h3 { font-size: 26px; }
-  .voice-direction { font-size: 12px; }
   .dialogue { padding-left: 15px; }
   .dialogue p { font-size: 17px; }
   .sound-section { grid-template-columns: 1fr; gap: 30px; }
@@ -203,8 +205,9 @@
   .voice-image img { max-height: 310px; }
   .voice-image-wide { width: 100%; }
   .voice-image-wide img { max-height: 270px; }
-  .voice-copy h3 { font-size: 28px; margin-bottom: 14px; }
-  .voice-direction { font-size: 13px; margin-bottom: 20px; }
+  .voice-heading { gap: 6px 14px; margin-bottom: 15px; }
+  .voice-copy h3 { font-size: 28px; }
+  .voice-profile { margin-bottom: 23px; font-size: 15px; }
   .dialogue p { font-size: 19px; }
   .sound-list > div { grid-template-columns: 1fr; gap: 8px; padding: 19px 0; }
   .sound-list dt { font-size: 19px; }

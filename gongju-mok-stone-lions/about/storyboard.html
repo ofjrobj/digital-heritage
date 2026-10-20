@@ -4,16 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>스토리보드 — 봉황동 석사자</title>
-  <meta name="description" content="석사자의 먹선에서 현재의 두 석사자까지. 열네 장면의 구도와 카메라 움직임을 담은 러프 스토리보드.">
+  <meta name="description" content="석사자의 먹선에서 현재의 두 석사자까지. Story의 열네 장면과 Index의 네 관찰 단계로 이어지는 러프 스토리보드.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v46">
-  <link rel="stylesheet" href="./storyboard.css?v=storyboard-v1">
+  <link rel="stylesheet" href="./storyboard.css?v=storyboard-index-v2">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/storyboard.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="스토리보드 — 봉황동 석사자">
-  <meta property="og:description" content="열네 장면의 구도와 카메라 움직임을 담은 러프 스토리보드.">
+  <meta property="og:description" content="Story의 열네 장면과 Index의 네 관찰 단계로 이어지는 러프 스토리보드.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/storyboard.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
   <meta property="og:image:alt" content="돌에 새긴 선, 풍경이 되다 — 봉황동 석사자">
@@ -51,12 +51,13 @@
     </header>
     <main id="storyboard">
       <header class="board-hero">
-        <p class="eyebrow">02 · STORYBOARD</p>
+        <p class="eyebrow">06 · STORYBOARD</p>
         <h1>장면과 카메라의 흐름</h1>
-        <p class="board-key">파란 선 · 카메라 이동과 고정 구도</p>
+        <p class="board-key">파란 선 · 카메라 이동과 관찰 구도</p>
       </header>
+      <nav class="board-contents" aria-label="스토리보드 목차"><a href="#story-board">Story · #01–14</a><a href="#index-board">Index · #15–18</a></nav>
 
-      <section class="board-chapter" aria-labelledby="opening-title">
+      <section class="board-chapter" id="story-board" aria-labelledby="opening-title">
         <header class="board-chapter-heading"><span class="number">01 / OPENING</span><h2 id="opening-title">먹선에서 마을로</h2></header>
         <ol class="board-grid">
           <li class="board-cut" id="cut-01">
@@ -216,6 +217,27 @@
               </div>
               <figcaption><span class="camera-note">구도 유지 · 시간 전환</span><p>사계절을 거쳐 현재의 두 석사자로 연결.</p></figcaption>
             </figure>
+          </li>
+        </ol>
+      </section>
+      <section class="board-chapter" id="index-board" aria-labelledby="index-board-title">
+        <header class="board-chapter-heading"><span class="number">05 / INDEX</span><h2 id="index-board-title">이야기에서 실제 표면으로</h2></header>
+        <ol class="board-grid" start="15">
+          <li class="board-cut" id="cut-15">
+            <header class="cut-heading"><span class="cut-number">#15</span><h3>이야기에서 Index로</h3></header>
+            <figure><div class="board-frame"><img src="./assets/ux-flow-sketch-v1.png" width="1536" height="1024" alt="Story 풍경 화면에서 두 석사자의 관찰 화면으로 이어지는 흑백 스케치" loading="lazy" decoding="async"><svg class="camera-overlay" viewBox="0 0 600 400" aria-hidden="true"><use href="#camera-wide-hold"/></svg></div><figcaption><span class="camera-note">화면 전환</span><p>이야기가 끝난 뒤 ‘아카이브 탐색’을 눌러 Index로 이동.</p></figcaption></figure>
+          </li>
+          <li class="board-cut" id="cut-16">
+            <header class="cut-heading"><span class="cut-number">#16</span><h3>두 개체의 전체 모습</h3></header>
+            <figure><div class="board-frame"><img src="./assets/ux-index-sketch-v1.png" width="1536" height="1024" alt="두 석사자를 나란히 두고 회전과 확대를 설명하는 흑백 스케치" loading="lazy" decoding="async"></div><figcaption><span class="camera-note">개체 회전 · 확대</span><p>두 석사자를 각각 돌려 보고 확대하며 전체 형태를 살핌.</p></figcaption></figure>
+          </li>
+          <li class="board-cut" id="cut-17">
+            <header class="cut-heading"><span class="cut-number">#17</span><h3>같은 부위를 나란히</h3></header>
+            <figure><div class="board-frame"><img src="./assets/sketch-lions-v2.png" width="1536" height="1024" alt="두 석사자의 같은 부위를 나란히 비교하기 위한 흑백 러프 스케치" loading="lazy" decoding="async"><svg class="camera-overlay" viewBox="0 0 600 400" aria-hidden="true"><use href="#camera-wide-hold"/></svg></div><figcaption><span class="camera-note">공통 부위로 시점 맞춤</span><p>갈기·수염·무늬·이목구비·눈매를 선택해 두 개체의 대응 부위를 비교.</p></figcaption></figure>
+          </li>
+          <li class="board-cut" id="cut-18">
+            <header class="cut-heading"><span class="cut-number">#18</span><h3>표면색과 굴곡</h3></header>
+            <figure><div class="board-frame"><img src="./assets/sketch-lions-v2.png" width="1536" height="1024" alt="같은 구도에서 표면색과 굴곡을 각각 살펴보는 두 석사자의 흑백 스케치" loading="lazy" decoding="async"><svg class="camera-overlay" viewBox="0 0 600 400" aria-hidden="true"><use href="#camera-wide-hold"/></svg></div><figcaption><span class="camera-note">구도 유지 · 표현 전환</span><p>같은 모델에서 원본 표면색을 켜거나 무채색으로 바꾸어 흔적과 굴곡을 관찰.</p></figcaption></figure>
           </li>
         </ol>
       </section>

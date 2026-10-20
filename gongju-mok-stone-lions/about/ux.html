@@ -4,66 +4,134 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>웹 이용 흐름 설계 — 봉황동 석사자</title>
-  <meta name="description" content="Story의 이동·재생과 Index의 회전·확대·비교 기능을 정리한 웹 이용 흐름 설계.">
+  <meta name="description" content="Figma와 웹 기술을 이용한 Story·Index의 화면 설계. 영상 이동과 정지, 대사 재생, 3D 회전·확대·비교의 구현 과정.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v46">
-  <link rel="stylesheet" href="./storyline.css?v=simple-sketch-v3">
-  <link rel="stylesheet" href="./ux.css?v=ux-detail-v1">
+  <link rel="stylesheet" href="./storyline.css?v=character-detail-v4">
+  <link rel="stylesheet" href="./ux.css?v=ux-detail-v2">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/ux.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="웹 이용 흐름 설계 — 봉황동 석사자">
-  <meta property="og:description" content="Story의 이동·재생과 Index의 회전·확대·비교 기능을 정리한 웹 이용 흐름 설계.">
+  <meta property="og:description" content="Story의 영상 조작부터 Index의 3D 관찰까지, 화면과 기능을 연결한 여덟 단계.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/ux.html">
-  <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/archive-comparison.png">
-  <meta property="og:image:secure_url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/archive-comparison.png">
+  <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
+  <meta property="og:image:secure_url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
   <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="2704">
-  <meta property="og:image:height" content="1454">
-  <meta property="og:image:alt" content="두 석사자의 같은 부위를 나란히 비교하는 Index 화면">
+  <meta property="og:image:width" content="1562">
+  <meta property="og:image:height" content="710">
+  <meta property="og:image:alt" content="돌에 새긴 선, 풍경이 되다 — 봉황동 석사자">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="웹 이용 흐름 설계 — 봉황동 석사자">
-  <meta name="twitter:description" content="Story의 이동·재생과 Index의 회전·확대·비교 기능을 정리한 웹 이용 흐름 설계.">
-  <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/archive-comparison.png">
+  <meta name="twitter:description" content="Story의 영상 조작부터 Index의 3D 관찰까지, 화면과 기능을 연결한 여덟 단계.">
+  <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
 </head>
 <body class="storyline-page ux-page">
   <a class="skip" href="#ux">본문으로 건너뛰기</a>
   <div class="wrap">
     <header class="top">
       <a class="brand" href="../?start=intro"><span class="brand-mark" aria-hidden="true">石</span><span>봉황동 석사자</span></a>
-      <a class="story-back" href="./#evolution">기획과 제작으로</a>
+      <a class="story-back" href="./#planning-ux">기획과 제작으로</a>
     </header>
     <main id="ux">
       <header class="ux-hero">
-        <p class="eyebrow">웹 이용 흐름 · UX DESIGN</p>
-        <h1>페이지 이동과<br>화면 조작</h1>
-        <p class="story-lead">Story의 이동·재생과 Index의 회전·확대·비교 기능을 정리했습니다.</p>
+        <p class="eyebrow">07 · UX DESIGN</p>
+        <h1>화면 설계와<br>인터랙션 구현</h1>
+        <dl class="ux-tools" aria-label="사용한 디지털 도구">
+          <div><dt>설계</dt><dd>Figma</dd></div>
+          <div><dt>웹 구현</dt><dd>Codex · HTML · CSS · JavaScript</dd></div>
+          <div><dt>영상과 3D</dt><dd>Canvas 2D · HTML Video / Audio · Three.js</dd></div>
+        </dl>
       </header>
+
       <nav class="story-contents" aria-label="웹 이용 흐름 목차">
-        <a href="#story-experience"><span>01</span> Story · 이동과 재생</a>
-        <a href="#index-experience"><span>02</span> Index · 회전과 비교</a>
+        <a href="#story-experience"><span>#01–04</span> Story</a>
+        <a href="#index-experience"><span>#05–08</span> Index</a><a href="./index-plan.html">Index 관찰 기획</a>
       </nav>
-      <section class="story-section ux-experiences" aria-label="Story와 Index의 화면과 이용 흐름">
-        <div class="experience-editorial">
-          <article id="story-experience" aria-labelledby="story-experience-title">
-            <figure><img src="./assets/story-figma-ui.png" width="2704" height="1696" alt="Story의 화면 구성과 이용 흐름을 정리한 Figma 설계 자료" loading="lazy" decoding="async"><figcaption>Story · 화면 구성과 이용 흐름 설계</figcaption></figure>
-            <h2 id="story-experience-title">이동과 재생</h2>
-            <p>시작 화면에 들어온 뒤 첫 전진 스크롤이나 드래그로 도입이 재생됩니다. 길에서는 직접 이동하고, 멈추면 해당 화면에 머뭅니다.</p>
-            <p>대화와 장면 전환 구간은 자동으로 재생됩니다. 자막·대사는 반투명 패널에 표시하고, 대화가 끝나면 패널이 사라집니다. 소리는 음소거 버튼으로 켜고 끕니다.</p>
-          </article>
-          <article id="index-experience" aria-labelledby="index-experience-title">
-            <figure><img src="./assets/archive-comparison.png" width="2704" height="1454" alt="두 석사자를 나란히 놓고 같은 부위를 비교하는 Index 화면" loading="lazy" decoding="async"><figcaption>Index · 두 석사자의 형태를 나란히 관찰</figcaption></figure>
-            <h2 id="index-experience-title">회전과 비교</h2>
-            <p>Story 마지막의 ‘아카이브 탐색’을 누르면 Index로 이동합니다.</p>
-            <p>두 스캔을 각각 돌리고 확대하며 갈기·수염·무늬·이목구비·눈매를 비교합니다. 무채색으로 굴곡을 보고, 원본 표면색을 켜서 함께 살펴볼 수 있습니다.</p>
-          </article>
-        </div>
+
+      <section class="ux-track" id="story-experience" aria-labelledby="story-experience-title">
+        <header class="ux-track-heading"><span class="number">STORY</span><h2 id="story-experience-title">이동과 재생</h2></header>
+        <ol class="ux-flow">
+          <li class="ux-step" id="ux-01">
+            <span class="ux-step-number">#01</span>
+            <div class="ux-step-copy">
+              <h3>화면의 역할과 이동 경로</h3>
+              <p class="ux-step-tools">Figma · HTML · CSS</p>
+              <p>Figma에서 Story·Index의 이동 메뉴와 패널 위치를 설계했습니다. 상단 메뉴로 두 화면을 오가고, Story의 끝에서도 Index로 이어지도록 연결했습니다.</p>
+            </div>
+            <figure class="ux-sketch"><img src="./assets/ux-flow-sketch-v1.png" width="1536" height="1024" alt="Story와 Index 두 화면의 이동 경로를 표현한 단순한 흑백 스케치" decoding="async"></figure>
+          </li>
+          <li class="ux-step" id="ux-02">
+            <span class="ux-step-number">#02</span>
+            <div class="ux-step-copy">
+              <h3>입력으로 이동하고, 한 프레임에 정지</h3>
+              <p class="ux-step-tools">JavaScript · HTML Video · Canvas 2D</p>
+              <p>스크롤·드래그 입력을 영상의 재생 위치에 연결했습니다. 입력이 멈추면 도달한 원본 프레임에 고정하고, 그 프레임을 Canvas에 표시합니다.</p>
+            </div>
+            <figure class="ux-sketch"><img src="./assets/ux-story-scroll-sketch-v1.png" width="1536" height="1024" alt="스크롤 이동과 한 프레임 정지를 표현한 단순한 흑백 스케치" loading="lazy" decoding="async"></figure>
+          </li>
+          <li class="ux-step" id="ux-03">
+            <span class="ux-step-number">#03</span>
+            <div class="ux-step-copy">
+              <h3>대사 패널과 음성 연결</h3>
+              <p class="ux-step-tools">HTML Audio · JavaScript · CSS</p>
+              <p>인물에 도착하면 반투명 대사 패널을 먼저 띄우고 음성을 재생합니다. 음성이 끝나는 시점에 패널을 닫고, 화면 크기에 맞춰 글자와 패널 크기를 조절합니다.</p>
+            </div>
+            <figure class="ux-sketch"><img src="./assets/ux-dialogue-sketch-v1.png" width="1536" height="1024" alt="인물 앞에 대사 패널이 놓인 화면의 단순한 흑백 스케치" loading="lazy" decoding="async"></figure>
+          </li>
+          <li class="ux-step ux-step-text" id="ux-04">
+            <span class="ux-step-number">#04</span>
+            <div class="ux-step-copy">
+              <h3>장면에 맞춘 소리 제어</h3>
+              <p class="ux-step-tools">HTML Audio · JavaScript</p>
+              <p>음성·환경음·발소리를 각각 재생하고, 이동과 대화 상태에 따라 음량을 조절합니다. 음소거 버튼으로 함께 제어하며, 다른 탭으로 이동하면 재생을 멈춥니다.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="ux-track" id="index-experience" aria-labelledby="index-experience-title">
+        <header class="ux-track-heading"><span class="number">INDEX</span><h2 id="index-experience-title">회전과 비교</h2></header>
+        <ol class="ux-flow" start="5">
+          <li class="ux-step ux-step-text" id="ux-05">
+            <span class="ux-step-number">#05</span>
+            <div class="ux-step-copy">
+              <h3>두 스캔을 웹의 3D 화면으로</h3>
+              <p class="ux-step-tools">Three.js · GLTFLoader · DRACOLoader</p>
+              <p>GLB 스캔을 불러와 수사자와 암사자를 각각의 3D 화면에 배치했습니다. 창 크기가 바뀌면 모델이 화면 안에 들어오도록 관찰 구도를 다시 맞춥니다.</p>
+            </div>
+          </li>
+          <li class="ux-step" id="ux-06">
+            <span class="ux-step-number">#06</span>
+            <div class="ux-step-copy">
+              <h3>각 개체를 돌리고 확대하기</h3>
+              <p class="ux-step-tools">Three.js · OrbitControls</p>
+              <p>두 화면에 독립적인 조작을 연결했습니다. 드래그로 돌리고 스크롤이나 핀치로 확대하며, 조명은 고정해 표면의 굴곡을 살펴볼 수 있게 했습니다.</p>
+            </div>
+            <figure class="ux-sketch"><img src="./assets/ux-index-sketch-v1.png" width="1536" height="1024" alt="두 석사자를 나란히 돌리고 확대하는 관찰 화면의 단순한 흑백 스케치" loading="lazy" decoding="async"></figure>
+          </li>
+          <li class="ux-step ux-step-text" id="ux-07">
+            <span class="ux-step-number">#07</span>
+            <div class="ux-step-copy">
+              <h3>같은 부위를 나란히 비교</h3>
+              <p class="ux-step-tools">Three.js · JavaScript</p>
+              <p>갈기·수염·무늬·이목구비·눈매를 선택하면 두 개체가 해당 부위를 보여주는 구도로 함께 이동합니다. 선택한 부위의 설명과 기록값도 연결했습니다.</p>
+            </div>
+          </li>
+          <li class="ux-step ux-step-text" id="ux-08">
+            <span class="ux-step-number">#08</span>
+            <div class="ux-step-copy">
+              <h3>표면색과 굴곡을 번갈아 관찰</h3>
+              <p class="ux-step-tools">Three.js · 재질 전환</p>
+              <p>무채색 재질로 형태를 살펴보고, 버튼을 눌러 원본 표면색을 켤 수 있게 했습니다. 두 모드가 같은 스캔 형상을 사용해 색과 굴곡을 비교합니다.</p>
+            </div>
+          </li>
+        </ol>
       </section>
     </main>
     <footer class="story-footer">
-      <div><p>돌에 새긴 선, 풍경이 되다<br>디지털헤리티지큐레이터 3기 · 가치해석 1팀 사자성어</p><a href="./#evolution">기획과 제작으로 돌아가기</a></div>
-      <p class="story-copyright">© 2026 가치해석 1팀 사자성어. 본 사이트의 자체 제작 콘텐츠에 대한 저작권은 사자성어 팀에 있습니다.</p>
+      <div><p>디지털헤리티지큐레이터 3기 · 가치해석 1팀 사자성어</p><a href="./#planning-ux">기획과 제작으로 돌아가기</a></div>
     </footer>
   </div>
 </body>

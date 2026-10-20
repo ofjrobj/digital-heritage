@@ -1,0 +1,20 @@
+.index-plan-page .top>a:last-child{font-size:13px}
+.index-plan-hero{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:64px 0;border-bottom:1px solid var(--line,#c7c7c1)}
+.index-plan-hero h1{font-size:clamp(38px,4.4vw,66px);line-height:1.5;font-weight:400;letter-spacing:-.045em;margin:22px 0 0}
+.index-plan-hero img{width:100%;height:auto;display:block}
+.index-plan-sequence{list-style:none;padding:0;margin:0}
+.index-plan-sequence>li{display:grid;grid-template-columns:70px minmax(0,1fr);gap:26px;padding:54px 0;border-bottom:1px solid var(--line,#c7c7c1)}
+.plan-number{font:13px/2 var(--story-sans,sans-serif);color:#85857a;padding-top:8px}
+.index-plan-sequence h2{font-size:28px;line-height:1.55;font-weight:400;margin:0 0 24px}
+.index-plan-sequence p,.feature-plan dd{font-size:19px;line-height:1.95;word-break:keep-all;overflow-wrap:anywhere;color:#62625a;margin:0 0 16px}
+.index-plan-sequence figure{max-width:800px;margin:32px 0 0}
+.index-plan-sequence figure img{width:100%;height:auto;display:block}
+.feature-plan{margin:0}
+.feature-plan>div{display:grid;grid-template-columns:160px minmax(0,1fr);gap:24px;padding:22px 0;border-top:1px solid var(--line,#c7c7c1)}
+.feature-plan dt{font-size:23px;line-height:1.8}
+.feature-plan dt span{display:inline-block;margin-right:22px;font:12px/1.8 var(--story-sans,sans-serif);color:#85857a}
+.feature-plan dd{margin:0}
+.index-plan-footer{display:flex;justify-content:space-between;gap:24px;padding:30px 0;font:12px/1.9 var(--story-sans,sans-serif);color:#85857a}
+.index-plan-footer p{margin:0}
+@media(max-width:760px){.index-plan-hero{grid-template-columns:1fr;gap:16px;padding:40px 0}.index-plan-hero img{max-width:560px;margin:auto}.index-plan-sequence>li{grid-template-columns:40px minmax(0,1fr);gap:12px;padding:36px 0}.index-plan-sequence h2{font-size:24px}.index-plan-sequence p,.feature-plan dd{font-size:17px}.feature-plan>div{grid-template-columns:1fr;gap:8px}.feature-plan dt{font-size:21px}.index-plan-footer{flex-direction:column;gap:10px}}
+@media(prefers-reduced-motion:reduce){.index-plan-page{scroll-behavior:auto}}

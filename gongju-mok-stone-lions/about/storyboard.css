@@ -64,3 +64,5 @@
   .board-frame { max-height: 400px; }
   .board-footer { align-items: flex-start; flex-direction: column; gap: 10px; }
 }
+
+.board-contents{display:flex;flex-wrap:wrap;gap:14px 34px;padding:0 0 28px;font:13px/1.8 var(--story-sans,sans-serif);color:#77776c}
