@@ -1,0 +1,30 @@
+.storyline-integrated .story-hero { display: block; max-width: 780px; padding: 64px 0 42px; }
+.storyline-integrated .story-lead { margin-top: 20px; }
+.storyline-integrated .story-fiction { max-width: none; margin-top: 14px; }
+.storyline-integrated .story-section { padding: 44px 0; }
+.storyline-integrated .story-section-heading { display: block; margin-bottom: 25px; }
+.storyline-integrated .story-section-heading h2 { font-size: 28px; }
+.storyline-integrated .opening-copy { margin-bottom: 0; }
+.integrated-board { padding-top: 44px; }
+.integrated-board-heading { margin-bottom: 28px; }
+.integrated-board-heading h2 { margin: 13px 0 0; font-size: 28px; font-weight: 400; }
+.integrated-board-heading .board-key { margin-top: 14px; }
+.storyline-integrated .board-cut figcaption { margin-top: 0; }
+.storyline-integrated .voice,
+.storyline-integrated .voice:nth-of-type(even) { display: block; padding: 28px 0; }
+.storyline-integrated .voice-copy { max-width: 850px; }
+.storyline-integrated .voice-heading { margin-bottom: 12px; }
+.storyline-integrated .voice-profile { margin-bottom: 14px; }
+.voice-dialogue summary { width: fit-content; padding: 7px 0; color: #77776c; cursor: pointer; font: 13px/1.8 var(--story-sans, sans-serif); }
+.voice-dialogue summary:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+.voice-dialogue .dialogue { margin-top: 14px; }
+.storyline-integrated .sound-section { padding-block: 40px; }
+@media (max-width: 760px) {
+  .storyline-integrated .story-hero { padding: 45px 0 30px; }
+  .storyline-integrated .story-section { padding: 34px 0; }
+  .storyline-integrated .story-section-heading h2,
+  .integrated-board-heading h2 { font-size: 25px; }
+  .integrated-board { padding-top: 34px; }
+  .storyline-integrated .voice,
+  .storyline-integrated .voice:nth-of-type(even) { padding: 24px 0; }
+}

@@ -1,0 +1,29 @@
+.video-process-figure { margin: 0 0 50px; padding: 18px 0 24px; border-block: 1px solid var(--line); }
+.video-process-figure img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
+.video-process-figure figcaption { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 4px; color: #77776c; text-align: center; font: 13px/1.75 var(--story-sans, sans-serif); }
+.video-process-steps { margin: 0; padding: 0; list-style: none; }
+.video-process-steps > li { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 24px; padding: 30px 0; border-bottom: 1px solid var(--line); }
+.video-process-steps > li:first-child { padding-top: 0; }
+.video-process-steps .number { padding-top: 10px; }
+.video-process-steps h2 { margin: 0; font-size: 27px; font-weight: 400; line-height: 1.65; }
+.video-process-steps p { max-width: 42em; margin: 16px 0 0; font-size: 18px; line-height: 1.95; }
+.video-process-steps .video-process-tool { margin-top: 10px; color: #77776c; font: 13px/1.8 var(--story-sans, sans-serif); }
+.video-process-steps .video-process-record { margin-top: 14px; color: #77776c; font: 13px/1.9 var(--story-sans, sans-serif); }
+.video-process-related { display: flex; flex-wrap: wrap; gap: 12px 30px; padding: 32px 0 48px; font: 14px/1.8 var(--story-sans, sans-serif); }
+.video-process-related a { display: inline-flex; align-items: baseline; gap: 12px; min-height: 34px; padding: 5px 0; }
+@media (max-width: 760px) {
+  .video-process-figure { margin-bottom: 36px; padding: 10px 0 20px; }
+  .video-process-figure figcaption { font-size: 11px; gap: 10px; }
+  .video-process-steps > li { grid-template-columns: 42px minmax(0, 1fr); gap: 18px; padding: 27px 0; }
+  .video-process-steps h2 { font-size: 25px; }
+  .video-process-steps p { font-size: 17px; margin-top: 14px; }
+  .video-process-related { gap: 9px 24px; padding: 25px 0 34px; font-size: 13px; }
+}
+@media (max-width: 480px) {
+  .video-process-figure figcaption { font-size: 10px; gap: 7px; }
+  .video-process-steps > li { grid-template-columns: 30px minmax(0, 1fr); gap: 14px; }
+  .video-process-steps h2 { font-size: 23px; }
+  .video-process-steps p { font-size: 16px; }
+  .video-process-steps .video-process-tool,
+  .video-process-steps .video-process-record { font-size: 12px; }
+}
