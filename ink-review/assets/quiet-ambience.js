@@ -2,6 +2,7 @@ const clamp = n => Math.max(0, Math.min(1, Number.isFinite(n) ? n : 0));
 const smooth = n => { const t = clamp(n); return t*t*(3-2*t); };
 // The approved opening reveals the two misty mountain ridges at source 3.2s.
 const INTRO_AMBIENCE_START = 3.2;
+const SEASON_CROSSFADE_SECONDS = 2.4;
 const townRoutes = new Set(['entry-merchant','merchant-farmer','farmer-cook','cook-trio']);
 
 // Gains multiply already quiet, peak-limited files. Dialogue always wins.
@@ -30,7 +31,7 @@ export function createQuietAmbience(stage) {
     audio.addEventListener('error',()=>{track.error='MediaError';track.blocked=true;});
     return [key,track];
   }));
-  let previousScene=null;
+  let previousScene=null,seasonHandoff=null;
   function ensure(track,prime=false) {
     const a=track.audio;
     if(track.pending||track.blocked||(!prime&&track.target<=0)||!a.paused||document.hidden)return;
@@ -40,6 +41,7 @@ export function createQuietAmbience(stage) {
       .finally(()=>{if(serial===track.serial){track.pending=false;if(track.target<=0)a.pause();}});
   }
   function stop() {
+    seasonHandoff=null;
     for(const t of Object.values(tracks)){t.serial++;t.pending=false;t.target=0;t.gainTarget=0;t.rise=null;t.audio.volume=0;t.audio.pause();}
   }
   return {
@@ -52,8 +54,15 @@ export function createQuietAmbience(stage) {
     stop,
     tick(state) {
       if(!state.sound||state.paused||state.hidden||state.finished||
-        state.scene?.id==='intro'&&(state.time||0)<INTRO_AMBIENCE_START){stop();return;}
+        state.scene?.id==='intro'&&(state.time||0)<INTRO_AMBIENCE_START||
+        state.scene?.id==='seasons'&&(state.endingGain??1)<=0){stop();return;}
       const target=ambienceTargets(state),dt=Math.min(.1,Math.max(0,state.dt||0));
+      const isSeasons=state.scene?.id==='seasons';
+      if(isSeasons){
+        // Hand the sound over once the film actually plays, not while it waits.
+        if(!seasonHandoff)seasonHandoff={elapsed:0,from:{forest:tracks.forest.audio.volume,village:tracks.village.audio.volume}};
+        if(state.active&&state.moving)seasonHandoff.elapsed+=dt;
+      }else seasonHandoff=null;
       const seasonal=tracks.seasons.audio;
       if(state.scene?.id==='seasons' && seasonal.readyState>=1 &&
         (previousScene!=='seasons'||Math.abs(seasonal.currentTime-state.time)>.30)) {
@@ -66,9 +75,17 @@ export function createQuietAmbience(stage) {
       for(const [key,t] of Object.entries(tracks)) {
         t.target=target[key];
         const a=t.audio;
+        if(isSeasons&&key!=='seasons'){
+          // Finish the old forest bed completely; leave only the film's sound.
+          t.target=0;t.gainTarget=0;t.rise=null;
+          a.volume=clamp((seasonHandoff.from[key]||0)*(1-smooth(seasonHandoff.elapsed/SEASON_CROSSFADE_SECONDS))*clamp(state.endingGain??1));
+          if(a.volume===0)a.pause();
+          continue;
+        }
+        if(isSeasons&&(!state.active||!state.moving)){a.pause();continue;}
         if(t.target>t.gainTarget+.000001){
           // Count the fade from audible playback, never while autoplay is blocked.
-          t.rise={from:a.volume,elapsed:0,duration:state.scene?.id==='intro'?10:6};
+          t.rise={from:a.volume,elapsed:0,duration:isSeasons?SEASON_CROSSFADE_SECONDS:state.scene?.id==='intro'?10:6};
         }else if(t.target<t.gainTarget-.000001)t.rise=null;
         t.gainTarget=t.target;
         if(t.rise){

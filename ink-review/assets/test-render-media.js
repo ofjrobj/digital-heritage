@@ -1,6 +1,6 @@
 import {approachState,shouldStartApproach} from './dialogue-approach.js?v=arrival-20261020-v27';
 import {createAdaptiveNavPaper} from './adaptive-nav-paper.js?v=adaptive-paper-20261019-v25';
-import {createQuietAmbience} from './quiet-ambience.js?v=mountain-onset-20261020-v33';
+import {createQuietAmbience} from './quiet-ambience.js?v=seasons-handoff-20261020-v34';
 import {continuousScrollRate,createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop} from './scroll-motion.js?v=uniform-distance-20261020-v27';
 import {createFootageFog} from './footage-fog.js?v=edge-dissolve-20261019-v24';
 import {createSceneLife} from './scene-life.js?v=sound-fade-20261019-v17';
@@ -19,7 +19,9 @@ import {dialogueApproachGain,sceneArrivalDelay} from './dialogue-audio-flow.js?v
 const replacementOpening=document.body.dataset.mediaProfile==='selected-higgsfield';
 const reviewWindow=document.body.dataset.reviewWindow==='true';
 const entryGate=document.body.hasAttribute('data-intro-entry');
-let entryAccepted=!entryGate,entryFontsReady=!entryGate;
+const returningToIntro=new URLSearchParams(location.search).get('start')==='intro';
+let entryAccepted=!entryGate||returningToIntro,entryFontsReady=!entryGate;
+if(entryGate&&returningToIntro)document.body.dataset.introEntry='cover';
 if(entryGate)document.fonts.ready.then(()=>{entryFontsReady=true;});
 const walkingInput=createWalkingInput({oneStepPerGesture:replacementOpening});
 let walkingRate=0,walkingDirection=1,reverseElapsed=0;
@@ -45,7 +47,7 @@ const adaptiveNavPaper=createAdaptiveNavPaper(stage,canvas,$('storyIndexBar'));
 // title opacity into the narration and produces a visible dip/flash at the swap.
 const caption=document.createElement('p');caption.className='tr-caption';caption.hidden=true;caption.style.transition='none';stage.append(caption);
 const endingPaper=document.createElement('div');endingPaper.className='tr-ending-paper';endingPaper.setAttribute('aria-hidden','true');stage.append(endingPaper);
-const archiveCta=document.createElement('a');archiveCta.className='tr-archive-cta';const archiveCtaLabel=document.createElement('span');archiveCtaLabel.textContent='아카이브로 탐색';archiveCta.append(archiveCtaLabel);archiveCta.href=$('indexLink')?.href||'archive/index.html';archiveCta.hidden=true;stage.append(archiveCta);archiveCta.onclick=()=>remember();
+const archiveCta=document.createElement('a');archiveCta.className='tr-archive-cta';const archiveCtaLabel=document.createElement('span');archiveCtaLabel.textContent='아카이브 탐색';archiveCta.append(archiveCtaLabel);archiveCta.href=$('indexLink')?.href||'archive/index.html';archiveCta.hidden=true;stage.append(archiveCta);archiveCta.onclick=()=>remember();
 let archiveFrame=null,endingElapsed=0,storyStarted=false,loadingHiddenAt=null,firstSceneShownAt=null;
 function prepareArchive(){if(archiveFrame)return;archiveFrame=document.createElement('iframe');archiveFrame.className='tr-archive';archiveFrame.title='석사자 아카이브';archiveFrame.src=$('indexLink')?.href||'archive/index.html';archiveFrame.setAttribute('aria-hidden','true');archiveFrame.inert=true;archiveFrame.onload=()=>{archiveFrame.dataset.loaded='true';try{archiveFrame.contentDocument.querySelectorAll('[data-story-return]').forEach(a=>a.target='_top');}catch{}};stage.append(archiveFrame);}
 const videos=[0,1].map(()=>{const v=document.createElement('video');v.muted=true;v.crossOrigin='anonymous';v.playsInline=true;v.preload='auto';v.className='tr-source';v.setAttribute('aria-hidden','true');stage.append(v);return v;});
