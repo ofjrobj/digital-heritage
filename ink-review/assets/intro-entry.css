@@ -30,12 +30,16 @@ body[data-intro-entry="ready"] #stage>:not(#introWelcome){visibility:hidden!impo
 #introEnter:focus-visible{outline:none}
 #introEnter:focus-visible .entry-label{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px}
 #projectAbout{
-  position:absolute;right:max(22px,env(safe-area-inset-right));top:max(22px,env(safe-area-inset-top));
-  z-index:12;width:38px;height:38px;display:grid;place-items:center;color:#4d4d47;
+  position:absolute;right:max(12px,1.2em,env(safe-area-inset-right));top:var(--shared-nav-top);
+  font-size:var(--shared-nav-font);
+  z-index:12;width:2em;height:2em;display:grid;place-items:center;color:#4d4d47;
   opacity:0;visibility:hidden;pointer-events:none;text-decoration:none;
   transition:opacity .65s ease,visibility 0s linear .65s;
 }
-#projectAbout svg{width:23px;height:23px;display:block}
+/* Follow the same viewport scale and breakpoints as Story / Index. */
+#projectAbout svg{width:1.25em;height:1.25em;display:block}
+/* Keep a comfortable click target even when the visible icon becomes small. */
+#projectAbout::before{content:"";position:absolute;left:50%;top:50%;width:max(44px,100%);height:max(44px,100%);transform:translate(-50%,-50%)}
 #projectAbout:focus-visible{outline:1px solid currentColor;outline-offset:3px}
 body[data-intro-entry="cover"][data-journey-started="false"]:not([data-leaving-intro="true"]) #projectAbout{
   opacity:.8;visibility:visible;pointer-events:auto;transition:opacity .65s ease,visibility 0s;
