@@ -1,0 +1,4 @@
+@font-face{font-family:'KoPubWorld Batang Light';src:url('./kopubworld-batang-light.woff2') format('woff2');font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:'KoPubWorld Dotum Light';src:url('./kopubworld-dotum-light.woff2') format('woff2');font-weight:300;font-style:normal;font-display:swap}
+:root{--story-serif:'KoPubWorld Batang Light',serif;--story-sans:'KoPubWorld Dotum Light',sans-serif}
+body,button,input,select,textarea{font-family:var(--story-serif);font-synthesis:none}body *{font-weight:300;font-synthesis:none}
