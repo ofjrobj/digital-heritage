@@ -1,5 +1,7 @@
 const clamp = n => Math.max(0, Math.min(1, Number.isFinite(n) ? n : 0));
 const smooth = n => { const t = clamp(n); return t*t*(3-2*t); };
+// The approved opening reveals the two misty mountain ridges at source 3.2s.
+const INTRO_AMBIENCE_START = 3.2;
 const townRoutes = new Set(['entry-merchant','merchant-farmer','farmer-cook','cook-trio']);
 
 // Gains multiply already quiet, peak-limited files. Dialogue always wins.
@@ -9,7 +11,7 @@ export function ambienceTargets({scene, time=0, duration=0, moving=false, active
   const zero = {forest:0, village:0, seasons:0, drum:0, bird:0, townDetail:0, lionDetail:0};
   if (!active || !sound || paused || hidden || finished) return zero;
   if (scene?.id==='seasons') return {...zero, seasons:.72*clamp(endingGain)};
-  if (scene?.id==='intro') return {...zero,forest:.22};
+  if (scene?.id==='intro') return time<INTRO_AMBIENCE_START?zero:{...zero,forest:.22};
   // Only the dialogue has a soft duck. Loading a frame or releasing the wheel
   // does not stop, seek or modulate the ongoing environmental recording.
   if (scene?.mode==='dialogue') return {...zero,forest:.035};
@@ -49,7 +51,8 @@ export function createQuietAmbience(stage) {
     }}},
     stop,
     tick(state) {
-      if(!state.sound||state.paused||state.hidden||state.finished){stop();return;}
+      if(!state.sound||state.paused||state.hidden||state.finished||
+        state.scene?.id==='intro'&&(state.time||0)<INTRO_AMBIENCE_START){stop();return;}
       const target=ambienceTargets(state),dt=Math.min(.1,Math.max(0,state.dt||0));
       const seasonal=tracks.seasons.audio;
       if(state.scene?.id==='seasons' && seasonal.readyState>=1 &&

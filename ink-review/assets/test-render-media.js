@@ -1,6 +1,6 @@
 import {approachState,shouldStartApproach} from './dialogue-approach.js?v=arrival-20261020-v27';
 import {createAdaptiveNavPaper} from './adaptive-nav-paper.js?v=adaptive-paper-20261019-v25';
-import {createQuietAmbience} from './quiet-ambience.js?v=gradual-return-v29';
+import {createQuietAmbience} from './quiet-ambience.js?v=mountain-onset-20261020-v33';
 import {continuousScrollRate,createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop} from './scroll-motion.js?v=uniform-distance-20261020-v27';
 import {createFootageFog} from './footage-fog.js?v=edge-dissolve-20261019-v24';
 import {createSceneLife} from './scene-life.js?v=sound-fade-20261019-v17';
