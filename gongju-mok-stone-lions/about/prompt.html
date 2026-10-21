@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>AI 협업 구조 설계 — 봉황동 석사자</title>
+  <title>AI 협업 방식 — 봉황동 석사자</title>
   <meta name="description" content="Story와 Index의 공통 제작 시작점. 사람과 AI의 역할, 영상·음성·3D 스캔·웹 구현의 도구별 입력과 검토 기준.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v49">
@@ -13,14 +13,15 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
-  <meta property="og:title" content="AI 협업 구조 설계 — 봉황동 석사자">
+  <meta property="og:title" content="AI 협업 방식 — 봉황동 석사자">
   <meta property="og:description" content="Story·Index 공통 AI 협업 설계와 도구별 역할 분담.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/prompt.html">
-  <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/motion-planning-board.png">
+  <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="AI 협업 구조 설계 — 봉황동 석사자">
+  <meta name="twitter:title" content="AI 협업 방식 — 봉황동 석사자">
   <meta name="twitter:description" content="Story·Index 공통 AI 협업 설계와 도구별 역할 분담.">
-  <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/motion-planning-board.png">
+  <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
+<link rel="stylesheet" href="./case-study.css?v=54">
 </head>
 <body class="materials-page">
   <a class="skip" href="#material">본문으로 건너뛰기</a>
@@ -32,51 +33,33 @@
     <main id="material">
       <header class="material-header">
         
-        <h1>AI 협업 구조 설계</h1>
-        <p class="material-intro">Story와 Index의 제작 도구, 역할과 검토 기준.</p>
-        <nav class="material-references" aria-label="관련 원본 자료">
-          <a href="https://www.figma.com/board/5bWhFaY63IrDFhjK0M632d/Prompt-for-Higgsfield?node-id=0-1&amp;t=KYYqoagI8gjfBk5s-1" target="_blank" rel="noopener noreferrer" aria-label="Figma에서 프롬프트 보기 (새 탭)">Figma에서 프롬프트 보기</a>
-        </nav>
+        <h1>AI 협업 방식</h1>
+        <p class="material-intro">팀이 정한 방향을 바탕으로 AI와 제작 도구를 활용하고, 결과를 비교하며 다듬는다.</p>
       </header>
       <section class="collaboration-section" aria-labelledby="collaboration-roles">
         <p class="number">01 / ROLES</p>
-        <h2 id="collaboration-roles">사람이 정할 것과 AI에 요청할 것</h2>
+        <h2 id="collaboration-roles">팀의 판단과 AI의 역할</h2>
         <div class="collaboration-pair">
-          <article><h3>팀의 판단</h3><p>출처·해석 범위·장면 순서 결정. 원본 스캔과 제작 결과 대조, 웹 동작 확인.</p></article>
-          <article><h3>AI와의 협업</h3><p>제작 지시 구체화, 이미지·영상·음성·웹 코드 초안 제작.</p></article>
+          <article><h3>팀의 판단</h3><p>이야기의 방향과 장면 순서를 정하고, 제작 결과를 원본 자료와 대조한다.</p></article>
+          <article><h3>AI와의 협업</h3><p>이미지·영상·음성과 웹 코드의 초안을 만들고, 팀의 피드백을 반영한다.</p></article>
         </div>
       </section>
-      <section class="collaboration-section" aria-labelledby="collaboration-sequence">
-        <p class="number">02 / WORKFLOW</p>
-        <h2 id="collaboration-sequence">기획을 제작으로 옮기는 순서</h2>
-        <ol class="collaboration-flow">
-          <li><span>#01</span><div><h3>입력 자료</h3><p>조사 자료·원본 스캔, 서체·색감·UI, 인물·대사·스토리보드·UX.</p></div></li>
-          <li><span>#02</span><div><h3>고정할 조건과 바꿀 조건</h3><p>고정: 석사자 형상·표면색, 서체·UI, 옷차림·건축 배치.<br>조정: 시점·동작·빛·이동 속도.</p></div></li>
-          <li><span>#03</span><div><h3>Story와 Index의 작업 구분</h3><p>Story: 장면·카메라·대사.<br>Index: 스캔 후처리·관찰 방향·회전·확대.</p></div></li>
-          <li><span>#04</span><div><h3>결과 검토</h3><p>원본과의 형태 차이, 장면 사이의 구도·움직임, Story 재생과 Index 회전·확대.</p></div></li>
-        </ol>
-      </section>
       <section class="collaboration-section" aria-labelledby="collaboration-tools">
-        <p class="number">03 / HANDOFF</p>
-        <h2 id="collaboration-tools">도구별 입력과 결과</h2>
+        <p class="number">02 / TOOLS</p>
+        <h2 id="collaboration-tools">제작 도구와 맡은 작업</h2>
         <dl class="collaboration-handoffs">
-          <div><dt>Story · Blender</dt><dd>고지도·공간 배치·스토리보드 → 지형·건물·카메라 경로·렌더 프레임</dd></div>
-          <div><dt>Story · ChatGPT·Higgsfield·ElevenLabs</dt><dd>인물 설정·무드·기준 프레임·대사 → 어셋·스타일 프레임·영상·음성.<br>팀 검토: 형태·장면 연결·발음.</dd></div>
-          <div><dt>Index · Artec Studio·ZBrush</dt><dd>원본 스캔 → 모델·텍스처 정리, 스캔되지 않은 하부 보완.<br>팀 검토: 원본 형상과 보완 범위.</dd></div>
-          <div><dt>공통 · Figma·Codex</dt><dd>UI·UX, 영상·음성·3D 모델 → HTML·CSS·JavaScript와 Three.js 구현.<br>팀 검토: 클릭·드래그·스크롤 등 실제 조작.</dd></div>
+          <div><dt>Story · Blender</dt><dd>고지도와 건축 자료를 바탕으로 마을을 만들고, 인물을 찾아가는 카메라 동선을 설계한다.</dd></div>
+          <div><dt>Story · ChatGPT·Higgsfield·ElevenLabs</dt><dd>인물 설정을 그림으로, 스타일 프레임을 영상으로 옮긴다. 확정한 대사는 ElevenLabs로 음성을 합성한다.</dd></div>
+          <div><dt>Index · Artec Studio·ZBrush</dt><dd>스캔 데이터를 정리하고 촬영되지 않은 하부를 보완한다. 원본과 비교해 표면 문양을 유지한다.</dd></div>
+          <div><dt>공통 · Figma·Codex</dt><dd>Figma로 화면과 조작 방식을 설계하고, Codex로 영상·음성·3D 모델을 웹에 연결한다.</dd></div>
         </dl>
       </section>
-      <div class="material-gallery">
-        <figure class="material-figure material-figure--wide">
-          <a class="material-image" href="./assets/motion-planning-board.png" target="_blank" rel="noopener noreferrer" aria-label="Higgsfield 장면별 프롬프트 보드 · 원본 크게 보기 (새 탭)"><img src="./assets/motion-planning-board.png" width="2704" height="1698" alt="Higgsfield 장면별 프롬프트 보드" loading="eager" decoding="async"></a>
-          <figcaption>Higgsfield 제작 보드 · 참조 이미지·시간대·카메라 이동·지시문</figcaption>
-        </figure>
-      </div>
     </main>
     <footer class="material-footer">
       <a href="./#step-prompt">기획과 제작으로 돌아가기</a>
       <p>© 2026 가치해석 1팀 사자성어</p>
     </footer>
   </div>
+<script src="./about.js?v=54" defer></script>
 </body>
 </html>

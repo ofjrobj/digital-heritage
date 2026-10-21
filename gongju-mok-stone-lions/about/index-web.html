@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>UI와 3D 웹 구현 — 봉황동 석사자</title>
-  <meta name="description" content="두 석사자의 회전·확대·부위 비교·표면색 전환.">
+  <title>Index 웹 구현 — 봉황동 석사자</title>
+  <meta name="description" content="두 석사자를 돌려 보고 확대하며, 같은 부위의 형태와 표면색을 비교하는 화면.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v49">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
@@ -12,14 +12,15 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
-  <meta property="og:title" content="UI와 3D 웹 구현 — 봉황동 석사자">
-  <meta property="og:description" content="두 석사자의 회전·확대·부위 비교·표면색 전환.">
+  <meta property="og:title" content="Index 웹 구현 — 봉황동 석사자">
+  <meta property="og:description" content="두 석사자를 돌려 보고 확대하며, 같은 부위의 형태와 표면색을 비교하는 화면.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/index-web.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/index-ui-design.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="UI와 3D 웹 구현 — 봉황동 석사자">
-  <meta name="twitter:description" content="두 석사자의 회전·확대·부위 비교·표면색 전환.">
+  <meta name="twitter:title" content="Index 웹 구현 — 봉황동 석사자">
+  <meta name="twitter:description" content="두 석사자를 돌려 보고 확대하며, 같은 부위의 형태와 표면색을 비교하는 화면.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/index-ui-design.jpg">
+<link rel="stylesheet" href="./case-study.css?v=54">
 </head>
 <body class="materials-page">
   <a class="skip" href="#material">본문으로 건너뛰기</a>
@@ -31,11 +32,8 @@
     <main id="material">
       <header class="material-header">
         <p class="eyebrow">Index · 04</p>
-        <h1>UI와 3D 웹 구현</h1>
-        <p class="material-intro">두 석사자의 회전·확대·부위 비교·표면색 전환.</p>
-        <nav class="material-references" aria-label="관련 원본 자료">
-          <a href="https://drive.google.com/drive/folders/1g6D9I7yzgYN4Cx4vYP7qbA1AZXZ-Tqbz" target="_blank" rel="noopener noreferrer" aria-label="Index UI 시안 원본 (새 탭)">Index UI 시안 원본</a>
-        </nav>
+        <h1>Index 웹 구현</h1>
+        <p class="material-intro">두 석사자를 돌려 보고 확대하며, 같은 부위의 형태와 표면색을 비교하는 화면.</p>
       </header>
       <div class="material-gallery">
         <figure class="material-figure">
@@ -47,11 +45,19 @@
           <figcaption>구현 화면 · 스캔에 기록된 표면색으로 본 두 석사자와 정보 패널</figcaption>
         </figure>
       </div>
+<details class="prompt-details"><summary>UI 프롬프트</summary>
+<p class="prompt-provenance">완성된 화면과 동작을 바탕으로 재구성한 지시문. 실제 입력 원문과는 구분한 기록.</p>
+<article class="prompt-record"><h3>두 개체와 표면색</h3>
+<blockquote class="prompt-excerpt" lang="ko">수사자와 암사자를 나란히 배치하고 각 개체를 독립적으로 회전·확대하게 해 주세요. 가운데 표면 전환 버튼으로 원본 컬러와 표면색을 끈 회색 보기를 바꿔 형상과 표면색을 비교하게 해 주세요.</blockquote></article>
+<article class="prompt-record"><h3>같은 부위 비교</h3>
+<blockquote class="prompt-excerpt" lang="ko">중앙의 01–05 번호를 갈기·수염·무늬·이목구비·눈매에 연결해 주세요. 번호를 누르면 두 개체가 같은 관찰 부위를 보여 주고, 양옆의 정보 패널에서 각 개체의 수치와 설명을 확인하게 해 주세요.</blockquote></article>
+</details>
     </main>
     <footer class="material-footer">
       <a href="./#step-interface">기획과 제작으로 돌아가기</a>
       <p>© 2026 가치해석 1팀 사자성어</p>
     </footer>
   </div>
+<script src="./about.js?v=54" defer></script>
 </body>
 </html>

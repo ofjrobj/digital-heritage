@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>웹 이용 흐름 설계 — 봉황동 석사자</title>
-  <meta name="description" content="Story와 Index의 화면·조작 설계. 제작 도구와 예상 시간.">
+  <meta name="description" content="이야기를 따라 걷고 두 석사자를 살펴보는 화면과 조작 방식, 제작 도구와 예상 시간.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v49">
   <link rel="stylesheet" href="./storyline.css?v=character-detail-v4">
@@ -14,7 +14,7 @@
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="웹 이용 흐름 설계 — 봉황동 석사자">
-  <meta property="og:description" content="Story의 이동·재생과 Index의 회전·확대·비교를 설계한 여덟 단계.">
+  <meta property="og:description" content="Story의 이동과 재생, Index의 회전과 비교를 위한 여덟 가지 설계.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/ux.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
   <meta property="og:image:secure_url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
@@ -24,8 +24,9 @@
   <meta property="og:image:alt" content="돌에 새긴 선, 풍경이 되다 — 봉황동 석사자">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="웹 이용 흐름 설계 — 봉황동 석사자">
-  <meta name="twitter:description" content="Story의 이동·재생과 Index의 회전·확대·비교를 설계한 여덟 단계.">
+  <meta name="twitter:description" content="Story의 이동과 재생, Index의 회전과 비교를 위한 여덟 가지 설계.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
+<link rel="stylesheet" href="./case-study.css?v=54">
 </head>
 <body class="storyline-page ux-page">
   <a class="skip" href="#ux">본문으로 건너뛰기</a>
@@ -40,18 +41,18 @@
         <h1>화면과 조작 설계</h1>
         <dl class="ux-tools" aria-label="제작 도구와 역할">
           <div><dt>화면 설계</dt><dd>Figma · 메뉴·대사 패널·반응형 화면</dd></div>
-          <div><dt>공간·카메라</dt><dd>Blender · 지형·건축 배치, 카메라 위치·동선 확인과 렌더링</dd></div>
-          <div><dt>영상</dt><dd>Higgsfield · 스타일 프레임·장면 영상 생성</dd></div>
-          <div><dt>대사 음성</dt><dd>ElevenLabs · 확정 대사로 인물별 음성 제작</dd></div>
+          <div><dt>Blender 애니메이션</dt><dd>Blender · 지형과 건물 배치, 카메라 동선, 렌더링</dd></div>
+          <div><dt>영상</dt><dd>Higgsfield · 스타일 프레임과 영상 생성 / 영상 편집 · 장면 연결과 길이 조정</dd></div>
+          <div><dt>대사 음성</dt><dd>ElevenLabs · 인물별 대사 음성</dd></div>
           <div><dt>스캔·후처리</dt><dd>Artec Studio · ZBrush · 스캔 정렬·텍스처 정리·개체 분리·밑면 보완</dd></div>
           <div><dt>웹 구현</dt><dd>Codex · HTML · CSS · JavaScript · Three.js</dd></div>
         </dl>
-        <p class="ux-time-key">제작·관람 시간은 예상치. 실제 관람 시간은 이동·탐색 속도에 따라 달라짐.</p>
+        <p class="ux-time-key">아래 시간은 기획 단계의 예상치다. 관람 시간은 이동하거나 살펴보는 속도에 따라 달라진다.</p>
       </header>
 
       <nav class="story-contents" aria-label="웹 이용 흐름 목차">
         <a href="#story-experience"><span>#01–04</span> Story</a>
-        <a href="#index-experience"><span>#05–08</span> Index</a><a href="./index-plan.html">Index 관찰 기획</a>
+        <a href="#index-experience"><span>#05–08</span> Index</a>
       </nav>
 
       <section class="ux-track" id="story-experience" aria-labelledby="story-experience-title">
@@ -60,24 +61,22 @@
           <li class="ux-step" id="ux-01">
             <span class="ux-step-number">#01</span>
             <div class="ux-step-copy">
-              <h3>메뉴 · 화면 크기</h3>
+              <h3>어느 화면에서든 시작하기</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>Figma · Codex · HTML · CSS</dd></div>
                 <div><dt>제작물</dt><dd>Story·Index 메뉴, 대사 패널, PC·모바일 화면</dd></div>
                 <div><dt>동작</dt><dd>메뉴 선택 → Story·Index 이동 / 화면 폭에 맞춰 패널·글자 크기 조절</dd></div>
                 <div><dt>제작 예상</dt><dd>0.5–1일</dd></div>
-                <div><dt>관람 예상</dt><dd>메뉴 선택 시간 제한 없음</dd></div>
-              </dl>
+                              </dl>
             </div>
-            <figure class="ux-sketch"><img src="./assets/ux-flow-sketch-v1.png" width="1536" height="1024" alt="Story와 Index 두 화면의 이동 경로를 표현한 단순한 흑백 스케치" decoding="async"></figure>
           </li>
           <li class="ux-step" id="ux-02">
             <span class="ux-step-number">#02</span>
             <div class="ux-step-copy">
-              <h3>영상 이동 · 정지</h3>
+              <h3>스크롤로 걷고 멈추기</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>Blender · Higgsfield · Codex · JavaScript</dd></div>
-                <div><dt>제작물</dt><dd>공간·카메라 동선 확인과 렌더링 → 스타일 프레임 → 장면 영상</dd></div>
+                <div><dt>제작 순서</dt><dd>Blender 애니메이션 → 어셋 디자인 → 스타일 프레임 → Higgsfield 영상·편집 → 웹 구현</dd></div>
                 <div><dt>동작</dt><dd>스크롤·드래그한 만큼 영상 이동 / 손을 멈추면 해당 프레임 유지</dd></div>
                 <div><dt>제작 예상</dt><dd>구성·생성 2–4일 / 렌더링 약 2일</dd></div>
                 <div><dt>관람 예상</dt><dd>전체 영상 약 250초 / 이동 구간은 속도 조절 가능</dd></div>
@@ -88,7 +87,7 @@
           <li class="ux-step" id="ux-03">
             <span class="ux-step-number">#03</span>
             <div class="ux-step-copy">
-              <h3>대사 재생 · 종료</h3>
+              <h3>인물 앞에서 듣는 이야기</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>ElevenLabs · HTML Audio · JavaScript · CSS</dd></div>
                 <div><dt>제작물</dt><dd>확정 대사로 만든 다섯 장면의 인물 음성, 반투명 대사 패널</dd></div>
@@ -102,7 +101,7 @@
           <li class="ux-step ux-step-text" id="ux-04">
             <span class="ux-step-number">#04</span>
             <div class="ux-step-copy">
-              <h3>환경음 · 음소거</h3>
+              <h3>장소에 따라 달라지는 소리</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>Codex · HTML Audio · JavaScript</dd></div>
                 <div><dt>제작물</dt><dd>장소별 환경음, 발소리, 계절 전환 음향</dd></div>
@@ -121,7 +120,7 @@
           <li class="ux-step ux-step-text" id="ux-05">
             <span class="ux-step-number">#05</span>
             <div class="ux-step-copy">
-              <h3>스캔 · 후처리</h3>
+              <h3>두 석사자를 한 화면에</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>Artec Studio · ZBrush · Blender · Three.js</dd></div>
                 <div><dt>제작물</dt><dd>스캔 정렬·정합 / 텍스처 정리·개체 분리·밑면 보완 / 웹용 GLB</dd></div>
@@ -134,21 +133,21 @@
           <li class="ux-step" id="ux-06">
             <span class="ux-step-number">#06</span>
             <div class="ux-step-copy">
-              <h3>회전 · 확대</h3>
+              <h3>돌려 보고 가까이 보기</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>Three.js · OrbitControls · JavaScript</dd></div>
-                <div><dt>제작물</dt><dd>두 석사자를 각각 돌리고 확대하는 화면, 고정 조명</dd></div>
+                <div><dt>제작물</dt><dd>각각 회전·확대할 수 있는 두 석사자, 고정 조명</dd></div>
                 <div><dt>동작</dt><dd>드래그 → 회전 / 스크롤·핀치 → 확대·축소 / 두 석사자를 각각 조작</dd></div>
                 <div><dt>제작 예상</dt><dd>0.5–1일</dd></div>
                 <div><dt>관람 예상</dt><dd>개체별 약 30–60초 / 시간 제한 없음</dd></div>
               </dl>
             </div>
-            <figure class="ux-sketch"><img src="./assets/ux-index-sketch-v1.png" width="1536" height="1024" alt="두 석사자를 나란히 돌리고 확대하는 관찰 화면의 단순한 흑백 스케치" loading="lazy" decoding="async"></figure>
+            <figure class="ux-sketch"><img src="./assets/ux-lion-exploration-v2.webp" width="1536" height="1024" alt="두 석사자를 나란히 돌리고 확대하는 관찰 화면의 단순한 흑백 스케치" loading="lazy" decoding="async"></figure>
           </li>
           <li class="ux-step ux-step-text" id="ux-07">
             <span class="ux-step-number">#07</span>
             <div class="ux-step-copy">
-              <h3>부위 선택 · 비교</h3>
+              <h3>같은 부위를 나란히</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>Figma · Three.js · JavaScript</dd></div>
                 <div><dt>제작물</dt><dd>갈기·수염·무늬·이목구비·눈매 메뉴, 부위별 설명과 치수·개수</dd></div>
@@ -161,10 +160,10 @@
           <li class="ux-step ux-step-text" id="ux-08">
             <span class="ux-step-number">#08</span>
             <div class="ux-step-copy">
-              <h3>표면색 · 굴곡</h3>
+              <h3>돌의 색과 굴곡 살피기</h3>
               <dl class="ux-step-plan">
                 <div><dt>도구</dt><dd>ZBrush · Three.js · JavaScript</dd></div>
-                <div><dt>제작물</dt><dd>같은 스캔을 표면색·무채색으로 보여주는 두 방식</dd></div>
+                <div><dt>제작물</dt><dd>표면색과 무채색을 오가는 보기 방식</dd></div>
                 <div><dt>동작</dt><dd>버튼으로 두 석사자의 표면색 켜기·끄기 / 형태와 시점은 그대로 유지</dd></div>
                 <div><dt>제작 예상</dt><dd>0.5–1일</dd></div>
                 <div><dt>관람 예상</dt><dd>비교 약 20–40초 / 시간 제한 없음</dd></div>
@@ -178,5 +177,6 @@
       <div><p>디지털헤리티지큐레이터 3기 · 가치해석 1팀 사자성어</p><a href="./#planning-ux">기획과 제작으로 돌아가기</a></div>
     </footer>
   </div>
+<script src="./about.js?v=54" defer></script>
 </body>
 </html>
