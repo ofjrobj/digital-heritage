@@ -50,6 +50,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   const fill = new THREE.DirectionalLight(0xffffff, .65);
   fill.position.set(3, -3, 4); scene.add(fill);
   let dirty = true, ready = false, goal = null;
+  let resizePending = true, bufferWidth = 0, bufferHeight = 0;
   // Wheel zoom updates synchronously inside OrbitControls, before the next RAF.
   controls.addEventListener('change',()=>{dirty=true;});
   const surface = createSurfaceView(THREE,scene,element,()=>{dirty=true;});
@@ -60,16 +61,23 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
     if (!r.width || !r.height) return;
     camera.aspect=r.width/r.height;camera.updateProjectionMatrix();
     renderCamera.aspect=camera.aspect;renderCamera.updateProjectionMatrix();
-    renderer.setSize(r.width,r.height,false);framing.resize(r,goal);dirty=true;
+    const width=Math.max(1,Math.round(r.width)),height=Math.max(1,Math.round(r.height));
+    if(width!==bufferWidth||height!==bufferHeight){
+      renderer.setSize(width,height,false);bufferWidth=width;bufferHeight=height;
+    }
+    // A newly bound model still needs fitting when its viewport size is unchanged.
+    framing.resize(r,goal);dirty=true;
   };
-  new ResizeObserver(frame).observe(element);frame();
+  // ResizeObserver runs after animation callbacks. Defer buffer changes so that
+  // resizing and drawing happen together, before the browser paints the canvas.
+  new ResizeObserver(()=>{resizePending=true;}).observe(element);
   const loaded = loader.loadAsync(modelUrl, event => {
     loading.textContent = event.total ? `불러오는 중 ${Math.min(100,Math.round(event.loaded/event.total*100))}%` : '스캔 데이터를 불러오는 중…';
   }).then(gltf => {
     const model=levelScan(THREE,gltf.scene,{yaw,targetSize,sex:element.id==='male-scene'?'male':'female'});
     model.traverse(n=>{if(n.isMesh){n.material.roughness=.95;n.material.metalness=0;n.material.map && (n.material.map.anisotropy=renderer.capabilities.getMaxAnisotropy());}});
     model.traverse(n=>{if(n.isMesh&&n.material.map)element.dataset.colorTextureResolution=`${n.material.map.image.width}x${n.material.map.image.height}`;});
-    framing.bind(model);surface.bind(model);inspectionRoot.add(model);ready=true;frame();dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
+    framing.bind(model);surface.bind(model);inspectionRoot.add(model);ready=true;resizePending=true;dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
     element.dataset.loaded='true';
   }).catch(error => {
     console.error(error);loading.textContent='모델을 불러오지 못했습니다. 새로고침해 주세요.';element.dataset.loaded='error';
@@ -79,6 +87,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   function animate(){
     requestAnimationFrame(animate);
     if(document.hidden)return;
+    if(resizePending){resizePending=false;frame();}
     if(goal){camera.position.lerp(goal.position,.1);controls.target.lerp(goal.target,.1);dirty=true;if(camera.position.distanceTo(goal.position)<.002){camera.position.copy(goal.position);controls.target.copy(goal.target);goal=null;}}
     if(controls.update())dirty=true;
     if(dirty){
