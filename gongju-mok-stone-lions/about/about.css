@@ -41,11 +41,6 @@
 @media(max-width:560px){.process-gallery{width:calc(100% - 24px);max-height:calc(100dvh - 24px);padding:16px}.gallery-heading{gap:10px;margin-bottom:12px}.gallery-stage{height:44vh;height:44dvh;min-height:160px}.gallery-figure figcaption{font-size:14px}.gallery-bottom{gap:8px}.gallery-source{max-width:130px}}
 @media(prefers-reduced-motion:reduce){.process-gallery[open]{animation:none}.gallery-trigger .trigger-text,.gallery-trigger svg{transition:none}}
 
-.preparation-notice{position:fixed;z-index:1000;inset:50% auto auto 50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:min(360px,82vw,70dvh);aspect-ratio:1;border-radius:50%;border:1px solid rgba(255,255,252,.6);background:rgba(241,241,237,.93);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 12px 60px rgba(48,48,42,.08);pointer-events:none;opacity:0}
-.preparation-notice[hidden]{display:none}.preparation-notice.is-visible{animation:preparation-notice-fade 2s ease-in-out both}
-.preparation-notice p{margin:0;padding:24px;text-align:center;font-size:clamp(18px,2vw,26px);line-height:1.9;letter-spacing:.02em;color:#45453f}
-@keyframes preparation-notice-fade{0%{opacity:0}14%,84%{opacity:1}100%{opacity:0}}
-@media(prefers-reduced-motion:reduce){.preparation-notice.is-visible{animation:none;opacity:1}}
 
 /* Two entry routes, followed by separate Story and Index production tracks. */
 .experience-paths{margin:0 0 80px;padding:26px 0 30px;border-block:1px solid var(--line)}

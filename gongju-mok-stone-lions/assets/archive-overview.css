@@ -1,7 +1,4 @@
-/* Overview keeps the focus on the pair; feature selection restores detail UI. */
-html body .archive:not(:has(.hotspot.is-active)) .info-panel {
- opacity:0 !important; visibility:hidden !important; pointer-events:none !important;
-}
+/* Size panels remain available in both the full-object and feature views. */
 html body .archive .info-panel { transition:opacity .4s ease, visibility .4s; }
 html[data-archive-overview="hint"] body .archive:not(:has(.hotspot.is-active)) .detail-card {
  animation: archive-guide-pulse 2s ease-in-out 2;

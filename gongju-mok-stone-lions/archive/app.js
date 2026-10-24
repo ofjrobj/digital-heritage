@@ -100,7 +100,7 @@ const viewers = {
  female:createViewer({element:document.querySelector('#female-scene'),loading:document.querySelector('#female-loading'),modelUrl:'models/female-continuous.glb',targetSize:2.10,yaw:-140.445485*Math.PI/180,displayZoom:1.25})
 };
 mountSurfaceToggle(viewers);
-// The archive's numbered descriptions and side panels use the supplied scan values.
+// Numbered controls show feature observations; side panels keep the overall dimensions.
 // Keep the local GLB projection settings above: the remote archive used different OBJ axes.
 const detail = document.querySelector('.detail-card');
 const panels = [...document.querySelectorAll('.info-panel')];
@@ -115,18 +115,9 @@ const descriptions = [
 function setPanelOpen(panel, open) {
  panel.classList.toggle('is-open', open);
  panel.querySelector('.panel-toggle').setAttribute('aria-expanded', String(open));
-}
-function updatePanel(panel, objectName, column, point, note) {
- panel.querySelector('.panel-kicker').textContent=`OBJECT ${column===2?'01':'02'} · ${point} ${note.label}`;
- panel.querySelector('h1,h2').textContent=objectName;
- panel.querySelector('.panel-subtitle').textContent=note.label;
- const rows=note.rows.map(row=>{
-  const pair=document.createElement('div'),term=document.createElement('dt'),value=document.createElement('dd');
-  term.textContent=row[0];value.textContent=row[column];pair.append(term,value);return pair;
- });
- panel.querySelector('dl').replaceChildren(...rows);
- panel.querySelector('.panel-note').textContent=sourceNote;
- panel.querySelector('.panel-content').scrollTop=0;
+ const content=panel.querySelector('.panel-content');
+ content.inert=!open;
+ content.setAttribute('aria-hidden',String(!open));
 }
 function showObservation(index, focus=false) {
  const note=measurements[index],point=String(index+1).padStart(2,'0');
@@ -139,8 +130,6 @@ function showObservation(index, focus=false) {
  detail.querySelector('h3').textContent=`${point}. ${note.label}`;
  detail.querySelector('.detail-copy').textContent=descriptions[index];
  detail.querySelector('.detail-status').textContent=sourceNote;
- updatePanel(document.querySelector('.left-panel'),'수사자',2,point,note);
- updatePanel(document.querySelector('.right-panel'),'암사자',1,point,note);
  if(focus){viewers.male.focus(index);viewers.female.focus(index);}
 }
 // Start in the complete-object view with no numbered observation selected.
@@ -159,3 +148,11 @@ document.querySelectorAll('.panel-toggle').forEach(button=>button.addEventListen
  if(!wasOpen)setPanelOpen(panel,true);
 }));
 
+// Keep keyboard dismissal local to the open information panel.
+document.addEventListener('keydown',event=>{
+ if(event.key!=='Escape')return;
+ const openPanel=panels.find(panel=>panel.classList.contains('is-open'));
+ if(!openPanel)return;
+ setPanelOpen(openPanel,false);
+ openPanel.querySelector('.panel-toggle').focus();
+});
