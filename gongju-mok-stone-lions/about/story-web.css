@@ -55,3 +55,10 @@
 .story-production-records .prompt-origin{margin:24px 0}
 .story-production-records h2{margin:28px 0 16px;font-size:23px;font-weight:400}
 @media(max-width:600px){.story-output-grid{grid-template-columns:1fr;gap:28px}}
+
+.story-final-frames{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 22px}
+.story-final-frames figure{margin:0;min-width:0}.story-final-frames figcaption{margin-top:12px;font:14px/1.8 var(--story-sans,sans-serif);color:#68685f}
+.story-frame-window{position:relative;overflow:hidden;aspect-ratio:766/431;background:#e8e8e6}
+.story-frame-window img{position:absolute;display:block;max-width:none;width:calc(3200 * 100% / 766);height:auto;left:calc(var(--frame-x) * -100% / 766);top:calc(var(--frame-y) * -100% / 431)}
+@media(max-width:900px){.story-final-frames{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.story-final-frames{grid-template-columns:1fr}}

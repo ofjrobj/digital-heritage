@@ -60,3 +60,29 @@
   .architecture-model-grid { grid-template-columns: 1fr; }
   .asset-contents { gap: 14px 24px; font-size: 14px; }
 }
+
+/* Full production collection: retain complete sheets at every width. */
+.cast-collection, .resident-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 44px 30px; }
+.cast-study { min-width: 0; }
+.cast-study h3 { margin: 0; font-size: 25px; font-weight: 400; }
+.asset-place { margin: 8px 0 18px; color: #77776c; font: 13px/1.7 var(--story-sans, sans-serif); }
+.asset-design-page .asset-sheet img { display: block; width: 100%; height: auto; object-fit: contain; }
+.asset-design-page .asset-sheet figcaption { margin-top: 14px; font-size: 14px; line-height: 1.8; }
+.cast-study .asset-image { min-height: 0; }
+.cast-study img { aspect-ratio: 4 / 5; object-fit: contain; }
+.resident-grid .asset-image { display: flex; align-items: center; min-width: 0; }
+.resident-grid img { aspect-ratio: 3 / 2; object-fit: contain; }
+.architecture-views { margin-top: 24px !important; }
+.house-study { padding: 30px 0; border-top: 1px solid var(--line); }
+.house-study h4 { margin: 0 0 22px; font-size: 24px; font-weight: 400; }
+.house-study-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 30px; align-items: start; }
+.house-related { display: grid; gap: 28px; min-width: 0; }
+.landscape-collection { display: grid; gap: 38px; }
+.landscape-collection .asset-image { max-width: 100%; }
+@media (max-width: 700px) {
+  .cast-collection, .resident-grid, .house-study-grid { grid-template-columns: 1fr; gap: 32px; }
+  .cast-study img, .resident-grid img { aspect-ratio: auto; }
+  .cast-study h3 { font-size: 24px; }
+  .house-study { padding: 26px 0; }
+  .landscape-collection { gap: 30px; }
+}

@@ -4,22 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Higgsfield 영상·편집 — 봉황동 석사자</title>
-  <meta name="description" content="Blender의 참조 구도를 바탕으로 Higgsfield에서 움직임을 만들고, 480p 시안 검토를 거쳐 1080p로 출력한 과정을 소개합니다.">
+  <meta name="description" content="카메라 애니메이션과 스타일 프레임, 인물·공간 어셋을 모아 프롬프트를 작성하고 영상을 제작한 과정입니다.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v49">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
-  <link rel="stylesheet" href="./video-process.css?v=1">
+  <link rel="stylesheet" href="./video-process.css?v=57">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/video.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="Higgsfield 영상·편집 — 봉황동 석사자">
-  <meta property="og:description" content="Blender의 참조 구도부터 Higgsfield 영상 생성, 시안 검토와 최종 출력까지의 과정을 소개합니다.">
+  <meta property="og:description" content="카메라 애니메이션과 스타일 프레임, 인물·공간 어셋을 모아 Higgsfield 영상을 제작했습니다.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/video.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/video-production-flow-v1.webp">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Higgsfield 영상·편집 — 봉황동 석사자">
-  <meta name="twitter:description" content="Blender의 참조 구도부터 Higgsfield 영상 생성, 시안 검토와 최종 출력까지의 과정을 소개합니다.">
+  <meta name="twitter:description" content="카메라 애니메이션과 스타일 프레임, 인물·공간 어셋을 모아 Higgsfield 영상을 제작했습니다.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/video-production-flow-v1.webp">
 <link rel="stylesheet" href="./case-study.css?v=54">
 </head>
@@ -34,28 +34,17 @@
       <header class="material-header">
         <p class="eyebrow">Story · 04</p>
         <h1>Higgsfield 영상·편집</h1>
+        <p class="material-intro">Blender의 카메라 애니메이션과 스타일 프레임, 인물·공간 어셋을 모아 장면별 프롬프트를 작성했습니다. 이를 바탕으로 Higgsfield에서 영상을 생성하고 편집했습니다.</p>
       </header>
-      <figure class="video-process-figure">
-        <img src="./assets/video-production-flow-v1.webp" width="2172" height="724" alt="카메라와 건물의 배치, 장사꾼의 미세한 움직임, 시험 영상과 최종 영상 검토를 순서대로 그린 단순한 흑백 제작 과정 스케치" decoding="async">
-        <figcaption><span>Blender · 구도</span><span>Higgsfield · 움직임</span><span>480p 검토 → 1080p 출력</span></figcaption>
-      </figure>
+      <div class="video-inputs" aria-label="프롬프트에 함께 반영한 제작 자료">
+        <figure><img src="./assets/blender-camera-route-v1.svg" alt="Blender에서 설계한 카메라 이동 경로" decoding="async"><figcaption>카메라 이동 경로·시점</figcaption></figure>
+        <figure><img src="./assets/style-scene-03.webp" width="1600" height="900" alt="장사꾼 장면의 스타일 프레임" decoding="async"><figcaption>장면별 스타일 프레임</figcaption></figure>
+        <figure><img src="./assets/cast-merchant.png" alt="장사꾼의 옷차림과 소품을 정리한 인물 설정화" decoding="async"><figcaption>인물·소품·공간 어셋</figcaption></figure>
+      </div>
       <ol class="video-process-steps" aria-label="영상 제작 순서">
-        <li>
-          <span class="number">#01</span>
-          <div><h2>시작과 끝 구도</h2><p class="video-process-tool">입력 · Blender 카메라 가이드와 스타일 프레임</p><p>Blender에서 만든 카메라 가이드와 확정한 시작·끝 프레임을 준비합니다.</p></div>
-        </li>
-        <li>
-          <span class="number">#02</span>
-          <div><h2>장면별 움직임 제작</h2><p class="video-process-tool">Higgsfield · 참조 이미지 · 프롬프트</p><p>길을 따라가는 카메라와 인물의 작은 몸짓을 생성합니다. 대사 음성은 영상과 별도로 연결합니다.</p></div>
-        </li>
-        <li>
-          <span class="number">#03</span>
-          <div><h2>480p 시험 렌더</h2><p>낮은 해상도로 먼저 확인하며 인물과 소품, 이어지는 장면의 구도를 비교합니다.</p></div>
-        </li>
-        <li>
-          <span class="number">#04</span>
-          <div><h2>1080p 최종 출력</h2><p>선택한 영상을 1080p로 출력하고, 장면 순서와 구간 길이를 편집합니다.</p><p class="video-process-record">제작 기록 · 전체 영상 약 250초 · 렌더링 약 2일</p></div>
-        </li>
+        <li><span class="number">01</span><div><h2>자료를 모아 프롬프트 작성</h2><p>카메라의 이동 방향과 높이, 시작·끝 구도를 정하고 인물의 외형과 소품, 장면의 색감과 움직임을 함께 지시했습니다.</p></div></li>
+        <li><span class="number">02</span><div><h2>영상 생성과 검토</h2><p>Higgsfield에 참조 이미지와 프롬프트를 넣어 영상을 만들었습니다. 480p 시안에서 카메라 이동, 인물의 일관성, 앞뒤 장면의 연결을 확인했습니다.</p></div></li>
+        <li><span class="number">03</span><div><h2>최종 출력과 편집</h2><p>선택한 영상을 1080p로 출력하고, 장면 순서와 길이를 조정했습니다. 인물의 증언은 별도 음성으로 연결했습니다.</p></div></li>
       </ol>
 <details class="prompt-details"><summary>Higgsfield 프롬프트</summary>
 <p class="prompt-provenance">실제 제작 프롬프트에서 핵심 지시만 발췌했습니다. 초 단위 표기는 생성 요청 기준이며, 최종 영상 길이는 편집 후 달라질 수 있습니다.</p>

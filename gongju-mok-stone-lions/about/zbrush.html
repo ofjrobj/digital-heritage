@@ -21,6 +21,7 @@
   <meta name="twitter:description" content="스캔된 형태와 표면색을 정리하고, 촬영되지 않은 하부를 보완했습니다.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/scan-zbrush.png">
 <link rel="stylesheet" href="./case-study.css?v=54">
+  <link rel="stylesheet" href="./scan-records.css?v=57">
 </head>
 <body class="materials-page">
   <a class="skip" href="#material">본문으로 건너뛰기</a>
@@ -35,12 +36,22 @@
         <h1>ZBrush 후처리</h1>
         <p class="material-intro">스캔된 형태와 표면색을 정리하고, 촬영되지 않은 하부를 보완했습니다.</p>
       </header>
-      <div class="material-gallery">
-        <figure class="material-figure material-figure--wide">
-          <a class="material-image" href="./assets/scan-zbrush.png" target="_blank" rel="noopener noreferrer" aria-label="ZBrush의 수사자 모델과 펼쳐진 텍스처 맵 · 원본 크게 보기 (새 탭)"><img src="./assets/scan-zbrush.png" width="1538" height="926" alt="ZBrush의 수사자 모델과 펼쳐진 텍스처 맵" loading="eager" decoding="async"></a>
-          <figcaption>ZBrush 작업 화면 · 입체 모델과 펼쳐 놓은 표면색</figcaption>
+      <section class="scan-record-section" aria-labelledby="zbrush-model-title">
+        <h2 id="zbrush-model-title">형태와 표면색 정리</h2>
+        <figure class="material-figure">
+          <a class="material-image" href="./assets/scan-zbrush.png" target="_blank" rel="noopener noreferrer" aria-label="ZBrush 작업 화면 크게 보기 (새 탭)"><img src="./assets/scan-zbrush.png" width="1538" height="926" alt="ZBrush의 수사자 모델과 8192픽셀 텍스처 맵" decoding="async"></a>
+          <figcaption>ZBrush · 모델과 텍스처 맵</figcaption>
         </figure>
-      </div>
+        <p>스캔에서 비어 있던 하부를 보완하고, 입체 형태와 표면색을 각각 모델과 텍스처 맵으로 정리했습니다.</p>
+      </section>
+      <section class="scan-record-section" aria-labelledby="texture-title">
+        <h2 id="texture-title">추출한 텍스처 맵</h2>
+        <p>석사자의 표면색을 평면에 펼친 컬러 맵입니다. 두 맵을 각각의 모델에 연결해 돌의 색과 표면 흔적을 함께 볼 수 있도록 했습니다.</p>
+        <div class="scan-map-grid">
+          <figure class="material-figure"><img src="./assets/male-texture-map-v57.jpg" width="1400" height="1400" alt="수사자 표면색을 펼친 텍스처 맵" loading="lazy" decoding="async"><figcaption>수사자 · 컬러 맵<br>원본 8,192 × 8,192 px</figcaption></figure>
+          <figure class="material-figure"><img src="./assets/female-texture-map-v57.jpg" width="1400" height="1400" alt="암사자 표면색을 펼친 텍스처 맵" loading="lazy" decoding="async"><figcaption>암사자 · 컬러 맵<br>원본 8,192 × 8,192 px</figcaption></figure>
+        </div>
+      </section>
     </main>
     <footer class="material-footer">
       <a href="./#step-zbrush">기획과 제작으로 돌아가기</a>

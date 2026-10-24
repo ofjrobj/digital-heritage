@@ -27,3 +27,8 @@
   .video-process-steps .video-process-tool,
   .video-process-steps .video-process-record { font-size: 12px; }
 }
+
+.video-inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;padding:26px 0 34px;border-block:1px solid var(--line);margin-bottom:38px}
+.video-inputs figure{margin:0;min-width:0}.video-inputs img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:contain;background:#e8e8e6}
+.video-inputs figcaption{margin-top:14px;color:#68685f;font:14px/1.8 var(--story-sans,sans-serif)}
+@media(max-width:650px){.video-inputs{grid-template-columns:1fr;gap:30px}.video-inputs img{max-height:280px}.video-inputs figcaption{text-align:center}}

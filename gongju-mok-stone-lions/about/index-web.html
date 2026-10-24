@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Index 웹 구현 — 봉황동 석사자</title>
-  <meta name="description" content="두 석사자를 돌려 보고 확대하며, 같은 부위의 형태와 표면색을 비교하는 화면입니다.">
+  <meta name="description" content="두 석사자를 직접 돌려 보고, 같은 부위의 차이를 나란히 살펴보는 웹 화면입니다.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v49">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
@@ -13,16 +13,17 @@
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="Index 웹 구현 — 봉황동 석사자">
-  <meta property="og:description" content="두 석사자를 돌려 보고 확대하며, 같은 부위의 형태와 표면색을 비교하는 화면입니다.">
+  <meta property="og:description" content="두 석사자를 직접 돌려 보고, 같은 부위의 차이를 나란히 살펴보는 웹 화면입니다.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/index-web.html">
-  <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/index-ui-design.jpg">
+  <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/archive-comparison.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Index 웹 구현 — 봉황동 석사자">
-  <meta name="twitter:description" content="두 석사자를 돌려 보고 확대하며, 같은 부위의 형태와 표면색을 비교하는 화면입니다.">
-  <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/index-ui-design.jpg">
+  <meta name="twitter:description" content="두 석사자를 직접 돌려 보고, 같은 부위의 차이를 나란히 살펴보는 웹 화면입니다.">
+  <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/archive-comparison.png">
 <link rel="stylesheet" href="./case-study.css?v=54">
+  <link rel="stylesheet" href="./index-web.css?v=57">
 </head>
-<body class="materials-page">
+<body class="materials-page index-web-page">
   <a class="skip" href="#material">본문으로 건너뛰기</a>
   <div class="wrap">
     <header class="top">
@@ -33,18 +34,40 @@
       <header class="material-header">
         <p class="eyebrow">Index · 04</p>
         <h1>Index 웹 구현</h1>
-        <p class="material-intro">두 석사자를 돌려 보고 확대하며, 같은 부위의 형태와 표면색을 비교하는 화면입니다.</p>
+        <p class="material-intro">두 석사자를 직접 돌려 보고, 같은 부위의 차이를 나란히 살펴보는 웹 화면입니다.</p>
+        <a class="index-live-link" href="../archive/" target="_blank" rel="noopener noreferrer" aria-label="Index 직접 보기 (새 탭)">Index 직접 보기 <span aria-hidden="true">↗</span></a>
       </header>
-      <div class="material-gallery">
-        <figure class="material-figure">
-          <a class="material-image" href="./assets/index-ui-design.jpg" target="_blank" rel="noopener noreferrer" aria-label="전체 보기와 부위별 비교를 정리한 Index UI 시안 · 원본 크게 보기 (새 탭)"><img src="./assets/index-ui-design.jpg" width="2800" height="2925" alt="전체 보기와 부위별 비교를 정리한 Index UI 시안" loading="eager" decoding="async"></a>
-          <figcaption>UI 시안 · 전체 보기·다섯 관찰 지점·정보 패널·표면색</figcaption>
-        </figure>
-        <figure class="material-figure material-figure--wide">
-          <a class="material-image" href="./assets/archive-comparison.png" target="_blank" rel="noopener noreferrer" aria-label="수사자와 암사자의 표면색과 형태를 나란히 보여 주는 Index 제작 화면 · 원본 크게 보기 (새 탭)"><img src="./assets/archive-comparison.png" width="2704" height="1454" alt="수사자와 암사자의 표면색과 형태를 나란히 보여 주는 Index 제작 화면" loading="lazy" decoding="async"></a>
-          <figcaption>구현 화면 · 스캔에 기록된 표면색으로 본 두 석사자와 정보 패널</figcaption>
-        </figure>
+      <figure class="material-figure index-result">
+        <a class="material-image" href="./assets/archive-comparison.png" target="_blank" rel="noopener noreferrer" aria-label="Index 전체 화면 크게 보기 (새 탭)"><img src="./assets/archive-comparison.png" width="2704" height="1454" alt="표면색을 켠 두 석사자를 나란히 배치하고 오른쪽에 암사자 정보 패널을 펼친 Index 화면" loading="eager" decoding="async"></a>
+        <figcaption>표면색을 켠 전체 보기입니다. 양옆의 정보 패널에서 개체별 자료를 확인할 수 있습니다.</figcaption>
+      </figure>
+      <div class="index-features">
+        <section aria-labelledby="index-explore-title">
+          <h2 id="index-explore-title">직접 돌려 보고</h2>
+          <p>마우스나 손가락으로 각각의 석사자를 돌리고 확대할 수 있습니다.</p>
+        </section>
+        <section aria-labelledby="index-surface-title">
+          <h2 id="index-surface-title">형태와 표면을 살피고</h2>
+          <p>표면색을 켜면 돌의 색과 흔적이, 회색 보기에서는 조각의 굴곡이 잘 드러납니다.</p>
+        </section>
       </div>
+      <section class="index-comparison" aria-labelledby="index-compare-title">
+        <figure class="material-figure">
+          <a class="material-image" href="./assets/mood-index-live-v1.webp" target="_blank" rel="noopener noreferrer" aria-label="Index 갈기 비교 화면 크게 보기 (새 탭)"><img src="./assets/mood-index-live-v1.webp" width="682" height="550" alt="01 갈기를 선택해 두 석사자의 정수리를 같은 방향에서 확대한 회색 비교 화면" loading="lazy" decoding="async"></a>
+          <figcaption>갈기를 선택하고 표면색을 끈 화면입니다.</figcaption>
+        </figure>
+        <div class="index-comparison-copy">
+          <h2 id="index-compare-title">같은 부위를 나란히 비교합니다</h2>
+          <p>가운데 번호를 선택하면 두 석사자가 같은 부위를 보여 줍니다. 형태를 비교하면서 각 개체의 정보도 함께 살펴볼 수 있습니다.</p>
+          <ol class="index-points" aria-label="다섯 관찰 지점">
+            <li><span>01</span>갈기</li>
+            <li><span>02</span>수염</li>
+            <li><span>03</span>무늬</li>
+            <li><span>04</span>이목구비</li>
+            <li><span>05</span>눈매</li>
+          </ol>
+        </div>
+      </section>
 <details class="prompt-details"><summary>UI 프롬프트</summary>
 <p class="prompt-provenance">완성된 화면과 동작을 바탕으로 재구성한 지시문입니다. 실제 입력 원문과는 구분해 정리했습니다.</p>
 <p class="prompt-provenance"><a href="https://www.figma.com/board/HVyoLweznhVjIUPf7YpcCH/" target="_blank" rel="noopener noreferrer" aria-label="UI 설계 자료 Figma에서 보기 (새 탭)">UI 설계 자료 · Figma에서 보기 ↗</a></p>
