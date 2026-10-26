@@ -44,25 +44,3 @@ export function createNormalMapView(THREE,{element,textureUrl,redraw=()=>{}}){
  return {bind,setEnabled};
 }
 
-export function mountNormalMapToggle(viewers){
- const surface=document.querySelector('.surface-toggle');if(!surface)return;
- const button=document.createElement('button');button.type='button';button.className='normal-map-toggle';button.textContent='N';
- button.title='노멀맵';button.setAttribute('aria-label','노멀맵 보기');button.setAttribute('aria-pressed','false');surface.after(button);
- let wanted=false,request=0;
- function reset(){wanted=false;request++;button.removeAttribute('aria-busy');button.setAttribute('aria-pressed','false');button.setAttribute('aria-label','노멀맵 보기');button.title='노멀맵';}
- button.addEventListener('click',async()=>{
-  wanted=!wanted;const token=++request,enabled=wanted;
-  button.setAttribute('aria-busy',String(enabled));
-  const results=await Promise.all(Object.values(viewers).map(viewer=>viewer.setNormalMap(enabled)));
-  if(token!==request)return;
-  button.removeAttribute('aria-busy');
-  if(enabled&&results.some(ok=>!ok)){
-   wanted=false;for(const viewer of Object.values(viewers))viewer.setNormalMap(false);
-   button.setAttribute('aria-pressed','false');button.setAttribute('aria-label','노멀맵 다시 불러오기');button.title='노멀맵을 불러오지 못했습니다. 다시 시도';return;
-  }
-  button.setAttribute('aria-pressed',String(enabled));button.setAttribute('aria-label',enabled?'노멀맵 닫기':'노멀맵 보기');
- });
- surface.addEventListener('click',reset);
- document.querySelectorAll('.hotspot').forEach(node=>node.addEventListener('click',reset));
- return button;
-}

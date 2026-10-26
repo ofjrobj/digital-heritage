@@ -36,19 +36,44 @@ export function createSurfaceView(THREE, scene, element, redraw) {
   setColor(false);
   return {bind, setColor};
 }
-export function mountSurfaceToggle(viewers) {
-  const button = document.createElement('button');
+export function mountSurfaceToggle(viewers, root = document) {
+  const button = root.createElement('button');
   button.type = 'button'; button.className = 'surface-toggle';
-  button.innerHTML = '<i aria-hidden="true">◐</i>';
-  document.querySelector('.global-hotspot-set p').after(button);
-  let color = false;
-  function setColor(value) {
-    color = value;
-    for (const viewer of Object.values(viewers)) viewer.setColor(color);
-    button.setAttribute('aria-pressed', String(color));
-    button.setAttribute('aria-label', color ? '흑백' : '컬러');
+  button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path data-mode="color" d="M12 12V3a9 9 0 0 1 7.794 13.5Z"/><path data-mode="relief" d="M12 12l7.794 4.5a9 9 0 0 1-15.588 0Z"/><path data-mode="normal-map" d="M12 12l-7.794 4.5A9 9 0 0 1 12 3Z"/></svg>';
+  root.querySelector('.global-hotspot-set p').after(button);
+  const modes = ['color', 'relief', 'normal-map'];
+  const labels = {color:'컬러', relief:'무채색', 'normal-map':'노멀맵'};
+  const pair = Object.values(viewers);
+  let mode = 'relief', stableMode = 'relief', request = 0;
+  function updateButton() {
+    const next = modes[(modes.indexOf(mode) + 1) % modes.length];
+    button.dataset.mode = mode;
+    button.setAttribute('aria-label', `보기 전환: ${labels[mode]} · 다음 ${labels[next]}`);
+    button.title = `${labels[mode]} · 클릭하면 ${labels[next]}`;
+    button.querySelectorAll('[data-mode]').forEach(sector => sector.classList.toggle('is-selected', sector.dataset.mode === mode));
   }
-  button.addEventListener('click', () => setColor(!color));
-  document.querySelectorAll('.hotspot').forEach(button => button.addEventListener('click', () => setColor(false)));
-  setColor(false);
+  async function setMode(value) {
+    mode = value; const token = ++request;
+    button.removeAttribute('aria-busy'); updateButton();
+    if (mode !== 'normal-map') {
+      stableMode = mode;
+      // Also cancels any pending normal texture request before changing materials.
+      pair.forEach(viewer => viewer.setColor(mode === 'color'));
+      return;
+    }
+    button.setAttribute('aria-busy', 'true');
+    const results = await Promise.all(pair.map(viewer => Promise.resolve(viewer.setNormalMap(true)).catch(() => false)));
+    if (token !== request) return;
+    button.removeAttribute('aria-busy');
+    if (results.some(ok => !ok)) {
+      mode = stableMode;
+      pair.forEach(viewer => viewer.setColor(mode === 'color'));
+      updateButton();
+      button.title = '노멀맵을 불러오지 못했습니다. 다시 눌러 재시도';
+    }
+  }
+  button.addEventListener('click', () => setMode(modes[(modes.indexOf(mode) + 1) % modes.length]));
+  root.querySelectorAll('.hotspot').forEach(hotspot => hotspot.addEventListener('click', () => setMode('relief')));
+  setMode('relief');
+  return button;
 }

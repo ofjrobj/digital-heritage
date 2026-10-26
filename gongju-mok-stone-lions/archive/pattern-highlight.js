@@ -1,6 +1,6 @@
-import {patternHighlightData} from './pattern-highlight-data.js?v=surface-traces-20261026';
+import {patternHighlightData} from './pattern-highlight-data.js?v=full-back-traces-20261026';
 
-// Selected, manually checked grooves from the original scan. The data contains
+// Visible back grooves, manually checked against the original scan. The data contains
 // vertex IDs, not screen-space decorations or an inferred complete motif.
 // Call bind AFTER createSurfaceView.bind so these white meshes retain their own material.
 export function createPatternHighlight(THREE, {sex, element, redraw = () => {}}) {
@@ -9,7 +9,7 @@ export function createPatternHighlight(THREE, {sex, element, redraw = () => {}})
   const strokes = [];
   let enabled = true, activePoint = -1, startedAt = null, available = false;
   let material = null, state = 'unbound';
-  const timing = {delay:850, draw:1700, stagger:110, hold:650, fade:1100};
+  const timing = {delay:850, draw:2100, stagger:85, hold:3200, fade:1400};
   const clock = () => globalThis.performance?.now() ?? Date.now();
   function setState(value) {
     if (state === value) return;
@@ -129,7 +129,11 @@ export function createPatternHighlight(THREE, {sex, element, redraw = () => {}})
     const fadeAt = endDrawing + timing.hold;
     const endAt = fadeAt + timing.fade;
     if (elapsed >= endAt) { hide(); return true; }
-    setState(elapsed < endDrawing ? 'drawing' : elapsed < fadeAt ? 'holding' : 'fading');
+    const nextState = elapsed < endDrawing ? 'drawing' : elapsed < fadeAt ? 'holding' : 'fading';
+    // A complete pattern is static during the hold; the main RAF still checks
+    // the clock, but the multi-million-triangle scan need not redraw each frame.
+    if (nextState === 'holding' && state === 'holding') return false;
+    setState(nextState);
     const fade = Math.max(0, Math.min(1, (elapsed - fadeAt) / timing.fade));
     material.opacity = 1 - fade * fade * (3 - 2 * fade);
     strokes.forEach((stroke, i) => {

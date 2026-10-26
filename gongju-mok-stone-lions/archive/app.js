@@ -1,9 +1,9 @@
 import {levelScan,createInspectionFraming} from './scan-framing.js?v=paired-framing-20261026';
 import {createViewportBuffer,framingBlend} from './viewer-motion.js?v=smooth-pair-20261026';
-import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=inspection-relief-2';
+import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=three-way-surface-20261026';
 import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=inspection-tools-20261026';
-import {createNormalMapView,mountNormalMapToggle} from './normal-map-view.js?v=original-normal-map-20261026';
-import {createPatternHighlight} from './pattern-highlight.js?v=surface-traces-20261026';
+import {createNormalMapView} from './normal-map-view.js?v=three-way-surface-20261026';
+import {createPatternHighlight} from './pattern-highlight.js?v=full-back-traces-20261026';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -136,7 +136,6 @@ const viewers = {
 };
 mountSurfaceToggle(viewers);
 mountInspectionLight(viewers);
-mountNormalMapToggle(viewers);
 // Numbered controls show feature observations; side panels keep the overall dimensions.
 // Keep the local GLB projection settings above: the remote archive used different OBJ axes.
 const detail = document.querySelector('.detail-card');
