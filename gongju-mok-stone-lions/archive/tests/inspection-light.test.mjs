@@ -28,30 +28,109 @@ test('switching off restores the exact original light without changing its color
 });
 
 class Element extends EventTarget{
- constructor(tag){super();this.tagName=tag;this.attributes={};this.children=[];this.dataset={};}
+ constructor(tag){super();this.tagName=tag;this.attributes={};this.children=[];this.dataset={};this.style={setProperty:()=>{}};}
  setAttribute(key,value){this.attributes[key]=String(value);}
  getAttribute(key){return this.attributes[key];}
  append(...nodes){for(const node of nodes){if(node.parentNode)node.parentNode.children=node.parentNode.children.filter(n=>n!==node);this.children.push(node);node.parentNode=this;}}
  before(node){const parent=this.parentNode;parent.children.splice(parent.children.indexOf(this),0,node);node.parentNode=parent;}
  focus(){this.focused=true;}
+ getBoundingClientRect(){return{x:0,y:0,width:30,height:30};}
+ setPointerCapture(id){this.capture=id;}
+ hasPointerCapture(id){return this.capture===id;}
+ releasePointerCapture(){this.capture=null;}
 }
 
-test('one accessible slider controls both viewers and Escape closes it and restores their lights',()=>{
- const previous=globalThis.document,root=new Element('div'),surface=new Element('button');root.append(surface);
+const eventWith=(type,values={})=>Object.assign(new Event(type,{cancelable:true}),values);
+
+test('the sun itself exposes the angle, controls both viewers with keys, and restores their lights on Escape',()=>{
+ const previous=globalThis.document,previousObserver=globalThis.MutationObserver,root=new Element('div'),surface=new Element('button');surface.dataset.mode='relief';root.append(surface);
+ globalThis.MutationObserver=class{constructor(callback){this.callback=callback;}observe(target){target.notifyMode=this.callback;}};
  globalThis.document={querySelector:()=>surface,createElement:tag=>new Element(tag)};
  try{
   const calls={male:[],female:[]},viewers=Object.fromEntries(Object.keys(calls).map(sex=>[sex,{setLightEnabled:v=>calls[sex].push(['enabled',v]),setLightAngle:v=>calls[sex].push(['angle',v])}]));
-  const {button,range,panel}=mountInspectionLight(viewers);
-  assert.equal(panel.hidden,true);assert.equal(panel.inert,true);
-  assert.equal(button.getAttribute('aria-controls'),panel.id);
-  assert.equal(panel.children[0].htmlFor,range.id);
+  const {button}=mountInspectionLight(viewers);
+  assert.equal(button.getAttribute('role'),'slider');assert.equal(button.getAttribute('aria-label'),'빛 방향');
+  assert.equal(button.getAttribute('aria-valuenow'),'-31');assert.equal(button.dataset.enabled,'false');
   button.dispatchEvent(new Event('click'));
-  assert.equal(button.getAttribute('aria-expanded'),'true');assert.equal(panel.hidden,false);
-  range.value='60';range.dispatchEvent(new Event('input'));
-  assert.equal(range.getAttribute('aria-valuetext'),'오른쪽 60도');
-  const escape=new Event('keydown',{cancelable:true});Object.defineProperty(escape,'key',{value:'Escape'});button.parentNode.dispatchEvent(escape);
-  assert.equal(panel.hidden,true);assert.equal(panel.inert,true);assert.equal(button.focused,true);
-  assert.deepEqual(calls.male,[['enabled',true],['angle',60],['enabled',false]]);
+  assert.equal(button.dataset.enabled,'true');
+  button.dispatchEvent(eventWith('keydown',{key:'Home'}));
+  assert.equal(button.getAttribute('aria-valuenow'),'0');
+  button.dispatchEvent(eventWith('keydown',{key:'ArrowRight'}));
+  assert.equal(button.getAttribute('aria-valuetext'),'오른쪽 5도, 조명 켜짐');
+  button.dispatchEvent(eventWith('keydown',{key:'Escape'}));
+  assert.equal(button.dataset.enabled,'false');
+  assert.deepEqual(calls.male,[['enabled',true],['angle',0],['angle',5],['enabled',false]]);
   assert.deepEqual(calls.female,calls.male);
- }finally{globalThis.document=previous;}
+ }finally{globalThis.document=previous;globalThis.MutationObserver=previousObserver;}
+});
+
+test('a captured drag enables and clamps the light without the release click switching it off',()=>{
+ const previous=globalThis.document,previousObserver=globalThis.MutationObserver,root=new Element('div'),surface=new Element('button');surface.dataset.mode='relief';root.append(surface);
+ globalThis.MutationObserver=class{constructor(callback){this.callback=callback;}observe(target){target.notifyMode=this.callback;}};
+ globalThis.document={querySelector:()=>surface,createElement:tag=>new Element(tag)};
+ try{
+  const {button}=mountInspectionLight({male:{setLightEnabled(){},setLightAngle(){}}});
+  const pointer={pointerId:1,isPrimary:true,button:0};
+  button.dispatchEvent(eventWith('pointerdown',{...pointer,clientX:15,clientY:15}));
+  assert.equal(button.hasPointerCapture(1),true);
+  button.dispatchEvent(eventWith('pointermove',{...pointer,clientX:100,clientY:15}));
+  assert.equal(button.getAttribute('aria-valuenow'),'85');
+  button.dispatchEvent(eventWith('pointerup',{...pointer,clientX:100,clientY:15}));
+  assert.equal(button.hasPointerCapture(1),false);
+  button.dispatchEvent(eventWith('click',{detail:1}));
+  assert.equal(button.dataset.enabled,'true');
+  button.dispatchEvent(eventWith('click',{detail:0}));
+  assert.equal(button.dataset.enabled,'false','keyboard activation remains available immediately after dragging');
+ }finally{globalThis.document=previous;globalThis.MutationObserver=previousObserver;}
+});
+
+
+test('the rotary light is available only in relief mode and leaving it restores normal lighting',()=>{
+ const previous=globalThis.document,previousObserver=globalThis.MutationObserver,root=new Element('div'),surface=new Element('button');surface.dataset.mode='relief';root.append(surface);
+ globalThis.MutationObserver=class{constructor(callback){this.callback=callback;}observe(target){target.notifyMode=this.callback;}};
+ globalThis.document={querySelector:()=>surface,createElement:tag=>new Element(tag)};
+ try{
+  const calls=[];
+  const {button}=mountInspectionLight({male:{setLightEnabled:value=>calls.push(value),setLightAngle(){}}});
+  assert.equal(button.inert,false);assert.equal(button.parentNode.dataset.lightVisible,'true');
+  button.dispatchEvent(new Event('click'));assert.equal(button.dataset.enabled,'true');
+  surface.dataset.mode='normal-map';surface.notifyMode();
+  assert.equal(button.inert,true);assert.equal(button.tabIndex,-1);assert.equal(button.getAttribute('aria-hidden'),'true');
+  assert.equal(button.dataset.enabled,'false');assert.deepEqual(calls,[true,false]);
+  surface.dataset.mode='color';surface.notifyMode();assert.equal(button.inert,true);
+  surface.dataset.mode='relief';surface.notifyMode();
+  assert.equal(button.inert,false);assert.equal(button.tabIndex,0);assert.equal(button.parentNode.dataset.lightVisible,'true');
+ }finally{globalThis.document=previous;globalThis.MutationObserver=previousObserver;}
+});
+
+test('the brief rotation hint expires, dismisses on use and mode exit, and restarts on a fresh activation',()=>{
+ const previous={document:globalThis.document,MutationObserver:globalThis.MutationObserver,setTimeout:globalThis.setTimeout,clearTimeout:globalThis.clearTimeout};
+ const root=new Element('div'),surface=new Element('button'),timers=new Map();let nextTimer=0;
+ surface.dataset.mode='relief';root.append(surface);
+ globalThis.MutationObserver=class{constructor(callback){this.callback=callback;}observe(target){target.notifyMode=this.callback;}};
+ globalThis.document={querySelector:()=>surface,createElement:tag=>new Element(tag)};
+ globalThis.setTimeout=(callback,delay)=>{const id=++nextTimer;timers.set(id,{callback,delay});return id;};
+ globalThis.clearTimeout=id=>timers.delete(id);
+ try{
+  const {button,setEnabled}=mountInspectionLight({male:{setLightEnabled(){},setLightAngle(){}}});
+  const hint=button.parentNode.children.find(node=>node.className==='inspection-hint');
+  assert.equal(hint.textContent,'원을 잡고 돌려보세요');
+  assert.equal(hint.getAttribute('aria-hidden'),'true','existing described-by help stays the accessible instruction');
+  button.dispatchEvent(new Event('click'));
+  assert.equal(hint.dataset.visible,'true');assert.equal(timers.size,1);
+  const timer=[...timers.values()][0];assert.equal(timer.delay,2600);timer.callback();
+  assert.equal(hint.dataset.visible,'false');assert.equal(timers.size,0);
+  setEnabled(false);setEnabled(true);assert.equal(hint.dataset.visible,'true');
+  button.dispatchEvent(eventWith('keydown',{key:'ArrowRight'}));
+  assert.equal(hint.dataset.visible,'false');assert.equal(timers.size,0);
+  setEnabled(false);setEnabled(true);
+  const pointer={pointerId:1,isPrimary:true,button:0};
+  button.dispatchEvent(eventWith('pointerdown',{...pointer,clientX:15,clientY:15}));
+  button.dispatchEvent(eventWith('pointermove',{...pointer,clientX:20,clientY:15}));
+  assert.equal(hint.dataset.visible,'false');assert.equal(timers.size,0);
+  button.dispatchEvent(eventWith('pointerup',{...pointer,clientX:20,clientY:15}));
+  setEnabled(false);setEnabled(true);
+  surface.dataset.mode='color';surface.notifyMode();
+  assert.equal(hint.dataset.visible,'false');assert.equal(timers.size,0);
+ }finally{Object.assign(globalThis,previous);}
 });

@@ -32,8 +32,16 @@ export function mountInspectionLight(viewers){
  button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/><circle class="light-bearing" cx="12" cy="2" r="1.5"/></svg>';
  const help=document.createElement('span');help.id='light-direction-help';help.className='inspection-help';
  help.textContent='클릭하면 조명을 켜거나 끕니다. 원을 드래그하거나 방향키로 빛 방향을 바꾸고, Home 키로 정면에 맞춥니다.';
- row.append(button,help);
- let enabled=false,angle=-31,drag=null,suppressClickUntil=0;
+ const hint=document.createElement('span');hint.className='inspection-hint';hint.setAttribute('aria-hidden','true');
+ hint.textContent='원을 잡고 돌려보세요';
+ row.append(button,help,hint);
+ let enabled=false,angle=-31,drag=null,suppressClickUntil=0,hintTimer;
+ function hideHint(){
+  clearTimeout(hintTimer);hintTimer=undefined;hint.dataset.visible='false';
+ }
+ function showHint(){
+  hideHint();hint.dataset.visible='true';hintTimer=setTimeout(hideHint,2600);
+ }
  function describe(){
   const direction=angle===0?'정면':`${angle<0?'왼쪽':'오른쪽'} ${Math.abs(angle)}도`;
   button.dataset.enabled=String(enabled);button.setAttribute('aria-valuenow',String(angle));
@@ -41,15 +49,18 @@ export function mountInspectionLight(viewers){
   button.title=`빛 방향 · ${direction} (${enabled?'켜짐':'꺼짐'})`;
   button.style.setProperty('--light-angle',`${angle}deg`);
  }
- function setEnabled(value){
+ function setEnabled(value,showGuide=true){
+  const wasEnabled=enabled;
   enabled=!!value;
   for(const viewer of Object.values(viewers))viewer.setLightEnabled(enabled);
   describe();
+  if(!enabled)hideHint();else if(!wasEnabled&&showGuide)showHint();
  }
  function setAngle(value){
+  hideHint();
   angle=Math.round(clampAngle(value));
   for(const viewer of Object.values(viewers))viewer.setLightAngle(angle);
-  if(!enabled)setEnabled(true);else describe();
+  if(!enabled)setEnabled(true,false);else describe();
  }
  button.addEventListener('click',event=>{
   if(event.detail>0&&performance.now()<suppressClickUntil)return;
@@ -92,6 +103,7 @@ export function mountInspectionLight(viewers){
  function syncSurfaceMode(){
   const visible=surface.dataset.mode==='relief';
   if(!visible){
+   hideHint();
    if(document.activeElement===button)surface.focus({preventScroll:true});
    if(drag){if(button.hasPointerCapture(drag.id))button.releasePointerCapture(drag.id);drag=null;}
    if(enabled)setEnabled(false);

@@ -15,20 +15,32 @@
 .archive .panel-toggle i{
  position:absolute;top:50%;bottom:auto;display:grid;place-items:center;
  width:44px;height:48px;flex:none;margin:0;padding:0;isolation:isolate;
- font-size:22px;line-height:1;letter-spacing:0;color:#373734;text-shadow:none;
- transform:translateY(-50%);transition:transform .25s ease;pointer-events:auto;
+ font-size:22px;line-height:1;letter-spacing:0;color:rgba(55,55,52,.65);text-shadow:none;
+ transform:translateY(-50%);transition:transform .25s ease,color .2s ease;pointer-events:auto;
 }
-.archive .panel-toggle i::before{
- content:"";position:absolute;z-index:-1;top:4px;bottom:4px;
- left:calc((44px - var(--archive-panel-arrow))/2);width:var(--archive-panel-arrow);
- border:1px solid rgba(55,55,52,.19);border-radius:4px;
- background:rgba(232,232,230,.6);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);
-}
+.archive .panel-toggle i::before{content:none}
 .archive .left-panel .panel-toggle i{left:calc(100% + var(--archive-panel-arrow)/2 - 22px);right:auto}
 .archive .right-panel .panel-toggle i{right:calc(100% + var(--archive-panel-arrow)/2 - 22px);left:auto}
 .archive .info-panel.is-open .panel-toggle i{transform:translateY(-50%) rotate(180deg)}
-.archive .panel-toggle:hover i::before{background:rgba(232,232,230,.82)}
-.archive .panel-toggle:focus-visible i::before{outline:1px solid #373734;outline-offset:2px}
+.archive .panel-toggle:is(:hover,:focus-visible) i{color:#373734}
+
+/* Shorten the rails before the corner ornaments, including narrow portraits. */
+.archive .info-panel{
+ height:min(540px,calc(100dvh - 2 * var(--archive-frame-safe-bottom)));
+ max-height:calc(100dvh - 2 * var(--archive-frame-safe-bottom));
+}
+@media(min-width:701px){
+ .archive .info-panel{
+  height:min(480px,calc(100dvh - 2 * (var(--archive-frame-safe-bottom) + 48px)));
+  max-height:calc(100dvh - 2 * (var(--archive-frame-safe-bottom) + 48px));
+ }
+}
+@media(max-width:700px) and (orientation:portrait){
+ .archive .info-panel{
+  height:min(540px,calc(100dvh - 174px - var(--archive-frame-safe-bottom)));
+  max-height:calc(100dvh - 174px - var(--archive-frame-safe-bottom));
+ }
+}
 
 /* The title follows the navigation's viewport scale, without a fixed header offset. */
 .archive .wordmark{

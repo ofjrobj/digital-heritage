@@ -1,7 +1,7 @@
 import {levelScan,createInspectionFraming} from './scan-framing.js?v=paired-framing-20261026';
 import {createViewportBuffer,framingBlend} from './viewer-motion.js?v=smooth-pair-20261026';
 import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=three-way-surface-20261026';
-import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=relief-only-light-20261026';
+import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=light-hint-20261026';
 import {createNormalMapView} from './normal-map-view.js?v=three-way-surface-20261026';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
