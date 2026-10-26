@@ -3,7 +3,7 @@
 export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = false, gestureIdleMs = 220} = {}) {
   const pixelStep = Number.isFinite(pixelsPerStep) && pixelsPerStep > 0 ? pixelsPerStep : 100;
   const idle = Number.isFinite(gestureIdleMs) && gestureIdleMs > 0 ? gestureIdleMs : 220;
-  let lastPacketAt = -Infinity, lastDirection = 0, lastStepAt = -Infinity, lastMagnitude = 0, lastActiveAt = -Infinity, momentumTail = false, fallingPackets = 0, releaseDelay = 120;
+  let lastPacketAt = -Infinity, lastDirection = 0, lastStepAt = -Infinity, lastMagnitude = 0, lastActiveAt = -Infinity, momentumTail = false, fallingPackets = 0, decayStart = 0, releaseDelay = 120;
 
   function wheelGestureSteps(event, now) {
     const y = Number(event.deltaY), x = Number(event.deltaX) || 0;
@@ -17,11 +17,12 @@ export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = fal
       // Discrete wheel notches must not be swallowed by the trackpad burst lock.
       const detent = mode !== 0 || x === 0 && (magnitude === 100 || magnitude === 120);
       // A small fluctuation is still direct input. Only a sustained decay
-      // identifies momentum; its rounded tail stays blocked until input rises.
+      // of at least 25% identifies momentum; its rounded tail stays blocked until input rises.
       if (newGesture || detent || magnitude > lastMagnitude) {
-        momentumTail = false; fallingPackets = 0;
+        momentumTail = false; fallingPackets = 0; decayStart = magnitude;
       } else if (magnitude < lastMagnitude) {
-        if (++fallingPackets >= 3) momentumTail = true;
+        if (!fallingPackets) decayStart = lastMagnitude;
+        if (++fallingPackets >= 3 && magnitude <= decayStart * .75) momentumTail = true;
       } else if (!momentumTail) fallingPackets = 0;
       const held = !momentumTail;
       const continuing = held && now - lastStepAt >= 420;

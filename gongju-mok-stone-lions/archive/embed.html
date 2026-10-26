@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko" data-archive-overview="expanded">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>봉황동 석사자 3D 모델</title>
+  <link rel="stylesheet" href="../about/assets/fonts/fonts.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body, .model-stage { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body { background: #e8e8e6; color: #62625a; font: 12px/1.8 var(--story-sans, sans-serif); }
+    .model-stage { position: relative; }
+    .model-scene { width: 100%; height: 100%; }
+    canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+    canvas:active { cursor: grabbing; }
+    canvas:focus-visible { outline: 1px solid #77776c; outline-offset: -5px; }
+    .model-status { position: absolute; inset: 0; display: grid; place-content: center; gap: 8px; padding: 18px; text-align: center; pointer-events: none; }
+    .model-status[hidden] { display: none; }
+    .model-status p { margin: 0; }
+    .model-status button { justify-self: center; border: 0; border-bottom: 1px solid #77776c; padding: 4px 0; background: none; color: inherit; font: inherit; cursor: pointer; pointer-events: auto; }
+  </style>
+  <script type="importmap">{"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/addons/"}}</script>
+</head>
+<body>
+  <main class="model-stage">
+    <div class="model-scene" aria-label="석사자 3D 모델"></div>
+    <div class="model-status" role="status"><p>3D 모델을 불러오는 중…</p><button type="button" hidden>다시 불러오기</button></div>
+  </main>
+  <script type="module" src="./embed.js?v=paired-framing-20261026"></script>
+</body>
+</html>

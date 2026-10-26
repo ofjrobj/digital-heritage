@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {createWalkingInput, walkingTargetDelta} from '../assets/walking-input.js';
 import {continuousScrollRate, manualScrollHoldTime, nextScrollStop} from '../assets/scroll-motion.js';
-import {setPlaybackRate, holdPresentedFrame} from '../assets/video-playback.js';
+import {setPlaybackRate, holdPresentedFrame, reverseFrameStep} from '../assets/video-playback.js';
 
 const runtime = readFileSync(new URL('../assets/test-render-media.js', import.meta.url), 'utf8');
 const manifest = JSON.parse(readFileSync(new URL('../selected-media.json', import.meta.url), 'utf8'));
@@ -38,7 +38,7 @@ function createJourney({scene = walkingScene, end = 1000} = {}) {
   };
   const current = {scene, video, clipIn: 0, loaded: true, manualHeld: true, settledTarget: 0};
   const context = vm.createContext({
-    current, scenes: [scene], index: 0, replacementOpening: true, transition: null,
+    current, scenes: [scene], index: 0, replacementOpening: true, embeddedStory: false, transition: null,
     local: 0, target: 0, walkingRate: 0, walkingDirection: 1, reverseElapsed: 0,
     previewAuto: false, manualIdleMs: 120, lastManualInputAt: -Infinity,
     lastScrollAt: -Infinity, lastWheelMoveAt: -Infinity, lastDragMoveAt: -Infinity,
@@ -54,7 +54,7 @@ function createJourney({scene = walkingScene, end = 1000} = {}) {
     play(record) { record.video.paused = false; },
     seekScrollPosition(record, time) { record.video.pause(); record.video.currentTime = time; },
     walkingTargetDelta, nextScrollStop, continuousScrollRate, manualScrollHoldTime,
-    setPlaybackRate, holdPresentedFrame,
+    setPlaybackRate, holdPresentedFrame, reverseFrameStep,
   });
   vm.runInContext(inputCode + `
     function updateFrame(dt, now) {
@@ -62,6 +62,7 @@ function createJourney({scene = walkingScene, end = 1000} = {}) {
       const s=current.scene, v=current.video, d=duration(index);
       const pacedScene=s, departing=false, turnRate=1;
       local=v.currentTime;
+      reverseElapsed=walkingDirection<0&&target-local<-.008?Math.min(.25,reverseElapsed+dt):0;
       const gap=target-local;
       ${forwardBranch}
     }
@@ -185,4 +186,71 @@ test('authored turns and approaches remain independent of manual release deadlin
     assert.equal(manualScrollHoldTime({scene: walkingScene, currentTime: 4, lastInputAt: 0, now: 1000, idleMs, automatic: true}), null);
     assert.equal(manualScrollHoldTime({scene: walkingScene, currentTime: 4, lastInputAt: 0, now: 1000, idleMs, automatic: true, released: true}), null);
   }
+});
+
+test('three small trackpad fluctuations do not freeze a continuing gesture', () => {
+  const journey = createJourney();
+  for (const [i, magnitude] of [6, 5.9, 5.8, 5.7].entries()) {
+    journey.wheel(i * 16, -magnitude);
+    journey.frame(i * 16);
+  }
+  for (let time = 64; time <= 2000; time += 16) {
+    journey.wheel(time, -5.7);
+    journey.frame(time);
+    assert.equal(journey.snapshot().paused, false);
+  }
+  assert.ok(journey.snapshot().source > 2.9);
+  assert.equal(journey.snapshot().seeks, 0);
+});
+
+test('a zero elapsed display frame cannot seek to a queued walking destination', () => {
+  const journey = createJourney();
+  journey.wheel(0);
+  journey.frame(0, 0);
+  assert.equal(journey.snapshot().source, 0);
+  assert.equal(journey.snapshot().seeks, 0);
+  assert.equal(journey.snapshot().paused, false);
+  assert.equal(journey.context.current.settledTarget, null);
+});
+
+test('arriving within one source frame pauses without flushing the decoder', () => {
+  const journey = createJourney();
+  journey.wheel(0);
+  journey.context.target = .17;
+  journey.frame(100);
+  const stopped = journey.snapshot();
+  assert.equal(stopped.paused, true);
+  assert.equal(stopped.seeks, 0);
+  assert.ok(stopped.source < .17);
+  assert.equal(journey.context.current.settledTarget, .17);
+});
+
+test('reverse seeks complete source frames instead of every display frame', () => {
+  const journey = createJourney({scene: {...walkingScene, fps: 24}});
+  journey.wheel(0);
+  journey.frame(100);
+  journey.context.local = 5;
+  journey.video.currentTime = 5;
+  journey.wheel(100, 100);
+  const before = journey.snapshot();
+  journey.frame(100 + 1000 / 120, 1 / 120);
+  assert.equal(journey.snapshot().seeks, before.seeks);
+  for (let n = 2; n <= 12; n++) journey.frame(100 + n * 1000 / 120, 1 / 120);
+  const result = journey.snapshot();
+  assert.ok(result.seeks - before.seeks >= 2 && result.seeks - before.seeks <= 4);
+  assert.ok(result.source < 4.95 && result.source > 4.8);
+});
+
+test('a delayed reverse frame still finishes a destination just outside the frame tolerance', () => {
+  const journey = createJourney({scene: {...walkingScene, fps: 24}});
+  journey.wheel(0);
+  journey.context.local = 5;
+  journey.video.currentTime = 5;
+  journey.wheel(0, 100);
+  journey.context.target = 4.95;
+  journey.context.reverseElapsed = .25;
+  const before = journey.snapshot().seeks;
+  journey.frame(16);
+  assert.equal(journey.snapshot().seeks, before + 1);
+  assert.ok(journey.snapshot().source < 5);
 });

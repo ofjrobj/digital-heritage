@@ -121,3 +121,17 @@ test('continuous input mode keeps proportional pixel, line and page distances', 
   assert.equal(input.wheelGestureSteps(wheel(-1, {deltaMode: 2}), 32), 6);
   assert.equal(input.lastActiveAt(), 32);
 });
+
+test('three minor decreases followed by a plateau remain direct input', () => {
+  for (const start of [0.5, 6, 40]) {
+    const input = gestureInput();
+    for (let i = 0; i < 4; i++) {
+      input.wheelGestureSteps(wheel(-start * (1 - i * .02)), i * 16);
+      assert.equal(input.lastActiveAt(), i * 16);
+    }
+    for (let now = 64; now <= 1000; now += 16) {
+      input.wheelGestureSteps(wheel(-start * .94), now);
+      assert.equal(input.lastActiveAt(), now);
+    }
+  }
+});

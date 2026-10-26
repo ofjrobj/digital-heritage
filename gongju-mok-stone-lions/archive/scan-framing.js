@@ -1,43 +1,70 @@
 const LEVEL={male:[-.078247699,.032765705],female:[-.103479210,-.003594774]};
+// The scans' body axes are aligned, but their carved faces are not parallel.
+// These camera angles follow each face's frontal surface, without changing vertices.
+const FACE={male:{yaw:5,pitch:4},female:{yaw:-10,pitch:13}};
 const PARTS=[
  {band:[.80,1],direction:[-.20,1,.10]},
- {band:[.37,.79],direction:[1,-.08,.06],width:.80,height:.80},
+ {all:true,face:true,width:.80,height:.88},
  {all:true,direction:[-.002,1,.00001],height:.9},
- {band:[.46,1],direction:[1,.025,.22],femaleDirection:[1,.025,-.10],width:.80,height:.84},
- {band:[.64,.94],direction:[1,.015,.04]}
+ {band:[.47,1],face:true,angle:12,width:.86,height:.88},
+ {band:[.45,1],face:true,width:.86,height:.88}
 ];
 export function levelScan(THREE,scan,{yaw,targetSize,sex}){
  scan.rotation.y=yaw;
- const oldBox=new THREE.Box3().setFromObject(scan),oldCenter=oldBox.getCenter(new THREE.Vector3());
+ const oldBox=new THREE.Box3().setFromObject(scan,true),oldCenter=oldBox.getCenter(new THREE.Vector3());
  const scale=targetSize/oldBox.getSize(new THREE.Vector3()).x;
  scan.scale.setScalar(scale);scan.position.sub(oldCenter.multiplyScalar(scale));
  const [a,b]=LEVEL[sex],root=new THREE.Group();root.add(scan);
  root.quaternion.setFromUnitVectors(new THREE.Vector3(-a,1,-b).normalize(),new THREE.Vector3(0,1,0));
- root.position.sub(new THREE.Box3().setFromObject(root).getCenter(new THREE.Vector3()));
+ root.position.sub(new THREE.Box3().setFromObject(root,true).getCenter(new THREE.Vector3()));
  return root;
 }
 export function createInspectionFraming(THREE,{camera,controls,element}){
  const up=new THREE.Vector3(0,1,0),zero=new THREE.Vector3(),all=[];
+ const comparisonHeights=new Map();
  let bounds=null,current=null,overview=null,overviewHeight=null,fitted=0,lastRect=null,pending=null;
  function view(index){
   const part=Number.isInteger(index)?PARTS[index]:null,size=bounds.getSize(new THREE.Vector3());
   const selected=part&&!part.all?all.filter(p=>p.x>=bounds.min.x+size.x*.65&&p.y>=bounds.min.y+size.y*part.band[0]&&p.y<=bounds.min.y+size.y*part.band[1]):all;
   const points=selected.length>20?selected:all;
   const target=part?new THREE.Box3().setFromPoints(points).getCenter(new THREE.Vector3()):bounds.getCenter(new THREE.Vector3());
-  const direction=new THREE.Vector3(...((element.id==='female-scene'&&part?.femaleDirection)||part?.direction||[2.7,1.15,3.6])).normalize();
+  const sex=element.id==='female-scene'?'female':'male',face=FACE[sex];
+  let direction;
+  if(part?.face){
+   const yaw=THREE.MathUtils.degToRad(face.yaw+(part.angle||0)*(sex==='female'?-1:1)),pitch=THREE.MathUtils.degToRad(face.pitch);
+   direction=new THREE.Vector3(Math.cos(pitch)*Math.cos(yaw),Math.sin(pitch),Math.cos(pitch)*Math.sin(yaw));
+  }else{
+   direction=new THREE.Vector3(...(part?.direction||[2.7,1.15,3.6])).normalize();
+   direction.applyAxisAngle(up,-THREE.MathUtils.degToRad(face.yaw));
+  }
   const rotation=new THREE.Matrix4().lookAt(direction,zero,up).transpose();
-  return {index,part,target,direction,points:points.map(p=>p.clone().sub(target).applyMatrix4(rotation))};
+  const right=new THREE.Vector3().crossVectors(up,direction).normalize(),vertical=new THREE.Vector3().crossVectors(direction,right);
+  return {index,part,target,direction,right,vertical,points:points.map(p=>p.clone().sub(target).applyMatrix4(rotation))};
  }
  function projected(spec,distance,aspect=camera.aspect){
   const k=Math.tan(THREE.MathUtils.degToRad(camera.fov)/2)/camera.zoom;
-  let left=Infinity,right=-Infinity,bottom=Infinity,top=-Infinity;
-  for(const p of spec.points){const depth=distance-p.z,x=p.x/(depth*k*aspect),y=p.y/(depth*k);left=Math.min(left,x);right=Math.max(right,x);bottom=Math.min(bottom,y);top=Math.max(top,y);}
-  return {width:right-left,height:top-bottom,left,right,bottom,top};
+  let offsetX=0,offsetY=0,left,right,bottom,top;
+  // A world-space box centre is not the centre of its perspective silhouette.
+  // Translate only the viewpoint plane so crown/feet share the same baseline.
+  for(let pass=0;pass<5;pass++){
+   left=bottom=Infinity;right=top=-Infinity;let l,r,b,t;
+   for(const p of spec.points){
+    const depth=distance-p.z,x=(p.x-offsetX)/depth,y=(p.y-offsetY)/depth;
+    if(x<left){left=x;l=p;}if(x>right){right=x;r=p;}
+    if(y<bottom){bottom=y;b=p;}if(y>top){top=y;t=p;}
+   }
+   if(pass===4||Math.max(Math.abs(left+right),Math.abs(top+bottom))<1e-9)break;
+   const ld=distance-l.z,rd=distance-r.z,bd=distance-b.z,td=distance-t.z;
+   offsetX=(l.x*rd+r.x*ld)/(ld+rd);offsetY=(b.y*td+t.y*bd)/(bd+td);
+  }
+  left/=k*aspect;right/=k*aspect;bottom/=k;top/=k;
+  return {width:right-left,height:top-bottom,left,right,bottom,top,offsetX,offsetY};
  }
  function distanceFor(spec,r,matchOverview=true){
   const expanded=document.documentElement.dataset.archiveOverview==='expanded';
   const width=r.width*(spec.part?(spec.part.width??(spec.part.all ? .78 : .83)):expanded?.88:.76);
-  const height=spec.part?r.height*(spec.part.height??.86):Math.min(r.height*(expanded?.90:.82),innerHeight*(expanded?.57:.42),matchOverview&&overviewHeight>0?overviewHeight:Infinity);
+  const sharedHeight=matchOverview?(spec.part?comparisonHeights.get(spec.index):overviewHeight):null;
+  const height=Math.min(spec.part?r.height*(spec.part.height??.86):Math.min(r.height*(expanded?.90:.82),innerHeight*(expanded?.57:.42)),sharedHeight>0?sharedHeight:Infinity);
   let near=.05;for(const p of spec.points)near=Math.max(near,p.z+.05);let far=50;
   for(let i=0;i<22;i++){
    const d=(near+far)/2,b=projected(spec,d,r.width/r.height);
@@ -45,16 +72,20 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   }
   return far;
  }
+ function goalFor(spec,distance){
+  const b=projected(spec,distance),target=spec.target.clone().addScaledVector(spec.right,b.offsetX).addScaledVector(spec.vertical,b.offsetY);
+  return {position:target.clone().addScaledVector(spec.direction,distance),target};
+ }
  function publish(r){
   controls.minDistance=Math.max(.08,fitted*.22);controls.maxDistance=fitted*3.2;
   const b=projected(current,fitted);
   element.dataset.framing=current.part?String(current.index+1).padStart(2,'0'):'overview';
   element.dataset.fitDistance=fitted.toFixed(4);
   element.dataset.framedPixels=[b.width*r.width/2,b.height*r.height/2].map(n=>n.toFixed(1)).join(',');
-  element.dataset.focusTarget=current.target.toArray().map(n=>n.toFixed(4)).join(',');
+  element.dataset.focusTarget=goalFor(current,fitted).target.toArray().map(n=>n.toFixed(4)).join(',');
  }
  function bind(model){
-  model.updateMatrixWorld(true);bounds=new THREE.Box3().setFromObject(model);
+  model.updateMatrixWorld(true);bounds=new THREE.Box3().setFromObject(model,true);
   model.traverse(mesh=>{
    const attr=mesh.isMesh&&mesh.geometry?.attributes.position;if(!attr)return;
    const step=Math.max(1,Math.floor(attr.count/8000));
@@ -65,13 +96,14 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
  }
  function resize(r,goal){
   lastRect=r;if(!current)return;const next=distanceFor(current,r);
-  if(!fitted){controls.target.copy(current.target);camera.position.copy(current.target).addScaledVector(current.direction,next);}
+  if(!fitted){const initial=goalFor(current,next);controls.target.copy(initial.target);camera.position.copy(initial.position);}
   else if(Math.abs(next-fitted)>.00001){
    // Resize the destination rather than jumping the displayed camera. Reusing
    // that destination through the layout transition preserves any user zoom.
    const ratio=next/fitted;
+   const shift=goalFor(current,next).target.sub(goalFor(current,fitted).target);
    if(!goal)goal={position:camera.position.clone(),target:controls.target.clone()};
-   goal.position.sub(goal.target).multiplyScalar(ratio).add(goal.target);
+   goal.position.sub(goal.target).multiplyScalar(ratio);goal.target.add(shift);goal.position.add(goal.target);
   }
   fitted=next;publish(r);
   return goal;
@@ -85,18 +117,28 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   if(!Number.isFinite(height)||height<=0||overviewHeight!==null&&Math.abs(overviewHeight-height)<.1)return false;
   overviewHeight=height;element.dataset.overviewHeight=height.toFixed(1);return true;
  }
+ function naturalFramingHeight(){
+  if(!current||!lastRect)return null;
+  const distance=distanceFor(current,lastRect,false);
+  return projected(current,distance,lastRect.width/lastRect.height).height*lastRect.height/2;
+ }
+ function setFramingHeight(height){
+  if(!current?.part)return setOverviewHeight(height);
+  if(!Number.isFinite(height)||height<=0||Math.abs((comparisonHeights.get(current.index)||0)-height)<.1)return false;
+  comparisonHeights.set(current.index,height);return true;
+ }
  function focus(index){
   pending=index;if(!bounds)return null;current=view(index);
   const r=lastRect??element.getBoundingClientRect();fitted=distanceFor(current,r);publish(r);
-  return {position:current.target.clone().addScaledVector(current.direction,fitted),target:current.target.clone()};
+  return goalFor(current,fitted);
  }
  function reference(index,width,height){
   if(!bounds)return null;
   const spec=view(index),referenceCamera=new THREE.PerspectiveCamera(camera.fov,width/height,camera.near,camera.far);
   referenceCamera.zoom=camera.zoom;referenceCamera.updateProjectionMatrix();
-  referenceCamera.position.copy(spec.target).addScaledVector(spec.direction,distanceFor(spec,{width,height}));
-  referenceCamera.lookAt(spec.target);referenceCamera.updateMatrixWorld(true);
+  const goal=goalFor(spec,distanceFor(spec,{width,height}));referenceCamera.position.copy(goal.position);
+  referenceCamera.lookAt(goal.target);referenceCamera.updateMatrixWorld(true);
   return referenceCamera;
  }
- return {bind,resize,focus,reference,naturalOverviewHeight,setOverviewHeight};
+ return {bind,resize,focus,reference,naturalOverviewHeight,setOverviewHeight,naturalFramingHeight,setFramingHeight};
 }

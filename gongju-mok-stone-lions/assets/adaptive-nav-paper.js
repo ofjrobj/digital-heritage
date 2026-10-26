@@ -12,12 +12,17 @@ export function paperNeed(pixels) {
 export function createAdaptiveNavPaper(stage,canvas,nav){
   const sample=document.createElement('canvas');sample.width=48;sample.height=12;
   const ctx=sample.getContext('2d',{willReadFrequently:true});
-  let target=0,opacity=0,lastSample=-Infinity,failed=false;
+  let target=0,opacity=0,lastSample=-Infinity,failed=false,lastFrameKey,hasFrameKey=false,lastOpacity='';
   return {
-    tick(now,dt,ready){
+    tick(now,dt,ready,{visible=true,frameKey}={}){
       if(!nav||!ready)return;
-      if(now-lastSample>=150){
+      // Hidden navigation needs neither contrast sampling nor style updates.
+      // Recheck on reveal, even when its underlying frame has stayed still.
+      if(!visible){lastSample=-Infinity;hasFrameKey=false;return;}
+      const sameFrame=frameKey!==undefined&&hasFrameKey&&frameKey===lastFrameKey;
+      if(now-lastSample>=400&&!sameFrame){
         lastSample=now;
+        lastFrameKey=frameKey;hasFrameKey=frameKey!==undefined;
         try{
           const bounds=stage.getBoundingClientRect(),r=nav.getBoundingClientRect();
           const sx=canvas.width/bounds.width,sy=canvas.height/bounds.height;
@@ -30,7 +35,8 @@ export function createAdaptiveNavPaper(stage,canvas,nav){
       // roughly 1.5 seconds to become visually settled, without moving the text.
       opacity+=(target-opacity)*(1-Math.exp(-Math.min(.1,Math.max(0,dt))/.55));
       if(target===0&&opacity<.001)opacity=0;
-      stage.style.setProperty('--nav-paper',String(opacity));
+      const nextOpacity=opacity.toFixed(3);
+      if(nextOpacity!==lastOpacity){stage.style.setProperty('--nav-paper',nextOpacity);lastOpacity=nextOpacity;}
     },
     proof(){return {opacity,target,failed};}
   };

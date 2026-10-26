@@ -1,5 +1,5 @@
 // The renderer starts this invitation only after the first scene and fonts load.
-export function createIntroEntry({body, welcome, recommendation, button}) {
+export function createIntroEntry({body, welcome, recommendation, button, recommendationSeconds = 2, focusOnReady = true}) {
   let phase = 'loading';
   let elapsed = 0;
 
@@ -14,6 +14,15 @@ export function createIntroEntry({body, welcome, recommendation, button}) {
     button.disabled = true;
   }
 
+  function ready() {
+    phase = 'ready';
+    body.dataset.introEntry = phase;
+    recommendation.hidden = true;
+    button.hidden = false;
+    button.disabled = false;
+    if (focusOnReady) button.focus({preventScroll: true});
+  }
+
   reset();
   return {
     reset,
@@ -24,17 +33,13 @@ export function createIntroEntry({body, welcome, recommendation, button}) {
       welcome.hidden = false;
       welcome.inert = false;
       recommendation.hidden = false;
+      if (recommendationSeconds <= 0) ready();
     },
     advance(seconds) {
       if (phase !== 'recommendation' || !Number.isFinite(seconds) || seconds <= 0) return;
       elapsed += seconds;
-      if (elapsed < 2) return;
-      phase = 'ready';
-      body.dataset.introEntry = phase;
-      recommendation.hidden = true;
-      button.hidden = false;
-      button.disabled = false;
-      button.focus({preventScroll: true});
+      if (elapsed < recommendationSeconds) return;
+      ready();
     },
     accept() {
       if (phase !== 'ready' || button.disabled) return false;

@@ -1,6 +1,9 @@
-import {levelScan,createInspectionFraming} from './scan-framing.js?v=smooth-pair-20261026';
+import {levelScan,createInspectionFraming} from './scan-framing.js?v=paired-framing-20261026';
 import {createViewportBuffer,framingBlend} from './viewer-motion.js?v=smooth-pair-20261026';
 import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=inspection-relief-2';
+import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=inspection-tools-20261026';
+import {createNormalMapView,mountNormalMapToggle} from './normal-map-view.js?v=original-normal-map-20261026';
+import {createPatternHighlight} from './pattern-highlight.js?v=surface-traces-20261026';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -19,10 +22,10 @@ function synchronizeOverview(){
   if(overviewSyncPending)return;overviewSyncPending=true;
   requestAnimationFrame(()=>{
     overviewSyncPending=false;
-    const pair=Object.values(viewers),heights=pair.map(viewer=>viewer.overviewHeight());
+    const pair=Object.values(viewers),heights=pair.map(viewer=>viewer.framingHeight());
     if(heights.every(height=>Number.isFinite(height)&&height>0)){
       const height=Math.min(...heights);
-      pair.forEach(viewer=>viewer.setOverviewHeight(height));
+      pair.forEach(viewer=>viewer.setFramingHeight(height));
     }
   });
 }
@@ -36,7 +39,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   camera.zoom = displayZoom;
   camera.updateProjectionMatrix();
   // OrbitControls drives a virtual viewpoint; only the scan root receives its view matrix.
-  // The actual render camera and lights never rotate, including during preset transitions.
+  // The render camera stays fixed; the optional light control moves only the key.
   const renderCamera = new THREE.PerspectiveCamera(34, 1, .01, 100);
   renderCamera.zoom = displayZoom;
   const inspectionRoot = new THREE.Group();
@@ -64,12 +67,16 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   const fill = new THREE.DirectionalLight(0xffffff, .65);
   fill.position.set(3, -3, 4); scene.add(fill);
   let dirty = true, ready = false, goal = null;
+  const inspectionLight=createInspectionLight(key,element,()=>{dirty=true;});
   let resizePending = true, lastFrameAt = performance.now();
   const viewportBuffer=createViewportBuffer();
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
   // Wheel zoom updates synchronously inside OrbitControls, before the next RAF.
   controls.addEventListener('change',()=>{dirty=true;});
   const surface = createSurfaceView(THREE,scene,element,()=>{dirty=true;});
+  const sex=element.id==='male-scene'?'male':'female';
+  const normalMap=createNormalMapView(THREE,{element,textureUrl:`assets/${sex}-normal-map.webp`,redraw:()=>{dirty=true;}});
+  const highlight=createPatternHighlight(THREE,{sex,element,redraw:()=>{dirty=true;}});
   const framing=createInspectionFraming(THREE,{camera,controls,element});
   renderer.domElement.style.cursor="grab";
   const frame = now => {
@@ -91,12 +98,12 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
     const model=levelScan(THREE,gltf.scene,{yaw,targetSize,sex:element.id==='male-scene'?'male':'female'});
     model.traverse(n=>{if(n.isMesh){n.material.roughness=.95;n.material.metalness=0;n.material.map && (n.material.map.anisotropy=renderer.capabilities.getMaxAnisotropy());}});
     model.traverse(n=>{if(n.isMesh&&n.material.map)element.dataset.colorTextureResolution=`${n.material.map.image.width}x${n.material.map.image.height}`;});
-    framing.bind(model);surface.bind(model);inspectionRoot.add(model);ready=true;resizePending=true;dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
+    framing.bind(model);surface.bind(model);normalMap.bind(model);highlight.bind(model);inspectionRoot.add(model);ready=true;resizePending=true;dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
     element.dataset.loaded='true';
   }).catch(error => {
     console.error(error);loading.textContent='모델을 불러오지 못했습니다. 새로고침해 주세요.';element.dataset.loaded='error';
   });
-  function focus(index){goal=framing.focus(index);dirty=true;}
+  function focus(index){goal=framing.focus(index);highlight.focus(index);dirty=true;synchronizeOverview();}
   controls.addEventListener('start',()=>{goal=null;});
   function animate(now=performance.now()){
     requestAnimationFrame(animate);
@@ -108,6 +115,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
     if(buffer){renderer.setSize(buffer.width,buffer.height,false);element.dataset.bufferCommits=String(Number(element.dataset.bufferCommits||0)+1);dirty=true;}
     if(goal){const blend=framingBlend(elapsed,reducedMotion.matches);camera.position.lerp(goal.position,blend);controls.target.lerp(goal.target,blend);dirty=true;if(camera.position.distanceTo(goal.position)<.002&&controls.target.distanceTo(goal.target)<.002){camera.position.copy(goal.position);controls.target.copy(goal.target);goal=null;}}
     if(controls.update())dirty=true;
+    if(highlight.update(now))dirty=true;
     if(dirty){
       camera.updateMatrixWorld(true);
       inspectionRoot.matrix.copy(camera.matrixWorldInverse);
@@ -120,13 +128,15 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
       dirty=false;
     }
   }
-  animate();return {focus,loaded,setColor:surface.setColor,overviewHeight:framing.naturalOverviewHeight,setOverviewHeight(height){if(framing.setOverviewHeight(height))resizePending=true;}};
+  animate();return {focus,loaded,setColor(value){normalMap.setEnabled(false);surface.setColor(value);},setNormalMap:normalMap.setEnabled,setLightEnabled:inspectionLight.setEnabled,setLightAngle:inspectionLight.setAngle,framingHeight:framing.naturalFramingHeight,setFramingHeight(height){if(framing.setFramingHeight(height))resizePending=true;}};
 }
 const viewers = {
  male:createViewer({element:document.querySelector('#male-scene'),loading:document.querySelector('#male-loading'),modelUrl:'models/male-continuous.glb',targetSize:1.83,yaw:-3.902609*Math.PI/180}),
  female:createViewer({element:document.querySelector('#female-scene'),loading:document.querySelector('#female-loading'),modelUrl:'models/female-continuous.glb',targetSize:2.10,yaw:-140.445485*Math.PI/180,displayZoom:1.25})
 };
 mountSurfaceToggle(viewers);
+mountInspectionLight(viewers);
+mountNormalMapToggle(viewers);
 // Numbered controls show feature observations; side panels keep the overall dimensions.
 // Keep the local GLB projection settings above: the remote archive used different OBJ axes.
 const detail = document.querySelector('.detail-card');

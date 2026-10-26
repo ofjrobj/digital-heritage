@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Index 웹 구현 — 봉황동 석사자</title>
-  <meta name="description" content="Index 전체 화면과 갈기 비교 화면의 구현 결과입니다.">
+  <meta name="description" content="완성된 Index의 두 석사자 3D 모델을 직접 돌려 보고 확대할 수 있습니다.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v49">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
@@ -13,15 +13,15 @@
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="Index 웹 구현 — 봉황동 석사자">
-  <meta property="og:description" content="Index 전체 화면과 갈기 비교 화면의 구현 결과입니다.">
+  <meta property="og:description" content="완성된 Index의 두 석사자 3D 모델을 직접 돌려 보고 확대할 수 있습니다.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/index-web.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/archive-comparison.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Index 웹 구현 — 봉황동 석사자">
-  <meta name="twitter:description" content="Index 전체 화면과 갈기 비교 화면의 구현 결과입니다.">
+  <meta name="twitter:description" content="완성된 Index의 두 석사자 3D 모델을 직접 돌려 보고 확대할 수 있습니다.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/archive-comparison.png">
 <link rel="stylesheet" href="./case-study.css?v=54">
-  <link rel="stylesheet" href="./index-web.css?v=results-20261026">
+  <link rel="stylesheet" href="./index-web.css?v=live-models-20261026">
 </head>
 <body class="materials-page index-web-page">
   <a class="skip" href="#material">본문으로 건너뛰기</a>
@@ -32,17 +32,17 @@
     </header>
     <main id="material">
       <header class="material-header">
-        <p class="eyebrow">Index · 04</p>
+        <p class="eyebrow">FINAL OUTPUT · INDEX</p>
         <h1>Index 웹 구현</h1>
       </header>
-      <div class="index-results">
-        <figure class="material-figure index-result">
-          <a class="material-image" href="./assets/archive-comparison.png" target="_blank" rel="noopener noreferrer" aria-label="Index 전체 화면 크게 보기 (새 탭)"><img src="./assets/archive-comparison.png" width="2704" height="1454" alt="표면색을 켠 두 석사자를 나란히 배치하고 오른쪽에 암사자 정보 패널을 펼친 Index 화면" loading="eager" decoding="async"></a>
-          <figcaption>전체 화면 · 표면색 켬</figcaption>
+      <div class="index-models" aria-label="완성된 Index의 3D 모델">
+        <figure class="material-figure index-model">
+          <iframe src="../archive/embed.html?model=male" title="수사자 3D 모델 · 회전과 확대" loading="lazy"></iframe>
+          <figcaption>수사자</figcaption>
         </figure>
-        <figure class="material-figure index-comparison">
-          <a class="material-image" href="./assets/mood-index-live-v1.webp" target="_blank" rel="noopener noreferrer" aria-label="Index 갈기 비교 화면 크게 보기 (새 탭)"><img src="./assets/mood-index-live-v1.webp" width="682" height="550" alt="01 갈기를 선택해 두 석사자의 정수리를 같은 방향에서 확대한 회색 비교 화면" loading="lazy" decoding="async"></a>
-          <figcaption>갈기 비교 · 표면색 끔</figcaption>
+        <figure class="material-figure index-model">
+          <iframe src="../archive/embed.html?model=female" title="암사자 3D 모델 · 회전과 확대" loading="lazy"></iframe>
+          <figcaption>암사자</figcaption>
         </figure>
       </div>
     </main>

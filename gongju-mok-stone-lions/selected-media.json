@@ -1,5 +1,5 @@
 {
-  "version": "direct-scroll-20261026",
+  "version": "frame-paced-scroll-20261026",
   "scenes": [
     {
       "id": "intro",
@@ -397,15 +397,15 @@
     {
       "id": "farmer-cook",
       "label": "찬모에게 이동",
-      "src": "./media/v28/farmer-cook-original-24fps.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/6a2cf612-cc20-4598-bd73-c50b9a77fa8a.mp4",
       "duration": 15,
       "fps": 24,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
-        "provider": "User supplied original generation",
+        "provider": "User supplied original generation + Higgsfield tree repair",
         "sourceFile": "hf_20261018_225157_cb87ff18-412d-4245-bd30-4382e384a45d.mp4",
-        "selection": "v28 continuous original motion, without composite jump cuts",
+        "selection": "Original 15-second walk retained; malformed tree corrected only in frames 60–227 (2.5–9.5 seconds).",
         "nativeDimensions": [
           1920,
           1080
@@ -414,9 +414,27 @@
           "start": 0,
           "endExclusive": 15
         },
-        "delivery": "Continuous native 24 fps frames from user original, H.264 CRF17 for browser compatibility, half-second keyframes; no interior cuts or optical interpolation; no audio stream.",
+        "delivery": "1920x1080, 24fps, 360 frames, silent H.264 CRF17 with half-second keyframes. The 168-frame tree edit is aligned to the original camera path with short boundary blends. Frames before 2.5s and from 9.5s onward use the original video without AI changes.",
         "originalUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261018_225157_cb87ff18-412d-4245-bd30-4382e384a45d.mp4",
-        "deliverySha256": "80c217bc6b667a35ccde2721162670e08835dd22279780779c2cc6a1571f2667"
+        "deliverySha256": "f83879a00c455f7289d505334fabf37e208b762438b48ea9c25740f26e190e65",
+        "treeRepair": {
+          "provider": "Higgsfield",
+          "model": "Kling 3.0 Omni Edit Pro",
+          "generationId": "9980ea97-f151-482e-9df3-88fde6da1e26",
+          "mediaId": "6a2cf612-cc20-4598-bd73-c50b9a77fa8a",
+          "sourceFrameInterval": [
+            60,
+            228
+          ],
+          "sourceFrameIndexing": "zero-based; end exclusive",
+          "creditsUsed": 14,
+          "cameraAlignment": "Original background features; smoothed similarity transforms",
+          "boundaryBlendFrames": {
+            "in": 10,
+            "out": 12
+          },
+          "sourceOutsideInterval": "Original decoded frames; H.264 delivery encoding only"
+        }
       },
       "sourceDuration": 15,
       "sourceFrames": 409,
@@ -585,15 +603,15 @@
     {
       "id": "cook-trio",
       "label": "주민 삼총사에게 이동",
-      "src": "./media/v28/cook-trio-original-24fps.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/6275ac5f-17a2-46cf-8bb3-1ef251a1f1ee.mp4",
       "duration": 4.916666666666667,
       "fps": 24,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
-        "provider": "User supplied original generation",
+        "provider": "User supplied original generation + deterministic luma restoration",
         "sourceFile": "hf_20261019_001010_c9e6a89c-c532-47bc-ae08-a4a043eb5583.mp4",
-        "selection": "Preserve first 118 delivered frames; the damaged forward approach is replaced by the following continuous scene.",
+        "selection": "Keep the current delivered rotation frames 0–117 (original generation frames 63–180); improve luma edge definition without generating frames.",
         "nativeDimensions": [
           1920,
           1080
@@ -602,12 +620,37 @@
           "start": 0,
           "endExclusive": 4.916666666666667
         },
-        "delivery": "Continuous native 24 fps frames from user original, H.264 CRF17 for browser compatibility, half-second keyframes; no interior cuts or optical interpolation; no audio stream.",
+        "delivery": "1920x1080, 24fps, 118 original frames, silent H.264 CRF16 with half-second keyframes. Luma-only clarity fades in over 0.25s and out over 3.3–4.3s. Original color channels and motion are retained; the end returns to the source before the separate approach clip.",
         "originalUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_001010_c9e6a89c-c532-47bc-ae08-a4a043eb5583.mp4",
-        "deliverySha256": "5919a9e0bd0ea107e14c148a6a84570225db80b2233d95eb544d55fa7cc2fca8"
+        "deliverySha256": "414c51cbe2b0e17073280839a92d94e9dba83b23571005a04b3cb807c4189dfc",
+        "clarityRepair": {
+          "method": "FFmpeg luma unsharp, kernel7x7 amount0.75; chroma amount0",
+          "creditsUsed": 0,
+          "aiGeneration": false,
+          "sourceOriginalFrameInterval": [
+            63,
+            181
+          ],
+          "sourceFrameIndexing": "zero-based; end exclusive",
+          "deliveredFrameInterval": [
+            0,
+            118
+          ],
+          "fadeInSeconds": [
+            0,
+            0.25
+          ],
+          "fadeOutSeconds": [
+            3.3,
+            4.3
+          ],
+          "mediaId": "6275ac5f-17a2-46cf-8bb3-1ef251a1f1ee",
+          "timing": "Original frame order and 24fps retained; no interpolation or retiming",
+          "limitation": "Improves edge definition; details absent in the source remain soft."
+        }
       },
-      "sourceDuration": 11.4,
-      "sourceFrames": 337,
+      "sourceDuration": 4.916666666666667,
+      "sourceFrames": 118,
       "clipIn": 0,
       "ambience": "",
       "walkingReferenceDuration": 11.4,
@@ -1061,7 +1104,8 @@
         "blendStart": 0.3,
         "alignmentFraction": 0.3
       },
-      "uniformInputDistance": true
+      "uniformInputDistance": true,
+      "autoFrom": 10.75
     },
     {
       "id": "seasons",
@@ -1084,7 +1128,7 @@
         ],
         "delivery": "Frame-exact scene extraction from supplied composite; H.264 CRF 17, half-second keyframes for smooth seeking; no regenerated frames",
         "deliverySha256": "3a3c921547d41e3346202a572f5634a6893b9ef4fcc1d343afedb1b46d138df8",
-        "runtimeTrim": "Start at source 1.5s (frame 45), after the baked opening dissolve with doubled lion outlines. The preceding arrival blends into this clean frame; both lions retain the source scale and position. The source file and final 4.8s fade are unchanged."
+        "runtimeTrim": "Start at source 1.5s (frame 45), after the baked opening dissolve with doubled lion outlines. The preceding arrival blends into this clean frame; both lions retain the source scale and position. The source file and final 4.8 source-second fade are unchanged; the modern scene eases to 0.75x so its fade lasts about 6.2 seconds on screen."
       },
       "sourceDuration": 20,
       "motionBaked": true,
@@ -1094,7 +1138,25 @@
       "sourceFrames": 600,
       "clipIn": 1.5,
       "nativeAudio": false,
-      "endFadeSeconds": 4.8
+      "endFadeSeconds": 4.8,
+      "playbackCurve": [
+        {
+          "time": 0,
+          "rate": 1
+        },
+        {
+          "time": 13.7,
+          "rate": 1
+        },
+        {
+          "time": 14.7,
+          "rate": 0.75
+        },
+        {
+          "time": 18.5,
+          "rate": 0.75
+        }
+      ]
     }
   ],
   "review": {

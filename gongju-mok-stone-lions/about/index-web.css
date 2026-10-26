@@ -1,10 +1,21 @@
 .index-web-page .material-header { max-width: 880px; }
-.index-web-page .index-results {
+.index-web-page .index-models {
   display: grid;
-  gap: 56px;
-  padding-bottom: 64px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 3vw, 28px);
+  max-width: 900px;
+  padding-bottom: 56px;
 }
-.index-web-page .index-comparison { width: min(100%, 682px); }
+.index-web-page .index-model { min-width: 0; }
+.index-web-page .index-model iframe {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--line);
+  background: #e8e8e6;
+}
+.index-web-page .index-model figcaption { margin-top: 10px; }
 @media (max-width: 760px) {
-  .index-web-page .index-results { gap: 36px; padding-bottom: 40px; }
+  .index-web-page .index-models { padding-bottom: 40px; }
 }

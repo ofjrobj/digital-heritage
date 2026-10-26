@@ -3,23 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Story 영상 — 봉황동 석사자</title>
-  <meta name="description" content="Story에 사용한 인트로, 두 석사자와의 만남, 사계절 영상.">
+  <title>Story 웹 구현 — 봉황동 석사자</title>
+  <meta name="description" content="스크롤과 드래그로 둘러보는 공주목 Story.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v49">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
-  <link rel="stylesheet" href="./story-web.css?v=video-gallery-20261026">
+  <link rel="stylesheet" href="./story-web.css?v=embedded-story-20261026">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/story-web.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
-  <meta property="og:title" content="Story 영상 — 봉황동 석사자">
-  <meta property="og:description" content="Story에 사용한 인트로, 두 석사자와의 만남, 사계절 영상.">
+  <meta property="og:title" content="Story 웹 구현 — 봉황동 석사자">
+  <meta property="og:description" content="스크롤과 드래그로 둘러보는 공주목 Story.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/story-web.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/merchant-final.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Story 영상 — 봉황동 석사자">
-  <meta name="twitter:description" content="Story에 사용한 인트로, 두 석사자와의 만남, 사계절 영상.">
+  <meta name="twitter:title" content="Story 웹 구현 — 봉황동 석사자">
+  <meta name="twitter:description" content="스크롤과 드래그로 둘러보는 공주목 Story.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/merchant-final.png">
 </head>
 <body class="materials-page story-web-page">
@@ -30,44 +30,19 @@
       <a class="material-back" href="./#step-story-web">기획과 제작으로</a>
     </header>
     <main id="material">
-      <header class="story-video-header">
-        <h1>Story 영상</h1>
-        <a href="../?start=intro" target="_blank" rel="noopener noreferrer">Story 열기 ↗</a>
+      <header class="story-preview-header">
+        <p class="eyebrow">FINAL OUTPUT · STORY</p>
+        <h1>Story 웹 구현</h1>
       </header>
-      <section class="story-video-gallery" aria-label="Story에 사용한 영상">
-        <figure class="story-video">
-          <video controls playsinline muted preload="metadata" aria-labelledby="intro-caption">
-            <source src="../media/v23/intro-mountain-rush.mp4#t=0.1" type="video/mp4">
-          </video>
-          <figcaption id="intro-caption">먹선에서 공주목으로</figcaption>
-        </figure>
-        <figure class="story-video">
-          <video controls playsinline muted preload="metadata" aria-labelledby="lions-caption">
-            <source src="../media/v17/return-lions.mp4#t=0.1" type="video/mp4">
-          </video>
-          <figcaption id="lions-caption">두 석사자와의 만남</figcaption>
-        </figure>
-        <figure class="story-video">
-          <video controls playsinline muted preload="metadata" aria-labelledby="seasons-caption">
-            <source src="../media/v17/seasons.mp4#t=1.5" type="video/mp4">
-          </video>
-          <figcaption id="seasons-caption">사계절</figcaption>
-        </figure>
-      </section>
+      <figure class="story-preview">
+        <iframe src="../?embed=story" title="화면 UI와 소리를 제외한 Story 체험" loading="lazy"></iframe>
+        <figcaption>프레임 안에서 스크롤하거나 드래그해 이동합니다.</figcaption>
+      </figure>
     </main>
     <footer class="material-footer">
       <a href="./#step-story-web">기획과 제작으로 돌아가기</a>
       <p>© 2026 가치해석 1팀 사자성어</p>
     </footer>
   </div>
-<script>
-  const videos = [...document.querySelectorAll('.story-video video')];
-  for (const video of videos) video.addEventListener('play', () => {
-    for (const other of videos) if (other !== video) other.pause();
-  });
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) videos.forEach(video => video.pause());
-  });
-</script>
 </body>
 </html>

@@ -2,12 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createIntroEntry} from '../assets/intro-entry.js';
 
-function invitation() {
+function invitation(options = {}) {
   const body = {dataset: {}};
   const welcome = {};
   const recommendation = {};
   const button = {focusCount: 0, focus() { this.focusCount++; }};
-  const entry = createIntroEntry({body, welcome, recommendation, button});
+  const entry = createIntroEntry({body, welcome, recommendation, button, ...options});
   return {entry, body, welcome, recommendation, button};
 }
 
@@ -19,6 +19,18 @@ test('loading cannot be skipped by clicks or elapsed time before media is ready'
   assert.equal(welcome.hidden, true);
   assert.equal(button.disabled, true);
   assert.equal(button.focusCount, 0);
+});
+
+test('embedded entry waits for readiness without taking focus from the containing page', () => {
+  const {entry, body, welcome, recommendation, button} = invitation({recommendationSeconds: 0, focusOnReady: false});
+  assert.equal(welcome.hidden, true);
+  assert.equal(entry.accept(), false);
+  entry.start();
+  assert.equal(body.dataset.introEntry, 'ready');
+  assert.equal(recommendation.hidden, true);
+  assert.equal(button.disabled, false);
+  assert.equal(button.focusCount, 0);
+  assert.equal(entry.accept(), true);
 });
 
 test('ready media shows the recommendation for two visible seconds before enabling entry', () => {

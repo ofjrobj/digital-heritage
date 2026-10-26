@@ -1,0 +1,9 @@
+/* The same film, isolated inside the final-output preview. */
+html[data-story-embed="true"],
+html[data-story-embed="true"] body { overscroll-behavior: none; }
+html[data-story-embed="true"] body[data-media-profile] :is(#storyIndexBar, #projectAbout, #projectVr, #vrNotice, #cinemaDialogue, #soundToggle, #testTools, #hint, #rotate, .tr-caption, .tr-archive, .tr-archive-cta, .tr-ending-paper) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+html[data-story-embed="true"] #stage { touch-action: none; }

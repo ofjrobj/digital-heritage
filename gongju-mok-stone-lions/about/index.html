@@ -4,7 +4,7 @@
 <meta name="description" content="봉황동 석사자의 문양을 이야기와 직접 관찰로 풀어낸 사자성어 팀의 기획과 제작 과정을 소개합니다.">
 <link rel="stylesheet" href="./assets/fonts/fonts.css">
 <link rel="stylesheet" href="./about.css?v=58">
-<link rel="stylesheet" href="./production-flow.css?v=2">
+<link rel="stylesheet" href="./production-flow.css?v=3">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content="봉황동 석사자">
@@ -35,11 +35,10 @@
 <div id="planning-curation"><span class="meta">02 · CURATION</span><h3><a href="./curation.html">웹 큐레이션의 방향</a></h3><p>가상 증언과 직접 관찰을 잇는 경험을 기획했습니다.</p></div>
 <div id="planning-reference"><span id="planning-mood"></span><span class="meta">03 · REFERENCE &amp; MOOD</span><h3><a href="./reference.html">레퍼런스와 무드</a></h3><p>화면의 색상과 서체, 표현 방식을 정했습니다.</p></div>
 <div id="planning-storyline"><span id="planning-storyboard"></span><span class="meta">04 · STORY &amp; SCENES</span><h3><a href="./storyline.html">스토리라인과 스토리보드</a></h3><p>인물의 증언을 장면으로 나누고 카메라 움직임을 설계했습니다.</p></div>
-<div id="planning-ux"><span class="meta">05 · UX</span><h3><a href="./ux.html">웹 이용 흐름(UX) 설계</a></h3><p>이야기 탐색과 유물 관찰에 필요한 조작을 정리했습니다.</p></div>
 </div></section>
 <section class="section" id="process">
   <header><span class="number">03 / MAKING</span><h2>제작 과정</h2></header>
-  <div class="making-flow" aria-label="공통 AI 협업 설계에서 Story와 Index로 나누어 제작한 뒤 후보정·사운드에서 합류">
+  <div class="making-flow" aria-label="AI 협업에서 Story와 Index로 나누어 제작하고, UX/UI를 거쳐 두 웹페이지를 완성">
     <div class="making-shared" id="step-prompt"><h3><a class="production-trigger" href="./prompt.html">AI 협업 방식</a></h3></div>
     <div class="making-branches">
       <section class="making-branch" aria-labelledby="story-production-title">
@@ -49,7 +48,7 @@
           <li id="step-asset-design"><a href="./asset-design.html"><span>02</span>어셋 디자인</a></li>
           <li id="step-style-frames"><a href="./style-frames.html"><span>03</span>스타일 프레임</a></li>
           <li id="step-motion"><a href="./video.html"><span>04</span>Higgsfield 영상·편집</a></li>
-          <li id="step-story-web"><a href="./story-web.html"><span>05</span>Story 웹 구현</a></li>
+          <li id="step-finish"><a href="./postproduction.html"><span>05</span>후보정·사운드</a></li>
         </ol>
       </section>
       <section class="making-branch" aria-labelledby="index-production-title">
@@ -58,14 +57,20 @@
           <li id="step-scan"><a href="./scan.html"><span>01</span>3D 스캔·Artec</a></li>
           <li id="step-zbrush"><a href="./zbrush.html"><span>02</span>ZBrush 후처리</a></li>
           <li id="step-observation"><a href="./observation.html"><span>03</span>관찰 지점 정리</a></li>
-          <li id="step-interface"><a href="./index-web.html"><span>04</span>Index 웹 구현</a></li>
         </ol>
       </section>
     </div>
-    <div class="making-shared making-finish" id="step-finish"><h3><a class="production-trigger" href="./postproduction.html">후보정·사운드</a></h3></div>
+    <div class="making-shared making-merge" id="step-ux"><span id="planning-ux"></span><h3><a class="production-trigger" href="./ux.html">UX/UI</a></h3></div>
+    <section class="making-outputs" aria-labelledby="making-outputs-title">
+      <h3 id="making-outputs-title">최종 아웃풋</h3>
+      <ul class="making-output-links">
+        <li id="step-story-web"><a href="./story-web.html">Story 웹 구현</a></li>
+        <li id="step-interface"><a href="./index-web.html">Index 웹 구현</a></li>
+      </ul>
+    </section>
   </div>
 </section>
 <section class="section" id="team"><header><span class="number">04 / TEAM</span><h2>함께 만든 사람들</h2></header><div class="copy"><p>디지털헤리티지큐레이터 3기<br>가치해석 1팀 · 사자성어</p><ul class="team"><li><h3>강채영</h3><p class="role">팀장 · 기획 · 프로젝트 발표</p></li><li><h3>김문선</h3><p class="role">3D 스캔 후처리 · 인덱스</p><div class="social-links" role="group" aria-label="김문선 links"><a class="social-link" href="https://www.instagram.com/sun_draw_310?exln=MW82bjdsYThlbHIzYg==" target="_blank" rel="noopener noreferrer" aria-label="김문선 Instagram (새 탭)" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.1" cy="6.9" r=".75" fill="currentColor" stroke="none"/></svg></a></div></li><li><h3>윤다혜</h3><p class="role">가치해석 조사 · VFX · 인물</p></li><li><h3>윤정연</h3><p class="role">웹 설계 · 서사 구현</p><div class="social-links" role="group" aria-label="윤정연 links"><a class="social-link" href="https://undecember27.wpcomstaging.com" target="_blank" rel="noopener noreferrer" aria-label="윤정연 Website (새 탭)" title="Website"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-2.5 2.5-3.7 5.3-3.7 8.5s1.2 6 3.7 8.5c2.5-2.5 3.7-5.3 3.7-8.5S14.5 6 12 3.5Z"/></svg></a><a class="social-link" href="https://www.instagram.com/undecem.ber/" target="_blank" rel="noopener noreferrer" aria-label="윤정연 Instagram (새 탭)" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.1" cy="6.9" r=".75" fill="currentColor" stroke="none"/></svg></a></div></li></ul></div></section>
-<section class="section" id="interpretation"><header><h2>가치해석이란</h2></header><div class="copy"><p>저희에게 가치해석은 유물에 남은 과거의 흔적을 오늘의 시선으로 읽고, 그 의미를 함께 발견할 수 있는 경험으로 전하는 일입니다.</p></div></section>
+<section class="section" id="interpretation"><header><h2>가치해석이란</h2></header><div class="copy"><p>가치해석은 유물에 남은 과거의 흔적을 오늘의 시선으로 읽고, 관객과 함께 그 의미를 발견해 가는 과정입니다.</p></div></section>
 </main><footer class="footer">돌에 새긴 선, 풍경이 되다<br>디지털헤리티지큐레이터 3기 · 가치해석 1팀 사자성어<div class="copyright"><p>© 2026 가치해석 1팀 사자성어. 본 사이트의 자체 제작 콘텐츠에 대한 저작권은 사자성어 팀에 있습니다.</p><p lang="en">© 2026 Sajaseongeo, Value Interpretation Team 1. All original content on this site is copyrighted by the team. All rights reserved.</p></div></footer>
 </div><script src="./about.js?v=58" defer></script></body></html>
