@@ -7,6 +7,8 @@
 .collaboration-flow{list-style:none;padding:0;margin:0}
 .collaboration-flow li{display:grid;grid-template-columns:48px minmax(0,1fr);gap:22px;padding:25px 0;border-top:1px solid var(--line)}
 .collaboration-flow li>span{font:12px/2 var(--story-sans,sans-serif);color:#77776c;padding-top:5px}
+.collaboration-record-links{display:flex;flex-wrap:wrap;gap:8px 24px;border-top:1px solid var(--line);padding-top:24px;margin-top:8px;font:13px/1.8 var(--story-sans,sans-serif);color:#68685f}
+.collaboration-record-links>span{color:#77776c}
 .collaboration-handoffs{margin:0}
 .collaboration-handoffs>div{display:grid;grid-template-columns:220px minmax(0,1fr);gap:32px;border-top:1px solid var(--line);padding:24px 0}
 .collaboration-handoffs dt{font:15px/1.9 var(--story-sans,sans-serif)}

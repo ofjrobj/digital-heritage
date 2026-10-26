@@ -39,6 +39,9 @@
 .research-boundaries dt { margin: 0 0 12px; font-size: 21px; line-height: 1.65; }
 .research-comparisons dd,
 .research-boundaries dd { margin: 0; color: #62625a; font-size: 17px; line-height: 1.95; }
+.comparison-question { margin: 12px 0 0; }
+.comparison-question > span { display: block; margin-bottom: 4px; color: #77776c; font: 12px/1.8 var(--story-sans, sans-serif); }
+.research-inline-link { display: inline-block; margin-top: 22px; padding-block: 5px; color: #785b43; font: 14px/1.8 var(--story-sans, sans-serif); }
 .research-references { list-style: none; padding: 0; margin: 0; }
 .research-references li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 13px; padding: 0 0 22px; color: #62625a; font: 14px/1.95 var(--story-sans, sans-serif); overflow-wrap: anywhere; }
 .research-references li:last-child { padding-bottom: 0; }
@@ -48,6 +51,11 @@
 .research-footer p { margin: 0; }
 .research-surface { padding: 44px 0 34px; border-bottom: 1px solid var(--line); }
 .research-surface > header h2 { margin: 14px 0 0; font-size: 28px; font-weight: 400; }
+.research-surface-intro { max-width: 48em; margin: 22px 0 0; color: #62625a; font-size: 17px; line-height: 1.95; }
+.research-observation-record { margin-top: 40px; padding-top: 34px; border-top: 1px solid var(--line); }
+.research-observation-record h3 { margin: 0 0 16px; font-size: 23px; line-height: 1.65; font-weight: 400; }
+.research-observation-record > p:not(.measurement-source) { max-width: 48em; margin: 0; color: #62625a; font-size: 17px; line-height: 1.95; }
+.research-observation-record .research-inline-link { margin-top: 4px; }
 .research-study { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 38px; align-items: center; margin-top: 24px; }
 .research-study figure { margin: 0; min-width: 0; }
 .research-study img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
@@ -64,7 +72,9 @@
   .research-surface > header h2 { font-size: 25px; }
   .research-study { grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }
   .research-study h3 { font-size: 22px; }
-  .research-study p { font-size: 16px; }
+  .research-study p,
+  .research-surface-intro,
+  .research-observation-record > p:not(.measurement-source) { font-size: 16px; }
   .research-hero { padding: 48px 0 32px; }
   .research-hero h1 { font-size: 38px; }
   .research-hero > p:last-child { margin-top: 20px; font-size: 16px; }

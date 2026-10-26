@@ -17,6 +17,7 @@ import {createPaperColor, PAPER_CSS} from './paper-color.js?v=decoded-frame-2026
 import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=responsive-trackpad-20261026';
 import {setPlaybackRate,holdPresentedFrame} from './video-playback.js?v=responsive-playback-20261026';
 import {dialogueApproachGain,sceneArrivalDelay} from './dialogue-audio-flow.js?v=drag-arrival-audio-1';
+import {createIntroEntry} from './intro-entry.js?v=desktop-recommendation-20261026';
 const replacementOpening=document.body.dataset.mediaProfile==='selected-higgsfield';
 const reviewWindow=document.body.dataset.reviewWindow==='true';
 const entryGate=document.body.hasAttribute('data-intro-entry');
@@ -35,6 +36,7 @@ introVillage.onerror=()=>{introVillage.dataset.failed='true';};
 const introAssetsReady=()=>[...introPaintings,introVillage].every(im=>im.complete&&im.naturalWidth);
 const introAssetsFailed=()=>[...introPaintings,introVillage].some(im=>im.dataset.failed==='true'||im.complete&&!im.naturalWidth);
 const $=id=>document.getElementById(id),stage=$('stage'),canvas=$('world'),ctx=canvas.getContext('2d',{alpha:false});
+const entryScreen=entryGate&&!returningToIntro?createIntroEntry({body:document.body,welcome:$('introWelcome'),recommendation:$('introRecommendation'),button:$('introEnter')}):null;
 const PAPER=PAPER_CSS;
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
 const manifestURL=new URL(document.body.dataset.mediaManifest||'./test-render/manifest.json?v=rolling-fog-common-walk-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
@@ -67,8 +69,8 @@ const seasonAmbience=replacementOpening?null:createSeasonAmbience(stage),sceneLi
 const disabledAmbience={enabled:false,source:"",volume:0,paused:true,muted:true};
 const quietAmbience=replacementOpening?createQuietAmbience(stage):null;
 if($('introEnter'))$('introEnter').onclick=()=>{
- entryAccepted=true;document.body.dataset.introEntry='cover';
- $('introWelcome').inert=true;stage.focus({preventScroll:true});
+ if(entryAccepted||transition?.phase!=='entry'||transition.record.error||!entryScreen?.accept())return;
+ entryAccepted=true;stage.focus({preventScroll:true});
  // Prime the separate tracks silently on this real click; the cover stays silent.
  if(sound){unlockNativeSound();quietAmbience?.retry();footsteps.retry();}
 };
@@ -457,7 +459,7 @@ function updateStoryNavigation(){
 function advance(){if(continuousAdvance())return;if(scenes[index]?.id==='intro')return;if(index<scenes.length-1)requestScene(index+1);else{finished=true;endingElapsed=0;current?.video.pause();footsteps.stop();prepareArchive();}}
 let nextProofAt=0;
 function frame(now){
- const dt=document.hidden?0:Math.min(.08,Math.max(0,(now-last)/1000));last=now;
+ const visibleDt=document.hidden?0:Math.max(0,(now-last)/1000),dt=Math.min(.08,visibleDt);last=now;
  if(!hasFrame&&current?.loaded){if(current.still&&current.image)draw(current.image);else if(current.video.readyState>=2)draw(current.video);}
  if(transition){
   const t=transition;if(!paused)t.elapsed+=dt;if(!replacementOpening&&t.record.scene.id==='intro'&&introAssetsFailed())t.record.error='인트로 이미지를 불러오지 못했습니다.';
@@ -487,12 +489,13 @@ function frame(now){
    else if(t.record.loaded&&!t.record.video.seeking&&(replacementOpening||t.record.scene.id!=='intro'||introAssetsReady())&&(!entryGate||entryFontsReady&&t.elapsed>=.65)){
     status('');loadingHiddenAt=now;t.elapsed=0;
     if(entryGate&&!entryAccepted){
-     t.phase='entry';document.body.dataset.startup='entry';document.body.dataset.introEntry='ready';
-     $('introWelcome').hidden=false;$('introEnter').focus({preventScroll:true});
+     t.phase='entry';document.body.dataset.startup='entry';entryScreen.start();
     }else{t.phase='gap';document.body.dataset.startup='gap';}
    }
   }else if(t.phase==='entry'){
-   if(entryAccepted){t.phase='gap';t.elapsed=0;document.body.dataset.startup='gap';}
+   if(t.record.error){entryScreen.reset();t.phase='loading';t.elapsed=0;document.body.dataset.startup='loading';status(t.record.error,true);}
+   else if(entryAccepted){t.phase='gap';t.elapsed=0;document.body.dataset.startup='gap';}
+   else entryScreen.advance(paused?0:visibleDt);
   }else if(t.phase==='gap'){
    if(t.elapsed>=(replacementOpening?0:1)){current=t.record;index=t.to;local=Math.min(t.at,duration(index));target=local;current.video.pause();t.phase='out';t.elapsed=0;firstSceneShownAt=now;document.body.dataset.startup='reveal';document.body.dataset.ready='true';draw(current.still?current.image:current.video);mistAmount(t.fade?1:0);}
   }else if(t.phase==='in'){

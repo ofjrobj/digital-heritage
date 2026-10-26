@@ -7,12 +7,18 @@ body[data-media-profile="selected-higgsfield"] #stage #loading{
   text-align:center;letter-spacing:0;background:#e8e8e6!important;
 }
 body[data-intro-entry="loading"] #stage>:not(#loading),
-body[data-intro-entry="ready"] #stage>:not(#introWelcome){visibility:hidden!important}
+body:is([data-intro-entry="recommendation"],[data-intro-entry="ready"]) #stage>:not(#introWelcome){visibility:hidden!important}
 #introWelcome{
   position:absolute;inset:0;z-index:200;display:grid;place-items:center;
   background:#e8e8e6;color:#373734;opacity:1;transition:opacity .7s ease;
 }
 #introWelcome[hidden]{display:none!important}
+#introRecommendation{
+  margin:0;padding:24px;max-width:32em;text-align:center;text-wrap:balance;
+  font:300 clamp(16px,1.5vw,20px)/1.6 var(--story-serif,serif);letter-spacing:.02em;
+  animation:intro-button-appear .35s ease both;
+}
+#introRecommendation[hidden],#introEnter[hidden]{display:none!important}
 #introEnter{
   display:flex;flex-direction:column;align-items:center;gap:19px;padding:20px 28px;
   border:0;background:transparent;border-radius:0;color:inherit;
@@ -56,4 +62,4 @@ body[data-media-profile="selected-higgsfield"][data-journey-started="true"] #sou
 }
 @keyframes intro-button-appear{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes intro-invitation-pulse{0%,100%{opacity:1}50%{opacity:.42}}
-@media(prefers-reduced-motion:reduce){#introEnter,#introEnter .entry-orb,#introEnter .entry-label{animation:none}#introWelcome{transition:none}body[data-media-profile="selected-higgsfield"] #soundToggle{transition:none!important}}
+@media(prefers-reduced-motion:reduce){#introRecommendation,#introEnter,#introEnter .entry-orb,#introEnter .entry-label{animation:none}#introWelcome{transition:none}body[data-media-profile="selected-higgsfield"] #soundToggle{transition:none!important}}

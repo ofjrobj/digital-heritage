@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>레퍼런스와 무드 — 봉황동 석사자</title>
-  <meta name="description" content="이야기와 관찰을 하나의 분위기로 잇는 색상과 서체, 참고한 작품을 소개합니다.">
+  <meta name="description" content="Story의 공간·인물·장면 전개에 참고한 작품과 Index 구성, 색상·서체·UI.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v49">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
@@ -14,28 +14,27 @@
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="레퍼런스와 무드 — 봉황동 석사자">
-  <meta property="og:description" content="이야기와 관찰을 하나의 분위기로 잇는 색상과 서체, 참고한 작품을 소개합니다.">
+  <meta property="og:description" content="Story의 공간·인물·장면 전개에 참고한 작품과 Index 구성, 색상·서체·UI.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/reference.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/mood-story-live-v1.webp">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="레퍼런스와 무드 — 봉황동 석사자">
-  <meta name="twitter:description" content="이야기와 관찰을 하나의 분위기로 잇는 색상과 서체, 참고한 작품을 소개합니다.">
+  <meta name="twitter:description" content="Story의 공간·인물·장면 전개에 참고한 작품과 Index 구성, 색상·서체·UI.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/mood-story-live-v1.webp">
   <style>
-    .reference-page .material-figure h3{margin:0 0 10px;font:400 23px/1.5 var(--story-serif,serif);color:#373734;letter-spacing:-.02em}
-    .reference-page .material-figure figcaption>p{margin:0 0 10px}
-    .reference-credit{font-size:11px;line-height:1.8;color:#77776c}
-    .reference-reading{display:flex;flex-wrap:wrap;gap:10px 28px;margin:0 0 44px;font:13px/1.8 var(--story-sans,sans-serif);color:#68685f}
-    .reference-section-title{margin:0 0 28px;font-size:26px;font-weight:400;line-height:1.6}
-    .reference-experiences{margin:0 0 76px}
-    .reference-example{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:28px 60px;padding:28px 0;border-top:1px solid var(--line)}
-    .reference-example:last-child{border-bottom:1px solid var(--line)}
-    .reference-example .meta{display:block;margin-bottom:9px;letter-spacing:.06em}
-    .reference-example h3{margin:0 0 12px;font-size:24px;font-weight:400;line-height:1.5}
-    .reference-example .reference-credit{margin:0;font-family:var(--story-sans,sans-serif);font-size:12px}
-    .reference-viewpoint{margin:0;align-self:center;font-size:17px;line-height:1.95}
-    @media(max-width:760px){.reference-experiences{margin-bottom:52px}.reference-section-title{font-size:23px;margin-bottom:22px}.reference-example{gap:22px 30px}.reference-example h3{font-size:21px}.reference-viewpoint{font-size:16px}}
-    @media(max-width:560px){.reference-example{grid-template-columns:minmax(0,1fr);gap:16px;padding:24px 0}}
+    .reference-reading{display:flex;flex-wrap:wrap;gap:10px 28px;margin:0 0 32px;font:13px/1.8 var(--story-sans,sans-serif);color:#68685f}
+    .reference-section-title{margin:0 0 24px;font-size:26px;font-weight:400;line-height:1.6}
+    .reference-collection{margin:0 0 64px}
+    .reference-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 44px;list-style:none;margin:0;padding:0}
+    .reference-item{min-width:0;padding:22px 0;border-top:1px solid var(--line)}
+    .reference-item .meta{display:block;margin-bottom:8px;letter-spacing:.04em}
+    .reference-item h3{margin:0 0 10px;font-size:21px;font-weight:400;line-height:1.5;letter-spacing:-.02em}
+    .reference-item p{margin:0;font-size:15px;line-height:1.85;color:#62625a}
+    .reference-item .reference-credit{margin-top:10px;font:11px/1.8 var(--story-sans,sans-serif);color:#77776c}
+    .reference-source-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:5px;font:11px/1.8 var(--story-sans,sans-serif)}
+    .reference-collection .reference-reading{margin:14px 0 0;font-size:12px}
+    @media(max-width:760px){.reference-grid{gap:0 28px}.reference-section-title{font-size:23px}.reference-item h3{font-size:20px}.reference-collection{margin-bottom:48px}}
+    @media(max-width:560px){.reference-grid{grid-template-columns:minmax(0,1fr)}.reference-item{padding:19px 0}.reference-item p{font-size:14px}}
   </style>
 <link rel="stylesheet" href="./case-study.css?v=54">
 </head>
@@ -50,84 +49,64 @@
       <header class="material-header">
         <p class="eyebrow">03 · REFERENCE &amp; MOOD</p>
         <h1>레퍼런스와 무드</h1>
-        <p class="material-intro">이야기와 관찰을 하나의 분위기로 잇는 색상과 서체, 참고한 작품을 소개합니다.</p>
       </header>
-      <nav class="reference-reading" aria-label="레퍼런스와 무드 목차"><a href="#experience-references-title">웹 경험</a><a href="#visual-references-title">공간·인물</a><a href="#color-title">색상</a><a href="#type-title">서체</a><a href="#layout-title">UI</a></nav>
-      <section class="reference-experiences" aria-labelledby="experience-references-title">
-        <h2 class="reference-section-title" id="experience-references-title">참고한 작품</h2>
-        <article class="reference-example">
-          <div>
-            <span class="meta">마을 풍경</span>
+      <nav class="reference-reading" aria-label="레퍼런스와 무드 목차"><a href="#experience-references-title">참고한 작품</a><a href="#color-title">색상</a><a href="#type-title">서체</a><a href="#layout-title">UI</a></nav>
+      <section class="reference-collection" aria-labelledby="experience-references-title">
+        <h2 class="reference-section-title" id="experience-references-title">제작에 참고한 작품</h2>
+        <ul class="reference-grid">
+          <li class="reference-item">
+            <span class="meta">Story · 마을 풍경</span>
             <h3><a href="https://www.virtualangkor.com/" target="_blank" rel="noopener noreferrer">Virtual Angkor</a></h3>
+            <p>길과 물길, 집과 사람의 배치를 살펴 Story의 마을 풍경을 구성하는 데 참고했습니다.</p>
             <p class="reference-credit">Monash University SensiLab 외 공동 연구팀</p>
-          </div>
-          <p class="reference-viewpoint">길과 물길, 집과 사람의 움직임으로 마을의 일상을 보여주는 3D 공간입니다.</p>
-        </article>
-        <article class="reference-example">
-          <div>
-            <span class="meta">표면 관찰과 해설</span>
-            <h3><a href="https://tapestry.cyark.org/content/dinetah" target="_blank" rel="noopener noreferrer">Tapestry · Sites of Dinétah</a></h3>
-            <p class="reference-credit">CyArk · 미국 토지관리국(BLM) 협업 · 2024, v2</p>
-          </div>
-          <p class="reference-viewpoint">3D 화면과 음성 해설로 주변 풍경부터 표면의 무늬까지 살펴볼 수 있습니다.</p>
-        </article>
-        <article class="reference-example">
-          <div>
-            <span class="meta">장면의 전개</span>
+          </li>
+          <li class="reference-item">
+            <span class="meta">Story · 장면의 전개</span>
             <h3><a href="https://persepolis.getty.edu/" target="_blank" rel="noopener noreferrer">Persepolis Reimagined</a></h3>
+            <p>스크롤을 따라 공간을 이동하고 장면이 이어지는 방식을 Story의 동선 전개에 참고했습니다.</p>
             <p class="reference-credit">Getty · Media.Monks · 2022</p>
-          </div>
-          <p class="reference-viewpoint">스크롤을 따라 공간을 이동하며 유물의 세부를 살펴볼 수 있습니다.</p>
-        </article>
-        <article class="reference-example">
-          <div>
-            <span class="meta">유물의 회전과 확대</span>
-            <h3><a href="https://artsandculture.google.com/experiment/the-talking-museum/XAHyUTtHIxB_tw?hl=en" target="_blank" rel="noopener noreferrer">The Talking Museum</a></h3>
-            <p class="reference-credit">Google Arts &amp; Culture Lab · Lex Fefegha · 2026</p>
-          </div>
-          <p class="reference-viewpoint">유물을 크게 보여주고 회전·확대 기능과 해설을 곁에 둔 화면입니다.</p>
-        </article>
-        <article class="reference-example">
-          <div>
-            <span class="meta">풍경과 인물의 비례</span>
+          </li>
+          <li class="reference-item">
+            <span class="meta">Story · 표면의 무늬</span>
+            <h3><a href="https://tapestry.cyark.org/content/dinetah" target="_blank" rel="noopener noreferrer">Tapestry · Sites of Dinétah</a></h3>
+            <p>3D 표면의 무늬를 강조하고 해설을 이어가는 방식을 석사자 관찰 장면의 참고로 삼았습니다.</p>
+            <p class="reference-credit">CyArk · 미국 토지관리국(BLM) 협업 · 2024, v2</p>
+          </li>
+          <li class="reference-item">
+            <span class="meta">Story · 풍경과 인물의 비례</span>
             <h3><a href="https://thunderfulgames.com/games/planet-of-lana/" target="_blank" rel="noopener noreferrer">Planet of Lana</a></h3>
+            <p>넓은 풍경 속 작은 인물이 만드는 거리감과 이동 방향을 Story 화면의 무드로 참고했습니다.</p>
             <p class="reference-credit">Wishfully · Thunderful Publishing · 2023</p>
-          </div>
-          <p class="reference-viewpoint">넓은 풍경 속 작은 인물로 거리감과 이동 방향을 표현합니다.</p>
-        </article>
-      </section>
-      <section aria-labelledby="visual-references-title">
-      <h2 class="reference-section-title" id="visual-references-title">공간과 인물의 표현</h2>
-      <div class="material-gallery">
-
-        <figure class="material-figure">
-          <a class="material-image" href="./assets/reference-danwon-giwaigi.jpg" target="_blank" rel="noopener noreferrer" aria-label="김홍도 기와이기 · 원본 크게 보기 (새 탭)"><img src="./assets/reference-danwon-giwaigi.jpg" width="3671" height="4312" alt="기와를 올리고 목재를 다듬는 사람들을 그린 김홍도의 기와이기" loading="lazy" decoding="async"></a>
-          <figcaption>
-            <h3>기와이기 · 건축과 작업</h3>
-            <p>기둥과 기와, 작업 도구의 크기를 인물과 비교하며 살펴보았습니다.</p>
-            <p class="reference-credit">김홍도, 『풍속도 화첩』 · 국립중앙박물관 소장<br><a href="https://commons.wikimedia.org/wiki/File:Danwon_Giwaigi.jpg" target="_blank" rel="noopener noreferrer">Wikimedia Commons 원본</a> · Public Domain</p>
-          </figcaption>
-        </figure>
-        <figure class="material-figure">
-          <a class="material-image" href="./assets/reference-danwon-haengsang.jpg" target="_blank" rel="noopener noreferrer" aria-label="김홍도 행상 · 원본 크게 보기 (새 탭)"><img src="./assets/reference-danwon-haengsang.jpg" width="1868" height="2158" alt="짐과 바구니를 메고 길에서 만난 사람들을 그린 김홍도의 행상" loading="lazy" decoding="async"></a>
-          <figcaption>
-            <h3>행상 · 옷차림과 소품</h3>
+          </li>
+          <li class="reference-item" id="visual-references-title">
+            <span class="meta">Story · 건축과 작업</span>
+            <h3><a href="./assets/reference-danwon-giwaigi.jpg" target="_blank" rel="noopener noreferrer">김홍도 〈기와이기〉</a></h3>
+            <p>기둥과 기와, 작업 도구의 크기를 인물과 비교하며 마을 공간의 비례를 살폈습니다.</p>
+            <p class="reference-credit">『풍속도 화첩』 · 국립중앙박물관 소장 · Public Domain</p>
+            <div class="reference-source-links"><a href="./assets/reference-danwon-giwaigi.jpg" target="_blank" rel="noopener noreferrer">이미지 크게 보기</a><a href="https://commons.wikimedia.org/wiki/File:Danwon_Giwaigi.jpg" target="_blank" rel="noopener noreferrer">Wikimedia Commons 원본</a></div>
+          </li>
+          <li class="reference-item">
+            <span class="meta">Story · 장사꾼의 옷차림과 소품</span>
+            <h3><a href="./assets/reference-danwon-haengsang.jpg" target="_blank" rel="noopener noreferrer">김홍도 〈행상〉</a></h3>
             <p>짐을 지는 자세와 옷차림을 살펴보고, 장사꾼의 소품을 구상하는 데 참고했습니다.</p>
-            <p class="reference-credit">김홍도, 『풍속도 화첩』 · 국립중앙박물관 소장<br><a href="https://commons.wikimedia.org/wiki/File:Danwon_Haengsang.jpg" target="_blank" rel="noopener noreferrer">Wikimedia Commons 원본</a> · Public Domain</p>
-          </figcaption>
-        </figure>
-        <figure class="material-figure">
-          <a class="material-image" href="./assets/reference-danwon-jumak.jpg" target="_blank" rel="noopener noreferrer" aria-label="김홍도 주막 · 원본 크게 보기 (새 탭)"><img src="./assets/reference-danwon-jumak.jpg" width="1893" height="2192" alt="주막에서 음식을 준비하고 식사하는 사람들을 그린 김홍도의 주막" loading="lazy" decoding="async"></a>
-          <figcaption>
-            <h3>주막 · 생활 동작</h3>
+            <p class="reference-credit">『풍속도 화첩』 · 국립중앙박물관 소장 · Public Domain</p>
+            <div class="reference-source-links"><a href="./assets/reference-danwon-haengsang.jpg" target="_blank" rel="noopener noreferrer">이미지 크게 보기</a><a href="https://commons.wikimedia.org/wiki/File:Danwon_Haengsang.jpg" target="_blank" rel="noopener noreferrer">Wikimedia Commons 원본</a></div>
+          </li>
+          <li class="reference-item">
+            <span class="meta">Story · 찬모의 생활 동작</span>
+            <h3><a href="./assets/reference-danwon-jumak.jpg" target="_blank" rel="noopener noreferrer">김홍도 〈주막〉</a></h3>
             <p>찬모의 손동작과 그릇, 부엌의 배치를 구상하는 데 참고했습니다.</p>
-            <p class="reference-credit">김홍도, 『풍속도 화첩』 · 국립중앙박물관 소장<br><a href="https://commons.wikimedia.org/wiki/File:Danwon_Jumak.jpg" target="_blank" rel="noopener noreferrer">Wikimedia Commons 원본</a> · Public Domain</p>
-          </figcaption>
-        </figure>
-      </div>
-      <nav class="reference-reading" aria-label="자료 해설">
-        <a href="https://encykorea.aks.ac.kr/Article/E0013639" target="_blank" rel="noopener noreferrer">김홍도 필 풍속도 화첩 · 작품 해설</a>
-      </nav>
+            <p class="reference-credit">『풍속도 화첩』 · 국립중앙박물관 소장 · Public Domain</p>
+            <div class="reference-source-links"><a href="./assets/reference-danwon-jumak.jpg" target="_blank" rel="noopener noreferrer">이미지 크게 보기</a><a href="https://commons.wikimedia.org/wiki/File:Danwon_Jumak.jpg" target="_blank" rel="noopener noreferrer">Wikimedia Commons 원본</a></div>
+          </li>
+          <li class="reference-item">
+            <span class="meta">Index · 유물의 조작과 해설</span>
+            <h3><a href="https://artsandculture.google.com/experiment/the-talking-museum/XAHyUTtHIxB_tw?hl=en" target="_blank" rel="noopener noreferrer">The Talking Museum</a></h3>
+            <p>유물을 크게 보여주고 회전·확대 기능과 해설을 곁에 두는 구성을 Index 화면에 참고했습니다.</p>
+            <p class="reference-credit">Google Arts &amp; Culture Lab · Lex Fefegha · 2026</p>
+          </li>
+        </ul>
+        <nav class="reference-reading" aria-label="자료 해설"><a href="https://encykorea.aks.ac.kr/Article/E0013639" target="_blank" rel="noopener noreferrer">김홍도 필 풍속도 화첩 · 작품 해설</a></nav>
       </section>
       <section class="mood-section" id="mood" aria-labelledby="color-title">
         <header><span class="number">COLOR</span><h2 id="color-title">절제된 색감</h2></header>

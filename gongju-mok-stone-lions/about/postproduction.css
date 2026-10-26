@@ -1,0 +1,37 @@
+.postproduction-page .postproduction-section {
+  display: grid;
+  grid-template-columns: minmax(150px, .7fr) minmax(0, 2fr);
+  gap: 48px;
+  padding: 38px 0 42px;
+  border-top: 1px solid var(--line);
+}
+.postproduction-page .postproduction-section h2 {
+  margin: 0;
+  font-size: 27px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.postproduction-page .postproduction-section dl {
+  display: grid;
+  gap: 28px;
+  margin: 0;
+}
+.postproduction-page .postproduction-section dt {
+  margin-bottom: 8px;
+  font: 15px/1.8 var(--story-sans, sans-serif);
+}
+.postproduction-page .postproduction-section dd {
+  margin: 0;
+  color: #62625a;
+  font-size: 17px;
+  line-height: 1.95;
+}
+@media (max-width: 760px) {
+  .postproduction-page .postproduction-section {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 30px 0 34px;
+  }
+  .postproduction-page .postproduction-section h2 { font-size: 24px; }
+  .postproduction-page .postproduction-section dd { font-size: 16px; }
+}
