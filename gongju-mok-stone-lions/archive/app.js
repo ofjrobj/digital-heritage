@@ -1,14 +1,13 @@
 import {levelScan,createInspectionFraming} from './scan-framing.js?v=paired-framing-20261026';
 import {createViewportBuffer,framingBlend} from './viewer-motion.js?v=smooth-pair-20261026';
 import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=three-way-surface-20261026';
-import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=inspection-tools-20261026';
+import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=relief-only-light-20261026';
 import {createNormalMapView} from './normal-map-view.js?v=three-way-surface-20261026';
-import {createPatternHighlight} from './pattern-highlight.js?v=full-back-traces-20261026';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-import { measurements } from './measurements.js?v=archive-link-1';
+import { measurements } from './measurements.js?v=back-pattern-label-20261026';
 
 const decoder = new DRACOLoader().setDecoderPath('./vendor/draco/').setWorkerLimit(1);
 const loader = new GLTFLoader().setDRACOLoader(decoder);
@@ -76,7 +75,6 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   const surface = createSurfaceView(THREE,scene,element,()=>{dirty=true;});
   const sex=element.id==='male-scene'?'male':'female';
   const normalMap=createNormalMapView(THREE,{element,textureUrl:`assets/${sex}-normal-map.webp`,redraw:()=>{dirty=true;}});
-  const highlight=createPatternHighlight(THREE,{sex,element,redraw:()=>{dirty=true;}});
   const framing=createInspectionFraming(THREE,{camera,controls,element});
   renderer.domElement.style.cursor="grab";
   const frame = now => {
@@ -98,12 +96,12 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
     const model=levelScan(THREE,gltf.scene,{yaw,targetSize,sex:element.id==='male-scene'?'male':'female'});
     model.traverse(n=>{if(n.isMesh){n.material.roughness=.95;n.material.metalness=0;n.material.map && (n.material.map.anisotropy=renderer.capabilities.getMaxAnisotropy());}});
     model.traverse(n=>{if(n.isMesh&&n.material.map)element.dataset.colorTextureResolution=`${n.material.map.image.width}x${n.material.map.image.height}`;});
-    framing.bind(model);surface.bind(model);normalMap.bind(model);highlight.bind(model);inspectionRoot.add(model);ready=true;resizePending=true;dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
+    framing.bind(model);surface.bind(model);normalMap.bind(model);inspectionRoot.add(model);ready=true;resizePending=true;dirty=true;loading.style.opacity=0;loading.setAttribute('aria-hidden','true');loading.hidden=true;
     element.dataset.loaded='true';
   }).catch(error => {
     console.error(error);loading.textContent='모델을 불러오지 못했습니다. 새로고침해 주세요.';element.dataset.loaded='error';
   });
-  function focus(index){goal=framing.focus(index);highlight.focus(index);dirty=true;synchronizeOverview();}
+  function focus(index){goal=framing.focus(index);dirty=true;synchronizeOverview();}
   controls.addEventListener('start',()=>{goal=null;});
   function animate(now=performance.now()){
     requestAnimationFrame(animate);
@@ -115,7 +113,6 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
     if(buffer){renderer.setSize(buffer.width,buffer.height,false);element.dataset.bufferCommits=String(Number(element.dataset.bufferCommits||0)+1);dirty=true;}
     if(goal){const blend=framingBlend(elapsed,reducedMotion.matches);camera.position.lerp(goal.position,blend);controls.target.lerp(goal.target,blend);dirty=true;if(camera.position.distanceTo(goal.position)<.002&&controls.target.distanceTo(goal.target)<.002){camera.position.copy(goal.position);controls.target.copy(goal.target);goal=null;}}
     if(controls.update())dirty=true;
-    if(highlight.update(now))dirty=true;
     if(dirty){
       camera.updateMatrixWorld(true);
       inspectionRoot.matrix.copy(camera.matrixWorldInverse);
@@ -163,7 +160,7 @@ function showObservation(index, focus=false) {
   button.setAttribute('aria-pressed',String(selected));
  });
  detail.querySelector('.detail-kicker').textContent=`${point} · 두 개체 공통 시점`;
- detail.querySelector('h3').textContent=`${point}. ${note.label}`;
+ detail.querySelector('h3').textContent=note.label;
  detail.querySelector('.detail-copy').textContent=descriptions[index];
  detail.querySelector('.detail-status').textContent=sourceNote;
  if(focus){viewers.male.focus(index);viewers.female.focus(index);}

@@ -1,7 +1,7 @@
 import {approachState,shouldStartApproach} from './dialogue-approach.js?v=arrival-20261020-v27';
 import {createAdaptiveNavPaper} from './adaptive-nav-paper.js?v=frame-paced-scroll-20261026';
 import {createQuietAmbience} from './quiet-ambience.js?v=trio-approach-20261026';
-import {continuousScrollRate,createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop,manualScrollHoldTime} from './scroll-motion.js?v=direct-scroll-20261026';
+import {continuousScrollRate,createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop,manualScrollHoldTime,boundedManualTarget} from './scroll-motion.js?v=scroll-cadence-20261026';
 import {createFootageFog} from './footage-fog.js?v=edge-dissolve-20261019-v24';
 import {createSceneLife} from './scene-life.js?v=sound-fade-20261019-v17';
 import {createSeasonAmbience} from './season-ambience.js?v=sound-fade-20261019-v17';
@@ -14,7 +14,7 @@ import {createScrollFootsteps} from './scroll-footsteps.js?v=manual-movement-202
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
 import {createIntroInkSpread,introVisualTime} from './intro-ink-spread.js?v=three-drops-slow-intro-1';
 import {createPaperColor, PAPER_CSS} from './paper-color.js?v=decoded-frame-20261026';
-import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=frame-paced-scroll-20261026';
+import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=scroll-cadence-20261026';
 import {setPlaybackRate,holdPresentedFrame,reverseFrameStep,createPresentedFrameClock} from './video-playback.js?v=frame-paced-scroll-20261026';
 import {dialogueApproachGain,sceneArrivalDelay} from './dialogue-audio-flow.js?v=drag-arrival-audio-1';
 import {createIntroEntry} from './intro-entry.js?v=embedded-story-20261026';
@@ -42,7 +42,7 @@ const entryScreen=entryGate&&!returningToIntro?createIntroEntry({body:document.b
 if(embeddedStory){
  document.documentElement.dataset.storyEmbed='true';
  $('introEnter').querySelector('.entry-label').textContent='체험 시작';$('introEnter').lang='ko';
- for(const id of ['storyIndexBar','projectAbout','projectVr','cinemaDialogue','soundToggle','testTools'])if($(id))$(id).inert=true;
+ for(const id of ['storyIndexBar','projectMenu','projectAbout','projectVr','cinemaDialogue','soundToggle','testTools'])if($(id))$(id).inert=true;
 }
 const PAPER=PAPER_CSS;
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
@@ -185,14 +185,14 @@ function draw(source){
  // Reuse the canvas only when its source pixels and framing are unchanged.
  // Every composited transition clears this cache so its overlays never accumulate.
  const lookKeys=scene?.connectionLook;
- const animated=transition||sceneJoin||current?.approaching||scene?.mode==='dialogue'
+ const animated=transition||sceneJoin||current?.approaching
   ||scene?.openingFraming&&paintTime<scene.openingFraming.releaseAt
   ||lookKeys?.length&&paintTime>lookKeys[0].time&&paintTime<lookKeys[lookKeys.length-1].time
   ||scene?.departureGrade&&paintTime<scene.departureGrade.until
   ||scene?.exitMatch&&paintTime>=duration(scenes.indexOf(scene))-scene.exitMatch.seconds-1/(Number(scene.fps)||30)
   ||sourceEndFade(scene,paintTime)>0||scene?.id==='seasons'&&!scene.motionBaked||scene?.id==='intro'&&!replacementOpening;
  const reusable=source.tagName==='VIDEO'&&!animated;
- if(reusable&&hasFrame&&lastPaint?.source===source&&lastPaint.key===frameKey&&lastPaint.width===width&&lastPaint.height===height)return true;
+ if(reusable&&hasFrame&&lastPaint?.source===source&&lastPaint.key===frameKey&&lastPaint.width===width&&lastPaint.height===height){dialogueFit.update(sceneRecord?.scene,source);return true;}
  lastPaint=reusable?{source,key:frameKey,width,height}:null;canvasPaints++;
  ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);const scale=Math.max(width/sw,height/sh);
  const isIntro=sceneRecord?.scene.id==='intro'&&!replacementOpening&&introAssetsReady();
@@ -312,9 +312,11 @@ function openingCaption(scene,time){
   else{text=welcome?.caption||'';opacity=ease(clamp((time-8.3)/1.2));}
  }
  if(scene.id==='entry-merchant')opacity=1-ease(clamp((time-.3)/1.2));
- caption.dataset.scene=scene.id;caption.dataset.intro=String(title);
+ if(caption.dataset.scene!==scene.id)caption.dataset.scene=scene.id;
+ if(caption.dataset.intro!==String(title))caption.dataset.intro=String(title);
  if(caption.textContent!==text)caption.textContent=text;
- caption.hidden=!text||scene.mode==='dialogue';caption.style.opacity=String(opacity);
+ const hidden=!text||scene.mode==='dialogue';if(caption.hidden!==hidden)caption.hidden=hidden;
+ if(caption.style.opacity!==String(opacity))caption.style.opacity=String(opacity);
 }
 function transitionTiming(from,to,quick=false){
  if(quick)return {cover:0,reveal:0,hold:0};
@@ -410,6 +412,7 @@ function manual(delta,fromDrag=false,idleMs=120){
  target=!fromDrag&&scenes[index]?.scrollStops?.length
   ?nextScrollStop(scenes[index],target,Math.sign(delta),scrollLimit())
   :clamp(target+walkingTargetDelta(walkingInputRange(),delta),0,scrollLimit());
+ if(replacementOpening&&current.scene.scrollPlayback==='continuous')target=boundedManualTarget(target,local,scrollLimit(),current.scene,fromDrag);
  // Start the native decoder in the input handler, without waiting for another
  // render frame. Reverse input continues to use the single-seek path below.
  if(current.scene.scrollPlayback==='continuous'&&target>local&&!current.video.seeking&&current.video.readyState>=2){
@@ -493,9 +496,13 @@ function updateStoryNavigation(){
  }
  if(current?.approaching&&!t)navOpacity*=1-(current.approachCover||0);
  if(t?.record.error)navOpacity=1;
- stage.style.setProperty('--story-nav-opacity',String(navOpacity));
- document.body.dataset.navFog=String(underFog);document.body.dataset.navHidden=String(navOpacity<.005);
- nav.inert=navOpacity<.35;if(navOpacity<.005)nav.setAttribute('aria-hidden','true');else nav.removeAttribute('aria-hidden');
+ const opacity=String(navOpacity),hidden=navOpacity<.005,inert=navOpacity<.35;
+ if(stage.style.getPropertyValue('--story-nav-opacity')!==opacity)stage.style.setProperty('--story-nav-opacity',opacity);
+ if(document.body.dataset.navFog!==String(underFog))document.body.dataset.navFog=String(underFog);
+ if(document.body.dataset.navHidden!==String(hidden))document.body.dataset.navHidden=String(hidden);
+ if(nav.inert!==inert)nav.inert=inert;
+ if(hidden){if(nav.getAttribute('aria-hidden')!=='true')nav.setAttribute('aria-hidden','true');}
+ else if(nav.hasAttribute('aria-hidden'))nav.removeAttribute('aria-hidden');
 }
 function advance(){if(continuousAdvance())return;if(scenes[index]?.id==='intro')return;if(index<scenes.length-1)requestScene(index+1);else{finished=true;endingElapsed=0;endingRestartShown=false;current?.video.pause();footsteps.stop();prepareArchive();}}
 let nextProofAt=0;
@@ -572,7 +579,8 @@ function frame(now){
   if(allowed&&ready&&current.startElapsed<delay)current.startElapsed=Math.min(delay,current.startElapsed+dt);
   const arrivalHold=current.startElapsed<delay;
   if(!embeddedStory&&dialogue&&!arrivalHold&&!current.dialogueEnded&&$('cinemaDialogue')?.hidden)showText();
-  document.body.dataset.interaction=finished?'finished':arrivalHold?'arrival':departing?'turning':current.approaching?'approaching':scroll?'walking':dialogue?'dialogue':'automatic';
+  const interaction=finished?'finished':arrivalHold?'arrival':departing?'turning':current.approaching?'approaching':scroll?'walking':dialogue?'dialogue':'automatic';
+  if(document.body.dataset.interaction!==interaction)document.body.dataset.interaction=interaction;
   if(!allowed){reverseElapsed=0;walkingRate=0;if(!current.still)v.pause();}
   const run=allowed&&!arrivalHold&&(!scroll||previewAuto||Math.abs(target-local)>.008),active=run&&ready&&!current.error;
   if(current.error)status(current.error+(embeddedStory?'':' Story를 눌러 다시 시작할 수도 있습니다.'),true);
@@ -690,9 +698,10 @@ function frame(now){
  adaptiveNavPaper.tick(now,dt,hasFrame,{visible:!embeddedStory&&navOpacity>.005,frameKey:canvasPaints});
  footageFog.tick(now,paused||document.hidden);
  const musicScene=scenes[index],musicVoice=voices.proof();
- const journey=journeyStarted();document.body.dataset.journeyStarted=String(journey);
- if($('soundToggle'))$('soundToggle').inert=!journey;
- for(const id of ['projectAbout','projectVr'])if($(id))$(id).inert=embeddedStory||journey||!entryAccepted||document.body.dataset.leavingIntro==='true';
+ const journey=journeyStarted();if(document.body.dataset.journeyStarted!==String(journey))document.body.dataset.journeyStarted=String(journey);
+ if($('soundToggle')&&$('soundToggle').inert!==!journey)$('soundToggle').inert=!journey;
+ const projectInert=embeddedStory||journey||!entryAccepted||document.body.dataset.leavingIntro==='true';
+ for(const id of ['projectMenu','projectAbout','projectVr']){const node=$(id);if(node&&node.inert!==projectInert)node.inert=projectInert;}
  const approachGain=dialogueApproachGain(musicScene,scenes[index+1],local,duration(index));
  // Public story videos are always silent, even if a future manifest enables native audio.
  for(const video of videos){

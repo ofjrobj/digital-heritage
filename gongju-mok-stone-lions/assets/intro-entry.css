@@ -35,22 +35,36 @@ body:is([data-intro-entry="recommendation"],[data-intro-entry="ready"]) #stage>:
 #introEnter:hover .entry-orb,#introEnter:hover .entry-label{animation:none;opacity:1}
 #introEnter:focus-visible{outline:none}
 #introEnter:focus-visible .entry-label{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px}
-#projectAbout,#projectVr{
+#projectMenu{
   position:absolute;right:max(12px,1.2em,env(safe-area-inset-right));top:var(--shared-nav-top);
-  font-size:var(--shared-nav-font);
-  z-index:12;width:2em;height:2em;display:grid;place-items:center;color:#4d4d47;
-  opacity:0;visibility:hidden;pointer-events:none;text-decoration:none;
-  transition:opacity .65s ease,visibility 0s linear .65s;
+  z-index:12;display:flex;align-items:center;gap:.9em;
+  font:300 var(--shared-nav-font)/1.4 var(--story-serif,serif);color:#72726b;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .35s ease,visibility 0s linear .35s;
 }
-/* Follow the same viewport scale and breakpoints as Story / Index. */
-#projectAbout svg{width:1.25em;height:1.25em;display:block}
-/* Keep a comfortable click target even when the visible icon becomes small. */
-#projectAbout::before,#projectVr::before{content:"";position:absolute;left:50%;top:50%;width:max(44px,100%);height:max(44px,100%);transform:translate(-50%,-50%)}
-#projectAbout:focus-visible,#projectVr:focus-visible{outline:1px solid currentColor;outline-offset:3px}
-body[data-intro-entry="cover"][data-journey-started="false"]:not([data-leaving-intro="true"]) :is(#projectAbout,#projectVr){
+#projectMenuToggle,#projectAbout,#projectVr{
+  position:relative;display:grid;place-items:center;flex:0 0 2em;width:2em;height:2em;
+  margin:0;padding:0;border:0;border-radius:0;color:inherit;background:transparent;
+  font:inherit;line-height:1;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#projectMenu svg{width:1.25em;height:1.25em;display:block}
+#projectMenuToggle svg{transition:transform .25s ease}
+#projectMenuToggle[aria-expanded="true"] svg{transform:rotate(45deg)}
+#projectMenuItems{
+  display:flex;align-items:center;gap:.9em;
+  opacity:0;visibility:hidden;transform:translateX(12px);pointer-events:none;
+  transition:opacity .25s ease,transform .25s ease,visibility 0s linear .25s;
+}
+#projectMenu[data-open="true"] #projectMenuItems{
+  opacity:1;visibility:visible;transform:translateX(0);pointer-events:auto;
+  transition:opacity .25s ease,transform .25s ease,visibility 0s;
+}
+#projectMenu :is(button,a):focus-visible{outline:1px solid currentColor;outline-offset:-5px}
+body[data-intro-entry="cover"][data-journey-started="false"]:not([data-leaving-intro="true"]) #projectMenu{
   opacity:.8;visibility:visible;pointer-events:auto;transition:opacity .65s ease,visibility 0s;
 }
-body[data-leaving-intro="true"] :is(#projectAbout,#projectVr){transition:opacity .35s ease,visibility 0s linear .35s}
+
+@media(prefers-reduced-motion:reduce){#projectMenu,#projectMenuItems,#projectMenuToggle svg{transition:none!important}}
 body[data-intro-entry="cover"] #introWelcome{opacity:0;pointer-events:none}
 body[data-media-profile="selected-higgsfield"] #soundToggle{
   opacity:0;visibility:hidden;pointer-events:none;
@@ -64,17 +78,10 @@ body[data-media-profile="selected-higgsfield"][data-journey-started="true"] #sou
 @keyframes intro-invitation-pulse{0%,100%{opacity:1}50%{opacity:.42}}
 @media(prefers-reduced-motion:reduce){#introRecommendation,#introEnter,#introEnter .entry-orb,#introEnter .entry-label{animation:none}#introWelcome{transition:none}body[data-media-profile="selected-higgsfield"] #soundToggle{transition:none!important}}
 
-/* VR keeps the book link's scale and only appears beside it on the cover. */
-#projectVr{
-  right:calc(max(12px,1.2em,env(safe-area-inset-right)) + max(44px,2em) + 6px);
-  margin:0;padding:0;border:0;border-radius:0;background:transparent;
-  font-family:var(--story-serif,serif);font-weight:300;line-height:1;
-  letter-spacing:.025em;cursor:pointer;-webkit-tap-highlight-color:transparent;
-}
-#projectVr span{font-size:.9em}
+#projectVr span{font-size:.9em;letter-spacing:.025em}
 #vrNotice{
   position:absolute;z-index:13;right:max(12px,1.2em,env(safe-area-inset-right));
-  top:calc(var(--shared-nav-top) + var(--shared-nav-font) + var(--shared-nav-font) + 12px);margin:0;padding:9px 13px;
+  top:calc(var(--shared-nav-top) + 2em + 12px);margin:0;padding:9px 13px;
   max-width:calc(100% - 32px);box-sizing:border-box;
   font:300 clamp(12px,1vw,15px)/1.6 var(--story-serif,serif);
   color:#4d4d47;background:#e8e8e6;border:1px solid #b8b8b0;
@@ -84,3 +91,13 @@ body[data-media-profile="selected-higgsfield"][data-journey-started="true"] #sou
 body:not([data-intro-entry="cover"]) #vrNotice,
 body[data-journey-started="true"] #vrNotice,
 body[data-leaving-intro="true"] #vrNotice{display:none!important}
+
+
+
+#projectMenu :is(button,a){transition:color .2s ease,background-color .2s ease}
+#projectMenu :is(button,a) svg path{transition:stroke-width .2s ease}
+@media(hover:hover){
+  #projectMenu :is(button,a):hover{color:#292925;background:rgba(55,55,52,.045)}
+  #projectMenu :is(button,a):hover svg path{stroke-width:1.65}
+}
+#projectMenu :is(button,a):active{color:#292925;background:rgba(55,55,52,.08)}

@@ -1,5 +1,5 @@
 {
-  "version": "frame-paced-scroll-20261026",
+  "version": "continuity-final-20261026",
   "scenes": [
     {
       "id": "intro",
@@ -57,7 +57,7 @@
     {
       "id": "entry-merchant",
       "label": "입구 → 장사꾼 · 연속 이동",
-      "src": "./media/v17/entry-merchant.mp4",
+      "src": "./media/v18/entry-merchant-foliage-repaired.mp4",
       "duration": 15.9,
       "mode": "scroll",
       "footsteps": true,
@@ -72,8 +72,14 @@
           1920,
           1080
         ],
-        "delivery": "Frame-exact scene extraction from supplied composite; H.264 CRF 17, half-second keyframes for smooth seeking; no regenerated frames",
-        "deliverySha256": "f36674ab40351235df232391e9f788f7a106de0f59de2dbae788d1a1705bed88"
+        "delivery": "Original 477-frame scene retained at 30fps. Frames 350–404 use a tracked composite of an edited small-tree reference, with wall, pillar and foreground character occlusion masks; final frames and audio remain from the original scene. H.264 BT.709 delivery.",
+        "deliverySha256": "d13117e9b28f82ef44ae2dd6195e70759976f13b9f595ccf7a69850da7536545",
+        "foliageRepair": {
+          "method": "Tracked composite of imagegen-edited tree reference",
+          "firstFrame": 350,
+          "lastFrameInclusive": 404,
+          "scope": "Only the rounded foliage visible behind the left wall and red pillar; original camera, people, architecture, timing and audio preserved."
+        }
       },
       "clipIn": 0,
       "sourceDuration": 15.9,
@@ -236,7 +242,7 @@
     {
       "id": "merchant-farmer",
       "label": "농민에게 이동",
-      "src": "./media/v17/merchant-farmer.mp4",
+      "src": "./media/v18/merchant-farmer-plaque-hyeyeuidang.mp4",
       "duration": 12,
       "fps": 30,
       "mode": "scroll",
@@ -252,8 +258,14 @@
           1920,
           1080
         ],
-        "delivery": "Frame-exact scene extraction from supplied composite; H.264 CRF 17, half-second keyframes for smooth seeking; no regenerated frames",
-        "deliverySha256": "6dfcb72fa5757f1f6f6d63cc37f00a1911336214103f03b699ab294f53d1f6da"
+        "delivery": "Original 360 frames and audio retained; tracked rear Hyeyeuidang plaque correction from the verified reference photograph in frames 175–330; H.264 1080p30 BT.709.",
+        "deliverySha256": "58d6023c7c139b8c74ba137eef773d201f7b8d8a9444959fa81387ac12326062",
+        "plaqueReference": {
+          "url": "https://imh2oo.tistory.com/15711621",
+          "inscription": "惠義堂",
+          "visualLeftToRight": "堂義惠",
+          "scope": "Rear plaque only; foreground gate unchanged"
+        }
       },
       "sourceDuration": 12,
       "sourceFrames": 360,
@@ -603,7 +615,7 @@
     {
       "id": "cook-trio",
       "label": "주민 삼총사에게 이동",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/6275ac5f-17a2-46cf-8bb3-1ef251a1f1ee.mp4",
+      "src": "./media/v18/cook-trio-joined.mp4",
       "duration": 4.916666666666667,
       "fps": 24,
       "mode": "scroll",
@@ -620,9 +632,9 @@
           "start": 0,
           "endExclusive": 4.916666666666667
         },
-        "delivery": "1920x1080, 24fps, 118 original frames, silent H.264 CRF16 with half-second keyframes. Luma-only clarity fades in over 0.25s and out over 3.3–4.3s. Original color channels and motion are retained; the end returns to the source before the separate approach clip.",
+        "delivery": "Original 118-frame 24fps rotation with luma clarity restoration; final 0.25 seconds smoothly aligned to the following approach including its runtime framing. Native BT.709 YUV color preserved.",
         "originalUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_001010_c9e6a89c-c532-47bc-ae08-a4a043eb5583.mp4",
-        "deliverySha256": "414c51cbe2b0e17073280839a92d94e9dba83b23571005a04b3cb807c4189dfc",
+        "deliverySha256": "b50ea2abf980cb2aef3cc0fb186f0da272cc7cdbbf8616117c076a02a79eb1f3",
         "clarityRepair": {
           "method": "FFmpeg luma unsharp, kernel7x7 amount0.75; chroma amount0",
           "creditsUsed": 0,
@@ -727,7 +739,7 @@
     {
       "id": "cook-trio-approach",
       "label": "주민 삼총사에게 다가가기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261026_055619_f6a46e43-e7a7-4f81-89b0-1e0baf17a3ae.mp4",
+      "src": "./media/v18/cook-trio-approach-matched.mp4",
       "duration": 5.041666666666667,
       "sourceDuration": 5.041666666666667,
       "sourceFrames": 121,
@@ -773,8 +785,15 @@
           1920,
           1080
         ],
-        "delivery": "Native 24fps, 121 frames, no audio. The original horizontal leg smears are excluded. Mild 2.1 percent framing correction aligns the separate sources; the original turn and subsequent dialogue remain independent.",
-        "creditsUsed": 80
+        "delivery": "121 frames at 24fps, BT.709. Background continuity repair is registered and color matched to the original; first 0.45 seconds and last 0.5 seconds preserve the original endpoints. Existing framing and dialogue approach timing retained.",
+        "creditsUsed": 80,
+        "deliverySha256": "4bdfe4922509ad9d9d2af6e1209143dc1d7ea9a1bdb2cc2ceaf434a8040d5ec0",
+        "continuityRepair": {
+          "provider": "Higgsfield",
+          "model": "FLUX 3 Video Edit",
+          "creditsUsed": 5.05,
+          "scope": "Middle interval only; original endpoints, characters, timing and subsequent dialogue preserved"
+        }
       },
       "connectionLook": [
         {

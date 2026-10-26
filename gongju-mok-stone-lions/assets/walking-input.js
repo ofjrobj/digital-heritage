@@ -3,7 +3,7 @@
 export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = false, gestureIdleMs = 220} = {}) {
   const pixelStep = Number.isFinite(pixelsPerStep) && pixelsPerStep > 0 ? pixelsPerStep : 100;
   const idle = Number.isFinite(gestureIdleMs) && gestureIdleMs > 0 ? gestureIdleMs : 220;
-  let lastPacketAt = -Infinity, lastDirection = 0, lastStepAt = -Infinity, lastMagnitude = 0, lastActiveAt = -Infinity, momentumTail = false, fallingPackets = 0, decayStart = 0, releaseDelay = 120;
+  let lastPacketAt = -Infinity, lastDirection = 0, lastStepAt = -Infinity, lastMagnitude = 0, lastActiveAt = -Infinity, lastDetentAt = -Infinity, momentumTail = false, fallingPackets = 0, decayStart = 0, releaseDelay = 120;
 
   function wheelGestureSteps(event, now) {
     const y = Number(event.deltaY), x = Number(event.deltaX) || 0;
@@ -26,7 +26,16 @@ export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = fal
       } else if (!momentumTail) fallingPackets = 0;
       const held = !momentumTail;
       const continuing = held && now - lastStepAt >= 420;
-      releaseDelay = detent ? 240 : 120;
+      // A repeated mouse notch often arrives just after the fixed release
+      // deadline. Preserve that measured cadence instead of pausing/restarting
+      // the native decoder on every notch. One isolated notch still uses 240ms;
+      // trackpads retain their short release and momentum-tail rejection.
+      const detentInterval = now - lastDetentAt;
+      releaseDelay = detent
+        ? detentInterval > 0 && detentInterval <= 450
+          ? Math.min(420, Math.max(240, detentInterval + 60)) : 240
+        : 120;
+      lastDetentAt = detent ? now : -Infinity;
       // Renew the input clock even when a packet shares the current step.
       // Decaying trackpad momentum must not keep a released frame moving.
       if(newGesture||detent||held)lastActiveAt=now;
@@ -48,7 +57,7 @@ export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = fal
 
   // Preserve the burst lock across scene changes: trackpad inertia must not
   // spend another step in the next scene. A quiet interval rearms naturally.
-  return {wheelGestureSteps, lastActiveAt:()=>lastActiveAt, releaseDelayMs:()=>releaseDelay, reset() {lastActiveAt=-Infinity;}};
+  return {wheelGestureSteps, lastActiveAt:()=>lastActiveAt, releaseDelayMs:()=>releaseDelay, reset() {lastActiveAt=-Infinity;lastDetentAt=-Infinity;}};
 }
 
 // Apply once to the target, in source seconds; do not also scale by walk speed.

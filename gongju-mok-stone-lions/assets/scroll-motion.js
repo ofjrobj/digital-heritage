@@ -79,6 +79,18 @@ export function manualScrollHoldTime({scene={},currentTime=0,clipIn=0,duration=I
  return Math.max(0,Math.min(duration,frame-clipIn));
 }
 
+// Direct input needs only a short runway, not a queue spanning the whole film.
+// Tiny drag packets must clear the one-frame stop tolerance so the decoder can
+// show a frame before stopping again. Pointer release still holds immediately.
+export function boundedManualTarget(target,local,end,scene={},drag=false){
+ const direction=Math.sign(target-local);
+ if(!direction)return Math.max(0,Math.min(end,target));
+ const frame=1/(Number(scene.fps)||30);
+ const maximum=Math.max(frame*2,Number(scene.secondsPerScroll)||1.8);
+ const distance=Math.max(drag?frame*2:0,Math.min(maximum,Math.abs(target-local)));
+ return Math.max(0,Math.min(end,local+direction*distance));
+}
+
 // Native forward decoding, with a bounded acceleration and braking envelope.
 // All distances are source seconds; the target remains the authored sharp stop.
 export function continuousScrollRate(gap,dt,previous,scene={},remaining=Infinity){
