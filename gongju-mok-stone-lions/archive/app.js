@@ -1,4 +1,5 @@
-import {levelScan,createInspectionFraming} from './scan-framing.js?v=overview-20261020-v28';
+import {levelScan,createInspectionFraming} from './scan-framing.js?v=smooth-pair-20261026';
+import {createViewportBuffer,framingBlend} from './viewer-motion.js?v=smooth-pair-20261026';
 import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=inspection-relief-2';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -12,6 +13,19 @@ const returnLink = document.querySelector('[data-story-return]');
 const nativePage = new URLSearchParams(location.search).get('native');
 const isBlender = ['blender-test', 'play', 'review'].includes(nativePage);
 returnLink.href = isBlender ? '../blender-test/?start=intro' : '../?start=intro';
+
+let overviewSyncPending=false;
+function synchronizeOverview(){
+  if(overviewSyncPending)return;overviewSyncPending=true;
+  requestAnimationFrame(()=>{
+    overviewSyncPending=false;
+    const pair=Object.values(viewers),heights=pair.map(viewer=>viewer.overviewHeight());
+    if(heights.every(height=>Number.isFinite(height)&&height>0)){
+      const height=Math.min(...heights);
+      pair.forEach(viewer=>viewer.setOverviewHeight(height));
+    }
+  });
+}
 
 function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, displayZoom = 1 }) {
   const scene = new THREE.Scene();
@@ -50,27 +64,27 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   const fill = new THREE.DirectionalLight(0xffffff, .65);
   fill.position.set(3, -3, 4); scene.add(fill);
   let dirty = true, ready = false, goal = null;
-  let resizePending = true, bufferWidth = 0, bufferHeight = 0;
+  let resizePending = true, lastFrameAt = performance.now();
+  const viewportBuffer=createViewportBuffer();
+  const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
   // Wheel zoom updates synchronously inside OrbitControls, before the next RAF.
   controls.addEventListener('change',()=>{dirty=true;});
   const surface = createSurfaceView(THREE,scene,element,()=>{dirty=true;});
   const framing=createInspectionFraming(THREE,{camera,controls,element});
   renderer.domElement.style.cursor="grab";
-  const frame = () => {
+  const frame = now => {
     const r = element.getBoundingClientRect();
     if (!r.width || !r.height) return;
     camera.aspect=r.width/r.height;camera.updateProjectionMatrix();
     renderCamera.aspect=camera.aspect;renderCamera.updateProjectionMatrix();
-    const width=Math.max(1,Math.round(r.width)),height=Math.max(1,Math.round(r.height));
-    if(width!==bufferWidth||height!==bufferHeight){
-      renderer.setSize(width,height,false);bufferWidth=width;bufferHeight=height;
-    }
+    viewportBuffer.request(r.width,r.height,now);
     // A newly bound model still needs fitting when its viewport size is unchanged.
-    framing.resize(r,goal);dirty=true;
+    goal=framing.resize(r,goal)||null;dirty=true;synchronizeOverview();
   };
   // ResizeObserver runs after animation callbacks. Defer buffer changes so that
   // resizing and drawing happen together, before the browser paints the canvas.
   new ResizeObserver(()=>{resizePending=true;}).observe(element);
+  new MutationObserver(()=>{resizePending=true;}).observe(document.documentElement,{attributes:true,attributeFilter:['data-archive-overview']});
   const loaded = loader.loadAsync(modelUrl, event => {
     loading.textContent = event.total ? `불러오는 중 ${Math.min(100,Math.round(event.loaded/event.total*100))}%` : '스캔 데이터를 불러오는 중…';
   }).then(gltf => {
@@ -84,11 +98,15 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   });
   function focus(index){goal=framing.focus(index);dirty=true;}
   controls.addEventListener('start',()=>{goal=null;});
-  function animate(){
+  function animate(now=performance.now()){
     requestAnimationFrame(animate);
+    const elapsed=Math.max(0,(now-lastFrameAt)/1000);lastFrameAt=now;
     if(document.hidden)return;
-    if(resizePending){resizePending=false;frame();}
-    if(goal){camera.position.lerp(goal.position,.1);controls.target.lerp(goal.target,.1);dirty=true;if(camera.position.distanceTo(goal.position)<.002){camera.position.copy(goal.position);controls.target.copy(goal.target);goal=null;}}
+    if(resizePending){resizePending=false;frame(now);}
+    const buffer=viewportBuffer.consume(now);
+    // Resize and redraw in the same task, after the changing layout settles.
+    if(buffer){renderer.setSize(buffer.width,buffer.height,false);element.dataset.bufferCommits=String(Number(element.dataset.bufferCommits||0)+1);dirty=true;}
+    if(goal){const blend=framingBlend(elapsed,reducedMotion.matches);camera.position.lerp(goal.position,blend);controls.target.lerp(goal.target,blend);dirty=true;if(camera.position.distanceTo(goal.position)<.002&&controls.target.distanceTo(goal.target)<.002){camera.position.copy(goal.position);controls.target.copy(goal.target);goal=null;}}
     if(controls.update())dirty=true;
     if(dirty){
       camera.updateMatrixWorld(true);
@@ -102,7 +120,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
       dirty=false;
     }
   }
-  animate();return {focus,loaded,setColor:surface.setColor};
+  animate();return {focus,loaded,setColor:surface.setColor,overviewHeight:framing.naturalOverviewHeight,setOverviewHeight(height){if(framing.setOverviewHeight(height))resizePending=true;}};
 }
 const viewers = {
  male:createViewer({element:document.querySelector('#male-scene'),loading:document.querySelector('#male-loading'),modelUrl:'models/male-continuous.glb',targetSize:1.83,yaw:-3.902609*Math.PI/180}),

@@ -13,8 +13,9 @@ import {createStoryMusic} from './story-audio-mix.js?v=drag-arrival-audio-1';
 import {createScrollFootsteps} from './scroll-footsteps.js?v=manual-movement-20261019-v19';
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
 import {createIntroInkSpread,introVisualTime} from './intro-ink-spread.js?v=three-drops-slow-intro-1';
-import {createPaperColor, PAPER_CSS} from './paper-color.js?v=matched-dialogue-20261020-v27';
-import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=manual-frame-hold-20261020';
+import {createPaperColor, PAPER_CSS} from './paper-color.js?v=decoded-frame-20261026';
+import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=responsive-trackpad-20261026';
+import {setPlaybackRate,holdPresentedFrame} from './video-playback.js?v=responsive-playback-20261026';
 import {dialogueApproachGain,sceneArrivalDelay} from './dialogue-audio-flow.js?v=drag-arrival-audio-1';
 const replacementOpening=document.body.dataset.mediaProfile==='selected-higgsfield';
 const reviewWindow=document.body.dataset.reviewWindow==='true';
@@ -125,7 +126,6 @@ function sourceEndFade(scene,time){
 // Blend toward the actual following video's first frame before switching sources.
 // The landing image and subsequent playback therefore share the exact same frame.
 function exitMatchState(record,time){
- if(record?.manualHeld)return null;
  const spec=record?.scene.exitMatch;
  if(!spec)return null;
  const fromIndex=scenes.indexOf(record.scene),next=scenes[fromIndex+1];
@@ -334,13 +334,12 @@ function seekScrollPosition(record,time){
 function holdManualFrame(released=false,now=performance.now()){
  const r=current;
  if(!replacementOpening||!r||r.manualHeld||r.still||!r.loaded||transition)return;
- const hold=manualScrollHoldTime({scene:r.scene,currentTime:r.lastDecodedTime??r.video.currentTime,clipIn:r.clipIn,duration:duration(index),lastInputAt:lastManualInputAt,now,released,automatic:!scrollDriven(r)||departureActive(r)||r.approaching||previewAuto});
- if(hold===null)return;
- r.manualHeld=true;r.video.pause();r.scrubTween=null;r.scrubTarget=undefined;
+ const shouldHold=manualScrollHoldTime({scene:r.scene,currentTime:r.lastDecodedTime??r.video.currentTime,clipIn:r.clipIn,duration:duration(index),lastInputAt:lastManualInputAt,now,released,automatic:!scrollDriven(r)||departureActive(r)||r.approaching||previewAuto});
+ if(shouldHold===null)return;
+ const hold=holdPresentedFrame(r,duration(index));
+ r.manualHeld=true;r.scrubTween=null;
  local=target=hold;r.settledTarget=hold;walkingRate=0;reverseElapsed=0;sceneJoin=null;seamMatch=null;footsteps.stop();
- // A seek already decoding must also return to the held source frame.
- seekScrollPosition(r,hold);
- if(r.video.readyState>=2)draw(r.video);
+ if(!r.video.seeking&&r.video.readyState>=2)draw(r.video);
 }
 // One forward gesture starts the entire selected intro; subsequent gestures are consumed.
 // Accept it during initial media loading too, rather than losing the first gesture.
@@ -369,6 +368,11 @@ function manual(delta,fromDrag=false){
  target=!fromDrag&&scenes[index]?.scrollStops?.length
   ?nextScrollStop(scenes[index],target,Math.sign(delta),scrollLimit())
   :clamp(target+walkingTargetDelta(walkingInputRange(),delta),0,scrollLimit());
+ // Start the native decoder in the input handler, without waiting for another
+ // render frame. Reverse input continues to use the single-seek path below.
+ if(current.scene.scrollPlayback==='continuous'&&target>local&&!current.video.seeking&&current.video.readyState>=2){
+  setPlaybackRate(current.video,walkingRate);play(current);
+ }
  if(scenes[index]?.scrollPlayback==='seek'){
   current.video.pause();
   const smoothing=scrollTweenDuration(scenes[index],local,target,duration(index),fromDrag);
@@ -383,7 +387,7 @@ stage.addEventListener('wheel',e=>{
   lastManualInputAt=now;lastWheelMoveAt=now;
   // A renewed direct packet resumes immediately, even inside the old gesture
   // lock; decaying trackpad momentum does not reach this branch.
-  if(!delta&&current.manualHeld)delta=-Math.sign(e.deltaY);
+  if(!delta&&(current.manualHeld||current.settledTarget===target))delta=-Math.sign(e.deltaY);
  }
  if(!delta)return;if(enterFromIntro(delta)){e.preventDefault();return;}if(!canWalk())return;
  e.preventDefault();const before=target;manual(delta);if(target!==before)lastWheelMoveAt=now;
@@ -451,6 +455,7 @@ function updateStoryNavigation(){
  nav.inert=navOpacity<.35;if(navOpacity<.005)nav.setAttribute('aria-hidden','true');else nav.removeAttribute('aria-hidden');
 }
 function advance(){if(continuousAdvance())return;if(scenes[index]?.id==='intro')return;if(index<scenes.length-1)requestScene(index+1);else{finished=true;endingElapsed=0;current?.video.pause();footsteps.stop();prepareArchive();}}
+let nextProofAt=0;
 function frame(now){
  const dt=document.hidden?0:Math.min(.08,Math.max(0,(now-last)/1000));last=now;
  if(!hasFrame&&current?.loaded){if(current.still&&current.image)draw(current.image);else if(current.video.readyState>=2)draw(current.video);}
@@ -544,7 +549,13 @@ function frame(now){
      // pausing or restarting the velocity envelope at every wheel packet.
      current.scrubTween=null;
      const tolerance=1/(Number(s.fps)||30)+.004;
-     if(current.settledTarget===target||Math.abs(gap)<=tolerance||gap<0&&walkingDirection>=0){
+     if(departing){
+      // The camera turn is an authored film, not a manual scroll destination.
+      // Keep its native cadence through the turn instead of braking to a crawl.
+      if(gap<=tolerance){
+       v.pause();walkingRate=0;reverseElapsed=0;current.settledTarget=target;footsteps.stop();
+      }else{walkingRate=turnRate;setPlaybackRate(v,walkingRate);play(current);}
+     }else if(current.settledTarget===target||Math.abs(gap)<=tolerance||gap<0&&walkingDirection>=0){
       v.pause();walkingRate=0;reverseElapsed=0;footsteps.stop();
       // Latch the stop. Decoders can report a nearby timestamp; never restart
       // playback or repeatedly seek the same final frame to chase milliseconds.
@@ -552,7 +563,7 @@ function frame(now){
      }else if(gap>0){
       reverseElapsed=0;
       walkingRate=continuousScrollRate(gap,dt,walkingRate,pacedScene,departing?target-local:d-local);
-      if(walkingRate){v.playbackRate=walkingRate;play(current);}else{v.pause();current.settledTarget=target;seekScrollPosition(current,target);}
+      if(walkingRate){setPlaybackRate(v,walkingRate);play(current);}else{v.pause();current.settledTarget=target;seekScrollPosition(current,target);}
      }else{
       // HTML video has no portable reverse playback. Keep one seek in flight
       // and use decoded progress, rather than a wall-clock tween that skips ahead.
@@ -567,7 +578,7 @@ function frame(now){
      walkingRate=0;reverseElapsed=0;seekScrollPosition(current,scrollPositionAt(current,target,now));
     }else if(gap>.008){
      walkingRate=walkingPlaybackRate(gap,dt,walkingRate,walkingReference(),(s.maxPlaybackRate||1)*turnRate);
-     if(walkingRate){v.playbackRate=walkingRate;play(current);}else v.pause();
+     if(walkingRate){setPlaybackRate(v,walkingRate);play(current);}else v.pause();
     }else if(gap<-.008&&walkingDirection<0){
      v.pause();const reverseDt=reverseElapsed;reverseElapsed=0;
      walkingRate=walkingPlaybackRate(-gap,reverseDt,walkingRate,walkingReference(),(s.maxPlaybackRate||1)*turnRate);
@@ -577,7 +588,7 @@ function frame(now){
   }else if(!current.still){
    reverseElapsed=0;
    const desired=openingPlaybackRate(s,local,d);
-   current.autoRate=(current.autoRate??v.playbackRate)+(desired-(current.autoRate??v.playbackRate))*(1-Math.exp(-dt/((s.id==='intro'||s.id==='aerial-entry') ? .45 : .16)));v.playbackRate=current.autoRate;
+   current.autoRate=(current.autoRate??v.playbackRate)+(desired-(current.autoRate??v.playbackRate))*(1-Math.exp(-dt/((s.id==='intro'||s.id==='aerial-entry') ? .45 : .16)));setPlaybackRate(v,current.autoRate);
    if(active&&(motion||!dialogue))play(current);else v.pause();
   }
   if(s.id==='intro'&&!replacementOpening){
@@ -641,8 +652,12 @@ function frame(now){
  const seasonPlaying=scenes[index]?.id==='seasons'&&!finished&&!compare&&!current?.error&&!current?.playBlocked&&current?.video.readyState>=3&&!current.video.paused&&!current.video.seeking;
  seasonAmbience?.tick({active:seasonPlaying,time:local,gain:1-endingFadeAmount,sound,paused:paused||!seasonPlaying,hidden:document.hidden,transition:!!transition,dt});
  footsteps.tick();if($('run'))$('run').textContent=previewAuto?'이동 멈춤':'이동 재생';if($('chapter')&&index>=0)$('chapter').value=String(index);if($('progress'))$('progress').value=String((offset(index)+local)/Math.max(1,total));
+ if(now>=nextProofAt){
+ nextProofAt=now+200;
  const deliveryVideo=current?.video,deliveryQuality=deliveryVideo?.getVideoPlaybackQuality?.();
- document.body.dataset.proof=JSON.stringify({engine:'test-render-media-v3',audioPolicy:replacementOpening?'separate-tracks-only':'legacy',quietAmbience:quietAmbience?.proof()??null,fit:'cover',dialogueFit:dialogueFit.proof(),dialoguePanel:{hidden:$('cinemaDialogue')?.hidden??true,ended:!!current?.dialogueEnded},fog:footageFog.proof(),navigation:{paper:adaptiveNavPaper.proof(),opacity:navOpacity,underFog:document.body.dataset.navFog==='true'},introRendering:scenes[index]?.id==='intro'?introEffect.proof():null,paper:PAPER,paperColor:paperColor.proof(),openingLayout,storyStarted,startup:document.body.dataset.startup,loadingHiddenAt,firstSceneShownAt,firstSceneGapMs:firstSceneShownAt&&loadingHiddenAt?firstSceneShownAt-loadingHiddenAt:null,endingElapsed,endingFadeAmount,seamMatch,sceneJoin:sceneJoin?{elapsed:sceneJoin.elapsed,duration:sceneJoin.duration}:null,paused,scene:scenes[index]?.id,index,local,duration:duration(index),approach:{active:!!current?.approaching,cover:current?.approachCover||0,config:current?.scene.dialogueApproach||null},mode:scenes[index]?.mode,effectiveMode:current?.autoStarted?'auto':scenes[index]?.mode,autoFrom:scenes[index]?.autoFrom??null,autoStarted:!!current?.autoStarted,transition:transition?.phase||null,transitionDetails:transition?{style:transition.precovered?'approach-paper-reveal':transition.briefPaper?'gentle-paper-fade':transition.soft?'edge-mist-dissolve':'cover',blendDuration:transition.blendDuration,from:transition.from,to:transition.record.scene.id,elapsed:transition.elapsed,cover:transition.fade,reveal:transition.reveal,hold:transition.hold}:null,lastSceneTransition,waiting:!!transition||!!current&&!current.loaded,renderedKind,renderedSource,imagePreview:renderedKind==='image',source:current?.scene.src||null,sourceTime:current?.video.currentTime||0,scrollTarget:target,sourcePaused:current?.video.paused??true,manualHeld:!!current?.manualHeld,inputIdleMs:Number.isFinite(lastManualInputAt)?Math.max(0,now-lastManualInputAt):null,settledTarget:current?.settledTarget??null,startDelay:sceneArrivalDelay(scenes[index]),startElapsed:current?.startElapsed||0,interaction:document.body.dataset.interaction,scrollEnabled:canWalk(),automaticTurn:{active:departureActive(),until:current?.scene.autoTurnUntil??null,done:!!current?.departureDone},walkingReferenceDuration:scenes[index]?.walkingReferenceDuration??null,scrollSteps:scenes[index]?.scrollSteps??6,secondsPerScroll:scenes[index]?.secondsPerScroll??null,scrollPlayback:scenes[index]?.scrollPlayback??'play',scrollSmoothingMs:scenes[index]?.scrollSmoothingMs??0,scrollTween:current?.scrubTween??null,maxPlaybackRate:scenes[index]?.maxPlaybackRate??null,nativeAudio:{blocked:nativeAudioBlocked,selected:!replacementOpening&&scenes[index]?.nativeAudio===true,muted:deliveryVideo?.muted??true,volume:deliveryVideo?.volume??0},sourceFps:current?.scene.fps??null,delivery:{width:deliveryVideo?.videoWidth||0,height:deliveryVideo?.videoHeight||0,playbackRate:deliveryVideo?.playbackRate??1,totalVideoFrames:deliveryQuality?.totalVideoFrames??null,droppedVideoFrames:deliveryQuality?.droppedVideoFrames??null},provenance:current?.scene.provenance??null,geometryVerified:false,voice:voices.proof(),seasonAmbience:(seasonAmbience?.proof()??disabledAmbience),musicVolume:music.volume,music:musicProof,sceneLife:(sceneLife?.proof()??disabledAmbience),footsteps:{active:foot.dataset.active,starts:Number(foot.dataset.starts||0),dragging:!!drag,input:'manual-movement',blocked:footsteps.proof().blocked,volume:foot.volume,wheelActive:now-lastWheelMoveAt<200,source:foot.currentSrc||foot.src},dialogueApproachGain:approachGain,finished});requestAnimationFrame(frame);
+ document.body.dataset.proof=JSON.stringify({engine:'test-render-media-v3',audioPolicy:replacementOpening?'separate-tracks-only':'legacy',quietAmbience:quietAmbience?.proof()??null,fit:'cover',dialogueFit:dialogueFit.proof(),dialoguePanel:{hidden:$('cinemaDialogue')?.hidden??true,ended:!!current?.dialogueEnded},fog:footageFog.proof(),navigation:{paper:adaptiveNavPaper.proof(),opacity:navOpacity,underFog:document.body.dataset.navFog==='true'},introRendering:scenes[index]?.id==='intro'?introEffect.proof():null,paper:PAPER,paperColor:paperColor.proof(),openingLayout,storyStarted,startup:document.body.dataset.startup,loadingHiddenAt,firstSceneShownAt,firstSceneGapMs:firstSceneShownAt&&loadingHiddenAt?firstSceneShownAt-loadingHiddenAt:null,endingElapsed,endingFadeAmount,seamMatch,sceneJoin:sceneJoin?{elapsed:sceneJoin.elapsed,duration:sceneJoin.duration}:null,paused,scene:scenes[index]?.id,index,local,duration:duration(index),approach:{active:!!current?.approaching,cover:current?.approachCover||0,config:current?.scene.dialogueApproach||null},mode:scenes[index]?.mode,effectiveMode:current?.autoStarted?'auto':scenes[index]?.mode,autoFrom:scenes[index]?.autoFrom??null,autoStarted:!!current?.autoStarted,transition:transition?.phase||null,transitionDetails:transition?{style:transition.precovered?'approach-paper-reveal':transition.briefPaper?'gentle-paper-fade':transition.soft?'edge-mist-dissolve':'cover',blendDuration:transition.blendDuration,from:transition.from,to:transition.record.scene.id,elapsed:transition.elapsed,cover:transition.fade,reveal:transition.reveal,hold:transition.hold}:null,lastSceneTransition,waiting:!!transition||!!current&&!current.loaded,renderedKind,renderedSource,imagePreview:renderedKind==='image',source:current?.scene.src||null,sourceTime:current?.video.currentTime||0,scrollTarget:target,sourcePaused:current?.video.paused??true,manualHeld:!!current?.manualHeld,inputIdleMs:Number.isFinite(lastManualInputAt)?Math.max(0,now-lastManualInputAt):null,settledTarget:current?.settledTarget??null,startDelay:sceneArrivalDelay(scenes[index]),startElapsed:current?.startElapsed||0,interaction:document.body.dataset.interaction,scrollEnabled:canWalk(),automaticTurn:{active:departureActive(),until:current?.scene.autoTurnUntil??null,done:!!current?.departureDone},walkingReferenceDuration:scenes[index]?.walkingReferenceDuration??null,scrollSteps:scenes[index]?.scrollSteps??6,secondsPerScroll:scenes[index]?.secondsPerScroll??null,scrollPlayback:scenes[index]?.scrollPlayback??'play',scrollSmoothingMs:scenes[index]?.scrollSmoothingMs??0,scrollTween:current?.scrubTween??null,maxPlaybackRate:scenes[index]?.maxPlaybackRate??null,nativeAudio:{blocked:nativeAudioBlocked,selected:!replacementOpening&&scenes[index]?.nativeAudio===true,muted:deliveryVideo?.muted??true,volume:deliveryVideo?.volume??0},sourceFps:current?.scene.fps??null,delivery:{width:deliveryVideo?.videoWidth||0,height:deliveryVideo?.videoHeight||0,playbackRate:deliveryVideo?.playbackRate??1,totalVideoFrames:deliveryQuality?.totalVideoFrames??null,droppedVideoFrames:deliveryQuality?.droppedVideoFrames??null},provenance:current?.scene.provenance??null,geometryVerified:false,voice:voices.proof(),seasonAmbience:(seasonAmbience?.proof()??disabledAmbience),musicVolume:music.volume,music:musicProof,sceneLife:(sceneLife?.proof()??disabledAmbience),footsteps:{active:foot.dataset.active,starts:Number(foot.dataset.starts||0),dragging:!!drag,input:'manual-movement',blocked:footsteps.proof().blocked,volume:foot.volume,wheelActive:now-lastWheelMoveAt<200,source:foot.currentSrc||foot.src},dialogueApproachGain:approachGain,finished});
+ }
+ requestAnimationFrame(frame);
 }
 status('Loading...');requestAnimationFrame(frame);
 try{

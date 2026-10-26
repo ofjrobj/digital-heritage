@@ -3,7 +3,7 @@
 export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = false, gestureIdleMs = 220} = {}) {
   const pixelStep = Number.isFinite(pixelsPerStep) && pixelsPerStep > 0 ? pixelsPerStep : 100;
   const idle = Number.isFinite(gestureIdleMs) && gestureIdleMs > 0 ? gestureIdleMs : 220;
-  let lastPacketAt = -Infinity, lastDirection = 0, lastStepAt = -Infinity, heldPixels = 0, lastMagnitude = 0, lastActiveAt = -Infinity;
+  let lastPacketAt = -Infinity, lastDirection = 0, lastStepAt = -Infinity, heldPixels = 0, lastMagnitude = 0, lastActiveAt = -Infinity, momentumTail = false;
 
   function wheelGestureSteps(event, now) {
     const y = Number(event.deltaY), x = Number(event.deltaX) || 0;
@@ -17,7 +17,12 @@ export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = fal
       // Discrete wheel notches must not be swallowed by the trackpad burst lock.
       const detent = mode !== 0 || x === 0 && (magnitude === 100 || magnitude === 120);
       if (newGesture) heldPixels = 0;
-      const held = magnitude >= 12 && magnitude >= lastMagnitude * .9;
+      // Gentle trackpad movement can stay below 12 pixels for the whole gesture.
+      // Keep those steady packets active, but do not let a decaying momentum
+      // tail resume movement when its last, rounded packets flatten out.
+      if (newGesture || detent || magnitude > lastMagnitude) momentumTail = false;
+      else if (magnitude < lastMagnitude * (magnitude < 12 ? 1 : .9)) momentumTail = true;
+      const held = !momentumTail && magnitude >= lastMagnitude * .9;
       heldPixels = held ? heldPixels + magnitude : 0;
       const continuing = held && now - lastStepAt >= 420 && heldPixels >= 180;
       // Renew the input clock even when a packet shares the current step.

@@ -18,7 +18,7 @@ export function levelScan(THREE,scan,{yaw,targetSize,sex}){
 }
 export function createInspectionFraming(THREE,{camera,controls,element}){
  const up=new THREE.Vector3(0,1,0),zero=new THREE.Vector3(),all=[];
- let bounds=null,current=null,fitted=0,lastRect=null,pending=null;
+ let bounds=null,current=null,overview=null,overviewHeight=null,fitted=0,lastRect=null,pending=null;
  function view(index){
   const part=Number.isInteger(index)?PARTS[index]:null,size=bounds.getSize(new THREE.Vector3());
   const selected=part&&!part.all?all.filter(p=>p.x>=bounds.min.x+size.x*.65&&p.y>=bounds.min.y+size.y*part.band[0]&&p.y<=bounds.min.y+size.y*part.band[1]):all;
@@ -34,10 +34,10 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   for(const p of spec.points){const depth=distance-p.z,x=p.x/(depth*k*aspect),y=p.y/(depth*k);left=Math.min(left,x);right=Math.max(right,x);bottom=Math.min(bottom,y);top=Math.max(top,y);}
   return {width:right-left,height:top-bottom,left,right,bottom,top};
  }
- function distanceFor(spec,r){
+ function distanceFor(spec,r,matchOverview=true){
   const expanded=document.documentElement.dataset.archiveOverview==='expanded';
   const width=r.width*(spec.part?(spec.part.width??(spec.part.all ? .78 : .83)):expanded?.88:.76);
-  const height=spec.part?r.height*(spec.part.height??.86):Math.min(r.height*(expanded?.90:.82),innerHeight*(expanded?.57:.42));
+  const height=spec.part?r.height*(spec.part.height??.86):Math.min(r.height*(expanded?.90:.82),innerHeight*(expanded?.57:.42),matchOverview&&overviewHeight>0?overviewHeight:Infinity);
   let near=.05;for(const p of spec.points)near=Math.max(near,p.z+.05);let far=50;
   for(let i=0;i<22;i++){
    const d=(near+far)/2,b=projected(spec,d,r.width/r.height);
@@ -60,14 +60,30 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
    const step=Math.max(1,Math.floor(attr.count/8000));
    for(let i=0;i<attr.count;i+=step)all.push(new THREE.Vector3().fromBufferAttribute(attr,i).applyMatrix4(mesh.matrixWorld));
   });
-  current=view(pending);fitted=0;
+  overview=view(null);current=Number.isInteger(pending)?view(pending):overview;fitted=0;
   element.dataset.rigidLevelQuaternion=model.quaternion.toArray().map(n=>n.toFixed(8)).join(',');
  }
  function resize(r,goal){
   lastRect=r;if(!current)return;const next=distanceFor(current,r);
   if(!fitted){controls.target.copy(current.target);camera.position.copy(current.target).addScaledVector(current.direction,next);}
-  else{const ratio=next/fitted;camera.position.sub(controls.target).multiplyScalar(ratio).add(controls.target);if(goal)goal.position.sub(goal.target).multiplyScalar(ratio).add(goal.target);}
+  else if(Math.abs(next-fitted)>.00001){
+   // Resize the destination rather than jumping the displayed camera. Reusing
+   // that destination through the layout transition preserves any user zoom.
+   const ratio=next/fitted;
+   if(!goal)goal={position:camera.position.clone(),target:controls.target.clone()};
+   goal.position.sub(goal.target).multiplyScalar(ratio).add(goal.target);
+  }
   fitted=next;publish(r);
+  return goal;
+ }
+ function naturalOverviewHeight(){
+  if(!overview||!lastRect)return null;
+  const distance=distanceFor(overview,lastRect,false);
+  return projected(overview,distance,lastRect.width/lastRect.height).height*lastRect.height/2;
+ }
+ function setOverviewHeight(height){
+  if(!Number.isFinite(height)||height<=0||overviewHeight!==null&&Math.abs(overviewHeight-height)<.1)return false;
+  overviewHeight=height;element.dataset.overviewHeight=height.toFixed(1);return true;
  }
  function focus(index){
   pending=index;if(!bounds)return null;current=view(index);
@@ -82,5 +98,5 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   referenceCamera.lookAt(spec.target);referenceCamera.updateMatrixWorld(true);
   return referenceCamera;
  }
- return {bind,resize,focus,reference};
+ return {bind,resize,focus,reference,naturalOverviewHeight,setOverviewHeight};
 }

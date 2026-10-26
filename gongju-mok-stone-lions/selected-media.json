@@ -1,5 +1,5 @@
 {
-  "version": "continuous-turns-20261020-v28",
+  "version": "responsive-playback-20261026",
   "scenes": [
     {
       "id": "intro",
@@ -21,7 +21,7 @@
           1920,
           1080
         ],
-        "delivery": "Bitstream copy, no recompression. Visible frames 0–582 match approved video. Runtime 0.90x only through the mountain passage, returning to 1x by 9.3s. Source video is silent; a separate extracted drum cue is mixed beneath narration.",
+        "delivery": "Bitstream copy, no recompression. Visible frames 0–582 match approved video. Native 1x playback preserves the source 30 fps cadence and its baked mountain speed ramp. Source video is silent; a separate extracted drum cue is mixed beneath narration.",
         "deliverySha256": "001746587660b767a72ff46bd455ddc0e51ac11e633d21dfd489471730abe25c",
         "paperColor": "#E8E8E6"
       },
@@ -50,22 +50,6 @@
       "playbackCurve": [
         {
           "time": 0,
-          "rate": 1
-        },
-        {
-          "time": 2.8,
-          "rate": 1
-        },
-        {
-          "time": 3.6,
-          "rate": 0.9
-        },
-        {
-          "time": 8.3,
-          "rate": 0.9
-        },
-        {
-          "time": 9.3,
           "rate": 1
         }
       ]
@@ -542,19 +526,7 @@
       "autoTurnCurve": [
         {
           "time": 0,
-          "rate": 0.8
-        },
-        {
-          "time": 0.8,
-          "rate": 0.7
-        },
-        {
-          "time": 3.5,
-          "rate": 0.7
-        },
-        {
-          "time": 4.5,
-          "rate": 0.6
+          "rate": 1
         }
       ]
     },
@@ -741,19 +713,7 @@
       "autoTurnCurve": [
         {
           "time": 0,
-          "rate": 0.8
-        },
-        {
-          "time": 0.8,
-          "rate": 0.7
-        },
-        {
-          "time": 3.9000000000000004,
-          "rate": 0.7
-        },
-        {
-          "time": 4.9,
-          "rate": 0.6
+          "rate": 1
         }
       ],
       "departureGrade": {
@@ -1096,7 +1056,7 @@
       "id": "seasons",
       "label": "석사자의 사계절과 현재",
       "src": "./media/v17/seasons.mp4",
-      "duration": 20,
+      "duration": 18.5,
       "fps": 30,
       "mode": "auto",
       "footsteps": false,
@@ -1112,15 +1072,16 @@
           1080
         ],
         "delivery": "Frame-exact scene extraction from supplied composite; H.264 CRF 17, half-second keyframes for smooth seeking; no regenerated frames",
-        "deliverySha256": "3a3c921547d41e3346202a572f5634a6893b9ef4fcc1d343afedb1b46d138df8"
+        "deliverySha256": "3a3c921547d41e3346202a572f5634a6893b9ef4fcc1d343afedb1b46d138df8",
+        "runtimeTrim": "Start at source 1.5s (frame 45), after the baked opening dissolve with doubled lion outlines. The preceding arrival blends into this clean frame; both lions retain the source scale and position. The source file and final 4.8s fade are unchanged."
       },
       "sourceDuration": 20,
       "motionBaked": true,
       "ambience": "",
-      "startDelay": 0.25,
+      "startDelay": 0,
       "transition": "none",
       "sourceFrames": 600,
-      "clipIn": 0,
+      "clipIn": 1.5,
       "nativeAudio": false,
       "endFadeSeconds": 4.8
     }

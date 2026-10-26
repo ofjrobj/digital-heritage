@@ -45,8 +45,8 @@ export function gradePixel(rgb,grade={}){
 }
 
 export function createPaperColor(){
- const surface=document.createElement('canvas'),profiles=new Map(),stillCache=new WeakMap();
- let gl,program,texture,lastKey='',lastTime=-1,lastWhite=null,backend='initializing';
+ const surface=document.createElement('canvas'),profiles=new Map(),stillCache=new WeakMap(),videoFrames=new WeakMap();
+ let gl,program,texture,lastKey='',lastTime=-1,lastSource=null,lastTextureSource=null,lastTextureTime=-1,lastWhite=null,backend='initializing';
  const vertex='attribute vec2 position; varying vec2 uv; void main(){uv=(position+1.0)*.5;gl_Position=vec4(position,0.,1.);}';
  const fragment=`precision highp float;
  varying vec2 uv; uniform sampler2D source; uniform vec3 white; uniform vec3 paper; uniform vec3 gradeGain; uniform float gradeSaturation; uniform float preserveSource; uniform vec3 shadowGain; uniform vec3 shadowLift;
@@ -78,27 +78,56 @@ export function createPaperColor(){
   gl.uniform3fv(gl.getUniformLocation(program,'paper'),PAPER_RGB.map(v=>v/255));backend='webgl';
  }catch{gl=null;backend='canvas';}
  const whiteUniform=gl?gl.getUniformLocation(program,'white'):null;
+ const gradeUniforms=gl?Object.fromEntries(['shadowGain','shadowLift','gradeGain','gradeSaturation','preserveSource'].map(name=>[name,gl.getUniformLocation(program,name)])):null;
  surface.addEventListener('webglcontextlost',e=>{e.preventDefault();gl=null;backend='canvas';lastKey='';});
  const fallback=document.createElement('canvas');const fc=fallback.getContext('2d',{willReadFrequently:true});
+ function frameTime(source){
+  if(source.tagName!=='VIDEO'||typeof source.requestVideoFrameCallback!=='function')return source.currentTime??-1;
+  let state=videoFrames.get(source);
+  if(!state){
+   state={revision:0,callback:null};videoFrames.set(source,state);
+   // currentTime is a playback clock, not a decoded-frame identity. Upload the
+   // texture only when the browser presents new pixels; the main canvas can
+   // still composite its transitions on every animation frame.
+   const watch=()=>{if(state.callback===null)state.callback=source.requestVideoFrameCallback(()=>{state.callback=null;state.revision++;watch();});};
+   const invalidate=()=>{state.revision++;watch();};
+   source.addEventListener('loadeddata',invalidate);
+   source.addEventListener('seeked',invalidate);
+   source.addEventListener('emptied',()=>{
+    state.revision++;
+    if(state.callback!==null)source.cancelVideoFrameCallback(state.callback);
+    state.callback=null;
+   });
+   watch();
+  }
+  return state.revision;
+ }
  function render(source,grade=null,preserveSource=false){
   if(preserveSource&&!grade)return source;
   const [w,h]=dimensions(source);if(!w||!h)return source;
-  const key=String(source.currentSrc||source.src||source)+'|'+JSON.stringify(grade)+'|'+preserveSource,time=source.currentTime??-1;
+  const sourceKey=source.currentSrc||source.src||source;
+  const key=String(sourceKey)+'|'+JSON.stringify(grade)+'|'+preserveSource,time=frameTime(source);
   try{
-   if(!profiles.has(key))profiles.set(key,samplePaperWhite(source));
-   const white=profiles.get(key);lastWhite=white;
+   // White belongs to the raw footage, independently of its animated grade.
+   // A changing departure grade must not resample/read back pixels every RAF.
+   if(!profiles.has(sourceKey))profiles.set(sourceKey,samplePaperWhite(source));
+   const white=profiles.get(sourceKey);lastWhite=white;
    if(gl){
     backend='webgl';
-    if(lastKey===key&&lastTime===time)return surface;
+    if(!source.seeking&&lastSource===source&&lastKey===key&&lastTime===time)return surface;
     if(surface.width!==w||surface.height!==h){surface.width=w;surface.height=h;gl.viewport(0,0,w,h);}
-    gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);
-    gl.uniform3fv(gl.getUniformLocation(program,'shadowGain'),grade?.shadowGain||[1,1,1]);gl.uniform3fv(gl.getUniformLocation(program,'shadowLift'),grade?.shadowLift||[0,0,0]);gl.uniform3fv(gl.getUniformLocation(program,'gradeGain'),grade?.gain||[1,1,1]);gl.uniform1f(gl.getUniformLocation(program,'gradeSaturation'),grade?.saturation??1);gl.uniform1f(gl.getUniformLocation(program,'preserveSource'),preserveSource?1:0);gl.uniform3fv(whiteUniform,white.map(v=>v/255));gl.drawArrays(gl.TRIANGLES,0,6);lastKey=source.seeking?'':key;lastTime=time;return surface;
+    gl.bindTexture(gl.TEXTURE_2D,texture);
+    if(source.seeking||lastTextureSource!==source||lastTextureTime!==time){
+     gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source);
+     lastTextureSource=source;lastTextureTime=time;
+    }
+    gl.uniform3fv(gradeUniforms.shadowGain,grade?.shadowGain||[1,1,1]);gl.uniform3fv(gradeUniforms.shadowLift,grade?.shadowLift||[0,0,0]);gl.uniform3fv(gradeUniforms.gradeGain,grade?.gain||[1,1,1]);gl.uniform1f(gradeUniforms.gradeSaturation,grade?.saturation??1);gl.uniform1f(gradeUniforms.preserveSource,preserveSource?1:0);gl.uniform3fv(whiteUniform,white.map(v=>v/255));gl.drawArrays(gl.TRIANGLES,0,6);lastKey=source.seeking?'':key;lastTime=time;lastSource=source;return surface;
    }
    backend='canvas';
    if(source.tagName!=='VIDEO'&&stillCache.has(source))return stillCache.get(source);
-   if(lastKey===key&&lastTime===time)return fallback;
+   if(!source.seeking&&lastSource===source&&lastKey===key&&lastTime===time)return fallback;
    const scale=Math.min(1,1920/w);fallback.width=Math.round(w*scale);fallback.height=Math.round(h*scale);fc.drawImage(source,0,0,fallback.width,fallback.height);if(grade){const pixels=fc.getImageData(0,0,fallback.width,fallback.height),d=pixels.data;for(let i=0;i<d.length;i+=4){const c=gradePixel([d[i],d[i+1],d[i+2]],grade);for(let ch=0;ch<3;ch++)d[i+ch]=c[ch];}fc.putImageData(pixels,0,0);}if(!preserveSource)normalizePaperPixels(fc,fallback.width,fallback.height,white);
-   lastKey=source.seeking?'':key;lastTime=time;
+   lastKey=source.seeking?'':key;lastTime=time;lastSource=source;
    if(source.tagName!=='VIDEO'){const copy=document.createElement('canvas');copy.width=fallback.width;copy.height=fallback.height;copy.getContext('2d').drawImage(fallback,0,0);stillCache.set(source,copy);return copy;}return fallback;
   }catch{backend='source-fallback';return source;}
  }
