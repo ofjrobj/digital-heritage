@@ -1128,7 +1128,7 @@
         ],
         "delivery": "Frame-exact scene extraction from supplied composite; H.264 CRF 17, half-second keyframes for smooth seeking; no regenerated frames",
         "deliverySha256": "3a3c921547d41e3346202a572f5634a6893b9ef4fcc1d343afedb1b46d138df8",
-        "runtimeTrim": "Start at source 1.5s (frame 45), after the baked opening dissolve with doubled lion outlines. The preceding arrival blends into this clean frame; both lions retain the source scale and position. The source file and final 4.8 source-second fade are unchanged; the modern scene eases to 0.75x so its fade lasts about 6.2 seconds on screen."
+        "runtimeTrim": "Start at source 1.5s (frame 45), after the baked opening dissolve with doubled lion outlines. The preceding arrival blends into this clean frame; both lions retain the source scale and position. The modern scene eases to 0.75x and plays through the final source frame. Only after playback ends, the last frame fades to paper over 6.5 seconds."
       },
       "sourceDuration": 20,
       "motionBaked": true,
@@ -1138,7 +1138,7 @@
       "sourceFrames": 600,
       "clipIn": 1.5,
       "nativeAudio": false,
-      "endFadeSeconds": 4.8,
+      "endFadeSeconds": 0,
       "playbackCurve": [
         {
           "time": 0,

@@ -58,7 +58,7 @@ const adaptiveNavPaper=createAdaptiveNavPaper(stage,canvas,$('storyIndexBar'));
 const caption=document.createElement('p');caption.className='tr-caption';caption.hidden=true;caption.style.transition='none';stage.append(caption);
 const endingPaper=document.createElement('div');endingPaper.className='tr-ending-paper';endingPaper.setAttribute('aria-hidden','true');stage.append(endingPaper);
 const archiveCta=document.createElement('a');archiveCta.className='tr-archive-cta';const archiveCtaLabel=document.createElement('span');archiveCtaLabel.textContent='아카이브 탐색';archiveCta.append(archiveCtaLabel);archiveCta.href=$('indexLink')?.href||'archive/index.html';archiveCta.hidden=true;stage.append(archiveCta);archiveCta.onclick=()=>remember();
-let archiveFrame=null,endingElapsed=0,storyStarted=false,loadingHiddenAt=null,firstSceneShownAt=null;
+let archiveFrame=null,endingElapsed=0,endingRestartShown=false,storyStarted=false,loadingHiddenAt=null,firstSceneShownAt=null;
 function prepareArchive(){if(embeddedStory||archiveFrame)return;archiveFrame=document.createElement('iframe');archiveFrame.className='tr-archive';archiveFrame.title='석사자 아카이브';archiveFrame.src=$('indexLink')?.href||'archive/index.html';archiveFrame.setAttribute('aria-hidden','true');archiveFrame.inert=true;archiveFrame.onload=()=>{archiveFrame.dataset.loaded='true';try{archiveFrame.contentDocument.querySelectorAll('[data-story-return]').forEach(a=>a.target='_top');}catch{}};stage.append(archiveFrame);}
 const videos=[0,1].map(()=>{const v=document.createElement('video');v.muted=true;v.crossOrigin='anonymous';v.playsInline=true;v.preload='auto';v.className='tr-source';v.setAttribute('aria-hidden','true');stage.append(v);return v;});
 const records=[null,null],voices=createStoryVoices(stage,{tailSeconds:1,onEnded:speaker=>{if(current?.scene.mode==='dialogue'&&current.scene.speaker===speaker)finishDialoguePanel();}}),music=$('music');music.volume=0;const storyMusic=createStoryMusic(music);
@@ -497,7 +497,7 @@ function updateStoryNavigation(){
  document.body.dataset.navFog=String(underFog);document.body.dataset.navHidden=String(navOpacity<.005);
  nav.inert=navOpacity<.35;if(navOpacity<.005)nav.setAttribute('aria-hidden','true');else nav.removeAttribute('aria-hidden');
 }
-function advance(){if(continuousAdvance())return;if(scenes[index]?.id==='intro')return;if(index<scenes.length-1)requestScene(index+1);else{finished=true;endingElapsed=0;current?.video.pause();footsteps.stop();prepareArchive();if(embeddedStory){entryAccepted=false;entryScreen.reset();entryScreen.start();$('introEnter').querySelector('.entry-label').textContent='다시 시작';}}}
+function advance(){if(continuousAdvance())return;if(scenes[index]?.id==='intro')return;if(index<scenes.length-1)requestScene(index+1);else{finished=true;endingElapsed=0;endingRestartShown=false;current?.video.pause();footsteps.stop();prepareArchive();}}
 let nextProofAt=0;
 function frame(now){
  const visibleDt=document.hidden?0:Math.max(0,(now-last)/1000),dt=Math.min(.08,visibleDt);last=now;
@@ -659,14 +659,20 @@ function frame(now){
    ctx.save();ctx.globalAlpha=arrival.cover;ctx.fillStyle=PAPER;ctx.fillRect(0,0,width,height);ctx.restore();
    if(allowed&&arrival.done)advance();
   }
-  if(!transition&&allowed&&(local>=d-.025||current.settledTarget===target&&target>=d-.008)&&(!scroll||target>=d-.008)&&(!scroll||s.scrollPlayback!=='continuous'||v.paused&&(current.settledTarget===target||Math.abs(target-local)<=.012))&&(!dialogue||voices.canFinish()&&!(sound&&voices.proof().failed)))advance();
+  // Let the final film deliver its last frame before covering it with paper.
+  // A near-duration threshold can cut off playback while it is still running.
+  const finalFilm=index===scenes.length-1&&!current.still&&!dialogue&&!v.loop&&!scroll;
+  const reachedEnd=finalFilm?v.ended:local>=d-.025||current.settledTarget===target&&target>=d-.008;
+  if(!transition&&allowed&&reachedEnd&&(!scroll||target>=d-.008)&&(!scroll||s.scrollPlayback!=='continuous'||v.paused&&(current.settledTarget===target||Math.abs(target-local)<=.012))&&(!dialogue||voices.canFinish()&&!(sound&&voices.proof().failed)))advance();
   if(!transition&&$('hint'))$('hint').hidden=finished||!scroll||!!current.approaching||departureActive()||previewAuto||paused;
  }
  if(finished){
-  endingElapsed+=dt;const reveal=ease(clamp(endingElapsed/6.5));
+  if(!paused&&!document.hidden)endingElapsed+=dt;
+  const reveal=ease(clamp(endingElapsed/6.5));
   document.body.dataset.ending='true';mistAmount(reveal);endingPaper.style.opacity=String(reveal);
   archiveCta.hidden=false;archiveCta.inert=endingElapsed<2;
   archiveCta.style.opacity=String(ease(clamp((endingElapsed-2)/4.5)));
+  if(embeddedStory&&reveal>=1&&!endingRestartShown){endingRestartShown=true;entryAccepted=false;entryScreen.reset();entryScreen.start();$('introEnter').querySelector('.entry-label').textContent='다시 시작';}
  }
 
  if(sceneJoin&&current?.loaded&&!current.video.seeking){

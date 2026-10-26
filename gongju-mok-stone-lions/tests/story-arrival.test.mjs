@@ -56,18 +56,46 @@ test('crossing a dialogue approach marker on release still owns the final approa
   assert.equal(reached.context.target,scene.duration);
 });
 
-test('the modern fade keeps its original source onset but takes longer on screen',()=>{
+test('the entire modern video remains visible through its final source frame',()=>{
   const scene=manifest.scenes.find(s=>s.id==='seasons');
   const context=vm.createContext({replacementOpening:true,sourcePlaybackRate,clamp,ease});
   vm.runInContext(rateCode+fadeCode,context);
-  const start=scene.duration-scene.endFadeSeconds,last=scene.duration-1/scene.fps;
   assert.equal(context.openingPlaybackRate(scene,10,scene.duration),1);
   assert.equal(context.openingPlaybackRate(scene,16,scene.duration),.75);
-  assert.equal(context.sourceEndFade(scene,start),0);
-  assert.equal(context.sourceEndFade(scene,last),1);
-  let wallSeconds=0;
-  for(let time=start;time<last;time+=.001)wallSeconds+=.001/context.openingPlaybackRate(scene,time,scene.duration);
-  assert.ok(wallSeconds>6&&wallSeconds<6.4, `${wallSeconds}s visible fade`);
-  const intro=manifest.scenes.find(s=>s.id==='intro');
-  assert.equal(context.openingPlaybackRate(intro,10,intro.duration),1);
+  for(const time of [0,13.7,17,scene.duration-1/scene.fps,scene.duration]){
+    assert.equal(context.sourceEndFade(scene,time),0,`no paper covering at ${time}s`);
+  }
+});
+
+test('the final film waits for ended even when its clock reaches the declared duration',()=>{
+  const code=between('  const finalFilm=', "  if(!transition&&$('hint'))").replaceAll('const ','var ');
+  let advances=0;
+  const context=vm.createContext({
+    index:0,scenes:[{}],current:{still:false},dialogue:false,scroll:false,v:{loop:false,ended:false,paused:false},
+    local:18.5,d:18.5,target:18.5,transition:null,allowed:true,s:{},advance(){advances++;},
+  });
+  vm.runInContext(code,context);assert.equal(advances,0);
+  context.v.ended=true;vm.runInContext(code.replaceAll('const ','var '),context);assert.equal(advances,1);
+  // Ordinary intermediate scene boundaries retain their existing trim behavior.
+  context.scenes.push({});context.v.ended=false;
+  vm.runInContext(code.replaceAll('const ','var '),vm.createContext({...context}));
+  assert.equal(advances,2);
+});
+
+test('the completed last frame fades over 6.5 seconds, then the embedded restart appears',()=>{
+  const code=between(' if(finished){','\n if(sceneJoin&&');
+  for(const embeddedStory of [false,true]){
+    let resets=0;
+    const context=vm.createContext({finished:true,endingElapsed:0,dt:0,paused:false,document:{hidden:false,body:{dataset:{}}},
+      clamp,ease,mistAmount(){},endingPaper:{style:{}},archiveCta:{style:{}},embeddedStory,endingRestartShown:false,
+      entryAccepted:true,entryScreen:{reset(){resets++;},start(){}},$:()=>({querySelector:()=>({})}),
+    });
+    vm.runInContext(code,context);assert.equal(Number(context.endingPaper.style.opacity),0);assert.equal(resets,0);
+    context.dt=3.25;vm.runInContext(code,context);
+    assert.equal(Number(context.endingPaper.style.opacity),.5);assert.equal(resets,0);
+    context.document.hidden=true;vm.runInContext(code,context);assert.equal(context.endingElapsed,3.25);
+    context.document.hidden=false;vm.runInContext(code,context);
+    assert.equal(Number(context.endingPaper.style.opacity),1);assert.equal(resets,embeddedStory?1:0);
+    vm.runInContext(code,context);assert.equal(resets,embeddedStory?1:0);
+  }
 });
