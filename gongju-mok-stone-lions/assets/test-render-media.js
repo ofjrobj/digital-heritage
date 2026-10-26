@@ -1,7 +1,7 @@
 import {approachState,shouldStartApproach} from './dialogue-approach.js?v=arrival-20261020-v27';
 import {createAdaptiveNavPaper} from './adaptive-nav-paper.js?v=adaptive-paper-20261019-v25';
-import {createQuietAmbience} from './quiet-ambience.js?v=seasons-handoff-20261020-v34';
-import {continuousScrollRate,createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop,manualScrollHoldTime} from './scroll-motion.js?v=manual-frame-hold-20261020';
+import {createQuietAmbience} from './quiet-ambience.js?v=trio-approach-20261026';
+import {continuousScrollRate,createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop,manualScrollHoldTime} from './scroll-motion.js?v=direct-scroll-20261026';
 import {createFootageFog} from './footage-fog.js?v=edge-dissolve-20261019-v24';
 import {createSceneLife} from './scene-life.js?v=sound-fade-20261019-v17';
 import {createSeasonAmbience} from './season-ambience.js?v=sound-fade-20261019-v17';
@@ -14,7 +14,7 @@ import {createScrollFootsteps} from './scroll-footsteps.js?v=manual-movement-202
 import {dialogueCopy} from './dialogue-copy.js?v=dialogue-final-20261014';
 import {createIntroInkSpread,introVisualTime} from './intro-ink-spread.js?v=three-drops-slow-intro-1';
 import {createPaperColor, PAPER_CSS} from './paper-color.js?v=decoded-frame-20261026';
-import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=responsive-trackpad-20261026';
+import {createWalkingInput,walkingTargetDelta,walkingPlaybackRate} from './walking-input.js?v=direct-scroll-20261026';
 import {setPlaybackRate,holdPresentedFrame} from './video-playback.js?v=responsive-playback-20261026';
 import {dialogueApproachGain,sceneArrivalDelay} from './dialogue-audio-flow.js?v=drag-arrival-audio-1';
 import {createIntroEntry} from './intro-entry.js?v=desktop-recommendation-20261026';
@@ -58,7 +58,7 @@ const records=[null,null],voices=createStoryVoices(stage,{tailSeconds:1,onEnded:
 const foot=document.createElement('audio');foot.id='scrollFootsteps';foot.preload='auto';foot.src=replacementOpening?new URL('../media/v17/drag-footsteps.mp3',import.meta.url).href:new URL('./footstep-single-v2.mp3',import.meta.url).href;stage.append(foot);
 const names=['장사꾼','농민','찬모','주민 삼총사','나무꾼'];
 let scenes=[],lengths=[],total=0,index=-1,current=null,transition=null,local=0,target=0,sound=true,paused=false,previewAuto=false,compare=false,motion=true,last=performance.now(),width=1,height=1,lastScrollAt=-Infinity,lastSource=null,hasFrame=false,finished=false,lastVoiceEnable=null,lastStatus='',renderedKind='none',renderedSource='';
-let drag=null,lastDragMoveAt=-Infinity,lastWheelMoveAt=-Infinity,lastManualInputAt=-Infinity;
+let drag=null,lastDragMoveAt=-Infinity,lastWheelMoveAt=-Infinity,lastManualInputAt=-Infinity,manualIdleMs=120;
 // A wheel gesture can start muted video even when the browser denies sound.
 // Keep that fallback across frames instead of immediately unmuting it again.
 let nativeAudioBlocked=false;
@@ -180,7 +180,12 @@ function draw(source){
  const seasonFit=null; // All scene images fill the viewport, including narrow windows.
  function paint(x,y,w,h){
   ctx.save();
-  if(look){x+=look.x*w;y+=look.y*h;w*=look.scale;h*=look.scale;ctx.filter=`brightness(${look.brightness})`;}
+  if(look){
+   x+=look.x*w;y+=look.y*h;w*=look.scale;h*=look.scale;ctx.filter=`brightness(${look.brightness})`;
+   // Extend the source's sky edge when a small framing correction moves it
+   // below the viewport, so no strip of a different paper color is exposed.
+   if(y>0)ctx.drawImage(graded,0,0,graded.videoWidth||graded.naturalWidth||graded.width,1,x,0,w,y+1);
+  }
   if(match){ctx.drawImage(graded,x,y,w,h);const p=match.alignment,m=match.spec;x+=(Number(m.offsetX)||0)*w*p;y+=(Number(m.offsetY)||0)*h*p;w*=1+((Number(m.scaleX)||1)-1)*p;h*=1+((Number(m.scaleY)||1)-1)*p;}
   ctx.drawImage(graded,x,y,w,h);ctx.restore();
  }
@@ -336,7 +341,7 @@ function seekScrollPosition(record,time){
 function holdManualFrame(released=false,now=performance.now()){
  const r=current;
  if(!replacementOpening||!r||r.manualHeld||r.still||!r.loaded||transition)return;
- const shouldHold=manualScrollHoldTime({scene:r.scene,currentTime:r.lastDecodedTime??r.video.currentTime,clipIn:r.clipIn,duration:duration(index),lastInputAt:lastManualInputAt,now,released,automatic:!scrollDriven(r)||departureActive(r)||r.approaching||previewAuto});
+ const shouldHold=manualScrollHoldTime({scene:r.scene,currentTime:r.lastDecodedTime??r.video.currentTime,clipIn:r.clipIn,duration:duration(index),lastInputAt:lastManualInputAt,now,released,idleMs:manualIdleMs,automatic:!scrollDriven(r)||departureActive(r)||r.approaching||previewAuto});
  if(shouldHold===null)return;
  const hold=holdPresentedFrame(r,duration(index));
  r.manualHeld=true;r.scrubTween=null;
@@ -358,9 +363,9 @@ function enterFromIntro(delta){
  const next=scenes.indexOf(intro)+1;if(next>=scenes.length)return false;
  pendingIntroEntry=false;previewAuto=false;requestScene(next);return true;
 }
-function manual(delta,fromDrag=false){
+function manual(delta,fromDrag=false,idleMs=120){
  if(!delta||enterFromIntro(delta)||!canWalk())return;
- previewAuto=false;current.manualHeld=false;if(walkingDirection!==Math.sign(delta))reverseElapsed=0;walkingDirection=Math.sign(delta);lastScrollAt=lastManualInputAt=performance.now();
+ previewAuto=false;current.manualHeld=false;manualIdleMs=idleMs;if(walkingDirection!==Math.sign(delta))reverseElapsed=0;walkingDirection=Math.sign(delta);lastScrollAt=lastManualInputAt=performance.now();
  // A reversed gesture cancels the old travel queue immediately.
  if((target-local)*walkingDirection<-.008){target=local;walkingRate=0;current.video.pause();}
  // Input now stops on release, so a short notch must not spend its entire
@@ -386,13 +391,13 @@ stage.addEventListener('wheel',e=>{
  if(e.ctrlKey||e.target.closest('#testTools,#cinemaDialogue,nav,button,a,input,select,textarea,[contenteditable]'))return;
  const now=performance.now();let delta=walkingInput.wheelGestureSteps(e,now);
  if(canWalk()&&walkingInput.lastActiveAt()===now){
-  lastManualInputAt=now;lastWheelMoveAt=now;
+  lastManualInputAt=now;lastWheelMoveAt=now;manualIdleMs=walkingInput.releaseDelayMs();
   // A renewed direct packet resumes immediately, even inside the old gesture
   // lock; decaying trackpad momentum does not reach this branch.
   if(!delta&&(current.manualHeld||current.settledTarget===target))delta=-Math.sign(e.deltaY);
  }
  if(!delta)return;if(enterFromIntro(delta)){e.preventDefault();return;}if(!canWalk())return;
- e.preventDefault();const before=target;manual(delta);if(target!==before)lastWheelMoveAt=now;
+ e.preventDefault();const before=target;manual(delta,false,walkingInput.releaseDelayMs());if(target!==before)lastWheelMoveAt=now;
 },{passive:false});
 canvas.addEventListener('pointerdown',e=>{if(!canWalk()||!e.isPrimary||e.pointerType==='mouse'&&e.button!==0)return;drag={x:e.clientX,y:e.clientY,pointerId:e.pointerId};canvas.setPointerCapture(e.pointerId);});
 canvas.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.pointerId)return;manual(((drag.y-e.clientY)+(e.clientX-drag.x)*.25)/90,true);drag={x:e.clientX,y:e.clientY,pointerId:e.pointerId};});

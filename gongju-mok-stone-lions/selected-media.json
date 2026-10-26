@@ -1,5 +1,5 @@
 {
-  "version": "responsive-playback-20261026",
+  "version": "direct-scroll-20261026",
   "scenes": [
     {
       "id": "intro",
@@ -167,11 +167,11 @@
         15.9
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
-      "scrollCruiseRate": 0.95,
+      "scrollCruiseRate": 1.5,
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
-      "scrollBraking": 0.65,
-      "scrollRateResponse": 0.24,
+      "scrollBraking": 1.4,
+      "scrollRateResponse": 0.14,
       "dialogueApproach": {
         "start": 13.1,
         "fadeFrom": 14.2,
@@ -328,11 +328,11 @@
         12
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
-      "scrollCruiseRate": 0.95,
+      "scrollCruiseRate": 1.5,
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
-      "scrollBraking": 0.65,
-      "scrollRateResponse": 0.24,
+      "scrollBraking": 1.4,
+      "scrollRateResponse": 0.14,
       "dialogueApproach": {
         "start": 9.2,
         "fadeFrom": 10.299999999999999,
@@ -492,11 +492,11 @@
         13.966667
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
-      "scrollCruiseRate": 0.95,
+      "scrollCruiseRate": 1.5,
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
-      "scrollBraking": 0.65,
-      "scrollRateResponse": 0.24,
+      "scrollBraking": 1.4,
+      "scrollRateResponse": 0.14,
       "preserveSourceColor": true,
       "connectionLook": [
         {
@@ -586,21 +586,21 @@
       "id": "cook-trio",
       "label": "주민 삼총사에게 이동",
       "src": "./media/v28/cook-trio-original-24fps.mp4",
-      "duration": 11.4,
+      "duration": 4.916666666666667,
       "fps": 24,
       "mode": "scroll",
       "footsteps": true,
       "provenance": {
         "provider": "User supplied original generation",
         "sourceFile": "hf_20261019_001010_c9e6a89c-c532-47bc-ae08-a4a043eb5583.mp4",
-        "selection": "v28 continuous original motion, without composite jump cuts",
+        "selection": "Preserve first 118 delivered frames; the damaged forward approach is replaced by the following continuous scene.",
         "nativeDimensions": [
           1920,
           1080
         ],
         "runtimeTrim": {
-          "start": 2.6,
-          "endExclusive": 14.0
+          "start": 0,
+          "endExclusive": 4.916666666666667
         },
         "delivery": "Continuous native 24 fps frames from user original, H.264 CRF17 for browser compatibility, half-second keyframes; no interior cuts or optical interpolation; no audio stream.",
         "originalUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_001010_c9e6a89c-c532-47bc-ae08-a4a043eb5583.mp4",
@@ -627,56 +627,18 @@
       "scrollMaxRate": 2.4,
       "arrivalMaxRate": 1.35,
       "scrollStops": [
-        1.716667,
-        3.683333,
-        5.55,
-        7.05,
-        9.05,
-        10.716667,
-        11.4
+        4.916666666666667
       ],
       "dragStopTimes": [
-        1.55,
-        1.716667,
-        2.05,
-        2.383333,
-        2.683333,
-        3.05,
-        3.383333,
-        3.683333,
-        4.05,
-        4.083333,
-        4.25,
-        4.55,
-        4.883333,
-        5.183333,
-        5.55,
-        5.883333,
-        5.916667,
-        6.183333,
-        6.383333,
-        6.716667,
-        7.05,
-        7.383333,
-        7.716667,
-        8.05,
-        8.383333,
-        8.716667,
-        9.05,
-        9.383333,
-        9.716667,
-        10.05,
-        10.383333,
-        10.716667,
-        10.95,
-        11.4
+        0,
+        4.916666666666667
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
-      "scrollCruiseRate": 0.95,
+      "scrollCruiseRate": 1.5,
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
-      "scrollBraking": 0.65,
-      "scrollRateResponse": 0.24,
+      "scrollBraking": 1.4,
+      "scrollRateResponse": 0.14,
       "preserveSourceColor": true,
       "connectionLook": [
         {
@@ -701,15 +663,8 @@
           "brightness": 1
         }
       ],
-      "dialogueApproach": {
-        "start": 8.600000000000001,
-        "fadeFrom": 9.7,
-        "end": 11.0,
-        "cruiseRate": 0.7,
-        "arrivalRate": 0.44
-      },
       "uniformInputDistance": true,
-      "autoTurnUntil": 4.9,
+      "autoTurnUntil": 4.916666666666667,
       "autoTurnCurve": [
         {
           "time": 0,
@@ -727,9 +682,78 @@
       }
     },
     {
+      "id": "cook-trio-approach",
+      "label": "주민 삼총사에게 다가가기",
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261026_055619_f6a46e43-e7a7-4f81-89b0-1e0baf17a3ae.mp4",
+      "duration": 5.041666666666667,
+      "sourceDuration": 5.041666666666667,
+      "sourceFrames": 121,
+      "fps": 24,
+      "mode": "scroll",
+      "footsteps": true,
+      "clipIn": 0,
+      "ambience": "",
+      "nativeAudio": false,
+      "transition": "none",
+      "secondsPerScroll": 1.8,
+      "scrollSteps": 3,
+      "scrollPlayback": "continuous",
+      "scrollCruiseRate": 1.5,
+      "scrollArrivalRate": 0.48,
+      "scrollArrivalZone": 1.6,
+      "scrollBraking": 1.4,
+      "scrollRateResponse": 0.14,
+      "uniformInputDistance": true,
+      "scrollStops": [
+        1.8,
+        3.6,
+        5.041666666666667
+      ],
+      "dragStopTimes": [
+        0,
+        5.041666666666667
+      ],
+      "preserveSourceColor": true,
+      "dialogueApproach": {
+        "start": 2.8,
+        "fadeFrom": 4.05,
+        "end": 5.0,
+        "cruiseRate": 0.85,
+        "arrivalRate": 0.6
+      },
+      "provenance": {
+        "provider": "Higgsfield",
+        "model": "Seedance 2.5",
+        "generationId": "f6a46e43-e7a7-4f81-89b0-1e0baf17a3ae",
+        "selection": "2026-10-26 replacement approach, guided by the existing turn endpoint and user-selected dialogue first frame",
+        "nativeDimensions": [
+          1920,
+          1080
+        ],
+        "delivery": "Native 24fps, 121 frames, no audio. The original horizontal leg smears are excluded. Mild 2.1 percent framing correction aligns the separate sources; the original turn and subsequent dialogue remain independent.",
+        "creditsUsed": 80
+      },
+      "connectionLook": [
+        {
+          "time": 0,
+          "scale": 1.021,
+          "x": -0.00328125,
+          "y": 0.005185185185185185,
+          "brightness": 1
+        },
+        {
+          "time": 5,
+          "scale": 1.021,
+          "x": -0.0016666666666666668,
+          "y": 0.005185185185185185,
+          "brightness": 1
+        }
+      ]
+    },
+    {
       "id": "trio",
       "label": "주민 삼총사의 이야기",
-      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_070142_7a01b8ec-134e-40b8-a144-84f07efa0742.mp4",
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_013525_a75b646e-146c-425d-b2b9-ab989910479b.mp4",
       "sourceDuration": 28.041666666666668,
       "fps": 24,
       "mode": "dialogue",
@@ -737,15 +761,16 @@
       "loop": false,
       "provenance": {
         "provider": "Higgsfield",
-        "generationId": "7a01b8ec-134e-40b8-a144-84f07efa0742",
-        "selection": "Latest user-supplied dialogue replacement on 2026-10-19",
-        "delivery": "Unmodified silent native 1920x1080 24fps source; existing separate testimony and 3.5-second post-speech pause retained",
+        "generationId": "a75b646e-146c-425d-b2b9-ab989910479b",
+        "selection": "User-supplied replacement on 2026-10-26, verified byte-identical to Downloads attachment",
+        "delivery": "Unmodified silent 1920x1080 24fps source. Separate existing trio testimony retained. Source colors retained: sky channels match incoming footage within 0.3/255; obsolete shadow lift and desaturation removed.",
         "nativeDimensions": [
           1920,
           1080
         ],
-        "nativeSha256": "4b5333bceb17c9c04652f496a2e3e333a1dff8dda916e41ff477b5e0dc6d01dd",
-        "technicalVerification": "All video frames decoded; public CDN bytes match the supplied local attachment"
+        "nativeSha256": "0f2c8507d555fc7e08a58cac96d3e1584d5f32bdefea1c23baeb4a8af24fc0a0",
+        "technicalVerification": "All video frames decoded; public CDN bytes match the supplied local attachment",
+        "sourceFile": "hf_20261019_013525_a75b646e-146c-425d-b2b9-ab989910479b.mp4"
       },
       "neckSafeY": 0.52,
       "sourceFrames": 673,
@@ -762,20 +787,6 @@
       "ambience": "",
       "footsteps": false,
       "preserveArrivalFraming": true,
-      "colorGrade": {
-        "gain": [
-          1.02,
-          1.015,
-          1.018
-        ],
-        "saturation": 0.85,
-        "scope": "midtones only; preserve pale paper and dark ink",
-        "shadowLift": [
-          0.105,
-          0.105,
-          0.105
-        ]
-      },
       "preserveSourceColor": true
     },
     {
@@ -871,11 +882,11 @@
         12.041666666666666
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
-      "scrollCruiseRate": 0.85,
+      "scrollCruiseRate": 1.35,
       "scrollArrivalRate": 0.38,
       "scrollArrivalZone": 3.2,
-      "scrollBraking": 0.48,
-      "scrollRateResponse": 0.3,
+      "scrollBraking": 1.4,
+      "scrollRateResponse": 0.14,
       "dialogueApproach": {
         "start": 9.241667,
         "fadeFrom": 10.341667,
@@ -1035,11 +1046,11 @@
         14.033333333333333
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
-      "scrollCruiseRate": 0.95,
+      "scrollCruiseRate": 1.5,
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
-      "scrollBraking": 0.65,
-      "scrollRateResponse": 0.24,
+      "scrollBraking": 1.4,
+      "scrollRateResponse": 0.14,
       "exitMatch": {
         "target": "seasons",
         "seconds": 1.1,

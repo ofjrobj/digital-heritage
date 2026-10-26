@@ -71,8 +71,8 @@ export function nearestSharpStop(scene,time,end){
 
 // Manual input owns movement. Release holds the frame already reached, never
 // the queued walking destination; authored turns and autoplay are independent.
-export function manualScrollHoldTime({scene={},currentTime=0,clipIn=0,duration=Infinity,lastInputAt=-Infinity,now,released=false,automatic=false}){
- if(automatic||!released&&now-lastInputAt<110)return null;
+export function manualScrollHoldTime({scene={},currentTime=0,clipIn=0,duration=Infinity,lastInputAt=-Infinity,now,released=false,automatic=false,idleMs=120}){
+ if(automatic||!released&&now-lastInputAt<idleMs)return null;
  const fps=Number(scene.fps)>0?Number(scene.fps):30;
  const source=Math.max(clipIn,Number(currentTime)||0);
  const frame=Math.floor(source*fps+1e-6)/fps;

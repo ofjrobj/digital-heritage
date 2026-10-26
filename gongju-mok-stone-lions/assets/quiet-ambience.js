@@ -3,7 +3,7 @@ const smooth = n => { const t = clamp(n); return t*t*(3-2*t); };
 // The approved opening reveals the two misty mountain ridges at source 3.2s.
 const INTRO_AMBIENCE_START = 3.2;
 const SEASON_CROSSFADE_SECONDS = 2.4;
-const townRoutes = new Set(['entry-merchant','merchant-farmer','farmer-cook','cook-trio']);
+const townRoutes = new Set(['entry-merchant','merchant-farmer','farmer-cook','cook-trio','cook-trio-approach']);
 
 // Gains multiply already quiet, peak-limited files. Dialogue always wins.
 export function ambienceTargets({scene, time=0, duration=0, moving=false, active=false,

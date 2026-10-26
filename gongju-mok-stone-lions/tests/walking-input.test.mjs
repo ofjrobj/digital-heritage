@@ -22,27 +22,27 @@ test('gentle movement preserves bounded steps instead of one step per packet', (
   for (let now = 0; now <= 1500; now += 16) {
     if (input.wheelGestureSteps(wheel(-2), now)) accepted.push(now);
   }
-  assert.deepEqual(accepted, [0, 1440]);
+  assert.deepEqual(accepted, [0, 432, 864, 1296]);
 });
 
-test('decaying momentum and its rounded tail do not renew movement', () => {
+test('sustained decay and its rounded tail stop renewing movement', () => {
   const input = gestureInput();
   assert.equal(input.wheelGestureSteps(wheel(-8), 0), 1);
   for (const [i, magnitude] of [7, 6, 5, 4, 3, 2, 1, 1, 1, 1].entries()) {
     assert.equal(input.wheelGestureSteps(wheel(-magnitude), (i + 1) * 16), 0);
-    assert.equal(input.lastActiveAt(), 0);
+    // Two falling packets may still be direct input; the third establishes decay.
+    assert.equal(input.lastActiveAt(), Math.min((i + 1) * 16, 32));
   }
 });
 
 test('renewed direct input resumes within the old gesture after momentum', () => {
   const input = gestureInput();
-  input.wheelGestureSteps(wheel(-8), 0);
-  input.wheelGestureSteps(wheel(-4), 16);
-  input.wheelGestureSteps(wheel(-1), 32);
-  assert.equal(input.wheelGestureSteps(wheel(-3), 48), 0);
-  assert.equal(input.lastActiveAt(), 48);
-  input.wheelGestureSteps(wheel(-3), 64);
+  for (const [i, magnitude] of [12, 8, 4, 1].entries()) input.wheelGestureSteps(wheel(-magnitude), i * 16);
+  assert.equal(input.lastActiveAt(), 32);
+  assert.equal(input.wheelGestureSteps(wheel(-3), 64), 0);
   assert.equal(input.lastActiveAt(), 64);
+  input.wheelGestureSteps(wheel(-3), 80);
+  assert.equal(input.lastActiveAt(), 80);
 });
 
 test('direction reversal and a quiet interval each begin a new step', () => {
@@ -66,13 +66,42 @@ test('discrete mouse notches remain immediate and independent', () => {
 
 test('reset preserves the gesture and momentum guards across scene changes', () => {
   const input = gestureInput();
-  input.wheelGestureSteps(wheel(-8), 0);
-  input.wheelGestureSteps(wheel(-4), 16);
+  for (const [i, magnitude] of [8, 6, 4, 2].entries()) input.wheelGestureSteps(wheel(-magnitude), i * 16);
   input.reset();
   assert.equal(input.lastActiveAt(), -Infinity);
-  assert.equal(input.wheelGestureSteps(wheel(-4), 32), 0);
+  assert.equal(input.wheelGestureSteps(wheel(-2), 64), 0);
   assert.equal(input.lastActiveAt(), -Infinity);
-  assert.equal(input.wheelGestureSteps(wheel(-4), 252), 1);
+  assert.equal(input.wheelGestureSteps(wheel(-2), 284), 1);
+});
+
+test('a small decrease followed by steady direct input does not latch momentum', () => {
+  const input = gestureInput();
+  input.wheelGestureSteps(wheel(-8), 0);
+  for (let now = 16; now <= 1000; now += 16) {
+    input.wheelGestureSteps(wheel(-7), now);
+    assert.equal(input.lastActiveAt(), now);
+  }
+});
+
+test('a long rounded momentum tail never spends a new timed step', () => {
+  const input = gestureInput();
+  for (const [i, magnitude] of [40, 28, 20, 12, 7, 3, 1].entries()) input.wheelGestureSteps(wheel(-magnitude), i * 16);
+  for (let now = 112; now < 1000; now += 16) {
+    assert.equal(input.wheelGestureSteps(wheel(-1), now), 0);
+    assert.equal(input.lastActiveAt(), 32);
+  }
+});
+
+test('discrete wheel and direct trackpad packets expose their own release windows', () => {
+  const input = gestureInput();
+  input.wheelGestureSteps(wheel(-100), 0);
+  assert.equal(input.releaseDelayMs(), 240);
+  input.wheelGestureSteps(wheel(-2), 250);
+  assert.equal(input.releaseDelayMs(), 120);
+  input.wheelGestureSteps(wheel(-3, {deltaMode: 1}), 500);
+  assert.equal(input.releaseDelayMs(), 240);
+  input.wheelGestureSteps(wheel(-2, {ctrlKey: true}), 510);
+  assert.equal(input.releaseDelayMs(), 240);
 });
 
 test('zoom, horizontal and invalid packets do not consume or renew a gesture', () => {
