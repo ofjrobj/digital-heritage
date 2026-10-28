@@ -591,6 +591,14 @@ html body .archive .info-panel{transition:transform var(--ui-motion-duration,1s)
  .archive .right-panel.is-open .panel-toggle i{transform:translate(-50%,-50%) rotate(-90deg)}
 }
 
+/* The source belongs to the drawer footer, regardless of the amount of copy.
+   Keep this more specific than the compact phone spacing rules below. */
+html body .archive .info-panel .panel-content .panel-note{
+ margin-top:auto;
+ margin-bottom:0;
+ flex:0 0 auto;
+}
+
 /* Short phone panes reserve useful scan height before allocating secondary copy. */
 @media(max-width:480px) and (max-height:540px) and (orientation:portrait){
  .archive{--archive-wordmark-top:14px;--archive-stage-top:calc(var(--archive-header-bottom) + 70px)}
