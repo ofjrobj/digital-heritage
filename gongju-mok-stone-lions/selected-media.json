@@ -43,7 +43,7 @@
         "text": "어느 옛날, 공주목과 그 주변 고을에는\n신비로운 두 사자의 이야기가 떠돌고 있습니다.",
         "start": 3.4,
         "fadeIn": 0.7,
-        "holdUntil": 6,
+        "holdUntil": 6.0,
         "end": 7.8
       },
       "captionFadeSeconds": 0.9,
@@ -174,7 +174,7 @@
       "scrollRateResponse": 0.14,
       "dialogueApproach": {
         "start": 12.8,
-        "fadeFrom": 13,
+        "fadeFrom": 13.0,
         "end": 13.6,
         "cruiseRate": 0.7,
         "arrivalRate": 0.44
@@ -609,7 +609,7 @@
     {
       "id": "cook-trio",
       "label": "주민 삼총사에게 이동",
-      "src": "./media/v18/cook-trio-joined.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/6275ac5f-17a2-46cf-8bb3-1ef251a1f1ee.mp4",
       "duration": 4.916666666666667,
       "fps": 24,
       "mode": "scroll",
@@ -626,9 +626,9 @@
           "start": 0,
           "endExclusive": 4.916666666666667
         },
-        "delivery": "Original 118-frame 24fps rotation with luma clarity restoration; final 0.25 seconds smoothly aligned to the following approach including its runtime framing. Native BT.709 YUV color preserved.",
+        "delivery": "Original 118-frame 24fps rotation; removed the baked 0.25-second overlap with the approach. The next shot uses a 0.95-second paper transition because the generated backgrounds are not geometrically identical.",
         "originalUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_001010_c9e6a89c-c532-47bc-ae08-a4a043eb5583.mp4",
-        "deliverySha256": "b50ea2abf980cb2aef3cc0fb186f0da272cc7cdbbf8616117c076a02a79eb1f3",
+        "deliverySha256": "414c51cbe2b0e17073280839a92d94e9dba83b23571005a04b3cb807c4189dfc",
         "clarityRepair": {
           "method": "FFmpeg luma unsharp, kernel7x7 amount0.75; chroma amount0",
           "creditsUsed": 0,
@@ -705,7 +705,7 @@
           "brightness": 1
         },
         {
-          "time": 3,
+          "time": 3.0,
           "scale": 1,
           "x": 0,
           "y": 0,
@@ -722,7 +722,7 @@
       ],
       "departureGrade": {
         "start": 0.35,
-        "until": 3,
+        "until": 3.0,
         "gain": [
           0.94,
           0.95,
@@ -749,7 +749,7 @@
       "clipIn": 0,
       "ambience": "",
       "nativeAudio": false,
-      "transition": "none",
+      "transition": "paper",
       "secondsPerScroll": 1.8,
       "scrollSteps": 3,
       "scrollPlayback": "continuous",
@@ -772,7 +772,7 @@
       "dialogueApproach": {
         "start": 2.8,
         "fadeFrom": 4.05,
-        "end": 5,
+        "end": 5.0,
         "cruiseRate": 0.85,
         "arrivalRate": 0.6
       },
