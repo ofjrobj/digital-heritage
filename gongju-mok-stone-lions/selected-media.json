@@ -66,7 +66,7 @@
     {
       "id": "entry-merchant",
       "label": "입구 → 장사꾼 · 연속 이동",
-      "src": "./media/v18/entry-merchant-foliage-repaired.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/b27014b1-01ac-4550-85fb-fa8fcb052a28.mp4",
       "duration": 15.9,
       "mode": "scroll",
       "footsteps": true,
@@ -81,13 +81,29 @@
           1920,
           1080
         ],
-        "delivery": "Original 477-frame scene retained at 30fps. Frames 350–404 use a tracked composite of an edited small-tree reference, with wall, pillar and foreground character occlusion masks; final frames and audio remain from the original scene. H.264 BT.709 delivery.",
-        "deliverySha256": "d13117e9b28f82ef44ae2dd6195e70759976f13b9f595ccf7a69850da7536545",
+        "delivery": "Original 477-frame, 1080p30 scene retained. The foliage boundary in frames 358–397 is locally registered and feathered from the Higgsfield repair; camera, people, architecture, frame timing and original audio remain unchanged. H.264 BT.709 delivery.",
+        "deliverySha256": "f8772237a9db63f0b9d503a0e29adfd6b254220f1e1eaf9a8f9fca2e2bef2cfb",
         "foliageRepair": {
           "method": "Tracked composite of imagegen-edited tree reference",
           "firstFrame": 350,
           "lastFrameInclusive": 404,
           "scope": "Only the rounded foliage visible behind the left wall and red pillar; original camera, people, architecture, timing and audio preserved."
+        },
+        "previousDeliverySha256": "d13117e9b28f82ef44ae2dd6195e70759976f13b9f595ccf7a69850da7536545",
+        "foliageBoundaryRepair": {
+          "provider": "Higgsfield",
+          "model": "gemini_omni_flash_1_1",
+          "generationId": "d0be616c-4a3b-4553-bfcf-266eac6878ec",
+          "deliveryMediaId": "b27014b1-01ac-4550-85fb-fa8fcb052a28",
+          "firstFrame": 358,
+          "lastFrameInclusive": 397,
+          "method": "Localized per-frame registration and continuous feathered mask; original YUV outside mask and original AAC packets preserved before encoding. Full-frame generated video was not used.",
+          "nativeDimensions": [
+            1920,
+            1080
+          ],
+          "nativeFps": 30,
+          "modifiedFrames": 40
         }
       },
       "clipIn": 0,
