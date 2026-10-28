@@ -593,7 +593,8 @@ html body .archive .info-panel{transition:transform var(--ui-motion-duration,1s)
 
 /* The source belongs to the drawer footer, regardless of the amount of copy.
    Keep this more specific than the compact phone spacing rules below. */
-html body .archive .info-panel .panel-content .panel-note{
+html body .archive .info-panel .panel-content .panel-note,
+html body .archive .info-panel.is-open .panel-content .panel-note{
  margin-top:auto;
  margin-bottom:0;
  flex:0 0 auto;
