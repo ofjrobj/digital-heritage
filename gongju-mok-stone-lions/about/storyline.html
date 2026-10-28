@@ -26,9 +26,9 @@
   <meta name="twitter:description" content="두 사자를 찾아가는 장면의 흐름과 인물의 대사를 소개합니다.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
   <link rel="stylesheet" href="./storyboard.css?v=fixed-four-20261026">
-  <link rel="stylesheet" href="./storyline-integrated.css?v=fixed-four-20261026">
+  <link rel="stylesheet" href="./storyline-integrated.css?v=readable-board-20261028">
 <link rel="stylesheet" href="./case-study.css?v=54">
-</head>
+<link rel="stylesheet" href="./page-motion.css?v=20261028"><script defer src="./page-motion.js?v=20261028"></script></head>
 <body class="storyline-page storyline-integrated">
   <a class="skip" href="#storyline">본문으로 건너뛰기</a>
   <div class="wrap">
@@ -40,19 +40,14 @@
       <header class="story-hero">
         <div class="story-hero-copy">
           <p class="eyebrow">04 · STORYLINE &amp; STORYBOARD</p>
-          <h1>소문을 따라,<br>두 사자에게</h1>
+          <h1 id="integrated-board-title">스토리라인과 스토리보드</h1>
           <p class="story-fiction">인물과 대사는 석사자의 실제 특징에서 출발한 창작입니다.</p>
         </div>
       </header>
 
-      <nav class="story-contents" aria-label="스토리라인과 스토리보드 목차">
-        <a href="#sequence">이야기의 시작</a>
-        <a href="#storyboard">장면과 카메라</a>
-        <a href="#voices">인물 소개</a>
-      </nav>
 
       <section id="storyboard" class="storyboard-page integrated-board" aria-labelledby="integrated-board-title">
-        <header class="integrated-board-heading"><span class="number">STORYBOARD</span><h2 id="integrated-board-title">장면과 카메라</h2><p class="board-key">파란 선 · 카메라 이동과 관찰 구도</p></header>
+        <p class="board-key">파란 선 · 카메라 이동과 관찰 구도</p>
   <svg class="camera-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
       <marker id="camera-arrow" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
@@ -114,7 +109,7 @@
             <blockquote class="board-dialogue"><p>마을에 오신 것을 환영합니다. 길을 따라 걸으며 사람들이 전하는 두 사자의 이야기를 들어보세요.</p></blockquote>
           </li>
           <li class="board-cut" id="cut-04">
-            <header class="cut-heading"><span class="cut-number">#04</span><h3><a href="#voice-merchant">장사꾼의 이야기</a></h3></header>
+            <header class="cut-heading"><span class="cut-number">#04</span><h3 id="merchant-title">장사꾼의 이야기</h3></header>
             <figure>
               <div class="board-frame board-frame-person">
                 <img src="./assets/sketch-merchant-v2.png" width="1536" height="1024" alt="짐을 멘 장사꾼의 단순한 흑백 러프 스케치" loading="lazy" decoding="async">
@@ -122,6 +117,10 @@
               </div>
               <figcaption><span class="camera-note">인물 구도 유지</span></figcaption>
             </figure>
+            <div class="board-character" id="profile-merchant">
+              <p class="board-character-meta">제금루 製錦樓 · 28–33세</p>
+              <p>공주목을 드나드는 장사꾼입니다. 그의 소문에 등장하는 두 사자는 덩치와 눈매가 다릅니다.</p>
+            </div>
             <blockquote class="board-dialogue" id="voice-merchant"><p>장터에 가는 길에 제금루에서 들었는데, 당나라에 다녀온 사신 편에 사자라는 희귀한 짐승 한 쌍에 대한 소문이 파다하더이다. 수놈이 암놈보다 얼굴, 덩치도 훨씬 크고, 눈꼬리가 위로 팍 올라간 게 눈매가 어찌나 사나운지, 바로 달려들 것 같았다지 뭡니까.</p></blockquote>
           </li>
           <li class="board-cut" id="cut-05">
@@ -135,7 +134,7 @@
             </figure>
           </li>
           <li class="board-cut" id="cut-06">
-            <header class="cut-heading"><span class="cut-number">#06</span><h3><a href="#voice-farmer">농민의 이야기</a></h3></header>
+            <header class="cut-heading"><span class="cut-number">#06</span><h3 id="farmer-title">농민의 이야기</h3></header>
             <figure>
               <div class="board-frame board-frame-person">
                 <img src="./assets/sketch-farmer-v2.png" width="1536" height="1024" alt="문서를 품에 안은 농민의 단순한 흑백 러프 스케치" loading="lazy" decoding="async">
@@ -143,6 +142,10 @@
               </div>
               <figcaption><span class="camera-note">인물 구도 유지</span></figcaption>
             </figure>
+            <div class="board-character" id="profile-farmer">
+              <p class="board-character-meta">동헌·혜의당 惠義堂 · 37–42세</p>
+              <p>토지 문제로 관아를 찾은 농민입니다. 흐릿하다가 선명해지는 사자의 얼굴에 관한 이야기를 들려줍니다.</p>
+            </div>
             <blockquote class="board-dialogue" id="voice-farmer"><p>어제 관아에서 일을 보고 돌아오는 길에 저도 그 희귀한 짐승 한 쌍에 대한 소문을 들었는데요. 한 놈의 얼굴이 흐릿하여 눈을 비비고 자세히 살펴보니, 이목구비와 얼굴 윤곽이 또렷하게 살아났다더군요. 금방이라도 말을 건넬 것 같은 모습이었답니다.</p></blockquote>
           </li>
           <li class="board-cut" id="cut-07">
@@ -156,7 +159,7 @@
             </figure>
           </li>
           <li class="board-cut" id="cut-08">
-            <header class="cut-heading"><span class="cut-number">#08</span><h3><a href="#voice-cook">찬모의 이야기</a></h3></header>
+            <header class="cut-heading"><span class="cut-number">#08</span><h3 id="cook-title">찬모의 이야기</h3></header>
             <figure>
               <div class="board-frame board-frame-person">
                 <img src="./assets/sketch-cook-v2.png" width="1536" height="1024" alt="음식상을 든 찬모의 단순한 흑백 러프 스케치" loading="lazy" decoding="async">
@@ -164,6 +167,10 @@
               </div>
               <figcaption><span class="camera-note">인물 구도 유지</span></figcaption>
             </figure>
+            <div class="board-character" id="profile-cook">
+              <p class="board-character-meta">객사터 客舍 · 35세 이상</p>
+              <p>객사의 음식을 맡은 찬모입니다. 꼬불꼬불한 갈기가 바람에 날렸다는 소문을 전합니다.</p>
+            </div>
             <blockquote class="board-dialogue" id="voice-cook"><p>저도 객사에 음식을 하러 가는 길에 소문을 들었지요. 고것이 글쎄, 위엄 있고 익살스러운 얼굴에, 정수리의 꼬불꼬불한 갈기까지 한 올 한 올 날리는 것이 참으로 신통했다네요.</p></blockquote>
           </li>
           <li class="board-cut" id="cut-09">
@@ -177,7 +184,7 @@
             </figure>
           </li>
           <li class="board-cut" id="cut-10">
-            <header class="cut-heading"><span class="cut-number">#10</span><h3><a href="#voice-trio">주민 삼총사의 이야기</a></h3></header>
+            <header class="cut-heading"><span class="cut-number">#10</span><h3 id="trio-title">주민 삼총사의 이야기</h3></header>
             <figure>
               <div class="board-frame">
                 <img src="./assets/sketch-trio-v2.png" width="1536" height="1024" alt="세 주민을 한 구도에 담은 단순한 흑백 러프 스케치" loading="lazy" decoding="async">
@@ -185,6 +192,10 @@
               </div>
               <figcaption><span class="camera-note">세 인물 구도 유지</span></figcaption>
             </figure>
+            <div class="board-character" id="profile-trio">
+              <p class="board-character-meta">민가 · 17–20세</p>
+              <p>투닥거리며 집으로 돌아가는 세 주민입니다. 웃는 듯한 표정과 사방으로 뻗은 수염이 이야기의 단서입니다.</p>
+            </div>
             <blockquote class="board-dialogue" id="voice-trio"><p>여느 때처럼 서로 투닥거리며 집에 돌아가는 길에 저도 그 희귀한 짐승에 대한 소문을 들었어요. 생생한 얼굴 표정에서 신비한 기운이 났다고 합니다. 입꼬리가 살짝 올라가 사람이 씩 웃는 것 같은 데다, 사방으로 쭉 뻗은 수염은 꼭 빛이 퍼져 나가는 듯했다지요.</p></blockquote>
           </li>
 
@@ -199,7 +210,7 @@
             </figure>
           </li>
           <li class="board-cut" id="cut-12">
-            <header class="cut-heading"><span class="cut-number">#12</span><h3><a href="#voice-woodcutter">나무꾼의 이야기</a></h3></header>
+            <header class="cut-heading"><span class="cut-number">#12</span><h3 id="woodcutter-title">나무꾼의 이야기</h3></header>
             <figure>
               <div class="board-frame board-frame-person">
                 <img src="./assets/sketch-woodcutter-v2.png" width="1536" height="1024" alt="장작을 지고 도끼를 든 나무꾼의 단순한 흑백 러프 스케치" loading="lazy" decoding="async">
@@ -207,6 +218,10 @@
               </div>
               <figcaption><span class="camera-note">인물 구도 유지</span></figcaption>
             </figure>
+            <div class="board-character" id="profile-woodcutter">
+              <p class="board-character-meta">봉황산 · 45–50세</p>
+              <p>장작을 지고 봉황산을 오가는 나무꾼입니다. 사자의 털에서 산등성이를 떠올리는 마지막 인물입니다.</p>
+            </div>
             <blockquote class="board-dialogue" id="voice-woodcutter"><p>어제 봉황산에 나무를 하러 갔는데, 동료 나무꾼이 그 희귀한 짐승에 대한 소문을 들려주더군요. 털 결이 꼭 산등성이 굽이처럼 선명하게 살아있는게, 산과 꼭 닮은 것이 꼭 산신의 사자가 내려온 것 같았다네요.</p></blockquote>
           </li>
 
@@ -232,48 +247,6 @@
           </li>
         </ol>
       </section>
-      </section>
-
-      <section class="story-section" id="voices" aria-labelledby="voices-title">
-        <header class="story-section-heading">
-          <span class="number">CHARACTERS</span>
-          <h2 id="voices-title">소문을 전하는 사람들</h2>
-        </header>
-        <article class="voice" id="profile-merchant" aria-labelledby="merchant-title">
-          <div class="voice-copy">
-            <p class="meta">01 · 제금루 製錦樓</p>
-            <div class="voice-heading"><h3 id="merchant-title">장사꾼</h3><p class="voice-age">28–33세</p></div>
-            <div class="voice-profile"><p>공주목을 드나드는 장사꾼입니다. 그의 소문에 등장하는 두 사자는 덩치와 눈매가 다릅니다.</p></div>
-          </div>
-        </article>
-        <article class="voice" id="profile-farmer" aria-labelledby="farmer-title">
-          <div class="voice-copy">
-            <p class="meta">02 · 동헌·혜의당 惠義堂</p>
-            <div class="voice-heading"><h3 id="farmer-title">농민</h3><p class="voice-age">37–42세</p></div>
-            <div class="voice-profile"><p>토지 문제로 관아를 찾은 농민입니다. 흐릿하다가 선명해지는 사자의 얼굴에 관한 이야기를 들려줍니다.</p></div>
-          </div>
-        </article>
-        <article class="voice" id="profile-cook" aria-labelledby="cook-title">
-          <div class="voice-copy">
-            <p class="meta">03 · 객사터 客舍</p>
-            <div class="voice-heading"><h3 id="cook-title">찬모</h3><p class="voice-age">35세 이상</p></div>
-            <div class="voice-profile"><p>객사의 음식을 맡은 찬모입니다. 꼬불꼬불한 갈기가 바람에 날렸다는 소문을 전합니다.</p></div>
-          </div>
-        </article>
-        <article class="voice" id="profile-trio" aria-labelledby="trio-title">
-          <div class="voice-copy">
-            <p class="meta">04 · 민가</p>
-            <div class="voice-heading"><h3 id="trio-title">주민 삼총사</h3><p class="voice-age">17–20세</p></div>
-            <div class="voice-profile"><p>투닥거리며 집으로 돌아가는 세 주민입니다. 웃는 듯한 표정과 사방으로 뻗은 수염이 이야기의 단서입니다.</p></div>
-          </div>
-        </article>
-        <article class="voice" id="profile-woodcutter" aria-labelledby="woodcutter-title">
-          <div class="voice-copy">
-            <p class="meta">05 · 봉황산</p>
-            <div class="voice-heading"><h3 id="woodcutter-title">나무꾼</h3><p class="voice-age">45–50세</p></div>
-            <div class="voice-profile"><p>장작을 지고 봉황산을 오가는 나무꾼입니다. 사자의 털에서 산등성이를 떠올리는 마지막 인물입니다.</p></div>
-          </div>
-        </article>
       </section>
 
     </main>

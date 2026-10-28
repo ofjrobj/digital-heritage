@@ -4,30 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Higgsfield 영상·편집 — 봉황동 석사자</title>
-  <meta name="description" content="영상의 움직임과 장면 연결을 검토하고 접근 구간을 수정한 과정을 소개합니다.">
+  <meta name="description" content="참조 구도와 스타일 프레임을 바탕으로 Story 영상을 생성하고 편집한 과정을 소개합니다.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v49">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
-  <link rel="stylesheet" href="./video-process.css?v=57">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/video.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="Higgsfield 영상·편집 — 봉황동 석사자">
-  <meta property="og:description" content="접근 장면의 수정 전후 영상과 실제 제작 프롬프트를 소개합니다.">
+  <meta property="og:description" content="Story 영상 제작에 사용한 실제 프롬프트와 장면별 움직임을 소개합니다.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/video.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/video-production-flow-v1.webp">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Higgsfield 영상·편집 — 봉황동 석사자">
-  <meta name="twitter:description" content="접근 장면의 수정 전후 영상과 실제 제작 프롬프트를 소개합니다.">
+  <meta name="twitter:description" content="Story 영상 제작에 사용한 실제 프롬프트와 장면별 움직임을 소개합니다.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/video-production-flow-v1.webp">
 <link rel="stylesheet" href="./case-study.css?v=54">
-  <style>
-    .video-revision h2 { margin:0 0 14px; font-size:27px; font-weight:400; line-height:1.6; }
-    .video-revision > p { margin:0 0 26px; font-size:16px; line-height:1.9; }
-    .video-revision video { display:block; width:100%; height:auto; aspect-ratio:16/9; background:#e8e8e6; }
-  </style>
-</head>
+
+<link rel="stylesheet" href="./page-motion.css?v=20261028"><script defer src="./page-motion.js?v=20261028"></script></head>
 <body class="materials-page video-process-page">
   <a class="skip" href="#material">본문으로 건너뛰기</a>
   <div class="wrap">
@@ -39,26 +34,9 @@
       <header class="material-header">
         <p class="eyebrow">Story · 04</p>
         <h1>Higgsfield 영상·편집</h1>
-        <p class="material-intro">장면을 생성한 뒤 움직임과 앞뒤 연결을 검토하고, 필요한 구간을 다시 제작했습니다.</p>
+        <p class="material-intro">Blender 카메라 가이드와 스타일 프레임을 바탕으로 인물의 작은 몸짓과 길을 따라가는 움직임을 생성하고, 장면의 순서와 길이를 편집했습니다.</p>
       </header>
-      <section class="video-revision" aria-labelledby="revision-title">
-        <h2 id="revision-title">삼총사 접근 장면 수정</h2>
-        <p>회전 장면은 유지하고, 다리 잔상이 보이던 접근 구간을 다시 제작했습니다.</p>
-        <div class="material-gallery">
-          <figure class="material-figure">
-            <video controls playsinline muted preload="metadata" aria-labelledby="before-caption">
-              <source src="../media/v28/cook-trio-original-24fps.mp4#t=4.916667,11.4" type="video/mp4">
-            </video>
-            <figcaption id="before-caption">수정 전 · 접근 구간의 다리 잔상</figcaption>
-          </figure>
-          <figure class="material-figure">
-            <video controls playsinline muted preload="metadata" aria-labelledby="after-caption">
-              <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261026_055619_f6a46e43-e7a7-4f81-89b0-1e0baf17a3ae.mp4#t=0.1" type="video/mp4">
-            </video>
-            <figcaption id="after-caption">수정 후 · 다시 제작한 접근 구간</figcaption>
-          </figure>
-        </div>
-      </section>
+
 <details class="prompt-details"><summary>Higgsfield 프롬프트</summary>
 <p class="prompt-provenance">실제 제작 프롬프트에서 핵심 지시만 발췌했습니다. 초 단위 표기는 생성 요청 기준이며, 최종 영상 길이는 편집 후 달라질 수 있습니다.</p>
 <p class="prompt-provenance"><a href="https://www.figma.com/board/5bWhFaY63IrDFhjK0M632d/Prompt-for-Higgsfield" target="_blank" rel="noopener noreferrer" aria-label="Higgsfield 프롬프트 Figma에서 보기 (새 탭)">Higgsfield 프롬프트 · Figma에서 보기 ↗</a></p>
@@ -80,14 +58,6 @@ One continuous new 16:9, 1080p Korean ink-and-light-colour illustrated shot. The
     </footer>
   </div>
 <script src="./about.js?v=54" defer></script>
-<script>
-  const revisionVideos = [...document.querySelectorAll('.video-revision video')];
-  for (const video of revisionVideos) video.addEventListener('play', () => {
-    for (const other of revisionVideos) if (other !== video) other.pause();
-  });
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) revisionVideos.forEach(video => video.pause());
-  });
-</script>
+
 </body>
 </html>

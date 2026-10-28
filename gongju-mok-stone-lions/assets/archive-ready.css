@@ -48,3 +48,9 @@ html:is([data-archive-state="revealing"], [data-archive-state="ready"]) .archive
   html[data-archive-state] :is(.archive .object-stage, .archive .info-panel, .archive .wordmark, .archive .masthead > p, .archive-corner-frame), .archive-ready-status { transition-duration: .01s; }
   .archive-ready-status p { animation: none !important; }
 }
+
+/* Reveal the two already-loaded scans in sequence. */
+html[data-archive-state="revealing"] .archive .male-card { animation: archive-scan-enter .8s cubic-bezier(.22,.75,.25,1) both; }
+html[data-archive-state="revealing"] .archive .female-card { animation: archive-scan-enter .8s cubic-bezier(.22,.75,.25,1) .24s both; }
+@keyframes archive-scan-enter { from { opacity:0; transform:translateY(12px) scale(.975); } to { opacity:1; transform:translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) { html[data-archive-state="revealing"] .archive :is(.male-card,.female-card) { animation:none; } }

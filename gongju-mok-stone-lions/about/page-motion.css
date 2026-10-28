@@ -1,0 +1,9 @@
+.page-motion-ready { opacity: 0; transform: translateY(12px); }
+.page-motion-ready.page-motion-in {
+ opacity: 1; transform: none;
+ transition: opacity .65s cubic-bezier(.22,.75,.25,1), transform .65s cubic-bezier(.22,.75,.25,1);
+ transition-delay: var(--page-motion-delay, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+ .page-motion-ready, .page-motion-in { opacity: 1; transform: none; transition: none; }
+}

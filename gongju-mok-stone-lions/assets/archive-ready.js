@@ -41,7 +41,7 @@
           root.dataset.archiveState = 'ready';
           gate.remove();
           observer.disconnect();
-        }, 1000);
+        }, 1700);
       })), delay);
     };
     const inspect = () => {

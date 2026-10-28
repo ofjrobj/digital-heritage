@@ -1,7 +1,8 @@
-const clampAngle=value=>Math.max(-85,Math.min(85,Number.isFinite(Number(value))?Number(value):0));
+const finiteAngle=value=>Number.isFinite(Number(value))?Number(value):0;
+const normalizeAngle=value=>((finiteAngle(value)%360)+360)%360;
 
 export function lightPositionAt(angle,base){
- const radians=clampAngle(angle)*Math.PI/180,radius=Math.hypot(base.x,base.z);
+ const radians=normalizeAngle(angle)*Math.PI/180,radius=Math.hypot(base.x,base.z);
  return [Math.sin(radians)*radius,base.y,Math.cos(radians)*radius];
 }
 
@@ -18,7 +19,7 @@ export function createInspectionLight(key,element,redraw){
  }
  return {
   setEnabled(value){enabled=!!value;apply();},
-  setAngle(value){angle=clampAngle(value);if(enabled)apply();}
+  setAngle(value){angle=normalizeAngle(value);if(enabled)apply();}
  };
 }
 
@@ -27,11 +28,11 @@ export function mountInspectionLight(viewers){
  const row=document.createElement('div');row.className='inspection-tools';surface.before(row);row.append(surface);
  const button=document.createElement('button');button.type='button';button.className='light-toggle';
  button.setAttribute('role','slider');button.setAttribute('aria-label','빛 방향');
- button.setAttribute('aria-valuemin','-85');button.setAttribute('aria-valuemax','85');button.setAttribute('aria-orientation','horizontal');
+ button.setAttribute('aria-valuemin','0');button.setAttribute('aria-valuemax','359');button.setAttribute('aria-orientation','horizontal');
  button.setAttribute('aria-describedby','light-direction-help');
  button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/><circle class="light-bearing" cx="12" cy="2" r="1.5"/></svg>';
  const help=document.createElement('span');help.id='light-direction-help';help.className='inspection-help';
- help.textContent='클릭하면 조명을 켜거나 끕니다. 원을 드래그하거나 방향키로 빛 방향을 바꾸고, Home 키로 정면에 맞춥니다.';
+ help.textContent='클릭하면 조명을 켜거나 끕니다. 원을 드래그하거나 방향키로 빛을 360도 회전하고, Home 키로 정면에 맞춥니다.';
  const hint=document.createElement('span');hint.className='inspection-hint';hint.setAttribute('aria-hidden','true');
  hint.textContent='원을 잡고 돌려보세요';
  row.append(button,help,hint);
@@ -43,8 +44,8 @@ export function mountInspectionLight(viewers){
   hideHint();hint.dataset.visible='true';hintTimer=setTimeout(hideHint,2600);
  }
  function describe(){
-  const direction=angle===0?'정면':`${angle<0?'왼쪽':'오른쪽'} ${Math.abs(angle)}도`;
-  button.dataset.enabled=String(enabled);button.setAttribute('aria-valuenow',String(angle));
+  const bearing=normalizeAngle(angle),direction=`${bearing}도`;
+  button.dataset.enabled=String(enabled);button.setAttribute('aria-valuenow',String(bearing));
   button.setAttribute('aria-valuetext',`${direction}, 조명 ${enabled?'켜짐':'꺼짐'}`);
   button.title=`빛 방향 · ${direction} (${enabled?'켜짐':'꺼짐'})`;
   button.style.setProperty('--light-angle',`${angle}deg`);
@@ -58,7 +59,9 @@ export function mountInspectionLight(viewers){
  }
  function setAngle(value){
   hideHint();
-  angle=Math.round(clampAngle(value));
+  // Keep whole turns for the dial; only the light position and accessible
+  // bearing wrap at north, so dragging never hits a stop at either edge.
+  angle=Math.round(finiteAngle(value));
   for(const viewer of Object.values(viewers))viewer.setLightAngle(angle);
   if(!enabled)setEnabled(true,false);else describe();
  }
@@ -96,12 +99,12 @@ export function mountInspectionLight(viewers){
  button.addEventListener('lostpointercapture',()=>{drag=null;});
  button.addEventListener('keydown',event=>{
   const step=event.shiftKey?15:5;
-  if(['ArrowLeft','ArrowDown','ArrowRight','ArrowUp','Home'].includes(event.key)){
-   event.preventDefault();setAngle(event.key==='Home'?0:angle+(['ArrowLeft','ArrowDown'].includes(event.key)?-step:step));
+  if(['ArrowLeft','ArrowDown','ArrowRight','ArrowUp','Home','End'].includes(event.key)){
+   event.preventDefault();setAngle(event.key==='Home'?0:event.key==='End'?359:angle+(['ArrowLeft','ArrowDown'].includes(event.key)?-step:step));
   }else if(event.key==='Escape'&&enabled){event.preventDefault();event.stopPropagation();setEnabled(false);}
  });
  function syncSurfaceMode(){
-  const visible=surface.dataset.mode==='relief';
+  const visible=['relief','normal-map'].includes(surface.dataset.mode);
   if(!visible){
    hideHint();
    if(document.activeElement===button)surface.focus({preventScroll:true});

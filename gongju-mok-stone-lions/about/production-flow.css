@@ -18,11 +18,13 @@
 .making-merge::before{content:"";position:absolute;bottom:100%;left:50%;height:28px;border-left:1px solid var(--line)}
 .making-outputs{position:relative;margin-top:56px}
 .making-outputs::before{content:"";position:absolute;bottom:100%;left:50%;height:28px;border-left:1px solid var(--line)}
-.making-outputs h3{margin:0 0 20px;text-align:center;font-size:23px;font-weight:300}
-.making-output-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:36px;list-style:none;margin:0;padding:0}
-.making-output-links li{min-width:0;border-block:1px solid var(--line)}
-.making-output-links a{display:block;padding:20px 8px;text-align:center;font-size:19px;line-height:1.6}
+.making-outputs h3{margin:0;text-align:center;font-size:23px;font-weight:300}
 .process-grid{row-gap:32px}
 .process-grid p{font-size:15px;color:#62625a}
-@media(max-width:760px){.making-shared{width:76%}.making-shared h3,.making-outputs h3{font-size:21px}.making-branches{--branch-gap:24px}.making-steps a{font-size:16px;padding:15px 0}.making-output-links{gap:24px}.making-output-links a{font-size:17px}}
-@media(max-width:420px){.making-branches{--branch-gap:18px}.making-steps a{grid-template-columns:16px minmax(0,1fr);gap:6px;font-size:15px}.making-shared{width:86%}.making-output-links{gap:18px}.making-output-links a{padding:17px 0;font-size:16px}}
+@media(max-width:760px){.making-shared{width:76%}.making-shared h3,.making-outputs h3{font-size:21px}.making-branches{--branch-gap:24px}.making-steps a{font-size:16px;padding:15px 0}}
+@media(max-width:420px){.making-branches{--branch-gap:18px}.making-steps a{grid-template-columns:16px minmax(0,1fr);gap:6px;font-size:15px}.making-shared{width:86%}}
+
+.experience-paths-static .experience-kind{display:grid;place-items:center;width:108px;aspect-ratio:1;border:1px solid var(--line);border-radius:50%;margin-bottom:10px;font-weight:300}
+.experience-paths-static .experience-path strong{font-weight:300}
+.experience-paths-static .experience-path:hover,.experience-paths-static .experience-path:hover strong{color:inherit}
+@media(max-width:760px){.experience-paths-static .experience-kind{width:94px;font-size:24px}}

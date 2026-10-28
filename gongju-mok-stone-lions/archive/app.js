@@ -1,13 +1,13 @@
-import {levelScan,createInspectionFraming} from './scan-framing.js?v=paired-framing-20261026';
+import {levelScan,createInspectionFraming} from './scan-framing.js?v=measured-back-frame-20261028';
 import {createViewportBuffer,framingBlend} from './viewer-motion.js?v=smooth-pair-20261026';
-import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=three-way-surface-20261026';
-import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=light-hint-20261026';
-import {createNormalMapView} from './normal-map-view.js?v=three-way-surface-20261026';
+import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=toggle-observation-20261028';
+import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=normal-light-20261028';
+import {createNormalMapView} from './normal-map-view.js?v=normal-handedness-20261028-v3';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-import { measurements } from './measurements.js?v=back-pattern-label-20261026';
+import { measurements } from './measurements.js?v=original-panel-info-20261028-v3';
 
 const decoder = new DRACOLoader().setDecoderPath('./vendor/draco/').setWorkerLimit(1);
 const loader = new GLTFLoader().setDRACOLoader(decoder);
@@ -131,12 +131,29 @@ const viewers = {
  male:createViewer({element:document.querySelector('#male-scene'),loading:document.querySelector('#male-loading'),modelUrl:'models/male-continuous.glb',targetSize:1.83,yaw:-3.902609*Math.PI/180}),
  female:createViewer({element:document.querySelector('#female-scene'),loading:document.querySelector('#female-loading'),modelUrl:'models/female-continuous.glb',targetSize:2.10,yaw:-140.445485*Math.PI/180,displayZoom:1.25})
 };
-mountSurfaceToggle(viewers);
+const surfaceToggle=mountSurfaceToggle(viewers);
 mountInspectionLight(viewers);
-// Numbered controls show feature observations; side panels keep the overall dimensions.
+// Side panels follow the selected observation while preserving the overall view initially.
 // Keep the local GLB projection settings above: the remote archive used different OBJ axes.
 const detail = document.querySelector('.detail-card');
 const panels = [...document.querySelectorAll('.info-panel')];
+const overallPanels = new Map(panels.map(panel => [panel, {kicker:panel.querySelector('.panel-kicker').textContent, subtitle:panel.querySelector('.panel-subtitle').textContent, rows:panel.querySelector('.object-size-list').innerHTML, source:panel.querySelector('.panel-note').textContent}]));
+function updatePanelContent(index) {
+ panels.forEach(panel => {
+  const kicker=panel.querySelector('.panel-kicker'), subtitle=panel.querySelector('.panel-subtitle'), list=panel.querySelector('.object-size-list'), source=panel.querySelector('.panel-note');
+  if (index === null) { const initial=overallPanels.get(panel); kicker.textContent=initial.kicker; subtitle.textContent=initial.subtitle; list.innerHTML=initial.rows; source.textContent=initial.source; panel.querySelector('.panel-content').scrollTop=0; return; }
+  const note=measurements[index], column=panel.dataset.side==='left'?2:1;
+  kicker.textContent=`${overallPanels.get(panel).kicker} · ${String(index+1).padStart(2,'0')} ${note.label}`;
+  subtitle.textContent=note.label; list.replaceChildren();
+  note.rows.forEach(row => {
+   if (row[column] == null) return;
+   const item=document.createElement('div'), term=document.createElement('dt'), value=document.createElement('dd');
+   term.textContent=row[0]; value.textContent=row[column]; item.append(term,value); list.append(item);
+  });
+  panel.querySelector('.panel-content').scrollTop=0;
+  source.textContent=sourceNote;
+ });
+}
 const sourceNote = '출처 · 공주대학교 박물관 소장 (디지털 변환: 사자성어 팀)';
 const descriptions = [
  '스캔 데이터를 통해 정수리 부분의 곱슬거리는 털 표현의 미세한 음각 양각을 입체적으로 관찰할 수 있습니다.',
@@ -154,6 +171,7 @@ function setPanelOpen(panel, open) {
 }
 function showObservation(index, focus=false) {
  const note=measurements[index],point=String(index+1).padStart(2,'0');
+ updatePanelContent(index);
  document.querySelectorAll('.hotspot').forEach(button=>{
   const selected=button.dataset.point===point;
   button.classList.toggle('is-active',selected);
@@ -169,9 +187,12 @@ function showObservation(index, focus=false) {
 document.querySelectorAll('.hotspot').forEach(button=>{button.classList.remove('is-active');button.setAttribute('aria-pressed','false');});
 panels.forEach(panel=>setPanelOpen(panel,false));
 document.querySelectorAll('.hotspot').forEach(button=>button.addEventListener('click',()=>{
- if(button.classList.contains('is-active')&&panels.some(panel=>panel.classList.contains('is-open'))){
-  panels.forEach(panel=>setPanelOpen(panel,false));return;
+ if(button.classList.contains('is-active')){
+  button.classList.remove('is-active');button.setAttribute('aria-pressed','false');
+  updatePanelContent(null);panels.forEach(panel=>setPanelOpen(panel,false));
+  viewers.male.focus(null);viewers.female.focus(null);surfaceToggle.setMode('color');return;
  }
+ surfaceToggle.setMode('relief');
  showObservation(Number(button.dataset.point)-1,true);
  panels.forEach(panel=>setPanelOpen(panel,false));
 }));

@@ -1,6 +1,6 @@
 // Untextured inspection uses scan geometry only; original materials stay available in color mode.
 export function createSurfaceView(THREE, scene, element, redraw) {
-  let color = false;
+  let color = true;
   const pairs = [];
   const lights = scene.children.filter(n=>n.isLight).map(light=>({light,intensity:light.intensity}));
   function setColor(enabled) {
@@ -33,7 +33,7 @@ export function createSurfaceView(THREE, scene, element, redraw) {
     });
     setColor(color);
   }
-  setColor(false);
+  setColor(true);
   return {bind, setColor};
 }
 export function mountSurfaceToggle(viewers, root = document) {
@@ -44,7 +44,7 @@ export function mountSurfaceToggle(viewers, root = document) {
   const modes = ['color', 'relief', 'normal-map'];
   const labels = {color:'컬러', relief:'무채색', 'normal-map':'노멀맵'};
   const pair = Object.values(viewers);
-  let mode = 'relief', stableMode = 'relief', request = 0;
+  let mode = 'color', stableMode = 'color', request = 0;
   function updateButton() {
     const next = modes[(modes.indexOf(mode) + 1) % modes.length];
     button.dataset.mode = mode;
@@ -73,7 +73,6 @@ export function mountSurfaceToggle(viewers, root = document) {
     }
   }
   button.addEventListener('click', () => setMode(modes[(modes.indexOf(mode) + 1) % modes.length]));
-  root.querySelectorAll('.hotspot').forEach(hotspot => hotspot.addEventListener('click', () => setMode('relief')));
-  setMode('relief');
-  return button;
+  setMode('color');
+  return {button, setMode};
 }

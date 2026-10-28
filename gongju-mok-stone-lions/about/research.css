@@ -43,16 +43,17 @@
 .comparison-question > span { display: block; margin-bottom: 4px; color: #77776c; font: 12px/1.8 var(--story-sans, sans-serif); }
 .research-inline-link { display: inline-block; margin-top: 22px; padding-block: 5px; color: #785b43; font: 14px/1.8 var(--story-sans, sans-serif); }
 .research-references { list-style: none; padding: 0; margin: 0; }
-.research-references li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 13px; padding: 0 0 22px; color: #62625a; font: 14px/1.95 var(--story-sans, sans-serif); overflow-wrap: anywhere; }
+.research-references li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 13px; padding: 0 0 22px; color: #62625a; font: 300 14px/1.95 var(--story-sans, sans-serif); overflow-wrap: anywhere; }
 .research-references li:last-child { padding-bottom: 0; }
-.research-references a { color: #373734; }
+.research-references a { color: inherit; font-weight: inherit; }
+.research-references a:hover { color: #785b43; }
 .reference-number { color: #77776c; font-size: 12px; padding-top: 2px; }
 .research-footer { display: flex; justify-content: space-between; align-items: baseline; gap: 18px 30px; padding: 28px 0 34px; color: #77776c; font: 12px/1.9 var(--story-sans, sans-serif); }
 .research-footer p { margin: 0; }
 .research-surface { padding: 44px 0 34px; border-bottom: 1px solid var(--line); }
 .research-surface > header h2 { margin: 14px 0 0; font-size: 28px; font-weight: 400; }
 .research-surface-intro { max-width: 48em; margin: 22px 0 0; color: #62625a; font-size: 17px; line-height: 1.95; }
-.research-observation-record { margin-top: 40px; padding-top: 34px; border-top: 1px solid var(--line); }
+.research-observation-record { margin-top: 28px; }
 .research-observation-record h3 { margin: 0 0 16px; font-size: 23px; line-height: 1.65; font-weight: 400; }
 .research-observation-record > p:not(.measurement-source) { max-width: 48em; margin: 0; color: #62625a; font-size: 17px; line-height: 1.95; }
 .research-observation-record .research-inline-link { margin-top: 4px; }
@@ -62,7 +63,7 @@
 .research-study h3 { margin: 0 0 14px; font-size: 23px; font-weight: 400; line-height: 1.6; }
 .research-study p { margin: 0; font-size: 17px; line-height: 1.95; color: #62625a; }
 .research-study .research-question { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); color: #373734; }
-.research-study-note { margin: 24px 0 0; color: #77776c; font: 12px/1.9 var(--story-sans, sans-serif); }
+.research-study-note, .research-copy > .research-study-note { margin: 24px 0 0; color: #77776c; font: 12px/1.9 var(--story-sans, sans-serif); }
 @media (max-width: 980px) {
   .research-section { grid-template-columns: 200px minmax(0, 1fr); gap: 36px; }
   .research-section h2 { font-size: 25px; }
@@ -97,4 +98,18 @@
   .research-boundaries dd { font-size: 16px; overflow-wrap: break-word; }
   .research-references li { grid-template-columns: 25px minmax(0, 1fr); gap: 9px; font-size: 13px; }
   .research-footer { align-items: flex-start; flex-direction: column; gap: 10px; }
+}
+
+.research-page .measurement-table, .research-page .measurement-table th, .research-page .measurement-table td { font-weight: 300; }
+.research-interpretation-flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin: 0 0 26px; padding: 0; list-style: none; }
+.research-interpretation-flow li { position: relative; min-width: 0; }
+.research-interpretation-flow li:not(:last-child)::after { content: "→"; position: absolute; top: 39%; right: -22px; color: #77776c; font-size: 18px; }
+.research-interpretation-flow figure { margin: 0; }
+.research-interpretation-flow img { display: block; width: 100%; height: 170px; object-fit: contain; mix-blend-mode: multiply; }
+.research-interpretation-flow figcaption { margin-top: 13px; text-align: center; font: 300 14px/1.8 var(--story-sans, sans-serif); }
+@media (max-width: 560px) {
+  .research-interpretation-flow { gap: 22px; }
+  .research-interpretation-flow img { height: 120px; }
+  .research-interpretation-flow li:not(:last-child)::after { right: -18px; font-size: 15px; }
+  .research-interpretation-flow figcaption { font-size: 12px; }
 }

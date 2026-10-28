@@ -32,12 +32,14 @@
     .reference-thumb:focus-visible{outline:1px solid currentColor;outline-offset:4px}
     .reference-item h3{margin:0 0 7px;font-size:18px;font-weight:400;line-height:1.5;letter-spacing:-.02em}
     .reference-item p{margin:0;font-size:14px;line-height:1.75;color:#62625a}
-    .reference-item .reference-credit{margin-top:8px;font:11px/1.7 var(--story-sans,sans-serif);color:#77776c}
-    @media(max-width:760px){.reference-grid{gap:24px 12px}.reference-section-title{font-size:23px}.reference-collection{margin-bottom:44px}.reference-item h3{font-size:15px}.reference-item p{font-size:12px}.reference-item .reference-credit{font-size:10px}}
-    @media(max-width:480px){.reference-grid{gap:20px 8px}.reference-page .reference-thumb{margin-bottom:9px}.reference-item h3{font-size:13px}.reference-item p{font-size:11px}.reference-item .reference-credit{font-size:9px}}
+    .reference-item .reference-credit{margin-top:8px;font:12px/1.7 var(--story-sans,sans-serif);color:#77776c}
+    @media(max-width:760px){.reference-grid{gap:24px 12px}.reference-section-title{font-size:23px}.reference-collection{margin-bottom:44px}.reference-item h3{font-size:15px}.reference-item p{font-size:13px}.reference-item .reference-credit{font-size:12px}}
+    @media(max-width:480px){.reference-grid{gap:20px 8px}.reference-page .reference-thumb{margin-bottom:9px}.reference-item h3{font-size:14px}.reference-item p{font-size:13px}.reference-item .reference-credit{font-size:12px}}
+    .reference-ui-title{margin:36px 0 16px;font-size:22px;font-weight:300;line-height:1.6}
+    .reference-page p,.reference-page .mood-palette li,.reference-page .mood-palette strong,.reference-page .sample-content strong,.reference-page .sample-caption{font-weight:300}
   </style>
 <link rel="stylesheet" href="./case-study.css?v=54">
-</head>
+<link rel="stylesheet" href="./page-motion.css?v=20261028"><script defer src="./page-motion.js?v=20261028"></script></head>
 <body class="materials-page reference-page">
   <a class="skip" href="#material">본문으로 건너뛰기</a>
   <div class="wrap">
@@ -50,7 +52,7 @@
         <p class="eyebrow">03 · REFERENCE &amp; MOOD</p>
         <h1>레퍼런스와 무드</h1>
       </header>
-      <nav class="reference-reading" aria-label="레퍼런스와 무드 목차"><a href="#experience-references-title">참고한 작품</a><a href="#color-title">색상</a><a href="#type-title">서체</a><a href="#layout-title">UI</a></nav>
+      <nav class="reference-reading" aria-label="레퍼런스와 무드 목차"><a href="#experience-references-title">참고한 작품</a><a href="#color-title">색상</a><a href="#type-title">타이포그래피와 UI 디자인</a></nav>
       <section class="reference-collection" aria-labelledby="experience-references-title">
         <h2 class="reference-section-title" id="experience-references-title">제작에 참고한 작품</h2>
         <ul class="reference-grid">
@@ -117,7 +119,7 @@
         </div>
       </section>
       <section class="mood-section" aria-labelledby="type-title">
-        <header><span class="number">TYPOGRAPHY</span><h2 id="type-title">가볍고 차분한 서체</h2></header>
+        <header><span class="number">TYPOGRAPHY &amp; UI</span><h2 id="type-title">타이포그래피와<br>UI 디자인</h2></header>
         <div class="mood-copy">
           <article class="mood-type">
             <p class="type-label">KoPubWorld 바탕 Light</p>
@@ -126,19 +128,15 @@
           </article>
           <article class="mood-type">
             <p class="type-label">KoPubWorld 돋움 Light</p>
-            <p class="type-sans-sample">봉황동 석사자<br><span>갈기 · 수염 · 무늬 · 이목구비 · 눈매</span></p>
+            <p class="type-sans-sample">봉황동 석사자<br><span>갈기 · 수염 · 등무늬 · 이목구비 · 눈매</span></p>
             <p>메뉴 · 수치 · 짧은 안내</p>
           </article>
-        </div>
-      </section>
-      <section class="mood-section" aria-labelledby="layout-title">
-        <header><span class="number">UI</span><h2 id="layout-title">여백과 얇은 선</h2></header>
-        <div class="mood-copy">
+          <h3 id="layout-title" class="reference-ui-title">여백과 얇은 선</h3>
           <p>장면과 유물은 넓게 보여주고, 메뉴와 설명은 간결하게 배치했습니다.</p>
           <div class="mood-ui-sample" aria-label="여백과 정보 위계를 보여주는 화면 표본">
             <div class="sample-nav"><span>Story</span><span>Index</span></div>
             <div class="sample-content"><span class="meta">봉황동 석사자</span><strong>두 사자를 살펴보다</strong><p>눈매와 표면의 선에 담긴<br>닮은 점과 다른 점</p></div>
-            <div class="sample-caption">관찰 부위 <span>갈기 · 수염 · 무늬</span></div>
+            <div class="sample-caption">관찰 부위 <span>갈기 · 수염 · 등무늬</span></div>
           </div>
         </div>
       </section>

@@ -7,6 +7,11 @@ function begin(){
 }
 new MutationObserver(begin).observe(root,{attributes:true,attributeFilter:['data-archive-state']});
 archive.querySelectorAll('.hotspot').forEach(button=>button.addEventListener('click',()=>{
- clearTimeout(timer);root.dataset.archiveOverview='detail';archive.querySelector('.detail-card')?.removeAttribute('aria-hidden');
+ clearTimeout(timer);queueMicrotask(()=>{
+  const active=!!archive.querySelector('.hotspot.is-active');
+  root.dataset.archiveOverview=active?'detail':'expanded';
+  if(active)archive.querySelector('.detail-card')?.removeAttribute('aria-hidden');
+  else archive.querySelector('.detail-card')?.setAttribute('aria-hidden','true');
+ });
 }));
 begin();

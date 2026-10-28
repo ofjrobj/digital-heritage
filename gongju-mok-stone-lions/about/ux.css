@@ -1,57 +1,19 @@
 .ux-hero { padding: 80px 0 52px; }
 .ux-hero .eyebrow { margin: 0 0 22px; }
 .ux-hero h1 { margin: 0; font-size: clamp(34px, 4.5vw, 56px); line-height: 1.45; letter-spacing: -.04em; font-weight: 400; }
-.ux-tools { display: grid; gap: 10px; margin: 30px 0 0; font: 15px/1.8 var(--story-sans, sans-serif); }
-.ux-tools > div { display: grid; grid-template-columns: 94px minmax(0, 1fr); gap: 16px; }
-.ux-tools dt { color: #77776c; }
-.ux-tools dd { margin: 0; color: #55554e; overflow-wrap: anywhere; }
-.ux-time-key { max-width: 760px; margin: 26px 0 0; color: #77776c; font: 13px/1.8 var(--story-sans, sans-serif); word-break: keep-all; }
-.ux-page .story-contents { gap: 12px 48px; }
-.ux-track { padding: 54px 0 62px; border-bottom: 1px solid var(--line); }
-.ux-track-heading { display: flex; align-items: baseline; gap: 28px; margin: 0 0 38px; }
-.ux-track-heading .number { min-width: 54px; }
+.ux-track { padding: 42px 0 56px; border-bottom: 1px solid var(--line); }
+.ux-track-heading { margin: 0 0 26px; }
 .ux-track-heading h2 { margin: 0; font-size: 30px; font-weight: 400; }
-.ux-flow { margin: 0; padding: 0; list-style: none; border-left: 1px solid var(--line); }
-.ux-step { display: grid; grid-template-columns: 54px minmax(0, 1.1fr) minmax(0, 1fr); align-items: start; gap: 24px; padding: 8px 0 44px 24px; }
-.ux-step + .ux-step { padding-top: 34px; }
-.ux-step:last-child { padding-bottom: 0; }
-.ux-step-number { align-self: start; padding-top: 7px; color: #77776c; font: 12px/1.7 var(--story-sans, sans-serif); }
-.ux-step-copy { min-width: 0; }
-.ux-step-copy h3 { margin: 0; font-size: 25px; line-height: 1.6; font-weight: 400; letter-spacing: -.025em; }
-.ux-step-plan { display: grid; gap: 12px; margin: 20px 0 0; font: 15px/1.75 var(--story-sans, sans-serif); }
-.ux-step-plan > div { display: grid; grid-template-columns: 66px minmax(0, 1fr); gap: 14px; }
-.ux-step-plan dt { color: #77776c; font-size: 12px; padding-top: 3px; }
-.ux-step-plan dd { margin: 0; color: #55554e; word-break: keep-all; overflow-wrap: anywhere; }
-.ux-step-text .ux-step-copy { grid-column: 2 / -1; max-width: 760px; }
-.ux-sketch { width: 100%; max-width: 430px; justify-self: end; }
-.ux-sketch img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: contain; }
+.ux-screens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.ux-screen { min-width: 0; margin: 0; }
+.ux-screen img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
+.ux-screen figcaption { margin-top: 14px; color: #68685f; font: 300 14px/1.8 var(--story-sans, sans-serif); }
 .ux-page .story-footer { padding-top: 26px; }
-@media (max-width: 900px) {
-  .ux-step { grid-template-columns: 42px minmax(0, 1fr) minmax(0, .9fr); gap: 18px; padding-left: 18px; }
-  .ux-step-copy h3 { font-size: 23px; }
-  .ux-step-plan { font-size: 14px; }
-  .ux-step-plan > div { grid-template-columns: 58px minmax(0, 1fr); gap: 10px; }
-}
 @media (max-width: 700px) {
   .ux-hero { padding: 48px 0 36px; }
-  .ux-tools { font-size: 14px; }
-  .ux-tools > div { grid-template-columns: 80px minmax(0, 1fr); gap: 12px; }
-  .ux-page .story-contents { gap: 12px 32px; }
-  .ux-track { padding: 36px 0 42px; }
-  .ux-track-heading { gap: 18px; margin-bottom: 30px; }
+  .ux-track { padding: 32px 0 42px; }
+  .ux-track-heading { margin-bottom: 22px; }
   .ux-track-heading h2 { font-size: 27px; }
-  .ux-step { grid-template-columns: 35px minmax(0, 1fr); gap: 16px 14px; align-items: start; padding: 0 0 32px 15px; }
-  .ux-step + .ux-step { padding-top: 22px; }
-  .ux-step-number { font-size: 11px; padding-top: 6px; }
-  .ux-step-copy h3 { font-size: 22px; }
-  .ux-step-plan { font-size: 14px; gap: 10px; margin-top: 15px; }
-  .ux-step-plan > div { grid-template-columns: 58px minmax(0, 1fr); gap: 10px; }
-  .ux-step-plan dt { font-size: 11px; }
-  .ux-sketch { grid-column: 2; justify-self: start; max-width: 360px; }
-  .ux-step-text .ux-step-copy { grid-column: 2; }
-}
-@media (max-width: 400px) {
-  .ux-step { grid-template-columns: 26px minmax(0, 1fr); gap: 12px 9px; padding-left: 10px; }
-  .ux-step-plan > div { grid-template-columns: 1fr; gap: 2px; }
-  .ux-step-plan dt { padding-top: 0; }
+  .ux-screens { grid-template-columns: 1fr; gap: 28px; }
+  .ux-screen figcaption { margin-top: 10px; font-size: 13px; }
 }

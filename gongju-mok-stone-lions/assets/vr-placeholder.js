@@ -38,13 +38,11 @@ if(menu&&toggle&&items){
   new MutationObserver(()=>{if(!coverAvailable())setOpen(false);}).observe(document.body,{attributes:true,attributeFilter:['data-intro-entry','data-journey-started','data-leaving-intro']});
 }
 if(button&&notice){
-  button.addEventListener('click',event=>{
-    event.stopPropagation();
-    if(button.inert||items?.inert||!coverAvailable())return;
-    clearTimeout(dismissTimer);
-    notice.hidden=false;notice.textContent='아직 준비 중입니다.';
-    dismissTimer=setTimeout(dismiss,2800);
-  });
-  document.addEventListener('keydown',event=>{if(event.key==='Escape')dismiss();});
+  const show=()=>{if(!button.inert&&!items?.inert&&coverAvailable()){notice.textContent='아직 준비 중입니다.';notice.hidden=false;}};
+  button.addEventListener('pointerenter',show);
+  button.addEventListener('pointerleave',dismiss);
+  button.addEventListener('focus',show);
+  button.addEventListener('blur',dismiss);
+  button.addEventListener('click',event=>event.stopPropagation());
   document.addEventListener('visibilitychange',()=>{if(document.hidden)dismiss();});
 }

@@ -2,6 +2,9 @@ const LEVEL={male:[-.078247699,.032765705],female:[-.103479210,-.003594774]};
 // The scans' body axes are aligned, but their carved faces are not parallel.
 // These camera angles follow each face's frontal surface, without changing vertices.
 const FACE={male:{yaw:5,pitch:4},female:{yaw:-10,pitch:13}};
+// Measured centreline from the support to the upper back (middle body bands).
+// Only the back camera follows this small lean; scan placement stays unchanged.
+const BACK_ROLL={male:-.37,female:-3.63};
 const PARTS=[
  {band:[.80,1],direction:[-.20,1,.10]},
  {all:true,face:true,width:.80,height:.88},
@@ -29,17 +32,33 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   const points=selected.length>20?selected:all;
   const target=part?new THREE.Box3().setFromPoints(points).getCenter(new THREE.Vector3()):bounds.getCenter(new THREE.Vector3());
   const sex=element.id==='female-scene'?'female':'male',face=FACE[sex];
-  let direction;
+  let direction,viewUp=up.clone();
   if(part?.face){
    const yaw=THREE.MathUtils.degToRad(face.yaw+(part.angle||0)*(sex==='female'?-1:1)),pitch=THREE.MathUtils.degToRad(face.pitch);
    direction=new THREE.Vector3(Math.cos(pitch)*Math.cos(yaw),Math.sin(pitch),Math.cos(pitch)*Math.sin(yaw));
   }else{
    direction=new THREE.Vector3(...(part?.direction||[2.7,1.15,3.6])).normalize();
-   direction.applyAxisAngle(up,-THREE.MathUtils.degToRad(face.yaw));
+   // Body axes are already aligned by levelScan. Face-specific yaw belongs
+   // only to frontal face views; applying it here tilts the pair differently
+   // in the overview, crown and back comparisons.
+   if(index===2){
+    const roll=THREE.MathUtils.degToRad(BACK_ROLL[sex]);
+    viewUp.set(0,Math.cos(roll),Math.sin(roll));
+    direction.copy(viewUp).add(new THREE.Vector3(-.002,0,0)).normalize();
+   }
   }
-  const rotation=new THREE.Matrix4().lookAt(direction,zero,up).transpose();
-  const right=new THREE.Vector3().crossVectors(up,direction).normalize(),vertical=new THREE.Vector3().crossVectors(direction,right);
-  return {index,part,target,direction,right,vertical,points:points.map(p=>p.clone().sub(target).applyMatrix4(rotation))};
+  const rotation=new THREE.Matrix4().lookAt(direction,zero,viewUp).transpose();
+  const right=new THREE.Vector3().crossVectors(viewUp,direction).normalize(),vertical=new THREE.Vector3().crossVectors(direction,right);
+  return {index,part,target,direction,up:viewUp,right,vertical,points:points.map(p=>p.clone().sub(target).applyMatrix4(rotation))};
+ }
+ function useViewUp(spec){
+  camera.up.copy(spec.up);
+  // This pinned OrbitControls caches its up-axis conversion at construction.
+  // Keep that conversion in sync so orbiting and the camera share one up axis.
+  if(controls._quat&&controls._quatInverse){
+   controls._quat.setFromUnitVectors(camera.up,up);
+   controls._quatInverse.copy(controls._quat).invert();
+  }
  }
  function projected(spec,distance,aspect=camera.aspect){
   const k=Math.tan(THREE.MathUtils.degToRad(camera.fov)/2)/camera.zoom;
@@ -92,6 +111,7 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
    for(let i=0;i<attr.count;i+=step)all.push(new THREE.Vector3().fromBufferAttribute(attr,i).applyMatrix4(mesh.matrixWorld));
   });
   overview=view(null);current=Number.isInteger(pending)?view(pending):overview;fitted=0;
+  useViewUp(current);
   element.dataset.rigidLevelQuaternion=model.quaternion.toArray().map(n=>n.toFixed(8)).join(',');
  }
  function resize(r,goal){
@@ -128,7 +148,7 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   comparisonHeights.set(current.index,height);return true;
  }
  function focus(index){
-  pending=index;if(!bounds)return null;current=view(index);
+  pending=index;if(!bounds)return null;current=view(index);useViewUp(current);
   const r=lastRect??element.getBoundingClientRect();fitted=distanceFor(current,r);publish(r);
   return goalFor(current,fitted);
  }
@@ -136,6 +156,7 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   if(!bounds)return null;
   const spec=view(index),referenceCamera=new THREE.PerspectiveCamera(camera.fov,width/height,camera.near,camera.far);
   referenceCamera.zoom=camera.zoom;referenceCamera.updateProjectionMatrix();
+  referenceCamera.up.copy(spec.up);
   const goal=goalFor(spec,distanceFor(spec,{width,height}));referenceCamera.position.copy(goal.position);
   referenceCamera.lookAt(goal.target);referenceCamera.updateMatrixWorld(true);
   return referenceCamera;
