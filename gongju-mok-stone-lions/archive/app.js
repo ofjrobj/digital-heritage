@@ -141,7 +141,8 @@ const overallPanels = new Map(panels.map(panel => [panel, {kicker:panel.querySel
 function updatePanelContent(index) {
  panels.forEach(panel => {
   const kicker=panel.querySelector('.panel-kicker'), subtitle=panel.querySelector('.panel-subtitle'), list=panel.querySelector('.object-size-list'), source=panel.querySelector('.panel-note');
-  if (index === null) { const initial=overallPanels.get(panel); kicker.textContent=initial.kicker; subtitle.textContent=initial.subtitle; list.innerHTML=initial.rows; source.textContent=initial.source; panel.querySelector('.panel-content').scrollTop=0; return; }
+  let observation=panel.querySelector('.panel-observation');
+  if (index === null) { const initial=overallPanels.get(panel); kicker.textContent=initial.kicker; subtitle.textContent=initial.subtitle; list.innerHTML=initial.rows; source.textContent=initial.source; observation?.remove(); panel.querySelector('.panel-content').scrollTop=0; return; }
   const note=measurements[index], column=panel.dataset.side==='left'?2:1;
   kicker.textContent=`${overallPanels.get(panel).kicker} · ${String(index+1).padStart(2,'0')} ${note.label}`;
   subtitle.textContent=note.label; list.replaceChildren();
@@ -150,6 +151,8 @@ function updatePanelContent(index) {
    const item=document.createElement('div'), term=document.createElement('dt'), value=document.createElement('dd');
    term.textContent=row[0]; value.textContent=row[column]; item.append(term,value); list.append(item);
   });
+  if (!observation) { observation=document.createElement('p'); observation.className='panel-observation'; list.after(observation); }
+  observation.textContent=note.text;
   panel.querySelector('.panel-content').scrollTop=0;
   source.textContent=sourceNote;
  });
