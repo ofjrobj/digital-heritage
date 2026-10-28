@@ -1,6 +1,6 @@
 (() => {
- const bootstrap = document.currentScript || document.querySelector('script[src*="public-routes.js?v=requested-fixes-20261028-v7"]');
- const stylesheet = new URL('fullscreen.css?v=requested-fixes-20261028-v7', bootstrap?.src || new URL('assets/fullscreen.js?v=requested-fixes-20261028-v7', document.baseURI));
+ const bootstrap = document.currentScript || document.querySelector('script[src*="public-routes.js"],script[src*="fullscreen.js"]');
+ const stylesheet = new URL('fullscreen.css?v=fullscreen-entry-20261028', bootstrap?.src || new URL('assets/fullscreen.js?v=requested-fixes-20261028-v7', document.baseURI));
  const projectRoot = new URL('../', stylesheet);
  const addStyle = doc => {
   if (doc.getElementById('fullscreenControlsStyle')) return;
@@ -33,13 +33,44 @@
   button.dataset.fullscreenBound = 'true';
   const hostDoc = host.ownerDocument;
   addStyle(doc); addStyle(hostDoc);
-  if (!hostDoc.fullscreenEnabled) button.hidden = true;
+  // Entry-only expansion remains available through loading and Enter. Once the
+  // story has moved, returning to its first frame must not bring the icon back.
+  const view = doc.defaultView;
+  const offered = !!hostDoc.fullscreenEnabled && doc.body?.dataset.mediaProfile === 'selected-higgsfield';
+  let journeyConsumed = doc.body?.dataset.journeyStarted === 'true';
+  let desiredVisible = null, hideTimer = 0, showFrame = 0;
   const active = () => !!hostDoc.fullscreenElement && (hostDoc.fullscreenElement === host || hostDoc.fullscreenElement.contains(host));
-  const sync = () => {
-   const label = active() ? '전체 화면 종료' : '전체 화면';
-   button.setAttribute('aria-label', label); button.setAttribute('aria-pressed', String(active()));
-   button.dataset.tooltip = label; button.removeAttribute('title');
+  const hideCompletely = () => {
+   button.hidden = true; button.inert = true; button.setAttribute('aria-hidden', 'true');
   };
+  const setVisible = visible => {
+   if (visible === desiredVisible) return;
+   const firstSync = desiredVisible === null;
+   desiredVisible = visible;
+   view.clearTimeout(hideTimer); view.cancelAnimationFrame(showFrame);
+   if (visible) {
+    const wasHidden = button.hidden;
+    button.hidden = false; button.inert = false; button.removeAttribute('aria-hidden');
+    button.dataset.fullscreenVisibility = wasHidden && !firstSync ? 'fading' : 'visible';
+    if (wasHidden && !firstSync) showFrame = view.requestAnimationFrame(() => {
+     if (desiredVisible) button.dataset.fullscreenVisibility = 'visible';
+    });
+   } else {
+    button.dataset.fullscreenVisibility = 'fading';
+    const duration = view.getComputedStyle(button).getPropertyValue('--ui-motion-duration').trim() || '1s';
+    const milliseconds = parseFloat(duration) * (duration.endsWith('ms') ? 1 : 1000);
+    if (firstSync || view.matchMedia('(prefers-reduced-motion: reduce)').matches) hideCompletely();
+    else hideTimer = view.setTimeout(() => { if (!desiredVisible) hideCompletely(); }, Number.isFinite(milliseconds) ? milliseconds : 1000);
+   }
+  };
+  const sync = () => {
+   journeyConsumed ||= doc.body?.dataset.journeyStarted === 'true';
+   button.setAttribute('aria-label', '전체 화면'); button.setAttribute('aria-pressed', String(active()));
+   button.removeAttribute('data-tooltip'); button.removeAttribute('title');
+   setVisible(offered && !journeyConsumed && !active());
+  };
+  const journeyObserver = new view.MutationObserver(sync);
+  journeyObserver.observe(doc.body, {attributes:true, attributeFilter:['data-journey-started']});
   // A top-level fullscreen document must not unload during internal navigation.
   // Keep it as a quiet host; only subsequent pages move through the child frame.
   // The normal document URL is restored on exit, so this is not a site-wide router.
@@ -91,14 +122,17 @@
    }, true);
   }
   button.addEventListener('click', async () => {
+   if (!offered || journeyConsumed || active() || !desiredVisible) return;
    try {
-    if (active()) await hostDoc.exitFullscreen();
-    else await host.requestFullscreen();
+    await host.requestFullscreen();
     sync();
    } catch (error) { console.warn('전체 화면을 사용할 수 없습니다.', error); }
   });
   hostDoc.addEventListener('fullscreenchange', sync);
-  doc.defaultView.addEventListener('pagehide', () => hostDoc.removeEventListener('fullscreenchange', sync), {once:true});
+  view.addEventListener('pagehide', () => {
+   hostDoc.removeEventListener('fullscreenchange', sync); journeyObserver.disconnect();
+   view.clearTimeout(hideTimer); view.cancelAnimationFrame(showFrame);
+  }, {once:true});
   sync();
  };
  install(document, findHost());

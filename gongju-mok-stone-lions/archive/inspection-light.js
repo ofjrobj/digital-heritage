@@ -10,37 +10,21 @@ export function lightPositionAt(angle,base){
 // keeps the chosen light direction relative to the screen while either lion turns.
 export function createInspectionLight(key,element,redraw){
  const base=key.position.clone(),originalLighting=element.dataset.lighting;
- const keyIntensity=key.intensity;
- let previousKeyIntensity=key.intensity;
- const fills=(key.parent?.children||[]).filter(light=>light!==key&&(light.isHemisphereLight||light.isDirectionalLight)).map(light=>({
-  light,intensity:light.intensity,previousIntensity:light.intensity,ground:light.isHemisphereLight?light.groundColor.clone():null
- }));
- let enabled=false,angle=null;
- function apply(){
-  if(enabled&&angle!==null)key.position.set(...lightPositionAt(angle,base));
-  else key.position.copy(base);
-  // Directional illumination must dominate the fill so small carved ridges
-  // retain visible light/shade contrast. A modest sky/ground fill still keeps
-  // the unlit face readable; switching off restores the material baseline.
-  key.intensity=enabled?keyIntensity*1.1:previousKeyIntensity;
-  for(const {light,intensity,previousIntensity,ground} of fills){
-   light.intensity=enabled?intensity*(ground?1.25:1):previousIntensity;
-   if(ground){light.groundColor.copy(ground);if(enabled)light.groundColor.lerp(light.color,.18);}
-  }
-  element.dataset.lighting=enabled?'adjustable-neutral-key-chin-fill':originalLighting;
-  redraw();
- }
+ let enabled=false;
  return {
   setEnabled(value){
    const next=!!value;
-   if(next&&!enabled){
-    // Material selection may have changed the baseline since construction.
-    previousKeyIntensity=key.intensity;
-    for(const saved of fills)saved.previousIntensity=saved.light.intensity;
-   }
-   enabled=next;apply();
+   if(next===enabled)return;
+   // Enabling only unlocks the existing light. Preserve its position, every
+   // intensity and the fill colors; a direction changes only after user input.
+   if(next)base.copy(key.position);
+   else key.position.copy(base);
+   enabled=next;
+   element.dataset.lighting=enabled?'adjustable-neutral-key-chin-fill':originalLighting;
+   redraw();
   },
-  setAngle(value){angle=normalizeAngle(value);if(enabled)apply();}
+  getAngle(){return Math.atan2(key.position.x,key.position.z)*180/Math.PI;},
+  setAngle(value){if(enabled){key.position.set(...lightPositionAt(value,base));redraw();}}
  };
 }
 
@@ -57,7 +41,8 @@ export function mountInspectionLight(viewers){
  const hint=document.createElement('span');hint.className='inspection-hint';hint.setAttribute('aria-hidden','true');
  hint.textContent='원을 잡고 돌려보세요';
  row.append(button,help,hint);
- let enabled=false,angle=-31,drag=null,suppressClickUntil=0,hintTimer;
+ const readAngle=()=>Object.values(viewers).find(viewer=>viewer.getLightAngle)?.getLightAngle();
+ let enabled=false,angle=readAngle()??-31,drag=null,suppressClickUntil=0,hintTimer;
  function hideHint(){
   clearTimeout(hintTimer);hintTimer=undefined;hint.dataset.visible='false';
  }
@@ -65,7 +50,7 @@ export function mountInspectionLight(viewers){
   hideHint();hint.dataset.visible='true';hintTimer=setTimeout(hideHint,2600);
  }
  function describe(){
-  const bearing=normalizeAngle(angle),direction=`${bearing}도`;
+  const bearing=Math.round(normalizeAngle(angle))%360,direction=`${bearing}도`;
   button.dataset.enabled=String(enabled);button.setAttribute('aria-valuenow',String(bearing));
   button.setAttribute('aria-valuetext',`${direction}, 조명 ${enabled?'켜짐':'꺼짐'}`);
   button.style.setProperty('--light-angle',`${angle}deg`);
@@ -74,6 +59,7 @@ export function mountInspectionLight(viewers){
   const wasEnabled=enabled;
   enabled=!!value;
   for(const viewer of Object.values(viewers))viewer.setLightEnabled(enabled);
+  angle=readAngle()??angle;
   describe();
   if(!enabled)hideHint();else if(!wasEnabled&&showGuide)showHint();
  }
@@ -81,9 +67,10 @@ export function mountInspectionLight(viewers){
   hideHint();
   // Keep whole turns for the dial; only the light position and accessible
   // bearing wrap at north, so dragging never hits a stop at either edge.
-  angle=Math.round(finiteAngle(value));
+  if(!enabled)setEnabled(true,false);
+  angle=finiteAngle(value);
   for(const viewer of Object.values(viewers))viewer.setLightAngle(angle);
-  if(!enabled)setEnabled(true,false);else describe();
+  describe();
  }
  button.addEventListener('click',event=>{
   if(event.detail>0&&performance.now()<suppressClickUntil)return;

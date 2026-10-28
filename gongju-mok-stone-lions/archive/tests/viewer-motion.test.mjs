@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../vendor/three/three.module.js';
-import {createViewportBuffer,framingBlend,createFramingTransition} from '../viewer-motion.js';
+import {createViewportBuffer,framingBlend,createFramingTransition,createViewportZoom} from '../viewer-motion.js';
 import {createInspectionFraming} from '../scan-framing.js';
 
 test('a grid enlargement keeps its drawing buffer until layout settles',()=>{
@@ -39,7 +39,7 @@ test('framing easing is monotone, independent of display refresh rate, and honor
   assert.equal(framingBlend(1/60,true),1);
 });
 
-test('preset travel eases into and out of the shortest orbit without crossing the model',()=>{
+test('layout travel eases into and out of the shortest orbit without crossing the model',()=>{
  const point=degrees=>new THREE.Vector3(Math.cos(degrees*Math.PI/180),0,Math.sin(degrees*Math.PI/180)).multiplyScalar(3);
  const target=new THREE.Vector3(),start=point(350),goal={position:point(10),target};
  const motion=createFramingTransition(THREE,start,target),steps=[];
@@ -53,6 +53,66 @@ test('preset travel eases into and out of the shortest orbit without crossing th
  assert.ok(Math.abs(travel-20*Math.PI/180)<1e-6,'rotation takes the 20-degree path');
  assert.ok(steps[0]<Math.max(...steps)*.02,'there is no fast first-frame whip');
  assert.ok(pose.done);assert.ok(pose.position.distanceTo(goal.position)<1e-9);
+});
+
+test('guide collapse preserves the rendered world-to-pixel scale while actual window resizing remains responsive',()=>{
+ const zoom=createViewportZoom(1.25),initial=zoom.at(350,800)*350;
+ for(const height of [400,450,525])assert.ok(Math.abs(zoom.at(height,800)*height-initial)<1e-9);
+ assert.ok(Math.abs(zoom.at(400,600)*400-initial*.75)<1e-9);
+});
+
+test('entering and leaving the authored back view keeps the horizontal screen axis level',()=>{
+ for(const roll of [-.37,-3.63]){
+  const target=new THREE.Vector3(),up=new THREE.Vector3(0,1,0),overview=new THREE.Vector3(2.7,1.15,3.6);
+  const r=THREE.MathUtils.degToRad(roll),backUp=new THREE.Vector3(0,Math.cos(r),Math.sin(r));
+  const back=new THREE.Vector3(-.002,backUp.y,backUp.z).normalize().multiplyScalar(4);
+  for(const [start,initialUp,goal] of [[overview,up,{position:back,target,up:backUp}],[back,backUp,{position:overview,target,up}]]){
+   const q=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().lookAt(start,target,initialUp));
+   const motion=createFramingTransition(THREE,start,target,{quaternion:q,up:initialUp});let pose,maxRoll=0;
+   for(let frame=0;frame<600;frame++){
+    pose=motion.sample(goal,1/60);
+    maxRoll=Math.max(maxRoll,Math.abs(new THREE.Vector3(1,0,0).applyQuaternion(pose.quaternion).y));
+    if(pose.done)break;
+   }
+   assert.ok(maxRoll<.25,`sideways tilt is limited, measured sine ${maxRoll}`);
+   assert.ok(pose.done);assert.ok(pose.position.distanceTo(goal.position)<1e-9);
+  }
+ }
+});
+
+test('a layout-only resize of the top view leaves its angle unchanged',()=>{
+ const target=new THREE.Vector3(),up=new THREE.Vector3(0,1,0),start=new THREE.Vector3(-.002,4,0);
+ const q=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().lookAt(start,target,up));
+ const motion=createFramingTransition(THREE,start,target,{quaternion:q,up});
+ for(let frame=0;frame<80;frame++){
+  const pose=motion.sample({position:start.clone().multiplyScalar(1.2),target,up},1/60);
+  assert.ok(q.angleTo(pose.quaternion)<1e-7);
+ }
+});
+
+test('a back-view turn rotates yaw and pitch together without an intermediate stop or scale reversal',()=>{
+ const target=new THREE.Vector3(),start=new THREE.Vector3(2.7,1.15,3.6),up=new THREE.Vector3(0,1,0);
+ const goalUp=new THREE.Vector3(0,Math.cos(-.063),Math.sin(-.063));
+ const goal={position:new THREE.Vector3(-.002,goalUp.y,goalUp.z).normalize().multiplyScalar(3),target,up:goalUp};
+ const initial=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().lookAt(start,target,up));
+ const initialAngles=new THREE.Euler().setFromQuaternion(initial,'YZX');
+ const final=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().lookAt(goal.position,target,goalUp));
+ const finalAngles=new THREE.Euler().setFromQuaternion(final,'YZX');
+ const delta=(a,b)=>Math.atan2(Math.sin(b-a),Math.cos(b-a));
+ const motion=createFramingTransition(THREE,start,target,{quaternion:initial,up});
+ let previous=initial,previousRadius=start.length(),pose;const steps=[];
+ for(let i=0;i<600;i++){
+  pose=motion.sample(goal,1/60);const angles=new THREE.Euler().setFromQuaternion(pose.quaternion,'YZX');
+  const yaw=delta(initialAngles.y,angles.y)/delta(initialAngles.y,finalAngles.y);
+  const pitch=delta(initialAngles.x,angles.x)/delta(initialAngles.x,finalAngles.x);
+  assert.ok(Math.abs(yaw-pitch)<1e-6,'yaw and pitch use the same continuous progress');
+  const radius=pose.position.distanceTo(pose.target);assert.ok(radius<=previousRadius+1e-9,'no pullback followed by a second zoom direction');previousRadius=radius;
+  steps.push(previous.angleTo(pose.quaternion));previous=pose.quaternion;
+  if(pose.done)break;
+ }
+ const middle=steps.slice(Math.floor(steps.length*.2),Math.ceil(steps.length*.8));
+ assert.ok(Math.min(...middle)>Math.max(...steps)*.3,'the middle of the turn never pauses');
+ assert.ok(pose.done);assert.ok(pose.quaternion.angleTo(final)<1e-7);
 });
 
 test('retargeting starts at the displayed pose and reduced motion settles immediately',()=>{
@@ -108,4 +168,25 @@ test('expanded layout and late pair fitting produce goals instead of camera jump
   assert.deepEqual(viewer.camera.position,before);
   assert.ok(goal.position.distanceTo(before)>.01);
   document.documentElement.dataset.archiveOverview='hint';
+});
+
+test('guide removal cannot increase the paired overview budget or trigger repeated matching adjustments',()=>{
+ document.documentElement.dataset.archiveOverview='hint';
+ const viewer=fixture(1.8,1.5),zoom=createViewportZoom(viewer.camera.zoom);
+ viewer.camera.zoom=zoom.at(600,innerHeight);
+ viewer.framing.setOverviewHeight(viewer.framing.naturalOverviewHeight());
+ viewer.framing.resize({width:600,height:600},null);
+ const before=Number(viewer.element.dataset.framedPixels.split(',')[1]);
+ document.documentElement.dataset.archiveOverview='expanded';
+ for(const height of [700,800,900]){
+  viewer.camera.aspect=600/height;viewer.camera.zoom=zoom.at(height,innerHeight);viewer.camera.updateProjectionMatrix();
+  const goal=viewer.framing.resize({width:600,height},null);
+  if(goal){viewer.camera.position.copy(goal.position);viewer.controls.target.copy(goal.target);}
+  viewer.framing.setOverviewHeight(viewer.framing.naturalOverviewHeight());
+  viewer.framing.resize({width:600,height},null);
+  const after=Number(viewer.element.dataset.framedPixels.split(',')[1]);
+  assert.ok(after<=before+.2,`${before} px should not grow to ${after} px after the guide folds`);
+  assert.equal(viewer.framing.setOverviewHeight(viewer.framing.naturalOverviewHeight()),false,'matching reaches a stable value');
+ }
+ document.documentElement.dataset.archiveOverview='hint';
 });

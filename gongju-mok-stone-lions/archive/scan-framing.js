@@ -25,7 +25,7 @@ export function levelScan(THREE,scan,{yaw,targetSize,sex}){
 export function createInspectionFraming(THREE,{camera,controls,element}){
  const up=new THREE.Vector3(0,1,0),zero=new THREE.Vector3(),all=[];
  const comparisonHeights=new Map();
- let bounds=null,current=null,overview=null,overviewHeight=null,fitted=0,lastRect=null,pending=null;
+ let bounds=null,current=null,overview=null,overviewHeight=null,overviewLimit=null,fitted=0,lastRect=null,pending=null;
  function view(index){
   const part=Number.isInteger(index)?PARTS[index]:null,size=bounds.getSize(new THREE.Vector3());
   const selected=part&&!part.all?all.filter(p=>p.x>=bounds.min.x+size.x*(part.front??.65)&&p.y>=bounds.min.y+size.y*part.band[0]&&p.y<=bounds.min.y+size.y*part.band[1]):all;
@@ -80,10 +80,9 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   return {width:right-left,height:top-bottom,left,right,bottom,top,offsetX,offsetY};
  }
  function distanceFor(spec,r,matchOverview=true){
-  const expanded=document.documentElement.dataset.archiveOverview==='expanded';
-  const width=r.width*(spec.part?(spec.part.width??(spec.part.all ? .78 : .83)):expanded?.88:.76);
+  const width=r.width*(spec.part?(spec.part.width??(spec.part.all ? .78 : .83)):.76);
   const sharedHeight=matchOverview?(spec.part?comparisonHeights.get(spec.index):overviewHeight):null;
-  const height=Math.min(spec.part?r.height*(spec.part.height??.86):Math.min(r.height*(expanded?.90:.82),innerHeight*(expanded?.57:.42)),sharedHeight>0?sharedHeight:Infinity);
+  const height=Math.min(spec.part?r.height*(spec.part.height??.86):Math.min(r.height*.82,innerHeight*.42),sharedHeight>0?sharedHeight:Infinity);
   let near=.05;for(const p of spec.points)near=Math.max(near,p.z+.05);let far=50;
   for(let i=0;i<22;i++){
    const d=(near+far)/2,b=projected(spec,d,r.width/r.height);
@@ -134,7 +133,10 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   return projected(overview,distance,lastRect.width/lastRect.height).height*lastRect.height/2;
  }
  function setOverviewHeight(height){
-  if(!Number.isFinite(height)||height<=0||overviewHeight!==null&&Math.abs(overviewHeight-height)<.1)return false;
+  if(!Number.isFinite(height)||height<=0)return false;
+  overviewLimit??={height,viewportHeight:innerHeight};
+  height=Math.min(height,overviewLimit.height*innerHeight/overviewLimit.viewportHeight);
+  if(overviewHeight!==null&&Math.abs(overviewHeight-height)<.1)return false;
   overviewHeight=height;element.dataset.overviewHeight=height.toFixed(1);return true;
  }
  function naturalFramingHeight(){

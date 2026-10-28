@@ -13,7 +13,7 @@ body.test-render-media{background:#e8e8e6}.test-render-media #stage{background:#
 @media(min-width:761px){body.test-render-media:not([data-mode="play"]){--dialogue-floor:84px;--sound-floor:16px}}
 @media(min-width:761px) and (max-height:650px){body.test-render-media:not([data-mode="play"]){--dialogue-floor:80px;--sound-floor:16px}}
 
-body[data-startup="loading"] #stage>:not(#loading):not(#storyIndexBar),body[data-startup="gap"] #stage>:not(#loading):not(#storyIndexBar){visibility:hidden!important}
+body[data-startup="loading"] #stage>:not(#loading):not(#storyIndexBar):not(#fullscreenToggle),body[data-startup="gap"] #stage>:not(#loading):not(#storyIndexBar):not(#fullscreenToggle){visibility:hidden!important}
 body.test-render-media #storyIndexBar{top:clamp(14px,4.4dvh,36px)!important}
 body.test-render-media #storyIndexBar :is(a,button){font-size:clamp(8px,min(1.65vw,2.7dvh),23px)!important;padding:.32em 1.25em!important}
 body.test-render-media #hint{font-size:clamp(10px,min(1.25vw,2dvh),15px)!important}
@@ -58,3 +58,11 @@ body.test-render-media #cinemaDialogue:not([hidden]){animation:story-ui-enter .5
 body.test-render-media .tr-archive-cta:not([hidden]){animation:story-ui-enter .65s cubic-bezier(.22,.75,.25,1) both}
 @keyframes story-ui-enter{from{opacity:0;translate:0 8px}to{opacity:1;translate:0 0}}
 @media(prefers-reduced-motion:reduce){body.test-render-media :is(#cinemaDialogue,.tr-archive-cta){animation:none!important}}
+
+/* The original icon outlines follow the local scene, softly and independently. */
+body.test-render-media :is(#fullscreenToggle,#soundToggle,#projectMenuToggle,#projectAbout,#projectVr,#projectQr){color:var(--scene-icon-color,#777771)!important}
+body.test-render-media :is(#projectMenuToggle,#projectAbout,#projectVr,#projectQr){transition:none!important}
+body.test-render-media #soundToggle img{display:none!important}
+body.test-render-media #soundToggle::before{content:"";display:block;width:1.8em;height:1.8em;background:currentColor;mask:url('./icons8-voice-50.png') center/contain no-repeat;-webkit-mask:url('./icons8-voice-50.png') center/contain no-repeat;pointer-events:none}
+body.test-render-media #soundToggle[aria-pressed="false"]::before{mask-image:url('./icons8-mute-50.png');-webkit-mask-image:url('./icons8-mute-50.png')}
+body.test-render-media :is(#fullscreenToggle,#soundToggle):focus-visible{outline-color:currentColor}

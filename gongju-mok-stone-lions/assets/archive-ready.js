@@ -9,13 +9,13 @@
     archive.setAttribute('aria-busy', 'true');
     const gate = document.createElement('div');
     gate.className = 'archive-ready-status';
-    const modelLabels = ['male', 'female'].map((side, index) => {
-      const label = document.createElement('p');
-      label.className = `archive-model-status ${side}`;
+    // Share the loader's existing per-model status during transfer and decoding.
+    // A second overlay label would show alongside its percentage progress.
+    const modelLabels = ['male', 'female'].map(side => {
+      const label = document.getElementById(`${side}-loading`);
       label.setAttribute('role', 'status');
       label.setAttribute('aria-live', 'polite');
-      label.textContent = 'Loading...';
-      gate.append(label);
+      if (/^OBJECT \d+ LOADING$/.test(label.textContent)) label.textContent = 'Loading...';
       return label;
     });
     const retry = document.createElement('button');
@@ -27,14 +27,15 @@
     document.body.append(gate);
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     root.dataset.archiveUi = 'entering';
-    setTimeout(() => { root.dataset.archiveUi = 'ready'; }, reducedMotion.matches ? 0 : 1000);
+    // One-second entrances; retain the last label's .72s stagger before cleanup.
+    setTimeout(() => { root.dataset.archiveUi = 'ready'; }, reducedMotion.matches ? 0 : 1720);
     let revealing = false;
-    const fail = delayed => {
+    const fail = (delayed, moduleFailed = false) => {
       if (revealing) return;
       root.dataset.archiveState = delayed ? 'delayed' : 'error';
       modelLabels.forEach((label, index) => {
         const loaded = document.getElementById(index === 0 ? 'male-scene' : 'female-scene')?.dataset.loaded;
-        if (loaded !== 'true') label.textContent = delayed ? 'Loading...' : '3D 자료를 불러오지 못했습니다.';
+        if (!delayed && loaded !== 'true' && (loaded === 'error' || moduleFailed)) label.textContent = '3D 자료를 불러오지 못했습니다.';
       });
       retry.hidden = false;
     };
@@ -68,7 +69,7 @@
     observer.observe(archive, { subtree: true, attributes: true, attributeFilter: ['data-loaded'] });
     const slowTimer = setTimeout(() => fail(true), 45000);
     addEventListener('error', event => {
-      if (String(event.filename || event.target?.src || '').includes('/archive/app.js?v=requested-fixes-20261028-v7')) fail(false);
+      if (/\/archive\/app\.js(?:[?#]|$)/.test(String(event.filename || event.target?.src || ''))) fail(false, true);
     }, true);
     inspect();
   };

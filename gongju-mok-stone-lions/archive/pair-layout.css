@@ -244,8 +244,8 @@ html body .archive .detail-card{max-height:none;overflow:visible}
 .archive .panel-content :is(.panel-kicker,dt,.panel-note){font-family:var(--sans)}
 .archive .wordmark small,
 .archive .object-card .card-label em{font-family:var(--sans);font-weight:300;line-height:1.4;letter-spacing:.1em}
-.archive .wordmark small{font-size:clamp(10px,calc(var(--archive-copy)*.65),13px);margin-top:.45em}
-.archive .object-card .card-label em{font-size:clamp(10px,calc(var(--archive-copy)*.6),12px);white-space:nowrap}
+.archive .wordmark small{font-size:var(--archive-auxiliary-font);margin-top:.45em}
+.archive .object-card .card-label em{font-size:var(--archive-auxiliary-font);white-space:nowrap}
 @media(max-width:700px) and (orientation:portrait){
  .archive{--archive-panel-width:min(320px,calc(100vw - 64px))}
 }
@@ -280,7 +280,7 @@ html body .archive .detail-card{max-height:none;overflow:visible}
 @media(min-width:801px) and (min-height:601px){
  .archive .wordmark{top:clamp(48px,9dvh,72px);translate:none}
  .archive .wordmark .wordmark-title{font-size:clamp(22px,2.1vw,27px)}
- .archive .wordmark small{font-size:clamp(10px,calc(var(--archive-copy)*.6),12px);margin-top:.85em}
+ .archive .wordmark small{margin-top:.85em}
 }
 @media(max-width:620px){
  html[data-archive-overview="hint"] body .archive:not(:has(.hotspot.is-active)) .detail-card h3{font-size:clamp(14px,2.7vw,16px)}
@@ -378,10 +378,13 @@ html body .archive .detail-card{max-height:none;overflow:visible}
    Keep its spacing relationships at every ordinary window height. The readable
    floors only affect the original small label/value sizes on narrow windows. */
 .archive{--archive-panel-copy:clamp(14px,min(calc(7px + .65vw),2.45dvh),19px);--archive-panel-rhythm:1}
-.archive .panel-content{display:block;height:100%;font-size:var(--archive-panel-copy);padding-top:calc(1.3em * var(--archive-panel-rhythm));padding-bottom:calc(1.3em * var(--archive-panel-rhythm));overflow:visible}
+.archive .panel-content{display:block;height:100%;font-size:var(--archive-panel-copy);padding-top:calc(1.3em * var(--archive-panel-rhythm));padding-bottom:calc(1.3em * var(--archive-panel-rhythm));overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scroll-padding-block:calc(1.3em * var(--archive-panel-rhythm))}
+/* Long source notes remain inside the rail and reachable in a short window.
+   Keep the original padding and type scale when everything already fits. */
 .archive .left-panel .panel-content{padding-left:1.35em;padding-right:calc(var(--archive-tab-width) + 1.1em)}
 .archive .right-panel .panel-content{padding-right:1.35em;padding-left:calc(var(--archive-tab-width) + 1.1em)}
 .archive .panel-content .panel-kicker{font-family:var(--sans);font-size:max(10px,.65em);font-weight:300;line-height:1.4;letter-spacing:.13em;margin:0 0 calc(1.2em * var(--archive-panel-rhythm))}
+html[data-archive-point]:not([data-archive-point=""]) .archive .panel-content .panel-kicker{display:none}
 .archive .panel-content h2{font-family:var(--serif);font-size:1.7em;font-weight:300;line-height:1.3;letter-spacing:-.09em}
 .archive .panel-content .panel-subtitle{font-family:var(--serif);font-size:1.1em;line-height:1.4;margin:calc(.45em * var(--archive-panel-rhythm)) 0 0}
 .archive .panel-content .object-size-list,
@@ -413,11 +416,57 @@ html body .archive .detail-card{max-height:none;overflow:visible}
 
 /* Preserve the original side-drawer structure while easing its complete travel.
    The stage follows the same easing so neither sculpture is covered in transit. */
-html body .archive .info-panel{transition:transform .55s cubic-bezier(.22,.75,.25,1),opacity .3s ease,visibility .3s ease}
-.archive .panel-content{opacity:0;visibility:hidden;transition:opacity .2s ease,visibility 0s .4s}
-.archive .info-panel.is-open .panel-content{opacity:1;visibility:visible;transition:opacity .34s ease .12s,visibility 0s}
-.archive .object-stage{transition:padding-left .55s cubic-bezier(.22,.75,.25,1),padding-right .55s cubic-bezier(.22,.75,.25,1)}
-.archive .global-hotspot-set{transition:left .55s cubic-bezier(.22,.75,.25,1)}
+html body .archive .info-panel{transition:transform var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1)),opacity var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1)),visibility 0s var(--ui-motion-duration,1s)}
+.archive .panel-content{opacity:0;visibility:hidden;transition:opacity var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1)),visibility 0s var(--ui-motion-duration,1s)}
+.archive .info-panel.is-open .panel-content{opacity:1;visibility:visible;transition:opacity var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1)) .12s,visibility 0s}
+.archive .object-stage{transition:padding-left var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1)),padding-right var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1))}
+.archive .global-hotspot-set{transition:left var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1))}
 @media(prefers-reduced-motion:reduce){
  html body .archive .info-panel,.archive .panel-content,.archive .info-panel.is-open .panel-content,.archive .object-stage,.archive .global-hotspot-set{transition:none}
 }
+
+/* Reserve the masthead's two text lines before any canvas can begin. The two
+   auxiliary labels share one scale, limited by both viewport dimensions. */
+.archive{
+ --archive-auxiliary-font:clamp(8px,min(calc(6px + .46875vw),1.5dvh),12px);
+ --archive-wordmark-top:calc(var(--shared-nav-top) + clamp(0px,calc(6.25vw - 20px),50px));
+ --archive-wordmark-shift:0px;
+ --archive-wordmark-title-size:calc(var(--archive-copy)*1.6);
+ --archive-wordmark-caption-space:1.85;
+ --archive-stage-top:clamp(88px,17dvh,150px);
+ --archive-header-bottom:calc(var(--archive-wordmark-top) + var(--archive-wordmark-shift) + var(--archive-wordmark-title-size)*1.25 + var(--archive-auxiliary-font)*var(--archive-wordmark-caption-space));
+}
+@media(max-width:800px){
+ .archive{--archive-wordmark-top:clamp(72px,9dvh,86px);--archive-wordmark-shift:10px}
+}
+@media(max-height:600px) and (orientation:landscape){
+ .archive{--archive-wordmark-top:16px;--archive-stage-top:116px}
+}
+@media(max-width:700px) and (orientation:portrait){
+ .archive{--archive-stage-top:214px}
+}
+@media(min-width:801px) and (min-height:601px){
+ .archive{--archive-wordmark-top:clamp(48px,9dvh,72px);--archive-wordmark-title-size:clamp(22px,2.1vw,27px);--archive-wordmark-caption-space:2.25}
+}
+.archive .wordmark{top:var(--archive-wordmark-top)}
+.archive .wordmark .wordmark-title{font-size:var(--archive-wordmark-title-size)}
+.archive .object-stage{padding-top:max(var(--archive-stage-top),calc(var(--archive-header-bottom) + 18px))}
+.archive .object-card .scene{overflow:clip}
+
+/* One modest heading identifies both the sculpture and its current feature. */
+.archive .panel-content :is(.panel-kicker,.panel-subtitle){display:none}
+.archive .panel-content h2{font-family:var(--sans);font-size:clamp(12px,.72em,13px);font-weight:300;color:#666660;line-height:1.5;letter-spacing:.03em;white-space:nowrap;margin:0;flex:none}
+.archive .panel-content .object-size-list{margin-top:calc(.8em * var(--archive-panel-rhythm))}
+@media(min-width:601px) and (min-height:441px){
+ .archive .info-panel.is-open .panel-toggle b{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0;
+ }
+}
+
+/* Keep the heading and provenance visible; only measured values may scroll. */
+.archive .panel-content{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.archive .panel-content .object-size-list{flex:1 1 auto;min-height:0;align-self:stretch;align-content:start;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scroll-padding-block:4px}
+.archive .panel-content .panel-note{flex:none;align-self:stretch}
+.archive .panel-content .object-size-list dd,
+.archive .panel-content .panel-note{font-family:var(--sans)}

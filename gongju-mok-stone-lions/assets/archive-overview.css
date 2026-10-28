@@ -1,14 +1,16 @@
 /* Size panels remain available in both the full-object and feature views. */
-html body .archive .info-panel { transition:opacity .4s ease, visibility .4s; }
-html[data-archive-overview="hint"] body .archive:not(:has(.hotspot.is-active)) .detail-card {
- animation: archive-guide-pulse 2s ease-in-out 2;
-}
-html body .archive .detail-card { transition:opacity .65s ease,max-height .8s ease,padding .8s ease; max-height:220px; }
+html body .archive .info-panel { transition:opacity var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1)), visibility 0s var(--ui-motion-duration,1s); }
+html body .archive .detail-card { transition:opacity var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1)),max-height var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1)),padding var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1)); max-height:220px; }
+html[data-archive-overview="hint"] body .archive .detail-card { opacity:1; }
+html[data-archive-overview="fading"] body .archive .detail-card { opacity:0;pointer-events:none; }
+/* The shared caption node stays available for observations, but an exhausted
+   introduction must leave no painted text or layout box behind. */
+html body .archive .detail-card[hidden] { display:none!important; }
+html[data-archive-overview="detail"] body .archive .detail-card { opacity:1; }
 html[data-archive-overview="expanded"] body .archive:not(:has(.hotspot.is-active)) .detail-card {
  opacity:0;max-height:0;padding-top:0;padding-bottom:0;border-width:0;overflow:hidden;pointer-events:none;
 }
 html[data-archive-overview="expanded"] body .archive:not(:has(.hotspot.is-active)) .object-stage { row-gap:0; }
-@keyframes archive-guide-pulse {0%,100%{opacity:1}50%{opacity:.38}}
 @media(prefers-reduced-motion:reduce){
  html body .archive .detail-card{animation:none!important;transition:none!important;}
 }

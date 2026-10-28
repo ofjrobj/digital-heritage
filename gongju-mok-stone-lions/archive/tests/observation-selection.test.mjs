@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
-import {measurements} from '../measurements.js';
+import {measurements,overallMeasurements,originalNotation} from '../measurements.js';
 
 // Run the actual DOM wiring without creating a WebGL renderer in Node.
 const source=await readFile(new URL('../app.js',import.meta.url),'utf8');
@@ -21,7 +21,7 @@ function fixture(initialMaterial='color'){
  const buttons=measurements.map((_,i)=>{const b=node();b.dataset.point=String(i+1).padStart(2,'0');return b;});
  const panels=['left','right'].map((side,i)=>{
   const panel=node();panel.dataset.side=side;
-  const parts=new Map([['.panel-kicker',node(`OBJECT 0${i+1}`)],['.panel-subtitle',node('크기 정보')],['.object-size-list',node()],['.panel-note',node('팀 측정 기록')],['.panel-content',node()],['.panel-toggle',node()]]);
+  const parts=new Map([['h2',node(i===0?'수사자':'암사자')],['.panel-kicker',node(`OBJECT 0${i+1}`)],['.panel-subtitle',node('크기 정보')],['.object-size-list',node()],['.panel-note',node('팀 측정 기록')],['.panel-content',node()],['.panel-toggle',node()]]);
   parts.get('.object-size-list').innerHTML='<div>original size data</div>';
   parts.get('.object-size-list').after=el=>{parts.set('.panel-observation',el);el.remove=()=>parts.delete('.panel-observation');};
   panel.querySelector=s=>parts.get(s)||null;
@@ -33,7 +33,7 @@ function fixture(initialMaterial='color'){
   querySelectorAll:s=>s==='.hotspot'?buttons:s==='.info-panel'?panels:s==='.panel-toggle'?panels.map(p=>p.querySelector(s)):[]
  };
  const focuses={male:[],female:[]},materialChanges=[],materialState={mode:initialMaterial};
- vm.runInNewContext(wiring,{document,measurements,viewers:Object.fromEntries(Object.keys(focuses).map(sex=>[sex,{focus:index=>focuses[sex].push(index)}])),surfaceToggle:{setMode:mode=>{materialChanges.push(mode);materialState.mode=mode;}}});
+ vm.runInNewContext(wiring,{document,measurements,overallMeasurements,originalNotation,viewers:Object.fromEntries(Object.keys(focuses).map(sex=>[sex,{focus:index=>focuses[sex].push(index)}])),surfaceToggle:{setMode:mode=>{materialChanges.push(mode);materialState.mode=mode;}}});
  return {root,caption,fields,buttons,panels,focuses,materialChanges,materialState};
 }
 
@@ -41,15 +41,19 @@ test('all numbered selections and deselections preserve material and restore ove
  for(const mode of ['color','relief','normal-map']){
   const f=fixture(mode),initialTitle=f.fields.get('h3').textContent,initialCopy=f.fields.get('.detail-copy').textContent;
   for(let index=0;index<5;index++){
+   f.panels.forEach(panel=>{panel.querySelector('.object-size-list').scrollTop=180;});
    const button=f.buttons[index];button.handlers.click();
    assert.equal(f.root.dataset.archivePoint,button.dataset.point);
    assert.equal(button.attrs['aria-pressed'],'true');
    assert.equal(f.fields.get('h3').textContent,measurements[index].label);
    f.panels.forEach((panel,p)=>{
+    assert.equal(panel.querySelector('h2').textContent,`${String(index+1).padStart(2,'0')} ${measurements[index].label} / ${p===0?'수사자':'암사자'}`);
+    assert.equal(panel.querySelector('.object-size-list').scrollTop,0);
     assert.equal(panel.querySelector('.panel-subtitle').textContent,measurements[index].label);
     assert.equal(panel.querySelector('.panel-observation'),null,'generic observation prose stays in the shared caption only');
     assert.deepEqual(panel.querySelector('.object-size-list').children.map(row=>row.children[1].textContent),measurements[index].rows.map(row=>row[p===0?2:1]).filter(value=>value!=null));
    });
+   f.panels.forEach(panel=>{panel.querySelector('.object-size-list').scrollTop=180;});
    button.handlers.click();
    assert.equal(f.root.dataset.archivePoint,'');
    assert(f.buttons.every(b=>b.attrs['aria-pressed']==='false'&&!b.classList.contains('is-active')));
@@ -57,10 +61,30 @@ test('all numbered selections and deselections preserve material and restore ove
    assert.equal(f.fields.get('h3').textContent,initialTitle);
    assert.equal(f.fields.get('.detail-copy').textContent,initialCopy);
    assert(f.panels.every(panel=>panel.querySelector('.panel-subtitle').textContent==='크기 정보'));
+   f.panels.forEach((panel,p)=>{
+    assert.equal(panel.querySelector('h2').textContent,`크기 정보 / ${p===0?'수사자':'암사자'}`);
+    assert.equal(panel.querySelector('.object-size-list').scrollTop,0);
+    assert.deepEqual(panel.querySelector('.object-size-list').children.map(row=>row.children[1].textContent),overallMeasurements.map(row=>row[p===0?2:1]));
+   });
    assert.equal(f.focuses.male.at(-1),null);assert.equal(f.focuses.female.at(-1),null);
    assert.equal(f.materialState.mode,mode);
    assert.deepEqual(f.materialChanges,[],`${mode}: numbered actions never invoke a material change`);
   }
+ }
+});
+
+test('original-notation qualifiers accompany restored male dimensions only',()=>{
+ const f=fixture();
+ for(const index of [3,4]){
+  f.buttons[index].handlers.click();
+  f.panels.forEach((panel,p)=>{
+   panel.querySelector('.object-size-list').children.forEach(row=>{
+    const [term,value]=row.children,expected=p===0&&originalNotation.male.includes(term.textContent);
+    assert.equal(value.children.length,expected?1:0);
+    if(expected)assert.equal(value.children[0].textContent,' (원문 표기)');
+   });
+   assert.match(panel.querySelector('.panel-note').textContent,/소장.*공주대학교 박물관.*측정 기록.*사자성어 팀/);
+  });
  }
 });
 

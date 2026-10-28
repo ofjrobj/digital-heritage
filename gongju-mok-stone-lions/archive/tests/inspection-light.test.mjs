@@ -18,21 +18,22 @@ test('light direction covers the full circle, including behind the model, withou
  for(const invalid of [NaN,Infinity,-Infinity,'invalid'])assert.deepEqual(lightPositionAt(invalid,base),lightPositionAt(0,base));
 });
 
-test('rotary inspection preserves directional contrast and restores its exact original position, color and intensity when off',()=>{
+test('activating inspection preserves the current position, color and intensity, including reopening after a turn',()=>{
  const key=new THREE.DirectionalLight(0xffffff,2.4);key.position.set(-3,4,5);
  const element={dataset:{lighting:'fixed-neutral-key-chin-fill'}},before=key.position.clone();let redraws=0;
  const lighting=createInspectionLight(key,element,()=>redraws++);
  lighting.setEnabled(true);assert.deepEqual(key.position,before,'opening the control does not jump the light');
- assert.ok(Math.abs(key.intensity-2.64)<1e-12);assert.equal(key.color.getHex(),0xffffff);
+ assert.equal(key.intensity,2.4);assert.equal(key.color.getHex(),0xffffff);
  lighting.setAngle(60);const adjusted=key.position.clone();assert.ok(adjusted.x>0);
  lighting.setEnabled(false);assert.deepEqual(key.position,before);
  assert.equal(element.dataset.lighting,'fixed-neutral-key-chin-fill');
  assert.equal(key.intensity,2.4);assert.equal(key.color.getHex(),0xffffff);
- lighting.setEnabled(true);assert.deepEqual(key.position,adjusted,'reopening keeps the chosen angle');
+ lighting.setEnabled(true);assert.deepEqual(key.position,before,'reopening starts at the light that is currently visible');
+ assert.ok(Math.abs(lighting.getAngle()-Math.atan2(-3,5)*180/Math.PI)<1e-12);
  assert.ok(redraws>=4);
 });
 
-test('inspection keeps the key dominant over sky and lower fill and restores originals across repeated toggles',()=>{
+test('inspection only rotates the key and never alters key intensity, sky fill, lower fill or ground color',()=>{
  const scene=new THREE.Scene(),key=new THREE.DirectionalLight(0xffffff,1.8);
  key.position.set(-3,4,5);
  const hemisphere=new THREE.HemisphereLight(0xffffff,0x888888,.8),fill=new THREE.DirectionalLight(0xffffff,.65);
@@ -40,9 +41,9 @@ test('inspection keeps the key dominant over sky and lower fill and restores ori
  const ground=hemisphere.groundColor.clone(),lighting=createInspectionLight(key,{dataset:{lighting:'original'}},()=>{});
  for(let i=0;i<3;i++){
   lighting.setEnabled(true);lighting.setAngle(180);
-  assert.ok(key.intensity>1.8);assert.ok(hemisphere.intensity>=.8&&hemisphere.intensity<=1);assert.equal(fill.intensity,.65);
+  assert.equal(key.intensity,1.8);assert.equal(hemisphere.intensity,.8);assert.equal(fill.intensity,.65);
   assert.ok(key.intensity>hemisphere.intensity+fill.intensity,'directional light must dominate diffuse fill to reveal relief');
-  assert.ok(hemisphere.groundColor.r>ground.r);
+  assert.deepEqual(hemisphere.groundColor,ground);
   lighting.setEnabled(false);
   assert.equal(key.intensity,1.8);assert.equal(hemisphere.intensity,.8);assert.equal(fill.intensity,.65);
   assert.deepEqual(hemisphere.groundColor,ground);
@@ -56,6 +57,16 @@ test('turning inspection off restores the latest material lighting, not the crea
  key.intensity=2.4;fill.intensity=.6;
  lighting.setEnabled(true);lighting.setAngle(180);lighting.setEnabled(false);
  assert.equal(key.intensity,2.4);assert.equal(fill.intensity,.6);
+});
+
+test('activation adopts a light that moved while the control was disabled without snapping back',()=>{
+ const key=new THREE.DirectionalLight(0xffffff,1.8);key.position.set(-3,4,5);
+ const lighting=createInspectionLight(key,{dataset:{}},()=>{});
+ key.position.set(4,3,-2);const current=key.position.clone();
+ lighting.setEnabled(true);assert.deepEqual(key.position,current);
+ const angle=lighting.getAngle();lighting.setAngle(angle+360);
+ assert.ok(key.position.distanceTo(current)<1e-12,'a full revolution returns to the current light');
+ lighting.setEnabled(false);assert.deepEqual(key.position,current);
 });
 
 class Element extends EventTarget{
@@ -118,6 +129,27 @@ test('a captured centre drag enables full-circle lighting without the release cl
  }finally{globalThis.document=previous;globalThis.MutationObserver=previousObserver;}
 });
 
+test('the dial reads the current viewer light and enables it before applying the first drag',()=>{
+ const previous=globalThis.document,previousObserver=globalThis.MutationObserver,root=new Element('div'),surface=new Element('button');surface.dataset.mode='relief';root.append(surface);
+ globalThis.MutationObserver=class{observe(){}};
+ globalThis.document={querySelector:()=>surface,createElement:tag=>new Element(tag)};
+ try{
+  const key=new THREE.DirectionalLight(0xffffff,2.4);key.position.set(5,4,0);
+  const lighting=createInspectionLight(key,{dataset:{}},()=>{});
+  const {button}=mountInspectionLight({male:{setLightEnabled:lighting.setEnabled,setLightAngle:lighting.setAngle,getLightAngle:lighting.getAngle}});
+  assert.equal(button.getAttribute('aria-valuenow'),'90');
+  const before=key.position.clone();button.dispatchEvent(new Event('click'));
+  assert.deepEqual(key.position,before,'a click leaves the rendered direction unchanged');
+  button.dispatchEvent(new Event('click'));
+  const pointer={pointerId:1,isPrimary:true,button:0};
+  button.dispatchEvent(eventWith('pointerdown',{...pointer,clientX:15,clientY:15}));
+  button.dispatchEvent(eventWith('pointermove',{...pointer,clientX:60,clientY:15}));
+  assert.equal(button.getAttribute('aria-valuenow'),'180');
+  assert.ok(Math.abs(key.position.x)<1e-10&&key.position.z<0,'first drag is applied after activation');
+  assert.equal(key.intensity,2.4);
+ }finally{globalThis.document=previous;globalThis.MutationObserver=previousObserver;}
+});
+
 
 test('keyboard steps wrap at zero, preserve accumulated rotation, and support Home and End',()=>{
  const previous=globalThis.document,previousObserver=globalThis.MutationObserver,root=new Element('div'),surface=new Element('button');surface.dataset.mode='relief';root.append(surface);
@@ -157,8 +189,8 @@ test('rim dragging makes multiple continuous turns through 359/0 in both directi
    button.dispatchEvent(eventWith('pointermove',at(angle)));
    const expected=((angle%360)+360)%360;
    assert.equal(button.getAttribute('aria-valuenow'),String(expected),`visible angle after ${angle} degrees`);
-   assert.equal(calls.at(-1),angle,'viewer angle must remain continuous across full turns');
-   assert.equal(button.style.getPropertyValue('--light-angle'),`${angle}deg`,'the dial must not spin backwards on wrapping');
+   assert.ok(Math.abs(calls.at(-1)-angle)<1e-9,'viewer angle must remain continuous across full turns');
+   assert.ok(Math.abs(parseFloat(button.style.getPropertyValue('--light-angle'))-angle)<1e-9,'the dial must not spin backwards on wrapping');
   }
   button.dispatchEvent(eventWith('pointerup',at(-1)));
   assert.equal(button.hasPointerCapture(1),false);assert.equal(button.dataset.enabled,'true');

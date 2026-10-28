@@ -1,0 +1,52 @@
+/* UI only: footage, model/camera motion, scan particles and invitation loops
+   retain their own timing. Entrance staggering is independent of duration. */
+:root{
+ --ui-motion-duration:1s;
+ --ui-motion-ease:cubic-bezier(.22,.75,.25,1);
+}
+
+body.test-render-media :is(.tr-caption,.tr-archive-cta),
+body.test-render-media #storyIndexBar::before,
+body .archive :is(.hotspot,.surface-toggle,.panel-toggle i),
+body .wrap :is(.back-link,.social-link,.gallery-trigger svg,.experience-path strong,.production-trigger>span:first-child){
+ transition-duration:var(--ui-motion-duration)!important;
+ transition-timing-function:var(--ui-motion-ease)!important;
+}
+body.test-render-media :is(#cinemaDialogue,.tr-archive-cta),
+body .process-gallery[open]{
+ animation-duration:var(--ui-motion-duration)!important;
+ animation-timing-function:var(--ui-motion-ease)!important;
+}
+
+/* Keep discrete visibility changes out of the one-second visual interpolation. */
+body .archive .inspection-hint{
+ transition:opacity var(--ui-motion-duration) var(--ui-motion-ease),transform var(--ui-motion-duration) var(--ui-motion-ease),visibility 0s var(--ui-motion-duration)!important;
+}
+body .archive .inspection-hint[data-visible=true]{transition-delay:0s!important}
+body .archive .global-hotspot-set .inspection-tools>.light-toggle{
+ transition:max-width var(--ui-motion-duration) var(--ui-motion-ease),max-height var(--ui-motion-duration) var(--ui-motion-ease),margin-left var(--ui-motion-duration) var(--ui-motion-ease),margin-top var(--ui-motion-duration) var(--ui-motion-ease),transform var(--ui-motion-duration) var(--ui-motion-ease),opacity var(--ui-motion-duration) var(--ui-motion-ease),border-width var(--ui-motion-duration) var(--ui-motion-ease),visibility 0s!important;
+}
+body .archive .global-hotspot-set .inspection-tools[data-light-visible=false]>.light-toggle{
+ transition-delay:0s,0s,0s,0s,0s,0s,0s,var(--ui-motion-duration)!important;
+}
+body .archive .hotspot span,
+body .archive .surface-toggle::after,
+body .archive .light-toggle::after{
+ transition:opacity var(--ui-motion-duration) var(--ui-motion-ease),visibility 0s var(--ui-motion-duration)!important;
+}
+@media(hover:hover) and (pointer:fine){
+ body .archive .hotspot:hover span,
+ body .archive .surface-toggle:hover::after,
+ body .archive .light-toggle:hover::after{transition-delay:0s!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+ body.test-render-media :is(.tr-caption,.tr-archive-cta,#cinemaDialogue),
+ body.test-render-media #storyIndexBar::before,
+ body .archive :is(.hotspot,.surface-toggle,.panel-toggle i,.inspection-hint,.hotspot span),
+ body .archive .surface-toggle::after,
+ body .archive .light-toggle::after,
+ body .archive .global-hotspot-set .inspection-tools>.light-toggle,
+ body .wrap :is(.back-link,.social-link,.gallery-trigger svg,.experience-path strong,.production-trigger>span:first-child),
+ body .process-gallery[open]{transition:none!important;animation:none!important}
+}

@@ -22,30 +22,48 @@ export function framingBlend(elapsedSeconds, reducedMotion = false) {
   return reducedMotion ? 1 : 1 - Math.exp(-Math.max(0, Math.min(.1, elapsedSeconds)) / .22);
 }
 
-// Interpolate the complete camera orientation. Rebuilding lookAt from a changing
-// direction and a fixed up vector is singular over the back: one small orbit step
-// can roll the whole scan by half a turn. The quaternion path has no such pole.
+// Keep the same pixels per world unit when only the guide or a panel changes
+// the canvas height. An actual window-height change still scales the view.
+export function createViewportZoom(baseZoom=1){
+ let ratio=null;
+ return {
+  at(height,viewportHeight){
+   if(!(height>0&&viewportHeight>0))return baseZoom;
+   ratio??=height/viewportHeight;
+   return baseZoom*ratio*viewportHeight/height;
+  }
+ };
+}
+
+// YZX derives yaw and roll from screen-right, so looking straight down does not
+// exchange yaw with roll. All three angles share one continuous progress value:
+// no intermediate viewpoints, stops, fade, or separate turn-and-tilt phases.
 export function createFramingTransition(THREE, position, target, {quaternion,up=new THREE.Vector3(0,1,0)}={}) {
  const origin=target.clone(),radius=position.distanceTo(target),initialUp=up.clone();
  const orientation=quaternion?.clone()??new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().lookAt(position,target,initialUp));
  const destinationOrientation=new THREE.Quaternion(),rotationMatrix=new THREE.Matrix4();
  const cameraBack=new THREE.Vector3(0,0,1),cameraUp=new THREE.Vector3(0,1,0);
+ const initialAngles=new THREE.Euler().setFromQuaternion(orientation,'YZX');
+ const unwrap=(from,to)=>Math.atan2(Math.sin(to-from),Math.cos(to-from));
  const maxAngularSpeed=THREE.MathUtils.degToRad(95);
  let elapsed=0;
  return {
   sample(goal, seconds, reducedMotion=false) {
    const distance=goal.position.distanceTo(goal.target);
    destinationOrientation.setFromRotationMatrix(rotationMatrix.lookAt(goal.position,goal.target,goal.up??initialUp));
-   const angle=orientation.angleTo(destinationOrientation);
+   const destinationAngles=new THREE.Euler().setFromQuaternion(destinationOrientation,'YZX');
+   const delta=['x','y','z'].map(axis=>unwrap(initialAngles[axis],destinationAngles[axis]));
+   const angle=Math.hypot(...delta);
    // Quintic easing peaks at 1.875 times the average speed. Large orientation
    // changes therefore get the time they need; neighbouring close-ups stay quick.
    const duration=Math.max(.9,1.875*angle/maxAngularSpeed);
    elapsed+=Math.max(0,Math.min(.1,seconds));
    const progress=reducedMotion?1:Math.min(1,elapsed/duration);
    const eased=progress*progress*progress*(progress*(progress*6-15)+10);
-   const nextOrientation=orientation.clone().slerp(destinationOrientation,eased);
+   const nextOrientation=progress===1?destinationOrientation.clone():new THREE.Quaternion().setFromEuler(new THREE.Euler(initialAngles.x+delta[0]*eased,initialAngles.y+delta[1]*eased,initialAngles.z+delta[2]*eased,'YZX'));
    const nextTarget=origin.clone().lerp(goal.target,eased);
-   const nextPosition=cameraBack.clone().applyQuaternion(nextOrientation).multiplyScalar(radius+(distance-radius)*eased).add(nextTarget);
+   const nextRadius=radius+(distance-radius)*eased;
+   const nextPosition=cameraBack.clone().applyQuaternion(nextOrientation).multiplyScalar(nextRadius).add(nextTarget);
    if(progress===1)nextPosition.copy(goal.position);
    return {position:nextPosition,target:nextTarget,quaternion:nextOrientation,up:cameraUp.clone().applyQuaternion(nextOrientation),done:progress===1};
   }

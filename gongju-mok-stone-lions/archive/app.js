@@ -1,20 +1,20 @@
-import {levelScan,createInspectionFraming} from './scan-framing.js?v=requested-fixes-20261028-v7';
-import {createViewportBuffer,createFramingTransition} from './viewer-motion.js?v=requested-fixes-20261028-v8';
+import {levelScan,createInspectionFraming} from './scan-framing.js?v=requested-fixes-20261028-v12';
+import {createViewportBuffer,createFramingTransition,createViewportZoom} from './viewer-motion.js?v=requested-fixes-20261028-v13';
 import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=requested-fixes-20261028-v8';
-import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=requested-fixes-20261028-v7';
+import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=requested-fixes-20261028-v11';
 import {createNormalMapView} from './normal-map-view.js?v=review-final-20261028-v6';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-import { measurements } from './measurements.js?v=original-panel-info-20261028-v3';
+import { measurements, overallMeasurements, originalNotation } from './measurements.js?v=requested-fixes-20261028-v11';
 
 const decoder = new DRACOLoader().setDecoderPath('./vendor/draco/').setWorkerLimit(1);
 const loader = new GLTFLoader().setDRACOLoader(decoder);
 const returnLink = document.querySelector('[data-story-return]');
 const nativePage = new URLSearchParams(location.search).get('native');
 const isBlender = ['blender-test', 'play', 'review'].includes(nativePage);
-returnLink.href = isBlender ? '../blender-test/?start=intro' : '../?start=intro';
+returnLink.href = isBlender ? '../blender-test/?start=main' : '../?start=main';
 
 let overviewSyncPending=false;
 function synchronizeOverview(){
@@ -69,6 +69,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   const inspectionLight=createInspectionLight(key,element,()=>{dirty=true;});
   let resizePending = true, lastFrameAt = performance.now();
   const viewportBuffer=createViewportBuffer();
+  const viewportZoom=createViewportZoom(displayZoom);
   const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
   // Wheel zoom updates synchronously inside OrbitControls, before the next RAF.
   controls.addEventListener('change',()=>{dirty=true;});
@@ -77,18 +78,31 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   const normalMap=createNormalMapView(THREE,{element,textureUrl:`assets/${sex}-normal-map.webp`,redraw:()=>{dirty=true;}});
   const framing=createInspectionFraming(THREE,{camera,controls,element});
   renderer.domElement.style.cursor="grab";
+  function updateProjection(r){
+    camera.aspect=r.width/r.height;camera.zoom=viewportZoom.at(r.height,innerHeight);camera.updateProjectionMatrix();
+    renderCamera.aspect=camera.aspect;renderCamera.zoom=camera.zoom;renderCamera.updateProjectionMatrix();
+    element.dataset.projectionZoom=camera.zoom.toFixed(4);
+  }
   const frame = now => {
     const r = element.getBoundingClientRect();
     if (!r.width || !r.height) return;
-    camera.aspect=r.width/r.height;camera.updateProjectionMatrix();
-    renderCamera.aspect=camera.aspect;renderCamera.updateProjectionMatrix();
+    updateProjection(r);
     viewportBuffer.request(r.width,r.height,now);
     // A newly bound model still needs fitting when its viewport size is unchanged.
     goal=framing.resize(r,goal)||null;dirty=true;synchronizeOverview();
   };
   // ResizeObserver runs after animation callbacks. Defer buffer changes so that
   // resizing and drawing happen together, before the browser paints the canvas.
-  new ResizeObserver(()=>{resizePending=true;}).observe(element);
+  new ResizeObserver(()=>{
+    resizePending=true;
+    const r=element.getBoundingClientRect();
+    if(ready&&r.width>0&&r.height>0){
+      updateProjection(r);
+      // Layout is already committed here. Compensate its CSS enlargement in
+      // the same paint; the buffer and fitted destination settle in the RAF.
+      renderer.render(scene,renderCamera);
+    }
+  }).observe(element);
   new MutationObserver(()=>{resizePending=true;}).observe(document.documentElement,{attributes:true,attributeFilter:['data-archive-overview']});
   const loaded = loader.loadAsync(modelUrl, event => {
     loading.textContent = event.total ? `Loading... ${Math.min(100,Math.round(event.loaded/event.total*100))}%` : 'Loading...';
@@ -162,7 +176,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
       dirty=false;
     }
   }
-  animate();return {focus,loaded,snapshot(){renderer.render(scene,renderCamera);const copy=document.createElement('canvas');copy.width=renderer.domElement.width;copy.height=renderer.domElement.height;copy.getContext('2d').drawImage(renderer.domElement,0,0);return copy;},setColor(value){normalMap.setEnabled(false);surface.setColor(value);},setNormalMap:normalMap.setEnabled,setLightEnabled:inspectionLight.setEnabled,setLightAngle:inspectionLight.setAngle,framingHeight:framing.naturalFramingHeight,setFramingHeight(height){if(framing.setFramingHeight(height))resizePending=true;}};
+  animate();return {focus,loaded,snapshot(){renderer.render(scene,renderCamera);const copy=document.createElement('canvas');copy.width=renderer.domElement.width;copy.height=renderer.domElement.height;copy.getContext('2d').drawImage(renderer.domElement,0,0);return copy;},setColor(value){normalMap.setEnabled(false);surface.setColor(value);},setNormalMap:normalMap.setEnabled,setLightEnabled:inspectionLight.setEnabled,setLightAngle:inspectionLight.setAngle,getLightAngle:inspectionLight.getAngle,framingHeight:framing.naturalFramingHeight,setFramingHeight(height){if(framing.setFramingHeight(height))resizePending=true;}};
 }
 const viewers = {
  male:createViewer({element:document.querySelector('#male-scene'),loading:document.querySelector('#male-loading'),modelUrl:'models/male-continuous.glb',targetSize:1.83,yaw:-3.902609*Math.PI/180}),
@@ -176,24 +190,38 @@ const detail = document.querySelector('.detail-card');
 const overviewCaption = new Map(['.detail-kicker','h3','.detail-copy','.detail-status'].map(selector=>[selector,detail.querySelector(selector).textContent]));
 let selectedObservation = null;
 const panels = [...document.querySelectorAll('.info-panel')];
-const overallPanels = new Map(panels.map(panel => [panel, {kicker:panel.querySelector('.panel-kicker').textContent, subtitle:panel.querySelector('.panel-subtitle').textContent, rows:panel.querySelector('.object-size-list').innerHTML, source:panel.querySelector('.panel-note').textContent}]));
+function renderMeasurementRows(list, rows, column) {
+ list.replaceChildren();
+ list.scrollTop=0;
+ rows.forEach(row => {
+  if (row[column] == null) return;
+  const item=document.createElement('div'), term=document.createElement('dt'), value=document.createElement('dd');
+  term.textContent=row[0]; value.textContent=row[column];
+  if (originalNotation[column===2?'male':'female'].includes(row[0])) {
+   const notation=document.createElement('small'); notation.textContent=' (원문 표기)'; value.append(notation);
+  }
+  item.append(term,value); list.append(item);
+ });
+}
+const overallPanels = new Map(panels.map(panel => {
+ const name=panel.dataset.side==='left'?'수사자':'암사자';
+ panel.querySelector('h2').textContent=`크기 정보 / ${name}`;
+ renderMeasurementRows(panel.querySelector('.object-size-list'),overallMeasurements,panel.dataset.side==='left'?2:1);
+ return [panel, {name,kicker:panel.querySelector('.panel-kicker').textContent, subtitle:panel.querySelector('.panel-subtitle').textContent, source:panel.querySelector('.panel-note').textContent}];
+}));
 function updatePanelContent(index) {
  panels.forEach(panel => {
-  const kicker=panel.querySelector('.panel-kicker'), subtitle=panel.querySelector('.panel-subtitle'), list=panel.querySelector('.object-size-list'), source=panel.querySelector('.panel-note');
-  if (index === null) { const initial=overallPanels.get(panel); kicker.textContent=initial.kicker; subtitle.textContent=initial.subtitle; list.innerHTML=initial.rows; source.textContent=initial.source; panel.querySelector('.panel-content').scrollTop=0; return; }
+  const kicker=panel.querySelector('.panel-kicker'), title=panel.querySelector('h2'), subtitle=panel.querySelector('.panel-subtitle'), list=panel.querySelector('.object-size-list'), source=panel.querySelector('.panel-note');
+  if (index === null) { const initial=overallPanels.get(panel); title.textContent=`크기 정보 / ${initial.name}`; kicker.textContent=initial.kicker; subtitle.textContent=initial.subtitle; renderMeasurementRows(list,overallMeasurements,panel.dataset.side==='left'?2:1); source.textContent=initial.source; panel.querySelector('.panel-content').scrollTop=0; return; }
   const note=measurements[index], column=panel.dataset.side==='left'?2:1;
+  title.textContent=`${String(index+1).padStart(2,'0')} ${note.label} / ${overallPanels.get(panel).name}`;
   kicker.textContent=`${overallPanels.get(panel).kicker} · ${String(index+1).padStart(2,'0')} ${note.label}`;
-  subtitle.textContent=note.label; list.replaceChildren();
-  note.rows.forEach(row => {
-   if (row[column] == null) return;
-   const item=document.createElement('div'), term=document.createElement('dt'), value=document.createElement('dd');
-   term.textContent=row[0]; value.textContent=row[column]; item.append(term,value); list.append(item);
-  });
+  subtitle.textContent=note.label; renderMeasurementRows(list,note.rows,column);
   panel.querySelector('.panel-content').scrollTop=0;
   source.textContent=sourceNote;
  });
 }
-const sourceNote = '출처 · 공주대학교 박물관 소장 (디지털 변환: 사자성어 팀)';
+const sourceNote = '소장 · 공주대학교 박물관 / 측정 기록 · 사자성어 팀';
 const descriptions = [
  '스캔 데이터를 통해 정수리 부분의 곱슬거리는 털 표현의 미세한 음각 양각을 입체적으로 관찰할 수 있습니다.',
  '마모되어 두드러지지 않던 입과 수염 자국의 굴곡이 스캔 데이터를 통해 뚜렷하게 드러납니다.',

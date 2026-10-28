@@ -1,5 +1,7 @@
 import {approachState,shouldStartApproach} from './dialogue-approach.js?v=arrival-20261020-v27';
 import {createAdaptiveNavPaper} from './adaptive-nav-paper.js?v=frame-paced-scroll-20261026';
+import {createAdaptiveIcons} from './adaptive-icons.js?v=fullscreen-menu-tone-20261028';
+import {UI_MOTION_SECONDS,uiMotionEase} from './ui-motion.js?v=ui-motion-1s';
 import {createQuietAmbience} from './quiet-ambience.js?v=ending-clock-20261028';
 import {continuousScrollRate,createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop,manualScrollHoldTime,boundedManualTarget} from './scroll-motion.js?v=scroll-cadence-20261026';
 import {createFootageFog} from './footage-fog.js?v=edge-dissolve-20261019-v24';
@@ -23,9 +25,10 @@ import {uiPreview} from './ui-preview.js?v=requested-fixes-20261028-v7';
 const replacementOpening=document.body.dataset.mediaProfile==='selected-higgsfield';
 const reviewWindow=document.body.dataset.reviewWindow==='true';
 const embeddedStory=new URLSearchParams(location.search).get('embed')==='story';
+const directStoryStart=!embeddedStory&&new URLSearchParams(location.search).get('start')==='main';
 const entryGate=document.body.hasAttribute('data-intro-entry');
-// A fresh intro URL resets the scene, but still waits for the visitor's entry click.
-let entryAccepted=!entryGate,entryFontsReady=!entryGate;
+// Fresh visits keep the invitation; Index returns open the same first cover.
+let entryAccepted=!entryGate||directStoryStart,entryFontsReady=!entryGate;
 if(entryGate)document.fonts.ready.then(()=>{entryFontsReady=true;});
 const walkingInput=createWalkingInput({oneStepPerGesture:replacementOpening});
 let walkingRate=0,walkingDirection=1,reverseElapsed=0;
@@ -48,12 +51,13 @@ if(embeddedStory){
 const PAPER=PAPER_CSS;
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
 const manifestURL=new URL(document.body.dataset.mediaManifest||'./test-render/manifest.json?v=rolling-fog-common-walk-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
-const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=requested-fixes-20261028-v7',import.meta.url).href;document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=fullscreen-entry-20261028',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
 const footageFog=createFootageFog({stage,world:canvas,mist,subtle:replacementOpening});
 stage.style.setProperty('--nav-paper','0');
 const adaptiveNavPaper=createAdaptiveNavPaper(stage,canvas,$('storyIndexBar'));
+const adaptiveIcons=createAdaptiveIcons(canvas,['fullscreenToggle','soundToggle','projectMenuToggle','projectAbout','projectVr','projectQr'].map($),{colorSources:{fullscreenToggle:'projectMenuToggle'}});
 // Opacity follows video time directly; a CSS transition here carries the old
 // title opacity into the narration and produces a visible dip/flash at the swap.
 const caption=document.createElement('p');caption.className='tr-caption';caption.hidden=true;caption.style.transition='none';stage.append(caption);
@@ -496,8 +500,8 @@ function updateStoryNavigation(dt=0){
  // The invitation owns the screen until Enter is accepted and the scene opens.
  if(entryGate){
   const entryOpening=entryAccepted&&!['loading','gap'].includes(document.body.dataset.startup);
-  entryNavReveal=!entryOpening?0:entryNavReducedMotion.matches?1:Math.min(1,entryNavReveal+dt/.7);
-  navOpacity*=ease(entryNavReveal);
+  entryNavReveal=!entryOpening?0:entryNavReducedMotion.matches?1:Math.min(1,entryNavReveal+dt/UI_MOTION_SECONDS);
+  navOpacity*=uiMotionEase(entryNavReveal);
  }
  const opacity=String(navOpacity),hidden=navOpacity<.005,inert=navOpacity<.35;
  if(stage.style.getPropertyValue('--story-nav-opacity')!==opacity)stage.style.setProperty('--story-nav-opacity',opacity);
@@ -541,7 +545,7 @@ function frame(now){
     status('');loadingHiddenAt=now;t.elapsed=0;
     if(entryGate&&!entryAccepted){
      t.phase='entry';document.body.dataset.startup='entry';entryScreen.start();
-    }else{t.phase='gap';document.body.dataset.startup='gap';}
+    }else{if(directStoryStart&&entryGate)document.body.dataset.introEntry='cover';t.phase='gap';document.body.dataset.startup='gap';}
    }
   }else if(t.phase==='entry'){
    if(t.record.error){entryScreen.reset();t.phase='loading';t.elapsed=0;document.body.dataset.startup='loading';status(t.record.error,true);}
@@ -699,6 +703,7 @@ function frame(now){
  if($('reviewReadout'))$('reviewReadout').textContent=`${Math.max(0,index)+1} / ${scenes.length} · ${local.toFixed(1)} / ${duration(index).toFixed(1)}초`;
  updateStoryNavigation(dt);
  adaptiveNavPaper.tick(now,dt,hasFrame,{visible:!embeddedStory&&navOpacity>.005,frameKey:canvasPaints});
+ adaptiveIcons.tick(now,dt,hasFrame,{visible:!embeddedStory,frameKey:canvasPaints,paperCover:Number(endingPaper.style.opacity)||0});
  footageFog.tick(now,paused||document.hidden);
  const musicScene=scenes[index],musicVoice=voices.proof();
  const journey=journeyStarted();if(document.body.dataset.journeyStarted!==String(journey))document.body.dataset.journeyStarted=String(journey);
@@ -737,7 +742,7 @@ try{
  for(const s of scenes){if(!['scroll','auto','dialogue'].includes(s.mode))throw Error('장면 모드 확인: '+s.id);if(s.mode==='dialogue'&&(!Number.isInteger(s.speaker)||s.speaker<0||s.speaker>4))throw Error('대사 인물 확인: '+s.id);}
  lengths=scenes.map(s=>s.mode==='dialogue'?voices.sceneDuration(s.speaker):Math.max(.1,Number(s.duration)||Number(s.sourceDuration)||6));total=lengths.reduce((a,b)=>a+b,0);
  if($('chapter'))$('chapter').replaceChildren(...scenes.map((s,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=s.label||s.id;return o;}));
- const freshIntro=entryGate||new URLSearchParams(location.search).get('start')==='intro';
+ const freshIntro=entryGate||['intro','main'].includes(new URLSearchParams(location.search).get('start'));
  let saved=null;try{if(!embeddedStory&&!uiPreview){if(!freshIntro)saved=JSON.parse(sessionStorage.getItem('test-render-resume'));sessionStorage.removeItem('test-render-resume');if(freshIntro)sessionStorage.removeItem('ink-pilot-return');}}catch{}
  if(pendingIntroEntry&&scenes[0].playOnScroll){requestScene(0);transition.record.autoStarted=true;transition.record.autoRate=1;pendingIntroEntry=false;}
  else if(pendingIntroEntry&&scenes[0].enterOnScroll&&scenes.length>1){pendingIntroEntry=false;requestScene(1);} 
