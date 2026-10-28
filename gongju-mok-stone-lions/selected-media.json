@@ -174,7 +174,7 @@
       "scrollRateResponse": 0.14,
       "dialogueApproach": {
         "start": 13.1,
-        "fadeFrom": 14.2,
+        "fadeFrom": 13.7,
         "end": 15.5,
         "cruiseRate": 0.7,
         "arrivalRate": 0.44
@@ -739,7 +739,7 @@
     {
       "id": "cook-trio-approach",
       "label": "주민 삼총사에게 다가가기",
-      "src": "./media/v18/cook-trio-approach-approved-20261029.mp4",
+      "src": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261026_055619_f6a46e43-e7a7-4f81-89b0-1e0baf17a3ae.mp4",
       "duration": 5.041666666666667,
       "sourceDuration": 5.041666666666667,
       "sourceFrames": 121,
@@ -778,19 +778,19 @@
       },
       "provenance": {
         "provider": "Higgsfield",
-        "model": "FLUX 3 Video Edit",
-        "generationId": "75136ec2-e74f-4d1b-8e8a-048da5b043b0",
-        "selection": "Exact full video explicitly selected by the user on 2026-10-29 via https://higgsfield.ai/s/vgmu3ogdQvM",
+        "model": "Seedance 2.5",
+        "generationId": "f6a46e43-e7a7-4f81-89b0-1e0baf17a3ae",
+        "selection": "Original version explicitly selected by the user on 2026-10-29 via https://higgsfield.ai/s/OnrKUG3I_sM",
         "nativeDimensions": [
-          1248,
-          704
+          1920,
+          1080
         ],
-        "delivery": "Unmodified original download, 121 frames at 24fps. All frames including both endpoints are the selected FLUX result; no mixing with the previous Seedance endpoints, no color correction, upscaling, interpolation or re-encoding. Existing framing and dialogue approach timing retained.",
-        "originalUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261026_094249_75136ec2-e74f-4d1b-8e8a-048da5b043b0.mp4",
-        "shareUrl": "https://higgsfield.ai/s/vgmu3ogdQvM",
-        "deliverySha256": "fe318c0de4358f5c3607e242fca0668eba629f731eba4536efcf9bd789246298",
+        "delivery": "Unmodified original source, full 121 frames at 24 fps. Existing framing and approach timing retained.",
+        "originalUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261026_055619_f6a46e43-e7a7-4f81-89b0-1e0baf17a3ae.mp4",
+        "shareUrl": "https://higgsfield.ai/s/OnrKUG3I_sM",
+        "deliverySha256": "5a81376c6a01ef60972dc34fce49b71e46c942fe81b509e37f8ffe2ce4e25163",
         "replacementCreditsUsed": 0,
-        "supersedes": "media/v18/cook-trio-approach-matched.mp4 — composite with prior Seedance endpoints"
+        "supersedes": "75136ec2-e74f-4d1b-8e8a-048da5b043b0"
       },
       "connectionLook": [
         {
