@@ -240,6 +240,19 @@ const descriptions = [
  '육안으로 확인하기 힘들었던 얼굴 윤곽과 이목구비 조형 표현이 스캔 데이터로 선명하게 시각화됩니다.',
  '암수사자의 얼굴 크기 차이가 비교되고, 눈매의 차이가 스캔 데이터를 통해 선명하게 확인됩니다.'
 ];
+const compactDescriptions = [
+ '정수리의 곱슬거리는 갈기와 음각·양각을 비교합니다.',
+ '입 주변 수염 자국의 개수·길이·굴곡을 비교합니다.',
+ '목 뒤부터 등까지 이어지는 줄기의 방향과 반복을 살펴봅니다.',
+ '코·귀·입·이빨의 크기와 배치를 비교합니다.',
+ '얼굴의 크기와 눈꼬리 방향, 눈의 윤곽을 비교합니다.'
+];
+const compactObservationWindow=globalThis.matchMedia?.('(max-width:480px) and (max-height:540px) and (orientation:portrait)');
+function updateObservationCopy(){
+ if(selectedObservation===null)return;
+ detail.querySelector('.detail-copy').textContent=(compactObservationWindow?.matches?compactDescriptions:descriptions)[selectedObservation];
+}
+compactObservationWindow?.addEventListener('change',updateObservationCopy);
 function setPanelOpen(panel, open) {
  panel.classList.toggle('is-open', open);
  panel.querySelector('.panel-toggle').setAttribute('aria-expanded', String(open));
@@ -258,7 +271,7 @@ function showObservation(index, focus=false) {
  });
  detail.querySelector('.detail-kicker').textContent=`${point} · 두 개체 공통 시점`;
  detail.querySelector('h3').textContent=note.label;
- detail.querySelector('.detail-copy').textContent=descriptions[index];
+ updateObservationCopy();
  detail.querySelector('.detail-status').textContent=sourceNote;
  detail.removeAttribute('aria-hidden');
  document.documentElement.dataset.archivePoint=point;

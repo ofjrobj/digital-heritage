@@ -7,7 +7,8 @@ import {measurements,overallMeasurements,originalNotation} from '../measurements
 // Run the actual DOM wiring without creating a WebGL renderer in Node.
 const source=await readFile(new URL('../app.js',import.meta.url),'utf8');
 const wiring=source.slice(source.indexOf('// Side panels follow'));
-function fixture(initialMaterial='color'){
+function fixture(initialMaterial='color',compact=false){
+ const media={matches:compact,addEventListener(type,handler){this[type]=handler;}};
  const node=(text='')=>({textContent:text,dataset:{},attrs:{},handlers:{},children:[],
   setAttribute(k,v){this.attrs[k]=v;},removeAttribute(k){delete this.attrs[k];},
   addEventListener(k,fn){this.handlers[k]=fn;},append(...items){this.children.push(...items);},replaceChildren(...items){this.children=items;},
@@ -33,8 +34,8 @@ function fixture(initialMaterial='color'){
   querySelectorAll:s=>s==='.hotspot'?buttons:s==='.info-panel'?panels:s==='.panel-toggle'?panels.map(p=>p.querySelector(s)):[]
  };
  const focuses={male:[],female:[]},materialChanges=[],materialState={mode:initialMaterial};
- vm.runInNewContext(wiring,{document,measurements,overallMeasurements,originalNotation,viewers:Object.fromEntries(Object.keys(focuses).map(sex=>[sex,{focus:index=>focuses[sex].push(index)}])),surfaceToggle:{setMode:mode=>{materialChanges.push(mode);materialState.mode=mode;}}});
- return {root,caption,fields,buttons,panels,focuses,materialChanges,materialState};
+ vm.runInNewContext(wiring,{document,measurements,overallMeasurements,originalNotation,matchMedia:()=>media,viewers:Object.fromEntries(Object.keys(focuses).map(sex=>[sex,{focus:index=>focuses[sex].push(index)}])),surfaceToggle:{setMode:mode=>{materialChanges.push(mode);materialState.mode=mode;}}});
+ return {root,caption,fields,buttons,panels,focuses,materialChanges,materialState,media};
 }
 
 test('all numbered selections and deselections preserve material and restore overview information',()=>{
@@ -97,4 +98,22 @@ test('rapid feature changes leave one matching selection and caption',()=>{
  assert.deepEqual(f.buttons.map(b=>b.attrs['aria-pressed']),['false','true','false','false','false']);
  assert.equal(f.fields.get('h3').textContent,'수염');
  assert.equal(f.focuses.male.at(-1),1);assert.equal(f.focuses.female.at(-1),1);
+});
+
+
+test('a short portrait window uses concise feature copy and restores full copy when resized',()=>{
+ const compact=fixture('relief',true),regular=fixture('relief');
+ for(let index=0;index<5;index++){
+  compact.buttons[index].handlers.click();regular.buttons[index].handlers.click();
+  const short=compact.fields.get('.detail-copy').textContent,full=regular.fields.get('.detail-copy').textContent;
+  assert.ok(short.length<full.length);
+  assert.ok(short.length<40,'the compact description fits a short two-line caption');
+  assert.equal(compact.fields.get('h3').textContent,measurements[index].label);
+  compact.media.matches=false;compact.media.change();
+  assert.equal(compact.fields.get('.detail-copy').textContent,full);
+  compact.media.matches=true;compact.media.change();
+  assert.equal(compact.fields.get('.detail-copy').textContent,short);
+  compact.buttons[index].handlers.click();regular.buttons[index].handlers.click();
+ }
+ assert.deepEqual(compact.materialChanges,[]);
 });

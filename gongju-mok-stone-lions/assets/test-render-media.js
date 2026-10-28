@@ -22,7 +22,7 @@ import {setPlaybackRate,holdPresentedFrame,reverseFrameStep,createPresentedFrame
 import {dialogueApproachGain,sceneArrivalDelay} from './dialogue-audio-flow.js?v=drag-arrival-audio-1';
 import {createIntroEntry} from './intro-entry.js?v=embedded-story-20261026';
 import {uiPreview} from './ui-preview.js?v=requested-fixes-20261028-v7';
-import {createStoryIndexTransition} from './story-index-transition.js?v=ready-index-20261029';
+import {createStoryIndexTransition} from './story-index-transition.js?v=reentry-fullscreen-20261029';
 const replacementOpening=document.body.dataset.mediaProfile==='selected-higgsfield';
 const reviewWindow=document.body.dataset.reviewWindow==='true';
 const embeddedStory=new URLSearchParams(location.search).get('embed')==='story';
@@ -338,7 +338,9 @@ function requestScene(i,at=0,quick=false){
  transition={soft,fromImage,precovered,blendDuration:precovered ? 1.0 : (from?.mode==='dialogue'||scenes[i]?.mode==='dialogue') ? 2.2 : .95,briefPaper:from?.mode==='dialogue'||scenes[i]?.mode==='dialogue',fromDialogue:from?.mode==='dialogue',from:from?.id,to:i,at:clamp(at,0,duration(i)),record:preparedScene(i,at),phase:soft?'blend-wait':storyStarted?'in':'loading',initial:!storyStarted,elapsed:0,fade,reveal:storyStarted?timing.reveal:fade,hold:timing.hold};footageFog.start(!transition.initial&&transition.fade>0);status('Loading...');
 }
 function remember(){if(embeddedStory||uiPreview)return;footageFog.stop();sceneLife?.stop();seasonAmbience?.stop();quietAmbience?.stop();footsteps.stop();videos.forEach(v=>v.pause());voiceEnabled(false);music.pause();sessionStorage.setItem('test-render-resume',JSON.stringify({index,local}));sessionStorage.setItem('ink-pilot-return',location.pathname.endsWith('/test-render-clean.html')?'test-render-clean.html':'test-render.html');}
-document.addEventListener('fullscreen-navigation',()=>{paused=true;remember();});
+let fullscreenNavigationPaused=null;
+document.addEventListener('fullscreen-navigation',()=>{if(fullscreenNavigationPaused===null)fullscreenNavigationPaused=paused;paused=true;remember();});
+document.addEventListener('fullscreen-navigation-end',()=>{if(fullscreenNavigationPaused!==null){paused=fullscreenNavigationPaused;fullscreenNavigationPaused=null;}});
 if($('indexLink'))$('indexLink').onclick=e=>{
  remember();
  if(entryGate&&entryAccepted&&!journeyStarted()&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey){

@@ -36,9 +36,28 @@ export function createStoryIndexTransition({link, stage, prepare, getFrame, reme
   const historyKey = 'gongjuArchiveOverlay';
   const oldTitle = doc.title;
   const previousInert = new Map();
+  const connectedDocuments = new WeakSet();
   let shown = false, busy = false, timer = null;
   const duration = () => reduced.matches ? 0 : UI_MOTION_MS;
   const clearTimer = () => { if (timer !== null) win.clearTimeout(timer); timer = null; };
+  // The fullscreen host's capture handler must let this prepared transition run.
+  // Install the marker only when the controller exists, so a failed script keeps
+  // the ordinary link as its recovery route.
+  link.setAttribute('data-story-index-transition', 'true');
+
+  function connectFullscreenNavigation(frame) {
+    const child = frame.contentDocument;
+    if (!child?.addEventListener || connectedDocuments.has(child)) return;
+    connectedDocuments.add(child);
+    child.addEventListener('click', event => {
+      const anchor = event.target.closest?.('a[href]');
+      if (!doc.fullscreenElement || event.defaultPrevented || !anchor || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || anchor.target === '_blank' || anchor.hasAttribute('download')) return;
+      // A click inside an iframe does not bubble to the persistent fullscreen
+      // host. Ask its existing navigation handler to preserve that host on return.
+      const request = new win.CustomEvent('fullscreen-navigation-request', {detail: {href: anchor.href}, cancelable: true});
+      if (!doc.dispatchEvent(request)) { event.preventDefault(); event.stopImmediatePropagation(); }
+    }, true);
+  }
 
   function show(recordHistory) {
     const frame = getFrame();
@@ -55,6 +74,11 @@ export function createStoryIndexTransition({link, stage, prepare, getFrame, reme
     }
     frame.inert = false;
     frame.removeAttribute('aria-hidden');
+    // Restarting Story may have explicitly hidden this already-loaded iframe.
+    // The transition stylesheet owns its visibility when the CTA is used again.
+    frame.style.removeProperty('opacity');
+    frame.style.removeProperty('pointer-events');
+    connectFullscreenNavigation(frame);
     if (recordHistory) win.history.pushState({...win.history.state, [historyKey]: true}, '', link.href);
     doc.title = frame.contentDocument?.title || '봉황동 석사자 — 3D 아카이브';
     timer = win.setTimeout(() => {

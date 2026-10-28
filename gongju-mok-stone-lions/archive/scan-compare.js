@@ -15,6 +15,7 @@ const retry = status.querySelector('button');
 element.id = `${sex}-scene`;
 element.setAttribute('aria-label', `${name} 3D 모델`);
 document.title = `${name} 3D 모델 — 봉황동 석사자`;
+document.querySelector('.compare-help').textContent = `${name} · 드래그로 회전 · 휠 또는 두 손가락으로 확대`;
 retry.addEventListener('click', () => location.reload());
 
 function fail() {

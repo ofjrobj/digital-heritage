@@ -77,21 +77,33 @@
   if (doc === hostDoc && host === doc.documentElement && !doc.documentElement.dataset.fullscreenNavigationBound) {
    doc.documentElement.dataset.fullscreenNavigationBound = 'true';
    let navigationFrame = null, currentURL = null;
+   const navigationHistoryKey = 'gongjuFullscreenNavigation';
+   const previousInert = new Map();
+   let previousTitle = doc.title;
+   const closeNavigation = () => {
+    if (!navigationFrame) return;
+    navigationFrame.remove(); navigationFrame = null; currentURL = null;
+    for (const [child, inert] of previousInert) child.inert = inert;
+    previousInert.clear(); doc.title = previousTitle;
+    doc.dispatchEvent(new CustomEvent('fullscreen-navigation-end'));
+   };
    const navigate = url => {
     if (!navigationFrame) {
+     previousTitle = doc.title;
      doc.dispatchEvent(new CustomEvent('fullscreen-navigation'));
      navigationFrame = doc.createElement('iframe');
      navigationFrame.className = 'fullscreen-navigation'; navigationFrame.dataset.fullscreenHost = 'navigation';
      navigationFrame.title = '봉황동 석사자 전체 화면'; navigationFrame.allowFullscreen = true;
      navigationFrame.allow = 'fullscreen; autoplay';
      navigationFrame.style.cssText = 'position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;border:0;z-index:2147483646;background:#efefed';
-     for (const child of doc.body.children) child.inert = true;
+     for (const child of doc.body.children) { previousInert.set(child, child.inert); child.inert = true; }
      navigationFrame.addEventListener('load', () => {
       try {
        const next = navigationFrame.contentWindow.location.href;
        if (!next.startsWith(projectRoot.href)) return;
        currentURL = next;
-       doc.defaultView.history.replaceState(doc.defaultView.history.state, '', next);
+       doc.defaultView.history.replaceState({...doc.defaultView.history.state, [navigationHistoryKey]: next}, '', next);
+       doc.title = navigationFrame.contentDocument.title || previousTitle;
        install(navigationFrame.contentDocument, navigationFrame, true);
        navigationFrame.focus({preventScroll:true});
       } catch { /* Only same-origin project pages are managed by this host. */ }
@@ -103,10 +115,25 @@
    doc.addEventListener('click', event => {
     const link = event.target.closest?.('a[href]');
     if (!active() || !link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.hasAttribute('download') || link.target === '_blank') return;
+    if (link.hasAttribute('data-story-index-transition')) return;
     const url = new URL(link.href, doc.baseURI);
     if (!url.href.startsWith(projectRoot.href) || url.pathname === doc.location.pathname && url.search === doc.location.search) return;
     event.preventDefault(); event.stopImmediatePropagation(); navigate(url);
    }, true);
+   doc.addEventListener('fullscreen-navigation-request', event => {
+    if (!active() || !event.detail?.href) return;
+    let url;
+    try { url = new URL(event.detail.href, doc.baseURI); } catch { return; }
+    if (!url.href.startsWith(projectRoot.href)) return;
+    event.preventDefault(); navigate(url);
+   });
+   view.addEventListener('popstate', event => {
+    const href = event.state?.[navigationHistoryKey];
+    if (typeof href === 'string' && href.startsWith(projectRoot.href)) {
+     if (active()) navigate(new URL(href));
+     else view.location.replace(href);
+    } else closeNavigation();
+   });
    hostDoc.addEventListener('fullscreenchange', () => {
     if (!hostDoc.fullscreenElement && navigationFrame && currentURL) doc.defaultView.location.replace(currentURL);
    });
