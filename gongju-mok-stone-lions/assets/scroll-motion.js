@@ -100,7 +100,9 @@ export function continuousScrollRate(gap,dt,previous,scene={},remaining=Infinity
  const arrival=Number(scene.scrollArrivalRate)||.48;
  const zone=Number(scene.scrollArrivalZone)||2.4;
  const u=Math.max(0,Math.min(1,1-remaining/zone));
- const cap=cruise+(arrival-cruise)*u*u*(3-2*u);
+ const configuredMax=Number(scene.maxPlaybackRate);
+ const maximum=Number.isFinite(configuredMax)&&configuredMax>0?configuredMax:Infinity;
+ const cap=Math.min(maximum,cruise+(arrival-cruise)*u*u*(3-2*u));
  const braking=Number(scene.scrollBraking)||.65;
  const desired=Math.min(cap,Math.sqrt(2*braking*Math.max(0,gap-.012)),gap/.24);
  const response=desired<previous?.16:(Number(scene.scrollRateResponse)||.24);

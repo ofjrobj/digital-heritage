@@ -46,6 +46,7 @@ export function createFramingTransition(THREE, position, target, {quaternion,up=
  const initialAngles=new THREE.Euler().setFromQuaternion(orientation,'YZX');
  const unwrap=(from,to)=>Math.atan2(Math.sin(to-from),Math.cos(to-from));
  const maxAngularSpeed=THREE.MathUtils.degToRad(95);
+ const maxRelativeZoomSpeed=1.4;
  let elapsed=0;
  return {
   sample(goal, seconds, reducedMotion=false) {
@@ -56,7 +57,8 @@ export function createFramingTransition(THREE, position, target, {quaternion,up=
    const angle=Math.hypot(...delta);
    // Quintic easing peaks at 1.875 times the average speed. Large orientation
    // changes therefore get the time they need; neighbouring close-ups stay quick.
-   const duration=Math.max(.9,1.875*angle/maxAngularSpeed);
+   const zoomTravel=Math.abs(Math.log(Math.max(.001,distance)/Math.max(.001,radius)));
+   const duration=Math.max(.9,1.875*angle/maxAngularSpeed,1.875*zoomTravel/maxRelativeZoomSpeed);
    elapsed+=Math.max(0,Math.min(.1,seconds));
    const progress=reducedMotion?1:Math.min(1,elapsed/duration);
    const eased=progress*progress*progress*(progress*(progress*6-15)+10);

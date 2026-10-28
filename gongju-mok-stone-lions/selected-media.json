@@ -4,7 +4,7 @@
     {
       "id": "intro",
       "label": "사자 일러스트 → 먹 번짐 → 산과 안개 → 마을 입구",
-      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/3f627a03-a493-4006-be59-4ef37654b8a6.mp4",
+      "src": "./media/v23/intro-mountain-rush.mp4",
       "duration": 19.433333333333334,
       "mode": "scroll",
       "caption": "돌에 새긴 선, 풍경이 되다",
@@ -21,24 +21,15 @@
           1920,
           1080
         ],
-        "delivery": "Motion-compensated interpolation to 1080p60 from the approved opening. 94 repeated cadence frames were omitted while retaining original source timestamps; adaptive bidirectional optical-flow interpolation fills the intermediate frames. The existing speed ramp, visible duration, composition and separate audio timing are unchanged.",
-        "deliverySha256": "94334494ddc6f04a62ff15f1ca98533e7c928ab4ee93192ec284085857b37a05",
-        "paperColor": "#E8E8E6",
-        "interpolation": {
-          "source": "media/v23/intro-mountain-rush.mp4",
-          "sourceSha256": "001746587660b767a72ff46bd455ddc0e51ac11e633d21dfd489471730abe25c",
-          "sourceFps": 30,
-          "sourceFrames": 600,
-          "outputFps": 60,
-          "method": "FFmpeg minterpolate mci/aobmc/bidir/vsbmc, source PTS preserved",
-          "approvedVisibleDuration": 19.433333333333334
-        }
+        "delivery": "Author-approved 1920x1080 30fps mountain speed ramp from the existing v23 delivery. Original source frames are decoded at 1x; no optical-flow interpolation or newly synthesized frames. The 19.433-second visible edit, composition and separate audio timing are unchanged.",
+        "deliverySha256": "001746587660b767a72ff46bd455ddc0e51ac11e633d21dfd489471730abe25c",
+        "paperColor": "#E8E8E6"
       },
       "footsteps": false,
-      "sourceDuration": 19.95,
+      "sourceDuration": 20,
       "ambience": "",
-      "sourceFrames": 1197,
-      "fps": 60,
+      "sourceFrames": 600,
+      "fps": 30,
       "clipIn": 0,
       "nativeAudio": false,
       "playOnScroll": true,
@@ -176,7 +167,7 @@
         15.9
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
-      "scrollCruiseRate": 1.5,
+      "scrollCruiseRate": 1,
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
       "scrollBraking": 1.4,
@@ -343,7 +334,7 @@
         12
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
-      "scrollCruiseRate": 1.5,
+      "scrollCruiseRate": 1,
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
       "scrollBraking": 1.4,
@@ -525,7 +516,7 @@
         13.966667
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
-      "scrollCruiseRate": 1.5,
+      "scrollCruiseRate": 1,
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
       "scrollBraking": 1.4,
@@ -692,7 +683,7 @@
         4.916666666666667
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
-      "scrollCruiseRate": 1.5,
+      "scrollCruiseRate": 1,
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
       "scrollBraking": 1.4,
@@ -748,7 +739,7 @@
     {
       "id": "cook-trio-approach",
       "label": "주민 삼총사에게 다가가기",
-      "src": "./media/v18/cook-trio-approach-matched.mp4",
+      "src": "./media/v18/cook-trio-approach-approved-20261029.mp4",
       "duration": 5.041666666666667,
       "sourceDuration": 5.041666666666667,
       "sourceFrames": 121,
@@ -762,7 +753,7 @@
       "secondsPerScroll": 1.8,
       "scrollSteps": 3,
       "scrollPlayback": "continuous",
-      "scrollCruiseRate": 1.5,
+      "scrollCruiseRate": 1,
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 1.6,
       "scrollBraking": 1.4,
@@ -787,22 +778,19 @@
       },
       "provenance": {
         "provider": "Higgsfield",
-        "model": "Seedance 2.5",
-        "generationId": "f6a46e43-e7a7-4f81-89b0-1e0baf17a3ae",
-        "selection": "2026-10-26 replacement approach, guided by the existing turn endpoint and user-selected dialogue first frame",
+        "model": "FLUX 3 Video Edit",
+        "generationId": "75136ec2-e74f-4d1b-8e8a-048da5b043b0",
+        "selection": "Exact full video explicitly selected by the user on 2026-10-29 via https://higgsfield.ai/s/vgmu3ogdQvM",
         "nativeDimensions": [
-          1920,
-          1080
+          1248,
+          704
         ],
-        "delivery": "121 frames at 24fps, BT.709. Background continuity repair is registered and color matched to the original; first 0.45 seconds and last 0.5 seconds preserve the original endpoints. Existing framing and dialogue approach timing retained.",
-        "creditsUsed": 80,
-        "deliverySha256": "4bdfe4922509ad9d9d2af6e1209143dc1d7ea9a1bdb2cc2ceaf434a8040d5ec0",
-        "continuityRepair": {
-          "provider": "Higgsfield",
-          "model": "FLUX 3 Video Edit",
-          "creditsUsed": 5.05,
-          "scope": "Middle interval only; original endpoints, characters, timing and subsequent dialogue preserved"
-        }
+        "delivery": "Unmodified original download, 121 frames at 24fps. All frames including both endpoints are the selected FLUX result; no mixing with the previous Seedance endpoints, no color correction, upscaling, interpolation or re-encoding. Existing framing and dialogue approach timing retained.",
+        "originalUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261026_094249_75136ec2-e74f-4d1b-8e8a-048da5b043b0.mp4",
+        "shareUrl": "https://higgsfield.ai/s/vgmu3ogdQvM",
+        "deliverySha256": "fe318c0de4358f5c3607e242fca0668eba629f731eba4536efcf9bd789246298",
+        "replacementCreditsUsed": 0,
+        "supersedes": "media/v18/cook-trio-approach-matched.mp4 — composite with prior Seedance endpoints"
       },
       "connectionLook": [
         {
@@ -819,7 +807,8 @@
           "y": 0.005185185185185185,
           "brightness": 1
         }
-      ]
+      ],
+      "maxPlaybackRate": 1
     },
     {
       "id": "trio",
@@ -953,7 +942,7 @@
         12.041666666666666
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
-      "scrollCruiseRate": 1.35,
+      "scrollCruiseRate": 1,
       "scrollArrivalRate": 0.38,
       "scrollArrivalZone": 3.2,
       "scrollBraking": 1.4,
@@ -1117,21 +1106,11 @@
         14.033333333333333
       ],
       "stopSelection": "Reviewed source frames, selected within 0.46 seconds of each walking step; cut boundaries excluded",
-      "scrollCruiseRate": 1.5,
+      "scrollCruiseRate": 1,
       "scrollArrivalRate": 0.48,
       "scrollArrivalZone": 2.4,
       "scrollBraking": 1.4,
       "scrollRateResponse": 0.14,
-      "exitMatch": {
-        "target": "seasons",
-        "seconds": 1.1,
-        "scaleX": 1,
-        "scaleY": 1,
-        "offsetX": 0,
-        "offsetY": 0,
-        "blendStart": 0.3,
-        "alignmentFraction": 0.3
-      },
       "uniformInputDistance": true,
       "autoFrom": 10.75
     },
@@ -1139,7 +1118,7 @@
       "id": "seasons",
       "label": "석사자의 사계절과 현재",
       "src": "./media/v17/seasons.mp4",
-      "duration": 18.5,
+      "duration": 20,
       "fps": 30,
       "mode": "auto",
       "footsteps": false,
@@ -1156,7 +1135,7 @@
         ],
         "delivery": "Frame-exact scene extraction from supplied composite; H.264 CRF 17, half-second keyframes for smooth seeking; no regenerated frames",
         "deliverySha256": "3a3c921547d41e3346202a572f5634a6893b9ef4fcc1d343afedb1b46d138df8",
-        "runtimeTrim": "Start at source 1.5s (frame 45), after the baked opening dissolve with doubled lion outlines. The preceding arrival blends into this clean frame; both lions retain the source scale and position. The modern scene eases to 0.75x and plays through the final source frame. Only after playback ends, the last frame fades to paper over 6.5 seconds."
+        "runtimeTrim": "Play all 600 source frames from frame 0 at native 1x speed. The preceding arrival ends at source frame 420 and the seasons clip begins at source frame 421 of the same supplied composite; no runtime still-frame blend or opening trim. After the final source frame, fade to paper over 6.5 seconds."
       },
       "sourceDuration": 20,
       "motionBaked": true,
@@ -1164,25 +1143,13 @@
       "startDelay": 0,
       "transition": "none",
       "sourceFrames": 600,
-      "clipIn": 1.5,
+      "clipIn": 0,
       "nativeAudio": false,
       "endFadeSeconds": 0,
       "playbackCurve": [
         {
           "time": 0,
           "rate": 1
-        },
-        {
-          "time": 13.7,
-          "rate": 1
-        },
-        {
-          "time": 14.7,
-          "rate": 0.75
-        },
-        {
-          "time": 18.5,
-          "rate": 0.75
         }
       ]
     }

@@ -33,6 +33,12 @@
     .reference-item h3{margin:0 0 7px;font-size:18px;font-weight:400;line-height:1.5;letter-spacing:-.02em}
     .reference-item p{margin:0;font-size:14px;line-height:1.75;color:#62625a}
     .reference-item .reference-credit{margin-top:8px;font:12px/1.7 var(--story-sans,sans-serif);color:#77776c}
+    .reference-style-boards{display:grid;gap:28px}
+    .reference-style-boards figure{min-width:0;margin:0}
+    .reference-style-boards a{display:block}
+    .reference-style-boards img{display:block;width:100%;height:auto}
+    .reference-style-boards figcaption{margin-top:12px;font:300 13px/1.8 var(--story-sans,sans-serif);color:#77776c}
+    .reference-style-source{margin:20px 0 0;font:300 13px/1.8 var(--story-sans,sans-serif);color:#77776c}
     @media(max-width:760px){.reference-grid{gap:24px 12px}.reference-section-title{font-size:23px}.reference-collection{margin-bottom:44px}.reference-item h3{font-size:15px}.reference-item p{font-size:13px}.reference-item .reference-credit{font-size:12px}}
     @media(max-width:480px){.reference-grid{gap:20px 8px}.reference-page .reference-thumb{margin-bottom:9px}.reference-item h3{font-size:14px}.reference-item p{font-size:13px}.reference-item .reference-credit{font-size:12px}}
     .reference-ui-title{margin:36px 0 16px;font-size:22px;font-weight:300;line-height:1.6}
@@ -46,14 +52,14 @@
   <div class="wrap">
     <header class="top">
       <a class="brand" href="../?start=intro"><span class="brand-mark" aria-hidden="true">石</span><span>봉황동 석사자</span></a>
-      <a class="material-back" href="./#planning-reference">기획과 제작으로</a>
+      <a class="material-back" href="./#planning-reference">뒤로가기</a>
     </header>
     <main id="material">
       <header class="material-header">
         <p class="eyebrow">03 · REFERENCE &amp; MOOD</p>
         <h1>레퍼런스와 무드</h1>
       </header>
-      <nav class="reference-reading" aria-label="레퍼런스와 무드 목차"><a href="#experience-references-title">참고한 작품</a><a href="#color-title">색상</a><a href="#type-title">타이포그래피와 UI 디자인</a></nav>
+      <nav class="reference-reading" aria-label="레퍼런스와 무드 목차"><a href="#experience-references-title">참고한 작품</a><a href="#story-style-title">스토리 그림체</a><a href="#color-title">색상</a><a href="#type-title">타이포그래피와 UI 디자인</a></nav>
       <section class="reference-collection" aria-labelledby="experience-references-title">
         <h2 class="reference-section-title" id="experience-references-title">제작에 참고한 작품</h2>
         <ul class="reference-grid">
@@ -89,10 +95,23 @@
           </li>
         </ul>
       </section>
+      <section class="reference-collection" aria-labelledby="story-style-title">
+        <h2 class="reference-section-title" id="story-style-title">스토리 그림체</h2>
+        <div class="reference-style-boards">
+          <figure>
+            <a href="./assets/reference-story-style-board-01.webp" target="_blank" rel="noopener noreferrer" aria-label="팀 수집 그림체 레퍼런스 보드 01 크게 보기"><img src="./assets/reference-story-style-board-01.webp" width="2048" height="1012" alt="산수 풍경과 전통 건축, 유물과 화면 구성을 모은 팀의 그림체 참고 보드 첫 번째 부분" loading="lazy" decoding="async"></a>
+            <figcaption>팀 수집 그림체 레퍼런스 · 01</figcaption>
+          </figure>
+          <figure>
+            <a href="./assets/reference-story-style-board-02.webp" target="_blank" rel="noopener noreferrer" aria-label="팀 수집 그림체 레퍼런스 보드 02 크게 보기"><img src="./assets/reference-story-style-board-02.webp" width="2048" height="987" alt="먹의 농담과 담채풍 산수, 전통 건축과 인물 표현을 모은 팀의 그림체 참고 보드 두 번째 부분" loading="lazy" decoding="async"></a>
+            <figcaption>팀 수집 그림체 레퍼런스 · 02</figcaption>
+          </figure>
+        </div>
+        <p class="reference-style-source"><a href="https://pin.it/2vAX6Apnq" target="_blank" rel="noopener noreferrer">Pinterest 레퍼런스</a></p>
+      </section>
       <section class="mood-section" id="mood" aria-labelledby="color-title">
         <header><span class="number">COLOR</span><h2 id="color-title">절제된 색감</h2></header>
         <div class="mood-copy">
-          <p>유물의 형태가 잘 보이도록 밝은 바탕과 차분한 색을 골랐습니다.</p>
           <ul class="mood-palette" aria-label="공통 색상 팔레트">
             <li><span class="swatch swatch-base" aria-hidden="true"></span><strong>바탕</strong><span>#E8E8E6</span></li>
             <li><span class="swatch swatch-paper" aria-hidden="true"></span><strong>종이빛</strong><span>#FAFAF8</span></li>
@@ -125,7 +144,7 @@
       </section>
     </main>
     <footer class="material-footer">
-      <a href="./#planning-reference">기획과 제작으로 돌아가기</a>
+      <a href="./#planning-reference">뒤로가기</a>
       <p>© 2026 가치해석 1팀 사자성어</p>
     </footer>
   </div>

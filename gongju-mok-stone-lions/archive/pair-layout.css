@@ -464,9 +464,129 @@ html body .archive .info-panel{transition:transform var(--ui-motion-duration,1s)
  }
 }
 
-/* Keep the heading and provenance visible; only measured values may scroll. */
+/* The complete measurement list fits in the drawer without an inner scrollbar. */
 .archive .panel-content{display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.archive .panel-content .object-size-list{flex:1 1 auto;min-height:0;align-self:stretch;align-content:start;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scroll-padding-block:4px}
+.archive .panel-content .object-size-list{flex:0 0 auto;min-height:0;align-self:stretch;align-content:start;overflow:visible}
 .archive .panel-content .panel-note{flex:none;align-self:stretch}
 .archive .panel-content .object-size-list dd,
 .archive .panel-content .panel-note{font-family:var(--sans)}
+
+/* Keep the identity on the upper-left line at every window size. */
+.archive{
+ --archive-wordmark-top:var(--shared-nav-top);
+ --archive-wordmark-shift:0px;
+ --archive-wordmark-title-size:clamp(18px,min(2.1vw,3.4dvh),27px);
+ --archive-wordmark-caption-space:1.85;
+}
+.archive .wordmark{left:clamp(40px,7.5vw,96px);right:auto;top:var(--archive-wordmark-top);translate:none;transform:none;max-width:calc(100vw - 180px)}
+.archive .wordmark small{margin-top:.45em;white-space:nowrap}
+@media(max-width:760px){
+ body .archive #archiveStoryIndexBar{left:auto!important;right:clamp(18px,4vw,32px)!important;transform:none!important}
+ body .archive #archiveStoryIndexBar :is(a,button){padding-inline:.65em!important}
+}
+
+/* A restrained title identifies the current feature; values keep their own scale. */
+.archive .panel-content h2{font-family:var(--serif);font-size:clamp(16px,1.15em,20px);font-weight:300;line-height:1.4;color:#373734;letter-spacing:-.035em;white-space:normal;word-break:keep-all}
+.archive .panel-content .object-size-list:has(>div:nth-child(5)){
+ grid-template-columns:repeat(2,minmax(0,1fr));column-gap:14px;
+}
+.archive .panel-content .object-size-list div,
+.archive .panel-content .object-size-list:has(>div:nth-child(5)) div{padding-block:calc(.35em * var(--archive-panel-rhythm));gap:2px;justify-content:stretch}
+.archive .panel-content .object-size-list dt{letter-spacing:0;line-height:1.35}
+.archive .panel-content .object-size-list dd{font-size:clamp(14px,.95em,18px);line-height:1.4}
+.archive .panel-content .panel-note{margin-top:.8em;padding-top:.6em;line-height:1.45}
+
+/* Keep PAIR above the tools without changing the canvas bounds as light opens. */
+.archive .global-hotspot-set{top:calc(clamp(120px,20dvh,156px) + 14px)}
+.archive .global-hotspot-set>p{display:block;position:absolute;left:50%;bottom:100%;transform:translateX(-50%);width:max-content;margin:0 0 9px;font-size:clamp(9px,.7vw,11px)}
+@media(max-width:700px) and (orientation:portrait){.archive .global-hotspot-set{top:170px}}
+@media(max-height:440px) and (orientation:landscape){.archive .global-hotspot-set{top:90px}}
+
+/* A narrow open drawer shows its own sculpture in a separate, usable column. */
+@media(max-width:760px){
+ .archive:has(>.info-panel.is-open){--archive-panel-width:clamp(176px,42vw,260px);--archive-panel-top:max(100px,calc(var(--archive-header-bottom) + 20px))}
+ .archive:has(>.left-panel.is-open){--archive-reserved-left:calc(var(--archive-panel-width) + 14px);--archive-reserved-right:20px}
+ .archive:has(>.right-panel.is-open){--archive-reserved-left:20px;--archive-reserved-right:calc(var(--archive-panel-width) + 14px)}
+ .archive:has(>.info-panel.is-open) .object-stage{
+  grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);column-gap:0;
+  padding-left:var(--archive-reserved-left);padding-right:var(--archive-reserved-right);
+  padding-top:calc(var(--archive-header-bottom) + 154px);
+ }
+ .archive:has(>.left-panel.is-open) .female-card,
+ .archive:has(>.right-panel.is-open) .male-card,
+ .archive:has(>.info-panel.is-open) .detail-card{display:none}
+ .archive:has(>.left-panel.is-open) .male-card,
+ .archive:has(>.right-panel.is-open) .female-card{display:grid;visibility:visible;pointer-events:auto;grid-column:1;grid-row:1}
+ .archive:has(>.info-panel.is-open) .global-hotspot-set{
+  display:grid;grid-template-columns:repeat(3,var(--archive-control));gap:6px;
+  top:calc(var(--archive-header-bottom) + 18px);
+  left:calc(50% + (var(--archive-reserved-left) - var(--archive-reserved-right))/2);
+  width:max-content;transform:translateX(-50%);
+ }
+ .archive:has(>.info-panel.is-open) .global-hotspot-set>p{position:static;grid-column:1/-1;grid-row:1;justify-self:center;transform:none;margin:0 0 2px}
+ .archive:has(>.info-panel.is-open) .inspection-tools{display:contents}
+ .archive:has(>.info-panel.is-open) .inspection-tools>.surface-toggle{grid-column:1;grid-row:2;margin:0}
+ .archive:has(>.info-panel.is-open) .inspection-tools>.light-toggle{grid-column:2;grid-row:2;margin:0}
+ .archive:has(>.info-panel.is-open) .hotspot[data-point="01"]{grid-column:1;grid-row:3}
+ .archive:has(>.info-panel.is-open) .hotspot[data-point="02"]{grid-column:2;grid-row:3}
+ .archive:has(>.info-panel.is-open) .hotspot[data-point="03"]{grid-column:3;grid-row:3}
+ .archive:has(>.info-panel.is-open) .hotspot[data-point="04"]{grid-column:1;grid-row:4}
+ .archive:has(>.info-panel.is-open) .hotspot[data-point="05"]{grid-column:2;grid-row:4}
+ .archive .panel-content .panel-note{font-size:clamp(9px,1.6vw,11px)}
+ .archive .panel-content .object-size-list:has(>div:nth-child(5)){column-gap:8px}
+ .archive .panel-content{padding-top:10px;padding-bottom:10px}
+ .archive .left-panel .panel-content{padding-left:10px;padding-right:calc(var(--archive-tab-width) + 8px)}
+ .archive .right-panel .panel-content{padding-right:10px;padding-left:calc(var(--archive-tab-width) + 8px)}
+}
+@media(max-width:480px){
+ .archive .panel-content h2{font-size:16px}
+ .archive .panel-content .object-size-list dt{font-size:11px}
+ .archive .panel-content .object-size-list dd{font-size:14px}
+}
+@media(max-height:440px) and (orientation:landscape){
+ .archive .panel-content .object-size-list:has(>div:nth-child(5)){grid-template-columns:repeat(3,minmax(0,1fr))}
+ .archive .panel-content .object-size-list div{padding-block:2px}
+}
+
+/* Phone-width panes use the full scan width, with a compact sheet below it. */
+@media(max-width:480px) and (orientation:portrait){
+ .archive:has(>.info-panel.is-open){
+  --archive-panel-width:calc(100vw - 24px);
+  --archive-compact-panel-height:clamp(210px,34dvh,238px);
+  --archive-reserved-left:24px;--archive-reserved-right:24px;
+ }
+ .archive:has(>.info-panel.is-open) .info-panel:not(.is-open){visibility:hidden;pointer-events:none}
+ .archive .info-panel.is-open{
+  left:12px;right:12px;top:auto;bottom:max(12px,env(safe-area-inset-bottom,0px));
+  width:auto;max-width:none;height:var(--archive-compact-panel-height);transform:none;
+ }
+ .archive:has(>.info-panel.is-open) .object-stage{
+  padding-top:calc(var(--archive-header-bottom) + 70px);
+  padding-bottom:calc(var(--archive-compact-panel-height) + 30px);
+ }
+ .archive:has(>.info-panel.is-open) .global-hotspot-set{
+  display:flex;flex-direction:row!important;left:50%;top:calc(var(--archive-header-bottom) + 28px);gap:6px;
+ }
+ .archive:has(>.info-panel.is-open) .global-hotspot-set>p{
+  position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin:0 0 9px;
+ }
+ .archive:has(>.info-panel.is-open) .inspection-tools{display:flex;flex-direction:row;gap:0}
+ .archive:has(>.info-panel.is-open) .inspection-tools>.light-toggle{margin-top:0;margin-left:6px}
+ .archive:has(>.info-panel.is-open) .inspection-tools[data-light-visible=false]>.light-toggle{margin-left:0;max-width:0}
+ .archive .info-panel.is-open .panel-content{padding-block:8px}
+ .archive .info-panel.is-open .panel-content .object-size-list,
+ .archive .info-panel.is-open .panel-content .object-size-list:has(>div:nth-child(5)){
+  grid-template-columns:repeat(3,minmax(0,1fr));column-gap:8px;margin-top:6px;
+ }
+ .archive .info-panel.is-open .panel-content .object-size-list div,
+ .archive .info-panel.is-open .panel-content .object-size-list:has(>div:nth-child(5)) div{padding-block:2px}
+ .archive .info-panel.is-open .panel-content .object-size-list :is(dt,dd){line-height:1.2}
+ .archive .info-panel.is-open .panel-content .object-size-list dd small{font-size:.78em}
+ .archive .info-panel.is-open .panel-content .panel-note{font-size:10px;line-height:1.3;margin-top:6px;padding-top:6px}
+ .archive .info-panel.is-open .panel-toggle b{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0;
+ }
+ .archive .info-panel.is-open .panel-toggle i{left:50%;right:auto;top:50%;width:28px;height:28px;transform:translate(-50%,-50%) rotate(90deg)}
+ .archive .right-panel.is-open .panel-toggle i{transform:translate(-50%,-50%) rotate(-90deg)}
+}

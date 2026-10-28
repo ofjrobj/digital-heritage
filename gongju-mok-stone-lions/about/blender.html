@@ -4,24 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Blender 애니메이션 — 봉황동 석사자</title>
-  <meta name="description" content="공주목 고지도와 제작용 배치도, Blender 모형·장면과 카메라 이동 경로를 소개합니다.">
+  <meta name="description" content="공주목 지도와 마을 배치도를 비교하고, Blender의 카메라 조정·인물 애니메이션과 웹 미리보기를 소개합니다.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css?v=requested-fixes-20261028-v7">
   <link rel="stylesheet" href="./about.css?v=approved-fonts-20261028">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
-  <link rel="stylesheet" href="./blender.css?v=fixed-four-20261026">
+  <link rel="stylesheet" href="./blender.css?v=production-notes-20261029">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/blender.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="Blender 애니메이션 — 봉황동 석사자">
-  <meta property="og:description" content="공주목 고지도와 제작용 배치도, Blender 모형·장면과 카메라 이동 경로를 소개합니다.">
+  <meta property="og:description" content="공주목 지도와 마을 배치도를 비교하고, Blender의 카메라 조정·인물 애니메이션과 웹 미리보기를 소개합니다.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/blender.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/blender-model-overview.webp">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Blender 애니메이션 — 봉황동 석사자">
-  <meta name="twitter:description" content="공주목 고지도와 제작용 배치도, Blender 모형·장면과 카메라 이동 경로를 소개합니다.">
+  <meta name="twitter:description" content="공주목 지도와 마을 배치도를 비교하고, Blender의 카메라 조정·인물 애니메이션과 웹 미리보기를 소개합니다.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/blender-model-overview.webp">
 <link rel="stylesheet" href="./case-study.css?v=ui-motion-audit-20261028">
+<link rel="stylesheet" href="./prompt-embed.css?v=inline-20261029"><script defer src="./prompt-embed.js?v=inline-20261029"></script>
 <link rel="stylesheet" href="./page-motion.css?v=ui-motion-1s"><script defer src="./page-motion.js?v=20261028"></script><link rel="stylesheet" href="../assets/ui-motion.css?v=ui-motion-audit-20261028">
 </head>
 <body class="materials-page blender-page">
@@ -29,7 +30,7 @@
   <div class="wrap">
     <header class="top">
       <a class="brand" href="../?start=intro"><span class="brand-mark" aria-hidden="true">石</span><span>봉황동 석사자</span></a>
-      <a class="material-back" href="./#step-space">기획과 제작으로</a>
+      <a class="material-back" href="./#step-space">뒤로가기</a>
     </header>
     <main id="material">
       <header class="material-header">
@@ -38,23 +39,19 @@
       </header>
       <section class="blender-stage" aria-labelledby="oldmap-title">
         <header class="blender-stage-heading">
-          <span class="number">01 · MAP</span>
-          <div><h2 id="oldmap-title">공주목 고지도</h2><p>강·산·성곽과 마을의 위치</p></div>
+          <span class="number">01–02 · MAP &amp; PLAN</span>
+          <div><h2 id="oldmap-title">공주목 지도와 마을 배치도</h2></div>
         </header>
-        <figure class="blender-figure">
-          <a class="material-image" href="./assets/blender-oldmap-1872.webp" target="_blank" rel="noopener noreferrer" aria-label="1872년 공주목지도 · 원본 크게 보기 (새 탭)"><img src="./assets/blender-oldmap-1872.webp" width="1575" height="896" alt="공산성과 공주목의 지형·건축물을 그린 1872년 공주목지도" loading="eager" decoding="async"></a>
-          <figcaption>1872년 공주목지도 <span class="blender-credit"><a href="https://commons.wikimedia.org/wiki/File:Gongju_1872.PNG" target="_blank" rel="noopener noreferrer">Wikimedia Commons 원본</a> · Public Domain</span></figcaption>
-        </figure>
-      </section>
-      <section class="blender-stage" aria-labelledby="layout-title">
-        <header class="blender-stage-heading">
-          <span class="number">02 · PLAN</span>
-          <div><h2 id="layout-title">마을 배치도</h2><p>강과 산, 건물이 놓인 자리</p></div>
-        </header>
-        <figure class="blender-figure">
-          <a class="material-image" href="./assets/blender-layout-plan-v1.svg" target="_blank" rel="noopener noreferrer" aria-label="공주목 제작용 마을 배치도 · 크게 보기 (새 탭)"><img src="./assets/blender-layout-plan-v1.svg" width="1536" height="1024" alt="강과 성곽, 관아와 객사, 민가의 관계를 단순한 흑백 선으로 정리한 제작용 마을 배치도" loading="lazy" decoding="async"></a>
-          <figcaption>고지도를 참고하되, 거리와 높이는 장면 연출에 맞춰 조정한 제작용 배치도입니다.</figcaption>
-        </figure>
+        <div class="blender-map-comparison">
+          <figure class="blender-figure">
+            <a class="material-image" href="./assets/blender-oldmap-1872.webp" target="_blank" rel="noopener noreferrer" aria-label="1872년 공주목지도 · 원본 크게 보기 (새 탭)"><img src="./assets/blender-oldmap-1872.webp" width="1575" height="896" alt="공산성과 공주목의 지형·건축물을 그린 1872년 공주목지도" loading="eager" decoding="async"></a>
+            <figcaption><span>1872년 공주목지도</span><span class="blender-credit"><a href="https://commons.wikimedia.org/wiki/File:Gongju_1872.PNG" target="_blank" rel="noopener noreferrer">Wikimedia Commons 원본</a> · Public Domain</span></figcaption>
+          </figure>
+          <figure class="blender-figure">
+            <a class="material-image" href="./assets/blender-layout-plan-v1.svg" target="_blank" rel="noopener noreferrer" aria-label="공주목 제작용 마을 배치도 · 크게 보기 (새 탭)"><img src="./assets/blender-layout-plan-v1.svg" width="1536" height="1024" alt="강과 성곽, 관아와 객사, 민가의 관계를 흑백 선으로 정리한 제작용 마을 배치도" loading="eager" decoding="async"></a>
+            <figcaption id="layout-title"><span>제작용 마을 배치도</span><span class="blender-credit">고지도를 참고하고, 거리와 높이는 장면 연출에 맞춰 조정했습니다.</span></figcaption>
+          </figure>
+        </div>
       </section>
       <section class="blender-stage" aria-labelledby="comparison-title">
         <header class="blender-stage-heading">
@@ -81,6 +78,18 @@
           <div class="material-image"><img src="./assets/blender-camera-route-v2.svg" width="1536" height="1024" alt="짐을 멘 장사꾼은 제금루, 괭이를 든 농민은 혜의당, 쟁반을 든 찬모는 객사, 주민 삼총사는 민가, 장작과 도끼를 든 나무꾼은 봉황산에 표시된 제작용 지도. 파란 경로가 이들을 거쳐 객사터의 두 석사자로 이어집니다." loading="lazy" decoding="async"></div>
           <figcaption>인물 배치와 이동 순서. 점선은 마지막 석사자 장면으로의 연결입니다.</figcaption>
         </figure>
+        <div class="blender-methods">
+          <article>
+            <h3>카메라의 위치와 시선</h3>
+            <p>장사꾼 → 농민 → 찬모 → 주민 삼총사 → 나무꾼 → 석사자로 이어지는 동선을 여섯 구간으로 나눴습니다. 길 위의 경로점을 부드럽게 연결하고, 지면 높이에 맞춰 카메라의 위치와 회전을 24fps 키프레임으로 기록했습니다.</p>
+            <p>기본 눈높이는 지면보다 1.65 높게 설정했습니다. 인물에게 다가갈 때에는 진행 방향을 보던 시선이 얼굴과 상반신을 향하도록 회전을 조정하고, 마지막 위치에서는 대화 구도를 유지했습니다. 이 높이는 Blender 장면의 연출용 값입니다.</p>
+          </article>
+          <article>
+            <h3>인물의 생활 동작</h3>
+            <p>인물의 몸통·머리·팔을 연결한 계층을 유지하고 각 부분의 회전에 키프레임을 적용했습니다. 물 나르기, 바느질, 천 정리 등 역할에 따라 팔과 몸통의 움직임 크기와 주기를 다르게 설정했습니다.</p>
+            <p>웹용 미리보기에는 10초 동안의 위치·회전을 별도로 기록해 모델의 같은 이름을 가진 부위에 연결했습니다. 반복이 끝날 무렵 첫 자세로 돌아가도록 보간해 동작을 이어지게 했습니다. 아래 미리보기에서 Blender 모형과 카메라 동선을 확인할 수 있습니다.</p>
+          </article>
+        </div>
       </section>
       <section class="blender-stage" id="blender-frames" aria-labelledby="blender-frames-title">
         <header class="blender-stage-heading">
@@ -144,10 +153,20 @@
           </li>
         </ol>
       </section>
+      <section class="blender-stage" id="blender-web-preview" aria-labelledby="blender-web-title">
+        <header class="blender-stage-heading">
+          <span class="number">06 · WEB PREVIEW</span>
+          <div><h2 id="blender-web-title">Blender 웹 미리보기</h2></div>
+        </header>
+        <figure class="blender-web-preview">
+          <iframe src="../blender-test/" title="Blender 공간 모형과 카메라 동선 체험" loading="lazy" allow="fullscreen" allowfullscreen></iframe>
+          <figcaption><span>프레임 안에서 스크롤하거나 드래그해 이동합니다.</span><a href="../blender-test/" target="_blank" rel="noopener noreferrer">크게 보기</a></figcaption>
+        </figure>
+      </section>
 <a class="prompt-link" href="https://www.figma.com/board/l83Pgo173KwwswpqWm9FAD/" target="_blank" rel="noopener noreferrer" aria-label="Blender 프롬프트 Figma에서 보기 (새 탭)">Blender 프롬프트</a>
     </main>
     <footer class="material-footer">
-      <a href="./#step-space">기획과 제작으로 돌아가기</a>
+      <a href="./#step-space">뒤로가기</a>
       <p>© 2026 가치해석 1팀 사자성어</p>
     </footer>
   </div>

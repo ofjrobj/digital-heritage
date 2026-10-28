@@ -84,42 +84,48 @@ function createJourney({scene = walkingScene, end = 1000, pixelRatio = 1} = {}) 
   };
 }
 
-function simulate({magnitude = 100, interval = 250, inputMs = 10000, endMs = inputMs + 500, frameRate = 60, pixelRatio = 1} = {}) {
+function simulate({magnitude = 100, interval = 250, inputMs = 10000, endMs = inputMs + 4000, frameRate = 60, pixelRatio = 1} = {}) {
   const journey = createJourney({pixelRatio});
   const events = [];
   for (let time = 0; time < inputMs; time += interval) events.push([time, 'wheel']);
   for (let frame = 0; frame <= Math.ceil(endMs * frameRate / 1000); frame++) events.push([frame * 1000 / frameRate, 'frame']);
   events.sort((a, b) => a[0] - b[0] || (a[1] === 'wheel' ? -1 : 1));
-  let minimumActiveRate = Infinity;
+  let minimumActiveRate = Infinity, maximumActiveRate = 0;
   for (const [time, kind] of events) {
     if (kind === 'wheel') journey.wheel(time, -magnitude);
     else {
       journey.frame(time, 1 / frameRate);
       const state = journey.snapshot();
-      if (!state.paused) minimumActiveRate = Math.min(minimumActiveRate, state.rate);
+      if (!state.paused) {
+        minimumActiveRate = Math.min(minimumActiveRate, state.rate);
+        maximumActiveRate = Math.max(maximumActiveRate, state.rate);
+      }
     }
   }
-  return {...journey.snapshot(), minimumActiveRate};
+  return {...journey.snapshot(), minimumActiveRate, maximumActiveRate};
 }
 
-test('a mouse notch moves visibly, then stops without seeking or consuming the queued target', () => {
+test('one mouse notch completes a bounded step with smooth acceleration and no decoder restarts', () => {
   const journey = createJourney();
   journey.wheel(0);
-  journey.frame(239, .016);
-  assert.equal(journey.snapshot().paused, false);
-  journey.frame(240, .001);
+  assert.equal(journey.snapshot().rate, .5);
+  for (let time = 16; time <= 240; time += 16) journey.frame(time, .016);
+  assert.equal(journey.snapshot().paused, false, 'release deadline must not cut off the step');
+  for (let time = 256; time <= 5000; time += 16) journey.frame(time, .016);
   const stopped = journey.snapshot();
   assert.equal(stopped.paused, true);
-  assert.ok(stopped.source >= .34 && stopped.source <= .37, `${stopped.source} source seconds`);
-  assert.equal(stopped.target, stopped.source);
+  assert.ok(stopped.source >= walkingScene.secondsPerScroll - .04 && stopped.source <= walkingScene.secondsPerScroll, `${stopped.source} source seconds`);
+  assert.equal(stopped.target, walkingScene.secondsPerScroll);
+  assert.equal(stopped.starts, 1);
+  assert.equal(stopped.stops, 1);
   assert.equal(stopped.seeks, 0);
-  journey.frame(1000);
+  journey.frame(6000);
   assert.equal(journey.snapshot().source, stopped.source);
 });
 
-test('trackpad idle and explicit release retain the short stopping response', () => {
+test('direct drag idle and explicit release retain the short stopping response', () => {
   const journey = createJourney();
-  journey.wheel(0, -8);
+  journey.context.manual(1, true);
   journey.frame(119, .016);
   assert.equal(journey.snapshot().paused, false);
   journey.frame(120, .001);
@@ -132,10 +138,30 @@ test('trackpad idle and explicit release retain the short stopping response', ()
   assert.equal(stopped.seeks, 0);
 });
 
-test('ordinary mouse-wheel cadence advances at least three times the old baseline', () => {
+test('eight separated notches reach the merchant approach without dozens of repeated inputs', () => {
+  const journey = createJourney({end: walkingScene.duration});
+  let previous = 0;
+  for (let step = 0; step < 8; step++) {
+    const start = step * 4000;
+    journey.wheel(start);
+    for (let elapsed = 16; elapsed <= 4000; elapsed += 16) journey.frame(start + elapsed, .016);
+    const state = journey.snapshot();
+    assert.equal(state.paused, true);
+    assert.ok(state.source - previous > 1.7 && state.source - previous <= 1.8);
+    if (step === 6) assert.ok(state.source < walkingScene.dialogueApproach.start);
+    previous = state.source;
+  }
+  const state = journey.snapshot();
+  assert.ok(state.source >= walkingScene.dialogueApproach.start);
+  assert.equal(state.starts, 8);
+  assert.equal(state.seeks, 0);
+});
+
+test('ordinary mouse-wheel cadence advances continuously without exceeding native source speed', () => {
   const result = simulate();
-  assert.ok(result.source > 4.433 * 3, `${result.source} source seconds after ten seconds of input`);
-  assert.ok(result.source <= walkingScene.scrollCruiseRate * 10.1);
+  assert.ok(result.source > 10, `${result.source} source seconds including the final bounded step`);
+  assert.ok(result.source <= walkingScene.scrollCruiseRate * 10 + walkingScene.secondsPerScroll);
+  assert.ok(result.maximumActiveRate <= 1);
   assert.equal(result.paused, true);
   assert.equal(result.seeks, 0);
 });
@@ -144,7 +170,8 @@ test('repeated mouse notches stay in native playback instead of restarting on ev
   for (const interval of [275, 300, 350, 400]) {
     const result = simulate({interval, inputMs: 5000});
     assert.ok(result.starts <= 2, `${interval}ms cadence restarted ${result.starts} times`);
-    assert.ok(result.source > 7.4 && result.source < 8.1);
+    assert.ok(result.source > 5 && result.source <= 5 + walkingScene.secondsPerScroll);
+    assert.ok(result.maximumActiveRate <= 1);
     assert.equal(result.paused, true);
     assert.equal(result.seeks, 0);
   }
@@ -154,7 +181,8 @@ test('Retina and zoom-scaled mouse notches retain continuous decoding and the sa
   for (const pixelRatio of [1.25,1.5,2,3]) {
     const result=simulate({magnitude:100/pixelRatio,pixelRatio,interval:283,inputMs:5000});
     assert.ok(result.starts<=2,`${pixelRatio}x screen restarted ${result.starts} times`);
-    assert.ok(result.source>7.4&&result.source<8.1,`${pixelRatio}x screen advanced ${result.source}s`);
+    assert.ok(result.source>5&&result.source<=5+walkingScene.secondsPerScroll,`${pixelRatio}x screen advanced ${result.source}s`);
+    assert.ok(result.maximumActiveRate<=1);
     assert.equal(result.paused,true);
     assert.equal(result.seeks,0);
   }
@@ -200,28 +228,31 @@ test('very gentle sustained input maintains the same continuous pace as strong i
     const gentle = simulate({magnitude: .5, interval: 16, frameRate});
     const strong = simulate({magnitude: 40, interval: 16, frameRate});
     assert.ok(Math.abs(gentle.source - strong.source) < .05);
-    assert.ok(gentle.minimumActiveRate >= walkingScene.scrollCruiseRate * .95);
-    assert.ok(gentle.source >= 14.9);
+    assert.ok(gentle.source > 10);
+    assert.ok(gentle.maximumActiveRate <= 1);
     assert.equal(gentle.paused, true);
     assert.equal(gentle.seeks, 0);
   }
 });
 
-test('a long momentum tail cannot restart a released frame', () => {
+test('a long momentum tail cannot extend or restart the one committed wheel step', () => {
   const journey = createJourney();
   for (const [i, magnitude] of [40, 28, 20, 12, 7, 3, 1].entries()) {
     journey.wheel(i * 16, -magnitude);
     journey.frame(i * 16);
   }
-  journey.frame(160);
-  const stopped = journey.snapshot();
-  assert.equal(stopped.paused, true);
-  for (let time = 176; time <= 1000; time += 16) {
+  const committedTarget = journey.snapshot().target;
+  let stopped = null;
+  for (let time = 112; time <= 6000; time += 16) {
     journey.wheel(time, -1);
     journey.frame(time);
-    assert.equal(journey.snapshot().source, stopped.source);
-    assert.equal(journey.snapshot().paused, true);
+    assert.equal(journey.snapshot().target, committedTarget);
+    if (stopped) assert.equal(journey.snapshot().source, stopped.source);
+    if (journey.snapshot().paused) stopped = journey.snapshot();
   }
+  assert.ok(stopped, 'the finite step settles even while momentum events keep arriving');
+  assert.equal(stopped.starts, 1);
+  assert.equal(stopped.seeks, 0);
 });
 
 test('reversing direction discards the old forward queue before any new frame', () => {
@@ -254,8 +285,20 @@ test('three small trackpad fluctuations do not freeze a continuing gesture', () 
     journey.frame(time);
     assert.equal(journey.snapshot().paused, false);
   }
-  assert.ok(journey.snapshot().source > 2.9);
+  assert.ok(journey.snapshot().source > 1.8 && journey.snapshot().source <= 2);
   assert.equal(journey.snapshot().seeks, 0);
+});
+
+test('continuous decoding respects maxPlaybackRate even if an older cruise value is higher', () => {
+  const scene={...walkingScene,scrollCruiseRate:2.4,maxPlaybackRate:1};
+  let rate=2.4;
+  for(let i=0;i<120;i++){
+    rate=continuousScrollRate(10,1/60,rate,scene,100);
+    assert.ok(rate<=1);
+  }
+  const journey=createJourney({scene});
+  journey.context.manual(1,true);
+  assert.ok(journey.video.playbackRate<=1,'the first input handler cannot bypass the cap');
 });
 
 test('a zero elapsed display frame cannot seek to a queued walking destination', () => {
@@ -271,13 +314,13 @@ test('a zero elapsed display frame cannot seek to a queued walking destination',
 test('arriving within one source frame pauses without flushing the decoder', () => {
   const journey = createJourney();
   journey.wheel(0);
-  journey.context.target = .17;
+  journey.context.target = .08;
   journey.frame(100);
   const stopped = journey.snapshot();
   assert.equal(stopped.paused, true);
   assert.equal(stopped.seeks, 0);
-  assert.ok(stopped.source < .17);
-  assert.equal(journey.context.current.settledTarget, .17);
+  assert.ok(stopped.source < .08);
+  assert.equal(journey.context.current.settledTarget, .08);
 });
 
 test('reverse seeks complete source frames instead of every display frame', () => {

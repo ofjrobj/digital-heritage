@@ -55,3 +55,16 @@
 .board-character p { margin: 0; color: #68685f; font: 300 clamp(13px, 1.1vw, 14px)/1.85 var(--story-sans, sans-serif); overflow-wrap: anywhere; word-break: normal; }
 .board-character .board-character-meta { margin-bottom: 9px; font-size: 12px; color: #77776c; }
 @media (max-width: 600px) { .board-character { margin-top: 12px; padding-top: 10px; } }
+
+/* Keep the restored transition card readable within the four-column board. */
+@media (max-width: 760px) {
+  .storyline-integrated .board-transition {
+    flex-direction: column;
+    gap: 4px;
+    min-height: 150px;
+    aspect-ratio: auto;
+    padding: 10px 2px;
+  }
+  .storyline-integrated .board-transition strong { margin-bottom: 2px; font-size: 16px; }
+  .storyline-integrated .board-transition .board-transition-arrow { transform: rotate(90deg); line-height: 1; }
+}

@@ -1,0 +1,16 @@
+.test-render-media .tr-archive {
+  transition: opacity var(--ui-motion-duration, 1s) var(--ui-motion-ease, cubic-bezier(.22,.75,.25,1));
+}
+body:is([data-archive-transition="entering"], [data-archive-transition="open"]) .tr-archive {
+  opacity: 1;
+  pointer-events: auto;
+}
+body[data-archive-transition="open"] #stage > :not(.tr-archive) { visibility: hidden; }
+body[data-archive-transition="waiting"] .tr-archive-cta { cursor: progress; }
+body[data-archive-transition="fallback"] #stage {
+  opacity: 0;
+  transition: opacity var(--ui-motion-duration, 1s) var(--ui-motion-ease, cubic-bezier(.22,.75,.25,1));
+}
+@media (prefers-reduced-motion: reduce) {
+  .test-render-media .tr-archive, body[data-archive-transition="fallback"] #stage { transition: none; }
+}

@@ -3,7 +3,7 @@ import {createAdaptiveNavPaper} from './adaptive-nav-paper.js?v=frame-paced-scro
 import {createAdaptiveIcons} from './adaptive-icons.js?v=fullscreen-menu-tone-20261028';
 import {UI_MOTION_MS,UI_MOTION_SECONDS,uiMotionEase,uiRevealOpacity} from './ui-motion.js?v=ui-motion-audit-20261028';
 import {createQuietAmbience} from './quiet-ambience.js?v=ending-clock-20261028';
-import {continuousScrollRate,createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop,manualScrollHoldTime,boundedManualTarget} from './scroll-motion.js?v=scroll-cadence-20261026';
+import {continuousScrollRate,createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop,manualScrollHoldTime,boundedManualTarget} from './scroll-motion.js?v=native-rate-20261029';
 import {createFootageFog} from './footage-fog.js?v=edge-dissolve-20261019-v24';
 import {createSceneLife} from './scene-life.js?v=sound-fade-20261019-v17';
 import {createSeasonAmbience} from './season-ambience.js?v=sound-fade-20261019-v17';
@@ -22,6 +22,7 @@ import {setPlaybackRate,holdPresentedFrame,reverseFrameStep,createPresentedFrame
 import {dialogueApproachGain,sceneArrivalDelay} from './dialogue-audio-flow.js?v=drag-arrival-audio-1';
 import {createIntroEntry} from './intro-entry.js?v=embedded-story-20261026';
 import {uiPreview} from './ui-preview.js?v=requested-fixes-20261028-v7';
+import {createStoryIndexTransition} from './story-index-transition.js?v=ready-index-20261029';
 const replacementOpening=document.body.dataset.mediaProfile==='selected-higgsfield';
 const reviewWindow=document.body.dataset.reviewWindow==='true';
 const embeddedStory=new URLSearchParams(location.search).get('embed')==='story';
@@ -62,9 +63,9 @@ const adaptiveIcons=createAdaptiveIcons(canvas,['fullscreenToggle','soundToggle'
 // title opacity into the narration and produces a visible dip/flash at the swap.
 const caption=document.createElement('p');caption.className='tr-caption';caption.hidden=true;caption.style.transition='none';stage.append(caption);
 const endingPaper=document.createElement('div');endingPaper.className='tr-ending-paper';endingPaper.setAttribute('aria-hidden','true');stage.append(endingPaper);
-const archiveCta=document.createElement('a');archiveCta.className='tr-archive-cta';const archiveCtaLabel=document.createElement('span');archiveCtaLabel.textContent='아카이브 탐색';archiveCta.append(archiveCtaLabel);archiveCta.href=$('indexLink')?.href||'archive/index.html';archiveCta.hidden=true;stage.append(archiveCta);archiveCta.onclick=()=>remember();
+const archiveCta=document.createElement('a');archiveCta.className='tr-archive-cta';const archiveCtaLabel=document.createElement('span');archiveCtaLabel.textContent='아카이브 탐색';archiveCta.append(archiveCtaLabel);archiveCta.href=$('indexLink')?.href||'archive/index.html';archiveCta.hidden=true;stage.append(archiveCta);
 let archiveFrame=null,endingElapsed=0,endingRestartShown=false,storyStarted=false,loadingHiddenAt=null,firstSceneShownAt=null;
-function prepareArchive(){if(embeddedStory||archiveFrame)return;archiveFrame=document.createElement('iframe');archiveFrame.className='tr-archive';archiveFrame.title='석사자 아카이브';archiveFrame.src=$('indexLink')?.href||'archive/index.html';archiveFrame.setAttribute('aria-hidden','true');archiveFrame.inert=true;archiveFrame.onload=()=>{archiveFrame.dataset.loaded='true';try{if(!uiPreview)archiveFrame.contentDocument.querySelectorAll('[data-story-return]').forEach(a=>a.target='_top');}catch{}};stage.append(archiveFrame);}
+function prepareArchive(){if(embeddedStory||archiveFrame)return;archiveFrame=document.createElement('iframe');archiveFrame.className='tr-archive';archiveFrame.title='석사자 아카이브';archiveFrame.src=$('indexLink')?.href||'archive/index.html';archiveFrame.setAttribute('aria-hidden','true');archiveFrame.inert=true;archiveFrame.onload=()=>{archiveFrame.dataset.loaded='true';try{archiveFrame.contentDocument.querySelectorAll('[data-story-return]').forEach(a=>a.target=uiPreview?'_parent':'_top');}catch{}};stage.append(archiveFrame);}
 const videos=[0,1].map(()=>{const v=document.createElement('video');v.muted=true;v.crossOrigin='anonymous';v.playsInline=true;v.preload='auto';v.className='tr-source';v.setAttribute('aria-hidden','true');stage.append(v);return v;});
 const records=[null,null],voices=createStoryVoices(stage,{tailSeconds:1,onEnded:speaker=>{if(current?.scene.mode==='dialogue'&&current.scene.speaker===speaker)finishDialoguePanel();}}),music=$('music');music.volume=0;const storyMusic=createStoryMusic(music);
 const foot=document.createElement('audio');foot.id='scrollFootsteps';foot.preload='auto';foot.src=replacementOpening?new URL('../media/v17/drag-footsteps.mp3',import.meta.url).href:new URL('./footstep-single-v2.mp3',import.meta.url).href;stage.append(foot);
@@ -75,6 +76,7 @@ let drag=null,lastDragMoveAt=-Infinity,lastWheelMoveAt=-Infinity,lastManualInput
 // Keep that fallback across frames instead of immediately unmuting it again.
 let nativeAudioBlocked=false;
 let pendingIntroEntry=false,sceneJoin=null,openingLayout=null,lastSceneTransition=null,endingFadeAmount=0,endingSoundGain=1,seamMatch=null;
+const archiveTransition=createStoryIndexTransition({link:archiveCta,stage,prepare:prepareArchive,getFrame:()=>archiveFrame,remember});
 const footsteps=createScrollFootsteps(foot,()=>Math.abs(target-local)>.008&&(!!current?.scrubTween||!current?.video.paused)&&sound&&!paused&&!compare&&!previewAuto&&!transition&&!finished&&!document.hidden&&!!current&&!current.error&&scrollDriven()&&scenes[index]?.mode==='scroll'&&scenes[index]?.footsteps===true&&(current.still||current.loaded||current.video.readyState>=2),()=>performance.now(),()=>endingSoundGain*dialogueApproachGain(scenes[index],scenes[index+1],local,duration(index))*(current?.scrubTween?Math.min(1,Math.abs(sampleScrollTween(current.scrubTween,performance.now()).velocity)/1.2):current?.scene.scrollPlayback==='continuous'?Math.min(1,walkingRate/.75):1));
 // Public film audio is authored separately: no embedded or extracted ambience.
 const seasonAmbience=replacementOpening?null:createSeasonAmbience(stage),sceneLife=replacementOpening?null:createSceneLife(stage);
@@ -255,7 +257,7 @@ function finishDialoguePanel(){
 }
 function showText(){const s=scenes[index],panel=$('cinemaDialogue');if(!s)return;if(embeddedStory){panel.hidden=true;panel.inert=true;caption.hidden=true;voices.select(-1);return;}if(s.id==='seasons')prepareArchive();const dialogueScene=s.mode==='dialogue',speaking=dialogueScene&&(current?.startElapsed||0)>=sceneArrivalDelay(s);document.body.dataset.dialogue=String(dialogueScene);if(panel){panel.inert=!speaking;panel.style.opacity='1';panel.hidden=!speaking;if(speaking){panel.querySelector('h2').textContent=names[s.speaker]||s.label;panel.querySelector('p').textContent=dialogueCopy[s.speaker]?.testimony||'';panel.querySelector('p').scrollTop=0;}}caption.dataset.scene=s.id;caption.dataset.intro=String(s.id==='intro');caption.textContent=s.caption||'';caption.hidden=!s.caption||speaking;if($('next'))$('next').textContent=index<scenes.length-1?'다음 장면으로':'아카이브로';voices.select(speaking?s.speaker:-1);dialogueFit.invalidate();}
 function prepare(i,at=0){
- const s=scenes[i],slot=current?1-current.slot:0,v=videos[slot],r={slot,scene:s,video:v,image:null,loaded:false,error:null,still:!s.src,at,clipIn:Math.max(0,Number(s.clipIn)||0),playPending:false,manualHeld:false,departureDone:at>=(Number(s.autoTurnUntil)||0),startElapsed:0,autoStarted:Number(s.autoFrom)>0&&at>=Number(s.autoFrom)};
+ const s=scenes[i],slot=current?1-current.slot:0,v=videos[slot],r={slot,scene:s,video:v,image:null,loaded:false,error:null,still:!s.src,at,clipIn:Math.max(0,Number(s.clipIn)||0),playPending:false,manualHeld:false,completeWheelStep:false,departureDone:at>=(Number(s.autoTurnUntil)||0),startElapsed:0,autoStarted:Number(s.autoFrom)>0&&at>=Number(s.autoFrom)};
  records[slot]=r;v.pause();v.muted=true;v.onloadeddata=null;v.onloadedmetadata=null;v.onerror=null;v.removeAttribute('src');v.load();
  if(s.image){const img=new Image();img.crossOrigin='anonymous';img.onload=()=>{r.image=img;if(r.still)r.loaded=true;};img.onerror=()=>{if(r.still)r.error='이미지를 불러오지 못했습니다.';};img.src=url(s.image);}
  if(s.src){
@@ -268,7 +270,7 @@ function prepare(i,at=0){
 function preparedScene(i,at=0){
  const cached=records.find(r=>r&&r!==current&&r.scene===scenes[i]&&!r.error);
  if(!cached||at>0&&cached.video.readyState<1)return prepare(i,at);
- cached.autoStarted=Number(scenes[i].autoFrom)>0&&at>=Number(scenes[i].autoFrom);cached.startElapsed=0;cached.departureDone=at>=(Number(scenes[i].autoTurnUntil)||0);cached.playBlocked=false;cached.manualHeld=false;cached.lastDecodedTime=undefined;cached.scrubTarget=undefined;cached.scrubTween=null;cached.settledTarget=null;cached.approaching=false;cached.approachCover=0;
+ cached.autoStarted=Number(scenes[i].autoFrom)>0&&at>=Number(scenes[i].autoFrom);cached.startElapsed=0;cached.departureDone=at>=(Number(scenes[i].autoTurnUntil)||0);cached.playBlocked=false;cached.manualHeld=false;cached.completeWheelStep=false;cached.lastDecodedTime=undefined;cached.scrubTarget=undefined;cached.scrubTween=null;cached.settledTarget=null;cached.approaching=false;cached.approachCover=0;
  const seek=cached.clipIn+(scenes[i].mode==='dialogue'?0:at);
  if(cached.video.readyState>=1&&Math.abs(cached.video.currentTime-seek)>.04)cached.video.currentTime=seek;
  return cached;
@@ -291,7 +293,7 @@ function continuousAdvance(){
   index++;current.scene=next;current.clipIn=Number(next.clipIn)||0;current.autoStarted=false;
   current.startElapsed=0;local=Math.max(0,current.video.currentTime-current.clipIn);target=local;current.video.pause();
  }else return false;
- current.manualHeld=false;current.lastDecodedTime=undefined;
+ current.manualHeld=false;current.completeWheelStep=false;current.lastDecodedTime=undefined;
  walkingInput.reset();walkingRate=0;reverseElapsed=0;lastWheelMoveAt=-Infinity;lastManualInputAt=-Infinity;footsteps.stop();showText();preloadNext();return true;
 }
 function openingPlaybackRate(scene,time,d){
@@ -378,10 +380,14 @@ function seekScrollPosition(record,time){
 function holdManualFrame(released=false,now=performance.now()){
  const r=current;
  if(!replacementOpening||!r||r.manualHeld||r.still||!r.loaded||transition)return;
+ // A wheel notch commits one bounded walking step. Do not cut that step off
+ // after 120–240ms and force another decoder restart for the next notch.
+ // Direct dragging, keyboard release and loss of focus still stop immediately.
+ if(r.completeWheelStep&&!released)return;
  const shouldHold=manualScrollHoldTime({scene:r.scene,currentTime:r.lastDecodedTime??r.video.currentTime,clipIn:r.clipIn,duration:duration(index),lastInputAt:lastManualInputAt,now,released,idleMs:manualIdleMs,automatic:!scrollDriven(r)||departureActive(r)||r.approaching||previewAuto});
  if(shouldHold===null)return;
  const hold=holdPresentedFrame(r,duration(index));
- r.manualHeld=true;r.scrubTween=null;
+ r.manualHeld=true;r.completeWheelStep=false;r.scrubTween=null;
  local=target=hold;r.settledTarget=hold;walkingRate=0;reverseElapsed=0;sceneJoin=null;seamMatch=null;footsteps.stop();
  if(!r.video.seeking&&r.video.readyState>=2)draw(r.video);
 }
@@ -400,14 +406,17 @@ function enterFromIntro(delta){
  const next=scenes.indexOf(intro)+1;if(next>=scenes.length)return false;
  pendingIntroEntry=false;previewAuto=false;requestScene(next);return true;
 }
-function manual(delta,fromDrag=false,idleMs=120){
+function manual(delta,fromDrag=false,idleMs=120,fromWheel=false){
  if(!delta||enterFromIntro(delta)||!canWalk())return;
- previewAuto=false;current.manualHeld=false;manualIdleMs=idleMs;if(walkingDirection!==Math.sign(delta))reverseElapsed=0;walkingDirection=Math.sign(delta);lastScrollAt=lastManualInputAt=performance.now();
+ previewAuto=false;current.manualHeld=false;current.completeWheelStep=fromWheel;manualIdleMs=idleMs;if(walkingDirection!==Math.sign(delta))reverseElapsed=0;walkingDirection=Math.sign(delta);lastScrollAt=lastManualInputAt=performance.now();
  // A reversed gesture cancels the old travel queue immediately.
  if((target-local)*walkingDirection<-.008){target=local;walkingRate=0;current.video.pause();}
- // Input now stops on release, so a short notch must not spend its entire
- // active interval below one source frame while accelerating from zero.
- if(replacementOpening&&current.scene.scrollPlayback==='continuous'&&!walkingRate)walkingRate=Number(current.scene.scrollCruiseRate)||.95;
+ // Wheel steps have time to accelerate smoothly; direct input keeps its
+ // immediate response before pointer/key release holds the reached frame.
+ if(replacementOpening&&current.scene.scrollPlayback==='continuous'&&!walkingRate){
+  const cruise=Math.min(Number(current.scene.scrollCruiseRate)||.95,Number(current.scene.maxPlaybackRate)||Infinity);
+  walkingRate=fromWheel&&walkingDirection>0?Math.min(.5,cruise):cruise;
+ }
  const previousTarget=target;current.settledTarget=null;
  target=!fromDrag&&scenes[index]?.scrollStops?.length
   ?nextScrollStop(scenes[index],target,Math.sign(delta),scrollLimit())
@@ -436,7 +445,7 @@ stage.addEventListener('wheel',e=>{
   if(!delta&&(current.manualHeld||current.settledTarget===target))delta=-Math.sign(e.deltaY);
  }
  if(!delta)return;if(enterFromIntro(delta)){e.preventDefault();return;}if(embeddedStory&&navigateEmbeddedScene(delta))return;if(!canWalk())return;
- e.preventDefault();const before=target;manual(delta,false,walkingInput.releaseDelayMs());if(target!==before)lastWheelMoveAt=now;
+ e.preventDefault();const before=target;manual(delta,false,walkingInput.releaseDelayMs(),true);if(target!==before)lastWheelMoveAt=now;
 },{passive:false});
 canvas.addEventListener('pointerdown',e=>{if(!canWalk()&&!canNavigateEmbeddedScene()||!e.isPrimary||e.pointerType==='mouse'&&e.button!==0)return;drag={x:e.clientX,y:e.clientY,pointerId:e.pointerId,sceneStep:canNavigateEmbeddedScene()};canvas.setPointerCapture(e.pointerId);});
 canvas.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.pointerId)return;const distance=(drag.y-e.clientY)+(e.clientX-drag.x)*.25;if(drag.sceneStep){if(Math.abs(distance)<24)return;navigateEmbeddedScene(Math.sign(distance));drag=null;return;}manual(distance/90,true);drag={x:e.clientX,y:e.clientY,pointerId:e.pointerId};});
@@ -515,6 +524,7 @@ function advance(){if(continuousAdvance())return;if(scenes[index]?.id==='intro')
 let nextProofAt=0;
 function frame(now){
  const visibleDt=document.hidden?0:Math.max(0,(now-last)/1000),dt=Math.min(.08,visibleDt);last=now;
+ if(archiveTransition.visible()){requestAnimationFrame(frame);return;}
  if(!hasFrame&&current?.loaded){if(current.still&&current.image)draw(current.image);else if(current.video.readyState>=2)draw(current.video);}
  if(transition){
   const t=transition;if(!paused)t.elapsed+=dt;if(!replacementOpening&&t.record.scene.id==='intro'&&introAssetsFailed())t.record.error='인트로 이미지를 불러오지 못했습니다.';
@@ -731,7 +741,7 @@ function frame(now){
  if(now>=nextProofAt){
  nextProofAt=now+200;
  const deliveryVideo=current?.video,deliveryQuality=deliveryVideo?.getVideoPlaybackQuality?.();
- document.body.dataset.proof=JSON.stringify({engine:'test-render-media-v3',embeddedStory,uiPreview,audioPolicy:replacementOpening?'separate-tracks-only':'legacy',quietAmbience:quietAmbience?.proof()??null,fit:'cover',dialogueFit:dialogueFit.proof(),dialoguePanel:{hidden:$('cinemaDialogue')?.hidden??true,ended:!!current?.dialogueEnded},fog:footageFog.proof(),navigation:{paper:adaptiveNavPaper.proof(),opacity:navOpacity,underFog:document.body.dataset.navFog==='true'},introRendering:scenes[index]?.id==='intro'?introEffect.proof():null,paper:PAPER,paperColor:paperColor.proof(),openingLayout,storyStarted,startup:document.body.dataset.startup,loadingHiddenAt,firstSceneShownAt,firstSceneGapMs:firstSceneShownAt&&loadingHiddenAt?firstSceneShownAt-loadingHiddenAt:null,endingElapsed,endingFadeAmount,endingSoundGain,seamMatch,sceneJoin:sceneJoin?{elapsed:sceneJoin.elapsed,duration:sceneJoin.duration}:null,paused,scene:scenes[index]?.id,index,local,duration:duration(index),approach:{active:!!current?.approaching,cover:current?.approachCover||0,config:current?.scene.dialogueApproach||null},mode:scenes[index]?.mode,effectiveMode:current?.autoStarted?'auto':scenes[index]?.mode,autoFrom:scenes[index]?.autoFrom??null,autoStarted:!!current?.autoStarted,transition:transition?.phase||null,transitionDetails:transition?{style:transition.precovered?'approach-paper-reveal':transition.briefPaper?'gentle-paper-fade':transition.soft?'edge-mist-dissolve':'cover',blendDuration:transition.blendDuration,from:transition.from,to:transition.record.scene.id,elapsed:transition.elapsed,cover:transition.fade,reveal:transition.reveal,hold:transition.hold}:null,lastSceneTransition,waiting:!!transition||!!current&&!current.loaded,renderedKind,renderedSource,imagePreview:renderedKind==='image',source:current?.scene.src||null,sourceTime:current?.video.currentTime||0,scrollTarget:target,sourcePaused:current?.video.paused??true,manualHeld:!!current?.manualHeld,inputIdleMs:Number.isFinite(lastManualInputAt)?Math.max(0,now-lastManualInputAt):null,settledTarget:current?.settledTarget??null,startDelay:sceneArrivalDelay(scenes[index]),startElapsed:current?.startElapsed||0,interaction:document.body.dataset.interaction,scrollEnabled:canWalk(),automaticTurn:{active:departureActive(),until:current?.scene.autoTurnUntil??null,done:!!current?.departureDone},walkingReferenceDuration:scenes[index]?.walkingReferenceDuration??null,scrollSteps:scenes[index]?.scrollSteps??6,secondsPerScroll:scenes[index]?.secondsPerScroll??null,scrollPlayback:scenes[index]?.scrollPlayback??'play',scrollSmoothingMs:scenes[index]?.scrollSmoothingMs??0,scrollTween:current?.scrubTween??null,maxPlaybackRate:scenes[index]?.maxPlaybackRate??null,nativeAudio:{blocked:nativeAudioBlocked,selected:!replacementOpening&&scenes[index]?.nativeAudio===true,muted:deliveryVideo?.muted??true,volume:deliveryVideo?.volume??0},sourceFps:current?.scene.fps??null,delivery:{canvasPaints,width:deliveryVideo?.videoWidth||0,height:deliveryVideo?.videoHeight||0,playbackRate:deliveryVideo?.playbackRate??1,totalVideoFrames:deliveryQuality?.totalVideoFrames??null,droppedVideoFrames:deliveryQuality?.droppedVideoFrames??null},provenance:current?.scene.provenance??null,geometryVerified:false,voice:voices.proof(),seasonAmbience:(seasonAmbience?.proof()??disabledAmbience),musicVolume:music.volume,music:musicProof,sceneLife:(sceneLife?.proof()??disabledAmbience),footsteps:{active:foot.dataset.active,starts:Number(foot.dataset.starts||0),dragging:!!drag,input:'manual-movement',blocked:footsteps.proof().blocked,volume:foot.volume,wheelActive:now-lastWheelMoveAt<200,source:foot.currentSrc||foot.src},dialogueApproachGain:approachGain,finished});
+ document.body.dataset.proof=JSON.stringify({engine:'test-render-media-v3',embeddedStory,uiPreview,audioPolicy:replacementOpening?'separate-tracks-only':'legacy',quietAmbience:quietAmbience?.proof()??null,fit:'cover',dialogueFit:dialogueFit.proof(),dialoguePanel:{hidden:$('cinemaDialogue')?.hidden??true,ended:!!current?.dialogueEnded},fog:footageFog.proof(),navigation:{paper:adaptiveNavPaper.proof(),opacity:navOpacity,underFog:document.body.dataset.navFog==='true'},introRendering:scenes[index]?.id==='intro'?introEffect.proof():null,paper:PAPER,paperColor:paperColor.proof(),openingLayout,storyStarted,startup:document.body.dataset.startup,loadingHiddenAt,firstSceneShownAt,firstSceneGapMs:firstSceneShownAt&&loadingHiddenAt?firstSceneShownAt-loadingHiddenAt:null,endingElapsed,endingFadeAmount,endingSoundGain,seamMatch,sceneJoin:sceneJoin?{elapsed:sceneJoin.elapsed,duration:sceneJoin.duration}:null,paused,scene:scenes[index]?.id,index,local,duration:duration(index),approach:{active:!!current?.approaching,cover:current?.approachCover||0,config:current?.scene.dialogueApproach||null},mode:scenes[index]?.mode,effectiveMode:current?.autoStarted?'auto':scenes[index]?.mode,autoFrom:scenes[index]?.autoFrom??null,autoStarted:!!current?.autoStarted,transition:transition?.phase||null,transitionDetails:transition?{style:transition.precovered?'approach-paper-reveal':transition.briefPaper?'gentle-paper-fade':transition.soft?'edge-mist-dissolve':'cover',blendDuration:transition.blendDuration,from:transition.from,to:transition.record.scene.id,elapsed:transition.elapsed,cover:transition.fade,reveal:transition.reveal,hold:transition.hold}:null,lastSceneTransition,waiting:!!transition||!!current&&!current.loaded,renderedKind,renderedSource,imagePreview:renderedKind==='image',source:current?.scene.src||null,sourceTime:current?.video.currentTime||0,scrollTarget:target,sourcePaused:current?.video.paused??true,manualHeld:!!current?.manualHeld,completeWheelStep:!!current?.completeWheelStep,inputIdleMs:Number.isFinite(lastManualInputAt)?Math.max(0,now-lastManualInputAt):null,settledTarget:current?.settledTarget??null,startDelay:sceneArrivalDelay(scenes[index]),startElapsed:current?.startElapsed||0,interaction:document.body.dataset.interaction,scrollEnabled:canWalk(),automaticTurn:{active:departureActive(),until:current?.scene.autoTurnUntil??null,done:!!current?.departureDone},walkingReferenceDuration:scenes[index]?.walkingReferenceDuration??null,scrollSteps:scenes[index]?.scrollSteps??6,secondsPerScroll:scenes[index]?.secondsPerScroll??null,scrollPlayback:scenes[index]?.scrollPlayback??'play',scrollSmoothingMs:scenes[index]?.scrollSmoothingMs??0,scrollTween:current?.scrubTween??null,maxPlaybackRate:scenes[index]?.maxPlaybackRate??null,nativeAudio:{blocked:nativeAudioBlocked,selected:!replacementOpening&&scenes[index]?.nativeAudio===true,muted:deliveryVideo?.muted??true,volume:deliveryVideo?.volume??0},sourceFps:current?.scene.fps??null,delivery:{canvasPaints,width:deliveryVideo?.videoWidth||0,height:deliveryVideo?.videoHeight||0,playbackRate:deliveryVideo?.playbackRate??1,totalVideoFrames:deliveryQuality?.totalVideoFrames??null,droppedVideoFrames:deliveryQuality?.droppedVideoFrames??null},provenance:current?.scene.provenance??null,geometryVerified:false,voice:voices.proof(),seasonAmbience:(seasonAmbience?.proof()??disabledAmbience),musicVolume:music.volume,music:musicProof,sceneLife:(sceneLife?.proof()??disabledAmbience),footsteps:{active:foot.dataset.active,starts:Number(foot.dataset.starts||0),dragging:!!drag,input:'manual-movement',blocked:footsteps.proof().blocked,volume:foot.volume,wheelActive:now-lastWheelMoveAt<200,source:foot.currentSrc||foot.src},dialogueApproachGain:approachGain,finished});
  }
  requestAnimationFrame(frame);
 }

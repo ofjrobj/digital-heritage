@@ -61,6 +61,27 @@ test('guide collapse preserves the rendered world-to-pixel scale while actual wi
  assert.ok(Math.abs(zoom.at(400,600)*400-initial*.75)<1e-9);
 });
 
+test('large scale changes receive more travel time with a quiet start and finish',()=>{
+ const run=distance=>{
+  const target=new THREE.Vector3(),start=new THREE.Vector3(0,0,4);
+  const motion=createFramingTransition(THREE,start,target);
+  const goal={position:new THREE.Vector3(0,0,distance),target},steps=[];
+  let before=4,pose;
+  for(let frame=0;frame<600;frame++){
+   pose=motion.sample(goal,1/60);
+   const radius=pose.position.distanceTo(pose.target);
+   steps.push(before-radius);before=radius;
+   if(pose.done)break;
+  }
+  assert.ok(pose.done);
+  assert.ok(steps.every(step=>step>=-1e-9),'zoom never reverses direction');
+  assert.ok(steps[0]<Math.max(...steps)*.03,'start eases in');
+  assert.ok(steps.at(-1)<Math.max(...steps)*.03,'finish eases out');
+  return steps.length;
+ };
+ assert.ok(run(1)>run(3),'a fourfold close-up is slower than a nearby size adjustment');
+});
+
 test('entering and leaving the authored back view keeps the horizontal screen axis level',()=>{
  for(const roll of [-.37,-3.63]){
   const target=new THREE.Vector3(),up=new THREE.Vector3(0,1,0),overview=new THREE.Vector3(2.7,1.15,3.6);
@@ -168,6 +189,27 @@ test('expanded layout and late pair fitting produce goals instead of camera jump
   assert.deepEqual(viewer.camera.position,before);
   assert.ok(goal.position.distanceTo(before)>.01);
   document.documentElement.dataset.archiveOverview='hint';
+});
+
+test('a single visible sculpture uses its own available area and restores comparison sizing on return',()=>{
+ for(const index of [null,1,2,4]){
+  const viewer=fixture(1.8,1.5);
+  let goal=viewer.framing.focus(index);
+  viewer.camera.position.copy(goal.position);viewer.controls.target.copy(goal.target);
+  const available=viewer.framing.naturalFramingHeight();
+  viewer.framing.setFramingHeight(available*.55);
+  goal=viewer.framing.resize({width:600,height:600},null);
+  if(goal){viewer.camera.position.copy(goal.position);viewer.controls.target.copy(goal.target);}
+  const sharedRadius=viewer.camera.position.distanceTo(viewer.controls.target),before=viewer.camera.position.clone();
+  assert.equal(viewer.framing.setComparisonEnabled(false),true);
+  goal=viewer.framing.resize({width:600,height:600},null);
+  assert.deepEqual(viewer.camera.position,before,'single-view fitting returns an eased destination, never a camera jump');
+  assert.ok(goal.position.distanceTo(goal.target)<sharedRadius*.8,'the hidden peer no longer limits the visible scan');
+  viewer.camera.position.copy(goal.position);viewer.controls.target.copy(goal.target);
+  viewer.framing.setComparisonEnabled(true);
+  goal=viewer.framing.resize({width:600,height:600},null);
+  assert.ok(Math.abs(goal.position.distanceTo(goal.target)-sharedRadius)<1e-6,'paired comparison resumes at its preserved height');
+ }
 });
 
 test('guide removal cannot increase the paired overview budget or trigger repeated matching adjustments',()=>{

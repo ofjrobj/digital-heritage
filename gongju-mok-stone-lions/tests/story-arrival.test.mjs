@@ -14,6 +14,19 @@ const rateCode=between('function openingPlaybackRate(', 'function openingCaption
 const fadeCode=between('function sourceEndFade(', '// Blend toward the actual following');
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
 
+test('the intro uses the approved native-frame edit and the walking clips stay within 1x',()=>{
+  const intro=manifest.scenes.find(s=>s.id==='intro');
+  assert.equal(intro.src,'./media/v23/intro-mountain-rush.mp4');
+  assert.equal(intro.fps,30);
+  assert.equal(intro.duration,583/30);
+  assert.equal(intro.provenance.interpolation,undefined);
+  assert.deepEqual(intro.playbackCurve,[{time:0,rate:1}]);
+  for(const scene of manifest.scenes.filter(s=>s.scrollPlayback==='continuous')){
+    assert.equal(scene.maxPlaybackRate,1,scene.id);
+    assert.ok(scene.scrollCruiseRate<=1,scene.id);
+  }
+});
+
 function arrival(scene,mediaTime,{paused=false,release=false}={}){
   const video={currentTime:mediaTime,playbackRate:1.5,paused};
   const current={scene,video,clipIn:0,manualHeld:paused};
@@ -57,15 +70,27 @@ test('crossing a dialogue approach marker on release still owns the final approa
   assert.equal(reached.context.target,scene.duration);
 });
 
-test('the entire modern video remains visible through its final source frame',()=>{
+test('the seasons film keeps its complete source at native speed through the final frame',()=>{
   const scene=manifest.scenes.find(s=>s.id==='seasons');
   const context=vm.createContext({replacementOpening:true,sourcePlaybackRate,clamp,ease});
   vm.runInContext(rateCode+fadeCode,context);
-  assert.equal(context.openingPlaybackRate(scene,10,scene.duration),1);
-  assert.equal(context.openingPlaybackRate(scene,16,scene.duration),.75);
+  assert.equal(scene.clipIn,0);
+  assert.equal(scene.duration,scene.sourceFrames/scene.fps);
   for(const time of [0,13.7,17,scene.duration-1/scene.fps,scene.duration]){
+    assert.equal(context.openingPlaybackRate(scene,time,scene.duration),1,`native speed at ${time}s`);
     assert.equal(context.sourceEndFade(scene,time),0,`no paper covering at ${time}s`);
   }
+});
+
+test('arrival and seasons meet at adjacent original frames without a frozen crossfade',()=>{
+  const arrival=manifest.scenes.find(s=>s.id==='return-lions');
+  const seasons=manifest.scenes.find(s=>s.id==='seasons');
+  assert.equal(arrival.provenance.sourceSha256,seasons.provenance.sourceSha256);
+  assert.equal(arrival.provenance.sourceEndFrameExclusive,seasons.provenance.sourceStartFrame);
+  assert.equal(arrival.exitMatch,undefined);
+  assert.equal(arrival.exitCrossfadeSeconds??0,0);
+  assert.equal(seasons.transition,'none');
+  assert.equal(seasons.startDelay,0);
 });
 
 test('the final film waits for ended even when its clock reaches the declared duration',()=>{

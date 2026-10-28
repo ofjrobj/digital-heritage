@@ -6,10 +6,14 @@
 <title>공주목 석사자 — Blender 테스트</title>
 <meta name="description" content="봉황동 석사자 두 점의 형태에서 공주의 옛 공간을 새롭게 바라보는 디지털 헤리티지 인트로.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='3' fill='%238a493a'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='serif' font-size='23' fill='%23f3ebd9'%3E石%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Song+Myung&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../about/assets/fonts/fonts.css?v=approved-fonts-20261028">
 <style>
-:root{font-family:'Gowun Batang',Batang,serif;color:#f8f7ef;background:#c9ceca;color-scheme:light;--travel:0}
+/* Important declarations in this layer also cover legacy styles injected by the prototype. */
+@layer approved-prototype-fonts {
+  body,body *{font-family:'KoPubWorld Batang Light',serif!important;font-weight:300!important;font-synthesis:none!important}
+  body button,body input,body select,body textarea,body small,body .eyebrow,body .intro-control,body .cover-top,body .cover-bottom,body #status,body #lionStatus,body #villageLoadStatus{font-family:'KoPubWorld Dotum Light',sans-serif!important}
+}
+:root{font-family:'KoPubWorld Batang Light',serif;color:#f8f7ef;background:#c9ceca;color-scheme:light;--travel:0}
 *{box-sizing:border-box}
 body{margin:0}
 button,a{-webkit-tap-highlight-color:transparent}
@@ -22,12 +26,12 @@ a{color:inherit;text-decoration:none}
 #film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:-3}
 .veil{position:absolute;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(180deg,rgba(15,29,26,.27),transparent 22%,transparent 57%,rgba(15,29,26,.30))}
 header{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:30px 3.5vw;text-shadow:0 1px 10px #18312b55}
-.identity{font-family:'Song Myung','Gowun Batang',Batang,serif;font-size:16px;letter-spacing:.12em;font-weight:400}
+.identity{font-family:'KoPubWorld Batang Light',serif;font-size:16px;letter-spacing:.12em;font-weight:400}
 .text-button{font-size:13px;letter-spacing:.035em;padding:12px 0;border-bottom:1px solid transparent}
 .text-button:hover{border-bottom-color:currentColor}
 .opening{position:absolute;left:8vw;bottom:19vh;pointer-events:none;opacity:var(--intro-opacity,1);transform:translateY(calc(var(--travel)*-35px));text-shadow:0 2px 30px #0d261b33}
 .opening p{font-size:12px;letter-spacing:.2em;margin:0 0 20px}
-.opening h1{font:300 clamp(34px,4vw,62px)/1.5 'Song Myung','Gowun Batang',Batang,serif;letter-spacing:-.04em;margin:0}
+.opening h1{font:300 clamp(34px,4vw,62px)/1.5 'KoPubWorld Batang Light',serif;letter-spacing:-.04em;margin:0}
 .scroll-cue{position:absolute;left:50%;bottom:5vh;transform:translateX(-50%);display:flex;align-items:center;gap:18px;font-size:12px;letter-spacing:.12em;opacity:var(--cue-opacity,1);white-space:nowrap;text-shadow:0 1px 15px #0c2923}
 .scroll-line{display:block;height:48px;width:1px;background:#ffffff42;position:relative;overflow:hidden}
 .scroll-line:after{content:'';position:absolute;left:0;top:0;width:1px;height:18px;background:#fff;animation:drift 2.7s ease-in-out infinite}
@@ -36,14 +40,14 @@ header{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;ju
 .distance-track{position:relative;width:1px;height:90px;background:#ffffff55}
 .distance-track i{position:absolute;top:calc(var(--travel)*100%);left:-2px;width:5px;height:5px;border-radius:50%;background:#fff;transform:translateY(-50%)}
 .arrival{position:absolute;bottom:8vh;left:6vw;text-shadow:0 2px 20px #162b22;animation:reveal 1s ease both}
-.arrival p{font:400 24px 'Song Myung','Gowun Batang',Batang,serif;margin:0 0 10px}
+.arrival p{font:400 24px 'KoPubWorld Batang Light',serif;margin:0 0 10px}
 .arrival button{font-size:12px}
-.credit{position:absolute;right:3.5vw;bottom:4vh;font:12px 'Song Myung','Gowun Batang',Batang,serif;letter-spacing:.12em;opacity:.65}
+.credit{position:absolute;right:3.5vw;bottom:4vh;font:12px 'KoPubWorld Batang Light',serif;letter-spacing:.12em;opacity:.65}
 #status{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:14px;line-height:1.8;color:#fff;background:#172e28df;padding:12px 18px;text-align:center}
 #status:empty{display:none}
 dialog{position:fixed;margin:auto;border:1px solid #b9b9a14a;background:#eef0e9;color:#263a32;padding:52px;max-width:620px;width:calc(100% - 36px);max-height:85svh;overflow:auto;box-shadow:0 25px 100px #0003}
 dialog::backdrop{background:#10231d66;backdrop-filter:blur(6px)}
-dialog h2{font:400 34px/1.6 'Song Myung','Gowun Batang',Batang,serif;margin:0 0 24px}
+dialog h2{font:400 34px/1.6 'KoPubWorld Batang Light',serif;margin:0 0 24px}
 dialog p{font-size:16px;line-height:1.95;color:#405149}
 .eyebrow{font-size:12px;letter-spacing:.15em}
 .dialog-close{position:absolute;right:16px;top:10px;font-size:28px;width:44px;height:44px}
@@ -82,14 +86,14 @@ dialog{padding:42px 26px}
 .intro-video-slot{position:absolute;inset:0;z-index:-3;background:#030303}
 .intro-vignette{position:absolute;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(circle at 50% 44%,rgba(255,255,255,.02) 0,rgba(0,0,0,.08) 34%,rgba(0,0,0,.72) 100%)}
 .intro-controls{position:absolute;top:0;left:0;right:0;display:flex;justify-content:flex-end;align-items:center;gap:25px;padding:28px 3.5vw;z-index:5}
-.intro-control{font-family:'Gowun Batang',Batang,serif;font-size:12px;letter-spacing:.11em;color:#f2eee4aa;padding:10px 0;border-bottom:1px solid transparent;transition:color .2s ease,border-color .2s ease}
+.intro-control{font-family:'KoPubWorld Batang Light',serif;font-size:12px;letter-spacing:.11em;color:#f2eee4aa;padding:10px 0;border-bottom:1px solid transparent;transition:color .2s ease,border-color .2s ease}
 .intro-control:hover{color:#fff;border-bottom-color:#ffffff5e}
 .intro-control .state{margin-left:6px;color:#fff}
-.intro-index{font-family:'Song Myung','Gowun Batang',Batang,serif;font-size:13px}
-.intro-scroll{position:absolute;left:50%;bottom:4.8vh;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:13px;color:#f2eee4a8;font-family:'Gowun Batang',Batang,serif;font-size:11px;letter-spacing:.13em;z-index:5}
+.intro-index{font-family:'KoPubWorld Batang Light',serif;font-size:13px}
+.intro-scroll{position:absolute;left:50%;bottom:4.8vh;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:13px;color:#f2eee4a8;font-family:'KoPubWorld Batang Light',serif;font-size:11px;letter-spacing:.13em;z-index:5}
 .intro-scroll-line{display:block;width:1px;height:48px;background:#ffffff2f;position:relative;overflow:hidden}
 .intro-scroll-line:after{content:'';position:absolute;left:0;top:-18px;width:1px;height:18px;background:#f2eee4;animation:drift 2.7s ease-in-out infinite}
-.intro-note{position:absolute;left:3.5vw;bottom:4.5vh;font-family:'Gowun Batang',Batang,serif;font-size:11px;letter-spacing:.1em;color:#f2eee447}
+.intro-note{position:absolute;left:3.5vw;bottom:4.5vh;font-family:'KoPubWorld Batang Light',serif;font-size:11px;letter-spacing:.1em;color:#f2eee447}
 .header-actions{display:flex;align-items:center;gap:24px}
 .settings-copy{font-size:14px;line-height:1.9;color:#405149}
 .settings-row{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px 0;border-top:1px solid #47594c33}
@@ -116,7 +120,7 @@ dialog{padding:42px 26px}
  color:#2b251c;
  border:1px solid #8c795c;
  box-shadow:0 8px 24px #0004;
- font-family:'Song Myung','Gowun Batang',Batang,serif;
+ font-family:'KoPubWorld Batang Light',serif;
  font-size:14px;
  letter-spacing:.18em;
  line-height:1;

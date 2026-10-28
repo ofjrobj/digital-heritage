@@ -63,6 +63,8 @@ test('all numbered selections and deselections preserve material and restore ove
    assert(f.panels.every(panel=>panel.querySelector('.panel-subtitle').textContent==='크기 정보'));
    f.panels.forEach((panel,p)=>{
     assert.equal(panel.querySelector('h2').textContent,`크기 정보 / ${p===0?'수사자':'암사자'}`);
+    assert.equal(panel.dataset.panelView,'overview');
+    assert.match(panel.querySelector('.panel-note').textContent,/소장.*공주대학교 박물관.*측정 기록.*사자성어 팀/);
     assert.equal(panel.querySelector('.object-size-list').scrollTop,0);
     assert.deepEqual(panel.querySelector('.object-size-list').children.map(row=>row.children[1].textContent),overallMeasurements.map(row=>row[p===0?2:1]));
    });

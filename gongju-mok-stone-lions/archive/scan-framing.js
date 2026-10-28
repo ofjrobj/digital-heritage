@@ -25,7 +25,7 @@ export function levelScan(THREE,scan,{yaw,targetSize,sex}){
 export function createInspectionFraming(THREE,{camera,controls,element}){
  const up=new THREE.Vector3(0,1,0),zero=new THREE.Vector3(),all=[];
  const comparisonHeights=new Map();
- let bounds=null,current=null,overview=null,overviewHeight=null,overviewLimit=null,fitted=0,lastRect=null,pending=null;
+ let bounds=null,current=null,overview=null,overviewHeight=null,overviewLimit=null,fitted=0,lastRect=null,pending=null,comparisonEnabled=true;
  function view(index){
   const part=Number.isInteger(index)?PARTS[index]:null,size=bounds.getSize(new THREE.Vector3());
   const selected=part&&!part.all?all.filter(p=>p.x>=bounds.min.x+size.x*(part.front??.65)&&p.y>=bounds.min.y+size.y*part.band[0]&&p.y<=bounds.min.y+size.y*part.band[1]):all;
@@ -81,7 +81,7 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
  }
  function distanceFor(spec,r,matchOverview=true){
   const width=r.width*(spec.part?(spec.part.width??(spec.part.all ? .78 : .83)):.76);
-  const sharedHeight=matchOverview?(spec.part?comparisonHeights.get(spec.index):overviewHeight):null;
+  const sharedHeight=matchOverview&&comparisonEnabled?(spec.part?comparisonHeights.get(spec.index):overviewHeight):null;
   const height=Math.min(spec.part?r.height*(spec.part.height??.86):Math.min(r.height*.82,innerHeight*.42),sharedHeight>0?sharedHeight:Infinity);
   let near=.05;for(const p of spec.points)near=Math.max(near,p.z+.05);let far=50;
   for(let i=0;i<22;i++){
@@ -154,6 +154,11 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   if(!Number.isFinite(height)||height<=0||Math.abs((comparisonHeights.get(current.index)||0)-height)<.1)return false;
   comparisonHeights.set(current.index,height);return true;
  }
+ function setComparisonEnabled(enabled){
+  const next=!!enabled;
+  if(next===comparisonEnabled)return false;
+  comparisonEnabled=next;return true;
+ }
  function focus(index){
   // A preset is an explicit new viewpoint. OrbitControls keeps drag inertia
   // after pointer-up; letting it run during this transition would move the
@@ -175,5 +180,5 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   referenceCamera.lookAt(goal.target);referenceCamera.updateMatrixWorld(true);
   return referenceCamera;
  }
- return {bind,resize,focus,reference,naturalOverviewHeight,setOverviewHeight,naturalFramingHeight,setFramingHeight};
+ return {bind,resize,focus,reference,naturalOverviewHeight,setOverviewHeight,naturalFramingHeight,setFramingHeight,setComparisonEnabled};
 }

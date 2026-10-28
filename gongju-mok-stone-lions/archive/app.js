@@ -1,5 +1,5 @@
-import {levelScan,createInspectionFraming} from './scan-framing.js?v=interaction-audit-20261028';
-import {createViewportBuffer,createFramingTransition,createViewportZoom} from './viewer-motion.js?v=requested-fixes-20261028-v13';
+import {levelScan,createInspectionFraming} from './scan-framing.js?v=single-panel-fit-20261029';
+import {createViewportBuffer,createFramingTransition,createViewportZoom} from './viewer-motion.js?v=relative-zoom-20261029';
 import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=requested-fixes-20261028-v8';
 import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=requested-fixes-20261028-v11';
 import {createNormalMapView} from './normal-map-view.js?v=review-final-20261028-v6';
@@ -21,7 +21,10 @@ function synchronizeOverview(){
   if(overviewSyncPending)return;overviewSyncPending=true;
   requestAnimationFrame(()=>{
     overviewSyncPending=false;
-    const pair=Object.values(viewers),heights=pair.map(viewer=>viewer.framingHeight());
+    const all=Object.values(viewers),pair=all.filter(viewer=>viewer.isVisible());
+    all.forEach(viewer=>viewer.setComparisonEnabled(pair.length===2));
+    if(pair.length!==2)return;
+    const heights=pair.map(viewer=>viewer.framingHeight());
     if(heights.every(height=>Number.isFinite(height)&&height>0)){
       const height=Math.min(...heights);
       pair.forEach(viewer=>viewer.setFramingHeight(height));
@@ -181,7 +184,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
       dirty=false;
     }
   }
-  animate();return {focus,loaded,snapshot(){renderer.render(scene,renderCamera);const copy=document.createElement('canvas');copy.width=renderer.domElement.width;copy.height=renderer.domElement.height;copy.getContext('2d').drawImage(renderer.domElement,0,0);return copy;},setColor(value){normalMap.setEnabled(false);surface.setColor(value);},setNormalMap:normalMap.setEnabled,setLightEnabled:inspectionLight.setEnabled,setLightAngle:inspectionLight.setAngle,getLightAngle:inspectionLight.getAngle,framingHeight:framing.naturalFramingHeight,setFramingHeight(height){if(framing.setFramingHeight(height))resizePending=true;}};
+  animate();return {focus,loaded,snapshot(){renderer.render(scene,renderCamera);const copy=document.createElement('canvas');copy.width=renderer.domElement.width;copy.height=renderer.domElement.height;copy.getContext('2d').drawImage(renderer.domElement,0,0);return copy;},setColor(value){normalMap.setEnabled(false);surface.setColor(value);},setNormalMap:normalMap.setEnabled,setLightEnabled:inspectionLight.setEnabled,setLightAngle:inspectionLight.setAngle,getLightAngle:inspectionLight.getAngle,isVisible(){const rect=element.getBoundingClientRect();return rect.width>0&&rect.height>0;},setComparisonEnabled(enabled){if(framing.setComparisonEnabled(enabled))resizePending=true;},framingHeight:framing.naturalFramingHeight,setFramingHeight(height){if(framing.setFramingHeight(height))resizePending=true;}};
 }
 const viewers = {
  male:createViewer({element:document.querySelector('#male-scene'),loading:document.querySelector('#male-loading'),modelUrl:'models/male-continuous.glb',targetSize:1.83,yaw:-3.902609*Math.PI/180}),
@@ -195,6 +198,7 @@ const detail = document.querySelector('.detail-card');
 const overviewCaption = new Map(['.detail-kicker','h3','.detail-copy','.detail-status'].map(selector=>[selector,detail.querySelector(selector).textContent]));
 let selectedObservation = null;
 const panels = [...document.querySelectorAll('.info-panel')];
+const sourceNote = '소장 · 공주대학교 박물관 / 측정 기록 · 사자성어 팀';
 function renderMeasurementRows(list, rows, column) {
  list.replaceChildren();
  list.scrollTop=0;
@@ -210,12 +214,15 @@ function renderMeasurementRows(list, rows, column) {
 }
 const overallPanels = new Map(panels.map(panel => {
  const name=panel.dataset.side==='left'?'수사자':'암사자';
+ panel.dataset.panelView='overview';
+ panel.querySelector('.panel-note').textContent=sourceNote;
  panel.querySelector('h2').textContent=`크기 정보 / ${name}`;
  renderMeasurementRows(panel.querySelector('.object-size-list'),overallMeasurements,panel.dataset.side==='left'?2:1);
  return [panel, {name,kicker:panel.querySelector('.panel-kicker').textContent, subtitle:panel.querySelector('.panel-subtitle').textContent, source:panel.querySelector('.panel-note').textContent}];
 }));
 function updatePanelContent(index) {
  panels.forEach(panel => {
+  panel.dataset.panelView=index===null?'overview':'observation';
   const kicker=panel.querySelector('.panel-kicker'), title=panel.querySelector('h2'), subtitle=panel.querySelector('.panel-subtitle'), list=panel.querySelector('.object-size-list'), source=panel.querySelector('.panel-note');
   if (index === null) { const initial=overallPanels.get(panel); title.textContent=`크기 정보 / ${initial.name}`; kicker.textContent=initial.kicker; subtitle.textContent=initial.subtitle; renderMeasurementRows(list,overallMeasurements,panel.dataset.side==='left'?2:1); source.textContent=initial.source; panel.querySelector('.panel-content').scrollTop=0; return; }
   const note=measurements[index], column=panel.dataset.side==='left'?2:1;
@@ -226,7 +233,6 @@ function updatePanelContent(index) {
   source.textContent=sourceNote;
  });
 }
-const sourceNote = '소장 · 공주대학교 박물관 / 측정 기록 · 사자성어 팀';
 const descriptions = [
  '스캔 데이터를 통해 정수리 부분의 곱슬거리는 털 표현의 미세한 음각 양각을 입체적으로 관찰할 수 있습니다.',
  '마모되어 두드러지지 않던 입과 수염 자국의 굴곡이 스캔 데이터를 통해 뚜렷하게 드러납니다.',

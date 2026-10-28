@@ -1,0 +1,55 @@
+.prompt-embed { margin: 24px 0 48px; min-width: 0; }
+.prompt-embed-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  margin: 0;
+  padding-inline: 0;
+  border-inline: 0;
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.prompt-embed-chevron {
+  width: 9px;
+  height: 9px;
+  margin-right: 6px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+  flex: 0 0 auto;
+  opacity: .6;
+  transition: transform var(--ui-motion-duration, 1s) var(--ui-motion-ease, cubic-bezier(.22,.75,.25,1));
+}
+.prompt-embed.is-open .prompt-embed-chevron { transform: rotate(225deg); }
+.prompt-embed-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition: grid-template-rows var(--ui-motion-duration, 1s) var(--ui-motion-ease, cubic-bezier(.22,.75,.25,1)), opacity var(--ui-motion-duration, 1s) var(--ui-motion-ease, cubic-bezier(.22,.75,.25,1)), visibility 0s var(--ui-motion-duration, 1s);
+}
+.prompt-embed.is-open .prompt-embed-panel {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.prompt-embed-inner { min-height: 0; min-width: 0; overflow: hidden; }
+.prompt-embed-toolbar { display: flex; justify-content: flex-end; align-items: center; gap: 16px; padding-block: 12px; }
+.prompt-embed-original {
+  color: var(--muted, #68685f);
+  font: 300 12px/1.6 var(--story-sans, 'KoPubWorld Dotum Light', sans-serif);
+  text-decoration: none;
+}
+.prompt-embed-original:hover { text-decoration: underline; text-underline-offset: .2em; }
+.prompt-embed-close { display: grid; place-items: center; width: 32px; height: 32px; padding: 6px; border: 0; background: transparent; color: var(--muted, #68685f); cursor: pointer; }
+.prompt-embed-close svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1; }
+.prompt-embed-original:focus-visible, .prompt-embed-close:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+.prompt-embed-frame { display: block; width: 100%; height: clamp(360px, 65vh, 720px); box-sizing: border-box; border: 1px solid var(--line, #c8c8c2); background: var(--paper, #e8e8e6); }
+@media (prefers-reduced-motion: reduce) {
+  .prompt-embed-panel, .prompt-embed-chevron { transition: none; }
+}
