@@ -47,7 +47,7 @@ if(embeddedStory){
 const PAPER=PAPER_CSS;
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
 const manifestURL=new URL(document.body.dataset.mediaManifest||'./test-render/manifest.json?v=rolling-fog-common-walk-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
-const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=archive-paper-1',import.meta.url).href;document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=loading-nav-20261028',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
 const footageFog=createFootageFog({stage,world:canvas,mist,subtle:replacementOpening});

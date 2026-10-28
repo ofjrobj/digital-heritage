@@ -4,16 +4,19 @@
 .ux-track { padding: 42px 0 56px; border-bottom: 1px solid var(--line); }
 .ux-track-heading { margin: 0 0 26px; }
 .ux-track-heading h2 { margin: 0; font-size: 30px; font-weight: 400; }
-.ux-screens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
-.ux-screen { min-width: 0; margin: 0; }
-.ux-screen img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
-.ux-screen figcaption { margin-top: 14px; color: #68685f; font: 300 14px/1.8 var(--story-sans, sans-serif); }
+.ux-preview { display: block; width: 100%; height: clamp(420px, 75svh, 680px); border: 1px solid var(--line); background: #e8e8e6; }
 .ux-page .story-footer { padding-top: 26px; }
 @media (max-width: 700px) {
   .ux-hero { padding: 48px 0 36px; }
   .ux-track { padding: 32px 0 42px; }
   .ux-track-heading { margin-bottom: 22px; }
   .ux-track-heading h2 { font-size: 27px; }
-  .ux-screens { grid-template-columns: 1fr; gap: 28px; }
-  .ux-screen figcaption { margin-top: 10px; font-size: 13px; }
+  .ux-preview { height: clamp(420px, 72svh, 600px); }
+}
+
+@media (max-width: 420px) {
+  .ux-preview { width: calc(100% + 36px); margin-inline: -18px; border-inline: 0; }
+}
+@media (max-height: 520px) {
+  .ux-preview { height: 75svh; min-height: 260px; }
 }

@@ -10,15 +10,36 @@ export function lightPositionAt(angle,base){
 // keeps the chosen light direction relative to the screen while either lion turns.
 export function createInspectionLight(key,element,redraw){
  const base=key.position.clone(),originalLighting=element.dataset.lighting;
+ const keyIntensity=key.intensity;
+ let previousKeyIntensity=key.intensity;
+ const fills=(key.parent?.children||[]).filter(light=>light!==key&&(light.isHemisphereLight||light.isDirectionalLight)).map(light=>({
+  light,intensity:light.intensity,previousIntensity:light.intensity,ground:light.isHemisphereLight?light.groundColor.clone():null
+ }));
  let enabled=false,angle=null;
  function apply(){
   if(enabled&&angle!==null)key.position.set(...lightPositionAt(angle,base));
   else key.position.copy(base);
+  // A rotating key should reveal relief without turning the unlit side black.
+  // Trade some key contrast for neutral sky/ground and frontal fill only while
+  // inspecting; color mode and the off state retain the exact original setup.
+  key.intensity=enabled?keyIntensity*.75:previousKeyIntensity;
+  for(const {light,intensity,previousIntensity,ground} of fills){
+   light.intensity=enabled?intensity*(ground?2.75:1.3):previousIntensity;
+   if(ground){light.groundColor.copy(ground);if(enabled)light.groundColor.lerp(light.color,.5);}
+  }
   element.dataset.lighting=enabled?'adjustable-neutral-key-chin-fill':originalLighting;
   redraw();
  }
  return {
-  setEnabled(value){enabled=!!value;apply();},
+  setEnabled(value){
+   const next=!!value;
+   if(next&&!enabled){
+    // Material selection may have changed the baseline since construction.
+    previousKeyIntensity=key.intensity;
+    for(const saved of fills)saved.previousIntensity=saved.light.intensity;
+   }
+   enabled=next;apply();
+  },
   setAngle(value){angle=normalizeAngle(value);if(enabled)apply();}
  };
 }
@@ -47,7 +68,7 @@ export function mountInspectionLight(viewers){
   const bearing=normalizeAngle(angle),direction=`${bearing}도`;
   button.dataset.enabled=String(enabled);button.setAttribute('aria-valuenow',String(bearing));
   button.setAttribute('aria-valuetext',`${direction}, 조명 ${enabled?'켜짐':'꺼짐'}`);
-  button.title=`빛 방향 · ${direction} (${enabled?'켜짐':'꺼짐'})`;
+  button.dataset.tooltip=`빛 방향 · ${direction} (${enabled?'켜짐':'꺼짐'})`;
   button.style.setProperty('--light-angle',`${angle}deg`);
  }
  function setEnabled(value,showGuide=true){

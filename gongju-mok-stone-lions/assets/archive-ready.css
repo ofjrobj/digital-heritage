@@ -1,8 +1,5 @@
-/* Both sculptures and their controls enter as one complete archive view. */
-html[data-archive-state] :is(.archive .object-stage, .archive .info-panel, .archive .wordmark, .archive .masthead > p, .archive-corner-frame) {
-  transition: opacity .9s ease;
-}
-html:is([data-archive-state="loading"], [data-archive-state="delayed"], [data-archive-state="error"]) :is(.archive .object-stage, .archive .info-panel, .archive .wordmark, .archive .masthead > p, .archive-corner-frame) {
+/* Keep both scans hidden until the navigation has reached its final position. */
+html:is([data-archive-state="loading"], [data-archive-state="delayed"], [data-archive-state="error"], [data-archive-state="positioning"]) :is(.archive .object-stage, .archive .info-panel, .archive .wordmark, .archive .masthead > p, .archive-corner-frame) {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -11,46 +8,41 @@ html:is([data-archive-state="revealing"], [data-archive-state="ready"]) :is(.arc
   opacity: 1;
   visibility: visible;
 }
-.archive-ready-status {
-  position: fixed;
-  inset: 0;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1em;
-  padding: 24px;
-  color: #454640;
-  font-family: 'KoPubWorld Batang Light', serif;
-  font-size: clamp(15px, min(1.55vw, 2.8dvh), 22px);
-  line-height: 1.65;
-  text-align: center;
-  pointer-events: none;
-  transition: opacity .4s ease;
-}
-.archive-ready-status p { margin: 0; }
-.archive-ready-status button {
-  pointer-events: auto;
-  font: inherit;
-  font-size: .82em;
-  color: inherit;
-  background: transparent;
-  border: 1px solid rgba(55,55,52,.28);
-  padding: .5em 1.1em;
-  cursor: pointer;
-}
-.archive-ready-status button[hidden] { display: none; }
-html[data-archive-state="loading"] .archive-ready-status p { animation: archive-loading-breathe 2.4s ease-in-out infinite; }
-html:is([data-archive-state="revealing"], [data-archive-state="ready"]) .archive-ready-status { opacity: 0; }
-@keyframes archive-loading-breathe { 0%,100% { opacity: .9; } 50% { opacity: .4; } }
-@media (prefers-reduced-motion: reduce) {
-  html[data-archive-state] :is(.archive .object-stage, .archive .info-panel, .archive .wordmark, .archive .masthead > p, .archive-corner-frame), .archive-ready-status { transition-duration: .01s; }
-  .archive-ready-status p { animation: none !important; }
-}
+.archive-ready-status{position:fixed;inset:0;z-index:5;pointer-events:none;color:#77776e;font:300 12px/1.6 'KoPubWorld Dotum Light',sans-serif;transition:opacity .25s ease}
+.archive-model-status{position:absolute;top:46%;width:40%;margin:0;text-align:center;animation:archive-loading-appear .3s .45s both}
+.archive-model-status.male{left:5%}
+.archive-model-status.female{right:5%}
+.archive-model-status[hidden]{display:none}
+.archive-ready-status button{position:absolute;left:50%;top:56%;transform:translateX(-50%);pointer-events:auto;font:inherit;color:inherit;background:transparent;border:1px solid rgba(55,55,52,.28);padding:.5em 1.1em;cursor:pointer}
+.archive-ready-status button[hidden]{display:none}
+html:is([data-archive-state="positioning"],[data-archive-state="revealing"],[data-archive-state="ready"]) .archive-ready-status{opacity:0}
+@keyframes archive-loading-appear{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.archive-ready-status{transition:none}.archive-model-status{animation:none}}
 
-/* Reveal the two already-loaded scans in sequence. */
-html[data-archive-state="revealing"] .archive .male-card { animation: archive-scan-enter .8s cubic-bezier(.22,.75,.25,1) both; }
-html[data-archive-state="revealing"] .archive .female-card { animation: archive-scan-enter .8s cubic-bezier(.22,.75,.25,1) .24s both; }
-@keyframes archive-scan-enter { from { opacity:0; transform:translateY(12px) scale(.975); } to { opacity:1; transform:translateY(0) scale(1); } }
-@media (prefers-reduced-motion: reduce) { html[data-archive-state="revealing"] .archive :is(.male-card,.female-card) { animation:none; } }
+/* Independent translate leaves the viewer/panel layout transforms untouched. */
+html[data-archive-state="revealing"] .archive .wordmark { animation: archive-ui-enter .6s cubic-bezier(.22,.75,.25,1) both; }
+html[data-archive-state="revealing"] .archive-corner-frame { animation: archive-ui-enter .6s ease .04s both; }
+html[data-archive-state="revealing"] .archive .global-hotspot-set { animation: archive-ui-enter .6s cubic-bezier(.22,.75,.25,1) .14s both; }
+html[data-archive-state="revealing"] .archive .male-card { animation: archive-scan-enter .8s cubic-bezier(.22,.75,.25,1) .3s both; }
+html[data-archive-state="revealing"] .archive .female-card { animation: archive-scan-enter .8s cubic-bezier(.22,.75,.25,1) .5s both; }
+html[data-archive-state="revealing"] .archive .info-panel { animation: archive-ui-enter .65s cubic-bezier(.22,.75,.25,1) .74s both; }
+html[data-archive-state="revealing"] .archive .detail-card { animation: archive-ui-enter .65s cubic-bezier(.22,.75,.25,1) .9s both; }
+@keyframes archive-ui-enter { from { opacity:0; translate:0 8px; } to { opacity:1; translate:0 0; } }
+@keyframes archive-scan-enter { from { opacity:0; translate:0 12px; scale:.975; } to { opacity:1; translate:0 0; scale:1; } }
+
+/* Its final right edge is shared with pair-layout.css. The initial offset
+   always centres the menu, even if the window is resized while loading. */
+@media(max-width:800px) and (orientation:portrait){
+ .archive{--archive-nav-edge:28px}
+ html[data-archive-state] .archive #archiveStoryIndexBar{
+  translate:0 0;
+  transition:translate .72s cubic-bezier(.22,.75,.25,1);
+ }
+ html:is([data-archive-state="loading"],[data-archive-state="delayed"],[data-archive-state="error"]) .archive #archiveStoryIndexBar{
+  translate:calc(-50vw + var(--archive-nav-edge) + 50%) 0;
+ }
+}
+@media (prefers-reduced-motion: reduce) {
+ html[data-archive-state="revealing"] :is(.archive .wordmark,.archive .global-hotspot-set,.archive .male-card,.archive .female-card,.archive .info-panel,.archive .detail-card,.archive-corner-frame){animation:none}
+ html[data-archive-state] .archive #archiveStoryIndexBar{transition:none}
+}

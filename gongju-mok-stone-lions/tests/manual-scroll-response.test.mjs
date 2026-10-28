@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {createWalkingInput, walkingTargetDelta} from '../assets/walking-input.js';
-import {continuousScrollRate, manualScrollHoldTime, nextScrollStop} from '../assets/scroll-motion.js';
+import {continuousScrollRate, manualScrollHoldTime, nextScrollStop, boundedManualTarget} from '../assets/scroll-motion.js';
 import {setPlaybackRate, holdPresentedFrame, reverseFrameStep} from '../assets/video-playback.js';
 
 const runtime = readFileSync(new URL('../assets/test-render-media.js', import.meta.url), 'utf8');
@@ -29,12 +29,12 @@ const forwardBranch = between(
 );
 
 function createJourney({scene = walkingScene, end = 1000} = {}) {
-  let now = 0, mediaTime = 0, seeks = 0, wheelHandler;
+  let now = 0, mediaTime = 0, seeks = 0, starts = 0, stops = 0, wheelHandler;
   const video = {
     paused: true, seeking: false, readyState: 4, playbackRate: 1,
     get currentTime() { return mediaTime; },
     set currentTime(value) { mediaTime = value; seeks++; },
-    pause() { this.paused = true; },
+    pause() { if (!this.paused) stops++; this.paused = true; },
   };
   const current = {scene, video, clipIn: 0, loaded: true, manualHeld: true, settledTarget: 0};
   const context = vm.createContext({
@@ -51,9 +51,9 @@ function createJourney({scene = walkingScene, end = 1000} = {}) {
     walkingInputRange: () => scene.secondsPerScroll * 6,
     clamp: (value, min = 0, max = 1) => Math.max(min, Math.min(max, value)),
     footsteps: {stop() {}, pulse() {}}, draw() {},
-    play(record) { record.video.paused = false; },
+    play(record) { if (record.video.paused) starts++; record.video.paused = false; },
     seekScrollPosition(record, time) { record.video.pause(); record.video.currentTime = time; },
-    walkingTargetDelta, nextScrollStop, continuousScrollRate, manualScrollHoldTime,
+    walkingTargetDelta, nextScrollStop, continuousScrollRate, manualScrollHoldTime, boundedManualTarget,
     setPlaybackRate, holdPresentedFrame, reverseFrameStep,
   });
   vm.runInContext(inputCode + `
@@ -80,7 +80,7 @@ function createJourney({scene = walkingScene, end = 1000} = {}) {
     },
     frame(time, dt = 1 / 60) { advance(time); context.updateFrame(dt, time); },
     release(time) { advance(time); context.holdManualFrame(true, time); },
-    snapshot() { return {time: now, source: mediaTime, target: context.target, rate: video.playbackRate, paused: video.paused, held: current.manualHeld, seeks}; },
+    snapshot() { return {time: now, source: mediaTime, target: context.target, rate: video.playbackRate, paused: video.paused, held: current.manualHeld, seeks, starts, stops}; },
   };
 }
 
@@ -138,6 +138,51 @@ test('ordinary mouse-wheel cadence advances at least three times the old baselin
   assert.ok(result.source <= walkingScene.scrollCruiseRate * 10.1);
   assert.equal(result.paused, true);
   assert.equal(result.seeks, 0);
+});
+
+test('repeated mouse notches stay in native playback instead of restarting on every notch', () => {
+  for (const interval of [275, 300, 350, 400]) {
+    const result = simulate({interval, inputMs: 5000});
+    assert.ok(result.starts <= 2, `${interval}ms cadence restarted ${result.starts} times`);
+    assert.ok(result.source > 7.4 && result.source < 8.1);
+    assert.equal(result.paused, true);
+    assert.equal(result.seeks, 0);
+  }
+});
+
+test('rapid input keeps a bounded runway and release discards the remaining queue', () => {
+  const journey = createJourney();
+  for (let i = 0; i < 120; i++) {
+    journey.wheel(i * 16);
+    journey.frame(i * 16);
+    const state = journey.snapshot();
+    assert.ok(state.target - state.source <= walkingScene.secondsPerScroll + 1e-8);
+  }
+  journey.release(1920);
+  const stopped = journey.snapshot();
+  journey.frame(3000);
+  assert.equal(journey.snapshot().source, stopped.source);
+  assert.equal(stopped.target, stopped.source);
+  assert.equal(stopped.seeks, 0);
+});
+
+test('fine drag packets deliver a first frame without repeated decoder restarts', () => {
+  const journey = createJourney();
+  for (let i = 0; i < 120; i++) {
+    const now = i * 1000 / 60;
+    journey.advance(now);
+    journey.context.manual(1 / 90, true);
+    journey.frame(now);
+  }
+  const moving = journey.snapshot();
+  assert.equal(moving.starts, 1);
+  assert.equal(moving.stops, 0);
+  assert.ok(moving.source > 1.8 && moving.source < 2.5);
+  journey.release(2000);
+  const stopped = journey.snapshot();
+  journey.frame(2500);
+  assert.equal(journey.snapshot().source, stopped.source);
+  assert.equal(stopped.seeks, 0);
 });
 
 test('very gentle sustained input maintains the same continuous pace as strong input', () => {

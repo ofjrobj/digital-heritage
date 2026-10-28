@@ -1,8 +1,8 @@
-import {levelScan,createInspectionFraming} from './scan-framing.js?v=measured-back-frame-20261028';
+import {levelScan,createInspectionFraming} from './scan-framing.js?v=review-final-20261028-v6';
 import {createViewportBuffer,framingBlend} from './viewer-motion.js?v=smooth-pair-20261026';
-import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=toggle-observation-20261028';
-import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=normal-light-20261028';
-import {createNormalMapView} from './normal-map-view.js?v=normal-handedness-20261028-v3';
+import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=review-final-20261028-v6';
+import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=review-final-20261028-v6';
+import {createNormalMapView} from './normal-map-view.js?v=review-final-20261028-v6';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -101,8 +101,8 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   }).catch(error => {
     console.error(error);loading.textContent='모델을 불러오지 못했습니다. 새로고침해 주세요.';element.dataset.loaded='error';
   });
-  function focus(index){goal=framing.focus(index);dirty=true;synchronizeOverview();}
-  controls.addEventListener('start',()=>{goal=null;});
+  function focus(index){goal=framing.focus(index);element.dataset.viewSource='preset';dirty=true;synchronizeOverview();}
+  controls.addEventListener('start',()=>{goal=null;element.dataset.viewSource='interaction';});
   function animate(now=performance.now()){
     requestAnimationFrame(animate);
     const elapsed=Math.max(0,(now-lastFrameAt)/1000);lastFrameAt=now;
@@ -131,18 +131,19 @@ const viewers = {
  male:createViewer({element:document.querySelector('#male-scene'),loading:document.querySelector('#male-loading'),modelUrl:'models/male-continuous.glb',targetSize:1.83,yaw:-3.902609*Math.PI/180}),
  female:createViewer({element:document.querySelector('#female-scene'),loading:document.querySelector('#female-loading'),modelUrl:'models/female-continuous.glb',targetSize:2.10,yaw:-140.445485*Math.PI/180,displayZoom:1.25})
 };
-const surfaceToggle=mountSurfaceToggle(viewers);
+mountSurfaceToggle(viewers);
 mountInspectionLight(viewers);
 // Side panels follow the selected observation while preserving the overall view initially.
 // Keep the local GLB projection settings above: the remote archive used different OBJ axes.
 const detail = document.querySelector('.detail-card');
+const overviewCaption = new Map(['.detail-kicker','h3','.detail-copy','.detail-status'].map(selector=>[selector,detail.querySelector(selector).textContent]));
+let selectedObservation = null;
 const panels = [...document.querySelectorAll('.info-panel')];
 const overallPanels = new Map(panels.map(panel => [panel, {kicker:panel.querySelector('.panel-kicker').textContent, subtitle:panel.querySelector('.panel-subtitle').textContent, rows:panel.querySelector('.object-size-list').innerHTML, source:panel.querySelector('.panel-note').textContent}]));
 function updatePanelContent(index) {
  panels.forEach(panel => {
   const kicker=panel.querySelector('.panel-kicker'), subtitle=panel.querySelector('.panel-subtitle'), list=panel.querySelector('.object-size-list'), source=panel.querySelector('.panel-note');
-  let observation=panel.querySelector('.panel-observation');
-  if (index === null) { const initial=overallPanels.get(panel); kicker.textContent=initial.kicker; subtitle.textContent=initial.subtitle; list.innerHTML=initial.rows; source.textContent=initial.source; observation?.remove(); panel.querySelector('.panel-content').scrollTop=0; return; }
+  if (index === null) { const initial=overallPanels.get(panel); kicker.textContent=initial.kicker; subtitle.textContent=initial.subtitle; list.innerHTML=initial.rows; source.textContent=initial.source; panel.querySelector('.panel-content').scrollTop=0; return; }
   const note=measurements[index], column=panel.dataset.side==='left'?2:1;
   kicker.textContent=`${overallPanels.get(panel).kicker} · ${String(index+1).padStart(2,'0')} ${note.label}`;
   subtitle.textContent=note.label; list.replaceChildren();
@@ -151,8 +152,6 @@ function updatePanelContent(index) {
    const item=document.createElement('div'), term=document.createElement('dt'), value=document.createElement('dd');
    term.textContent=row[0]; value.textContent=row[column]; item.append(term,value); list.append(item);
   });
-  if (!observation) { observation=document.createElement('p'); observation.className='panel-observation'; list.after(observation); }
-  observation.textContent=note.text;
   panel.querySelector('.panel-content').scrollTop=0;
   source.textContent=sourceNote;
  });
@@ -174,6 +173,7 @@ function setPanelOpen(panel, open) {
 }
 function showObservation(index, focus=false) {
  const note=measurements[index],point=String(index+1).padStart(2,'0');
+ selectedObservation=index;
  updatePanelContent(index);
  document.querySelectorAll('.hotspot').forEach(button=>{
   const selected=button.dataset.point===point;
@@ -184,19 +184,30 @@ function showObservation(index, focus=false) {
  detail.querySelector('h3').textContent=note.label;
  detail.querySelector('.detail-copy').textContent=descriptions[index];
  detail.querySelector('.detail-status').textContent=sourceNote;
+ detail.removeAttribute('aria-hidden');
+ document.documentElement.dataset.archivePoint=point;
  if(focus){viewers.male.focus(index);viewers.female.focus(index);}
+}
+function clearObservation() {
+ selectedObservation=null;
+ document.querySelectorAll('.hotspot').forEach(button=>{
+  button.classList.remove('is-active');button.setAttribute('aria-pressed','false');
+ });
+ updatePanelContent(null);
+ for(const [selector,text] of overviewCaption)detail.querySelector(selector).textContent=text;
+ detail.setAttribute('aria-hidden','true');
+ document.documentElement.dataset.archivePoint='';
+ panels.forEach(panel=>setPanelOpen(panel,false));
+ viewers.male.focus(null);viewers.female.focus(null);
 }
 // Start in the complete-object view with no numbered observation selected.
 document.querySelectorAll('.hotspot').forEach(button=>{button.classList.remove('is-active');button.setAttribute('aria-pressed','false');});
+document.documentElement.dataset.archivePoint='';
 panels.forEach(panel=>setPanelOpen(panel,false));
 document.querySelectorAll('.hotspot').forEach(button=>button.addEventListener('click',()=>{
- if(button.classList.contains('is-active')){
-  button.classList.remove('is-active');button.setAttribute('aria-pressed','false');
-  updatePanelContent(null);panels.forEach(panel=>setPanelOpen(panel,false));
-  viewers.male.focus(null);viewers.female.focus(null);surfaceToggle.setMode('color');return;
- }
- surfaceToggle.setMode('relief');
- showObservation(Number(button.dataset.point)-1,true);
+ const index=Number(button.dataset.point)-1;
+ if(selectedObservation===index){clearObservation();return;}
+ showObservation(index,true);
  panels.forEach(panel=>setPanelOpen(panel,false));
 }));
 document.querySelectorAll('.panel-toggle').forEach(button=>button.addEventListener('click',()=>{

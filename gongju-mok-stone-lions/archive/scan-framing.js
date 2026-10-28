@@ -148,6 +148,13 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
   comparisonHeights.set(current.index,height);return true;
  }
  function focus(index){
+  // A preset is an explicit new viewpoint. OrbitControls keeps drag inertia
+  // after pointer-up; letting it run during this transition would move the
+  // two cameras by different amounts after the same numbered selection.
+  controls._sphericalDelta?.set(0,0,0);
+  controls._panOffset?.set(0,0,0);
+  if('_scale' in controls)controls._scale=1;
+  if('_performCursorZoom' in controls)controls._performCursorZoom=false;
   pending=index;if(!bounds)return null;current=view(index);useViewUp(current);
   const r=lastRect??element.getBoundingClientRect();fitted=distanceFor(current,r);publish(r);
   return goalFor(current,fitted);

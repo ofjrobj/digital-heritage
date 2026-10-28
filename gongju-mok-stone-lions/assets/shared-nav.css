@@ -43,7 +43,7 @@ body .archive #archiveStoryIndexBar :is(a, button) {
   padding: .32em 1.25em !important;
   border: 0;
   border-radius: 0;
-  color: #373734 !important;
+  color: #77776f !important;
   background: transparent;
   box-shadow: none;
   font-family: inherit !important;
@@ -53,7 +53,7 @@ body .archive #archiveStoryIndexBar :is(a, button) {
   line-height: normal !important;
   letter-spacing: .04em;
   white-space: nowrap;
-  text-decoration: none;
+  text-decoration: none !important;
   text-shadow: none !important;
 }
 
@@ -64,9 +64,8 @@ body .archive #archiveStoryIndexBar :is(a, button) + :is(a, button) {
 
 body.test-render-media #stage #storyIndexBar [aria-current='page'],
 body .archive #archiveStoryIndexBar [aria-current='page'] {
-  text-decoration: underline;
-  text-underline-offset: 5px;
-  text-decoration-thickness: auto;
+  color: #282824 !important;
+  text-decoration: none !important;
 }
 
 body.test-render-media #stage #storyIndexBar::before {
@@ -94,3 +93,10 @@ body.test-render-media[data-media-profile="selected-higgsfield"] #stage #storyIn
   opacity: var(--nav-paper, 0);
   transition: none;
 }
+
+/* Selection and hover use ink density, without underline or filled tabs. */
+body.test-render-media #stage #storyIndexBar :is(a,button),
+body .archive #archiveStoryIndexBar :is(a,button){transition:color .22s ease}
+body.test-render-media #stage #storyIndexBar :is(a,button):hover,
+body .archive #archiveStoryIndexBar :is(a,button):hover{color:#282824!important}
+@media(prefers-reduced-motion:reduce){body.test-render-media #stage #storyIndexBar :is(a,button),body .archive #archiveStoryIndexBar :is(a,button){transition:none}}

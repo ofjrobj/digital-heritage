@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
-import {levelScan, createInspectionFraming} from './scan-framing.js?v=paired-framing-20261026';
-import {createSurfaceView} from './surface-view.js?v=inspection-relief-2';
+import {levelScan, createInspectionFraming} from './scan-framing.js?v=review-final-20261028-v6';
+import {createSurfaceView} from './surface-view.js?v=review-final-20261028-v6';
 import {createViewportBuffer, framingBlend} from './viewer-motion.js?v=smooth-pair-20261026';
 
 const sex = new URLSearchParams(location.search).get('model') === 'female' ? 'female' : 'male';

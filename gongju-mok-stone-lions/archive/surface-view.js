@@ -44,21 +44,48 @@ export function mountSurfaceToggle(viewers, root = document) {
   const modes = ['color', 'relief', 'normal-map'];
   const labels = {color:'컬러', relief:'무채색', 'normal-map':'노멀맵'};
   const pair = Object.values(viewers);
-  let mode = 'color', stableMode = 'color', request = 0;
+  const scenes = [...(root.querySelectorAll?.('.scene') || [])];
+  const window = root.defaultView;
+  let mode = 'color', stableMode = 'color', request = 0, initialized = false;
+  let fades = [];
+  function fadeTo(opacity, duration) {
+    const starts = scenes.map(scene => Number(window?.getComputedStyle(scene).opacity) || 1);
+    fades.forEach(animation => animation.cancel()); fades = [];
+    if (window?.matchMedia('(prefers-reduced-motion: reduce)').matches || !scenes.length || scenes.some(scene => !scene.animate)) return null;
+    // Fade only the rendered scans. Controls, camera and observation selection
+    // stay put, and the model is never hidden while a normal texture loads.
+    fades = scenes.map((scene, index) => scene.animate(
+      [{opacity:starts[index]}, {opacity}],
+      {duration, easing:'cubic-bezier(.22,.61,.36,1)', fill:'forwards'}
+    ));
+    return Promise.allSettled(fades.map(animation => animation.finished));
+  }
+  async function finishFade(token) {
+    const finished = fadeTo(1, 240);
+    if (finished) await finished;
+    if (token !== request) return;
+    fades.forEach(animation => animation.cancel()); fades = [];
+  }
   function updateButton() {
     const next = modes[(modes.indexOf(mode) + 1) % modes.length];
     button.dataset.mode = mode;
     button.setAttribute('aria-label', `보기 전환: ${labels[mode]} · 다음 ${labels[next]}`);
-    button.title = `${labels[mode]} · 클릭하면 ${labels[next]}`;
+    button.dataset.tooltip = `${labels[mode]} · 클릭하면 ${labels[next]}`;
     button.querySelectorAll('[data-mode]').forEach(sector => sector.classList.toggle('is-selected', sector.dataset.mode === mode));
   }
   async function setMode(value) {
+    if (!modes.includes(value)) return;
     mode = value; const token = ++request;
     button.removeAttribute('aria-busy'); updateButton();
+    const dimmed = initialized ? fadeTo(.62, 120) : null;
+    initialized = true;
+    if (dimmed) await dimmed;
+    if (token !== request) return;
     if (mode !== 'normal-map') {
       stableMode = mode;
       // Also cancels any pending normal texture request before changing materials.
       pair.forEach(viewer => viewer.setColor(mode === 'color'));
+      if (dimmed) await finishFade(token);
       return;
     }
     button.setAttribute('aria-busy', 'true');
@@ -69,8 +96,9 @@ export function mountSurfaceToggle(viewers, root = document) {
       mode = stableMode;
       pair.forEach(viewer => viewer.setColor(mode === 'color'));
       updateButton();
-      button.title = '노멀맵을 불러오지 못했습니다. 다시 눌러 재시도';
+      button.dataset.tooltip = '노멀맵을 불러오지 못했습니다. 다시 눌러 재시도';
     }
+    if (dimmed) await finishFade(token);
   }
   button.addEventListener('click', () => setMode(modes[(modes.indexOf(mode) + 1) % modes.length]));
   setMode('color');

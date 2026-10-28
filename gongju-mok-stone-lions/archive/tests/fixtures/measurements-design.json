@@ -1,0 +1,102 @@
+[
+  {
+    "number": "01",
+    "label": "갈기",
+    "rows": [
+      {
+        "term": "정수리 갈기 수",
+        "male": "11개",
+        "female": "8개"
+      }
+    ]
+  },
+  {
+    "number": "02",
+    "label": "수염",
+    "rows": [
+      {
+        "term": "수염 수(한쪽 당)",
+        "male": "4개",
+        "female": "8개"
+      },
+      {
+        "term": "수염 평균 길이",
+        "male": "9.5cm",
+        "female": "6.5cm"
+      }
+    ]
+  },
+  {
+    "number": "03",
+    "label": "무늬",
+    "rows": [
+      {
+        "term": "몸 길이",
+        "male": "104.6cm",
+        "female": "120.1cm"
+      },
+      {
+        "term": "등 줄기 수",
+        "male": "18",
+        "female": "16"
+      }
+    ]
+  },
+  {
+    "number": "04",
+    "label": "이목구비",
+    "rows": [
+      {
+        "term": "코 길이",
+        "male": "10.2cm",
+        "female": "15.4cm"
+      },
+      {
+        "term": "귀 크기",
+        "male": "55.5cm",
+        "female": "11.2cm"
+      },
+      {
+        "term": "입 크기",
+        "male": "15.9cm",
+        "female": "21.9cm"
+      },
+      {
+        "term": "이빨 크기",
+        "male": "1.8cm",
+        "female": "1.2cm"
+      },
+      {
+        "term": "이빨 수",
+        "male": "7개",
+        "female": "9개"
+      }
+    ]
+  },
+  {
+    "number": "05",
+    "label": "눈매",
+    "rows": [
+      {
+        "term": "얼굴 길이",
+        "male": "36.8cm",
+        "female": "34.1cm"
+      },
+      {
+        "term": "얼굴 넓이",
+        "male": "37.6cm",
+        "female": "34.5cm"
+      },
+      {
+        "term": "오른쪽 눈 길이",
+        "male": "80.4cm",
+        "female": "9.5cm"
+      },
+      {
+        "term": "왼쪽 눈 길이",
+        "male": "77.1cm",
+        "female": "9.4cm"
+      }
+    ]
+  }
+]

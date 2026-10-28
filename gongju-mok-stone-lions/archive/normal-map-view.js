@@ -1,7 +1,7 @@
 // Decode the supplied tangent-space normal map on the scan's verified UVs.
-// Colour the resulting view-space normal, not the raw atlas pixels: neighbouring
-// UV islands have different tangent bases, so painting those pixels as albedo
-// creates false coloured seams even when the mapping is correct.
+// Neighbouring UV islands have different tangent bases, so painting raw atlas
+// RGB as albedo creates false seams. Decode to view space for lighting, then
+// express the map's detail in a continuous surface-local frame for its colour.
 export function createNormalMapView(THREE,{element,textureUrl,redraw=()=>{}}){
  const meshes=[];let texture=null,pending=null,wanted=false,active=false,previousMode='relief';
  function restore(){
@@ -20,19 +20,29 @@ export function createNormalMapView(THREE,{element,textureUrl,redraw=()=>{}}){
      // bitangent direction as well as its image placement. Duplicate vertices
      // on atlas seams agree only with this Y sign (normal-handedness.json).
      const normal=new THREE.MeshStandardMaterial({normalMap:texture,normalScale:new THREE.Vector2(1,-1),color:0xffffff,roughness:1,metalness:0,side:material.side});
-     // The GLB converter flipped OBJ V, reversing the tangent bitangent. The
-     // original bake is unchanged, so invert its green component when decoding.
-     // Matching UV-seam vertices confirm this restores normal continuity.
-     normal.normalScale.set(1,-1);
      normal.name='mapped-surface-normal';
+     normal.toneMapped=false;
      normal.onBeforeCompile=shader=>{
-      // Three's normal_fragment_maps transforms the source map through the
-      // local tangent basis first. Both colour and the existing directional
-      // light therefore use the same continuous, perturbed surface normal.
-      shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',
-       '#include <normal_fragment_maps>\n diffuseColor.rgb = normal * 0.5 + 0.5;');
+      // Keep the standard material white while it measures illumination from
+      // the actual perturbed normal. Normal RGB is a diagnostic encoding, not
+      // albedo: BRDF, exposure and gamma must not recolour that encoding.
+      shader.fragmentShader=shader.fragmentShader
+       .replace('#include <opaque_fragment>', `
+        // Shortest rotation from the unperturbed surface normal to +Z. This
+        // removes the sculpture's broad orientation from the diagnostic RGB,
+        // retaining the actual baked detail without UV-island colour seams.
+        vec3 inspectionBase = normalize(nonPerturbedNormal);
+        vec3 inspectionDetail = inspectionBase.z > -0.999
+         ? normalize(vec3(normal.xy - inspectionBase.xy * (normal.z + dot(inspectionBase.xy, normal.xy) / (1.0 + inspectionBase.z)), dot(inspectionBase, normal)))
+         : normal * vec3(1.0, -1.0, -1.0);
+        float inspectionIllumination = clamp(dot(totalDiffuse, vec3(0.2126, 0.7152, 0.0722)), 0.0, 1.0);
+        float inspectionShade = mix(0.72, 1.0, inspectionIllumination);
+        outgoingLight = packNormalToRGB(inspectionDetail) * inspectionShade;
+        #include <opaque_fragment>`)
+       .replace('#include <tonemapping_fragment>', '')
+       .replace('#include <colorspace_fragment>', '');
      };
-     normal.customProgramCacheKey=()=> 'mapped-surface-normal-v2';
+     normal.customProgramCacheKey=()=> 'mapped-surface-normal-v4-local-detail';
      return normal;
     };
     pair.normal=Array.isArray(pair.previous)?pair.previous.map(make):make(pair.previous);

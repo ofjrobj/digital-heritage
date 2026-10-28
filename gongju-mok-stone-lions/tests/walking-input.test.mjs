@@ -104,6 +104,28 @@ test('discrete wheel and direct trackpad packets expose their own release window
   assert.equal(input.releaseDelayMs(), 240);
 });
 
+test('repeated mouse notches learn a bounded cadence without extending isolated input', () => {
+  const input = gestureInput();
+  for (const [now, delay] of [[0, 240], [300, 360], [650, 410], [1050, 420], [2000, 240]]) {
+    assert.equal(input.wheelGestureSteps(wheel(-100), now), 1);
+    assert.equal(input.releaseDelayMs(), delay);
+  }
+  input.wheelGestureSteps(wheel(-2), 2016);
+  assert.equal(input.releaseDelayMs(), 120, 'trackpad release remains immediate');
+  input.wheelGestureSteps(wheel(-100), 2200);
+  assert.equal(input.releaseDelayMs(), 240, 'another input device starts with an isolated notch');
+});
+
+test('a scene handoff clears the learned mouse cadence', () => {
+  const input = gestureInput();
+  input.wheelGestureSteps(wheel(-100), 0);
+  input.wheelGestureSteps(wheel(-100), 350);
+  assert.equal(input.releaseDelayMs(), 410);
+  input.reset();
+  input.wheelGestureSteps(wheel(-100), 700);
+  assert.equal(input.releaseDelayMs(), 240);
+});
+
 test('zoom, horizontal and invalid packets do not consume or renew a gesture', () => {
   const input = gestureInput();
   for (const event of [wheel(-2, {ctrlKey: true}), wheel(-2, {deltaX: 3}), wheel(0), wheel(NaN), wheel(-2, {deltaMode: 3})]) {
