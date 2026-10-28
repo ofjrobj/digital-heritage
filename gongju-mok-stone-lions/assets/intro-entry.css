@@ -103,7 +103,7 @@ body[data-leaving-intro="true"] #vrNotice{display:none!important}
 }
 #projectMenu :is(button,a):active{color:#292925;background:transparent}
 
-body[data-intro-entry="cover"][data-journey-started="false"] #world{animation:story-cover-appear 1.1s ease-out both}
+body[data-intro-entry="cover"][data-journey-started="false"] #world{animation:story-cover-appear var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1)) both}
 @keyframes story-cover-appear{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){body[data-intro-entry="cover"] #world{animation:none}}
 

@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {shouldStartApproach} from '../assets/dialogue-approach.js';
 import {sourcePlaybackRate} from '../assets/scroll-motion.js';
+import {uiRevealOpacity,uiMotionEase} from '../assets/ui-motion.js';
 
 const runtime=readFileSync(new URL('../assets/test-render-media.js',import.meta.url),'utf8');
 const manifest=JSON.parse(readFileSync(new URL('../selected-media.json',import.meta.url),'utf8'));
@@ -87,7 +88,7 @@ test('the completed last frame fades over 6.5 seconds, then the embedded restart
   for(const embeddedStory of [false,true]){
     let resets=0;
     const context=vm.createContext({finished:true,endingElapsed:0,dt:0,paused:false,document:{hidden:false,body:{dataset:{}}},
-      clamp,ease,mistAmount(){},endingPaper:{style:{}},archiveCta:{style:{}},embeddedStory,endingRestartShown:false,
+      clamp,ease,uiRevealOpacity,entryNavReducedMotion:{matches:false},mistAmount(){},endingPaper:{style:{}},archiveCta:{style:{}},embeddedStory,endingRestartShown:false,
       entryAccepted:true,entryScreen:{reset(){resets++;},start(){}},$:()=>({querySelector:()=>({})}),
     });
     vm.runInContext(code,context);assert.equal(Number(context.endingPaper.style.opacity),0);assert.equal(resets,0);
@@ -98,4 +99,25 @@ test('the completed last frame fades over 6.5 seconds, then the embedded restart
     assert.equal(Number(context.endingPaper.style.opacity),1);assert.equal(resets,embeddedStory?1:0);
     vm.runInContext(code,context);assert.equal(resets,embeddedStory?1:0);
   }
+});
+
+
+test('the ending archive link keeps its two-second delay and fades for one UI second independently of the film',()=>{
+ const code=between(' if(finished){','\n if(sceneJoin&&');
+ const context=vm.createContext({finished:true,endingElapsed:0,dt:0,paused:false,document:{hidden:false,body:{dataset:{}}},
+  clamp,ease,uiRevealOpacity,entryNavReducedMotion:{matches:false},mistAmount(){},endingPaper:{style:{}},archiveCta:{style:{}},embeddedStory:false,endingRestartShown:false});
+ for(const [time,hidden,alpha]of [[0,true,0],[1.99,true,0],[2,false,0],[2.5,false,uiMotionEase(.5)],[3,false,1],[6.5,false,1]]){
+  context.endingElapsed=time;vm.runInContext(code,context);
+  assert.equal(context.archiveCta.hidden,hidden);assert.equal(context.archiveCta.inert,hidden);
+  assert.equal(Number(context.archiveCta.style.opacity),alpha);
+  assert.equal(Number(context.endingPaper.style.opacity),ease(clamp(time/6.5)));
+ }
+ context.entryNavReducedMotion.matches=true;context.endingElapsed=2;vm.runInContext(code,context);assert.equal(context.archiveCta.style.opacity,'1');
+ const css=readFileSync(new URL('../assets/test-render-media.css',import.meta.url),'utf8');
+ assert.doesNotMatch(css,/\.tr-archive-cta:not\(\[hidden\]\)\{animation:/,'CSS cannot override the timeline-owned arrival delay');
+ const shared=readFileSync(new URL('../assets/ui-motion.css',import.meta.url),'utf8');
+ assert.match(shared,/body\.test-render-media #stage \.tr-archive-cta\{transition-property:color,border-color!important\}/,'CTA opacity cannot receive a second CSS interpolation');
+ const baseCtaRule=css.match(/\.test-render-media \.tr-archive-cta\{[^}]+\}/)?.[0];
+ assert.ok(baseCtaRule);assert.doesNotMatch(baseCtaRule,/transition:opacity/);
+
 });

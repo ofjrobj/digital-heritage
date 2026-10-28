@@ -38,11 +38,14 @@ if(menu&&toggle&&items){
   new MutationObserver(()=>{if(!coverAvailable())setOpen(false);}).observe(document.body,{attributes:true,attributeFilter:['data-intro-entry','data-journey-started','data-leaving-intro']});
 }
 if(button&&notice){
-  const show=()=>{if(!button.inert&&!items?.inert&&coverAvailable()){notice.textContent='아직 준비 중입니다.';notice.hidden=false;}};
+  const hoverPointer=matchMedia('(hover:hover) and (pointer:fine)');
+  const show=event=>{
+    if(event.pointerType==='mouse'&&hoverPointer.matches&&!button.inert&&!items?.inert&&coverAvailable()){notice.textContent='아직 준비 중입니다.';notice.hidden=false;}
+    else dismiss();
+  };
   button.addEventListener('pointerenter',show);
   button.addEventListener('pointerleave',dismiss);
-  button.addEventListener('focus',show);
-  button.addEventListener('blur',dismiss);
   button.addEventListener('click',event=>event.stopPropagation());
+  hoverPointer.addEventListener('change',event=>{if(!event.matches)dismiss();});
   document.addEventListener('visibilitychange',()=>{if(document.hidden)dismiss();});
 }

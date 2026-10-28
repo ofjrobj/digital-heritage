@@ -1,4 +1,4 @@
-import {levelScan,createInspectionFraming} from './scan-framing.js?v=requested-fixes-20261028-v12';
+import {levelScan,createInspectionFraming} from './scan-framing.js?v=interaction-audit-20261028';
 import {createViewportBuffer,createFramingTransition,createViewportZoom} from './viewer-motion.js?v=requested-fixes-20261028-v13';
 import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=requested-fixes-20261028-v8';
 import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=requested-fixes-20261028-v11';
@@ -134,6 +134,11 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   }
   controls.addEventListener('start',()=>{
     // A drag can interrupt a preset at any point without changing its roll.
+    // Keep the displayed radius too: the destination's close-up limits must
+    // not pull the wider in-flight view forward on the first drag or wheel.
+    const distance=camera.position.distanceTo(controls.target);
+    controls.minDistance=Math.min(controls.minDistance,distance);
+    controls.maxDistance=Math.max(controls.maxDistance,distance);
     useOrbitUp(camera.up);goal=null;cameraTransition=null;element.dataset.viewSource='interaction';
   });
   function animate(now=performance.now()){

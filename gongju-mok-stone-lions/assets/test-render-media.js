@@ -1,7 +1,7 @@
 import {approachState,shouldStartApproach} from './dialogue-approach.js?v=arrival-20261020-v27';
 import {createAdaptiveNavPaper} from './adaptive-nav-paper.js?v=frame-paced-scroll-20261026';
 import {createAdaptiveIcons} from './adaptive-icons.js?v=fullscreen-menu-tone-20261028';
-import {UI_MOTION_SECONDS,uiMotionEase} from './ui-motion.js?v=ui-motion-1s';
+import {UI_MOTION_MS,UI_MOTION_SECONDS,uiMotionEase,uiRevealOpacity} from './ui-motion.js?v=ui-motion-audit-20261028';
 import {createQuietAmbience} from './quiet-ambience.js?v=ending-clock-20261028';
 import {continuousScrollRate,createScrollTween,sampleScrollTween,scrollTweenDuration,sourcePlaybackRate,nextScrollStop,nearestSharpStop,manualScrollHoldTime,boundedManualTarget} from './scroll-motion.js?v=scroll-cadence-20261026';
 import {createFootageFog} from './footage-fog.js?v=edge-dissolve-20261019-v24';
@@ -51,7 +51,7 @@ if(embeddedStory){
 const PAPER=PAPER_CSS;
 const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n)),ease=t=>t*t*(3-2*t);
 const manifestURL=new URL(document.body.dataset.mediaManifest||'./test-render/manifest.json?v=rolling-fog-common-walk-1',import.meta.url),url=s=>s?new URL(s,manifestURL).href:'';
-const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=fullscreen-entry-20261028',import.meta.url).href;document.head.append(css);
+const css=document.createElement('link');css.rel='stylesheet';css.href=new URL('./test-render-media.css?v=ui-motion-audit-20261028',import.meta.url).href;document.head.append(css);
 document.body.classList.add('test-render-media');
 const mist=document.createElement('div');mist.className='tr-mist';mist.setAttribute('aria-hidden','true');stage.append(mist);
 const footageFog=createFootageFog({stage,world:canvas,mist,subtle:replacementOpening});
@@ -341,7 +341,7 @@ if($('indexLink'))$('indexLink').onclick=e=>{
  remember();
  if(entryGate&&entryAccepted&&!journeyStarted()&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey){
   e.preventDefault();document.body.dataset.leavingIntro='true';
-  setTimeout(()=>location.assign($('indexLink').href),350);
+  setTimeout(()=>location.assign($('indexLink').href),entryNavReducedMotion.matches?0:UI_MOTION_MS);
  }
 };
 if($('storyLink'))$('storyLink').onclick=e=>{e.preventDefault();paused=false;previewAuto=false;requestScene(0);};
@@ -685,8 +685,8 @@ function frame(now){
   if(!paused&&!document.hidden)endingElapsed+=dt;
   const reveal=ease(clamp(endingElapsed/6.5));
   document.body.dataset.ending='true';mistAmount(reveal);endingPaper.style.opacity=String(reveal);
-  archiveCta.hidden=false;archiveCta.inert=endingElapsed<2;
-  archiveCta.style.opacity=String(ease(clamp((endingElapsed-2)/4.5)));
+  archiveCta.hidden=endingElapsed<2;archiveCta.inert=endingElapsed<2;
+  archiveCta.style.opacity=String(uiRevealOpacity(endingElapsed,2,entryNavReducedMotion.matches));
   if(embeddedStory&&reveal>=1&&!endingRestartShown){endingRestartShown=true;entryAccepted=false;entryScreen.reset();entryScreen.start();$('introEnter').querySelector('.entry-label').textContent='다시 시작';}
  }
 

@@ -17,3 +17,9 @@ export function uiMotionEase(progress){
  }
  return curve((low+high)/2,.75,1);
 }
+
+// Timeline-owned UI can retain its arrival delay without borrowing film timing.
+export function uiRevealOpacity(elapsed,delay=0,reducedMotion=false){
+ const progress=(elapsed-delay)/UI_MOTION_SECONDS;
+ return reducedMotion?Number(progress>=0):uiMotionEase(progress);
+}

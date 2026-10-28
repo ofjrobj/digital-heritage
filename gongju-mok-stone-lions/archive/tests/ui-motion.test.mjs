@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {UI_MOTION_MS,UI_MOTION_SECONDS,uiMotionEase} from '../../assets/ui-motion.js';
+import {UI_MOTION_MS,UI_MOTION_SECONDS,uiMotionEase,uiRevealOpacity} from '../../assets/ui-motion.js';
 
 test('UI JavaScript easing matches the CSS Bezier at known curve coordinates',()=>{
  assert.equal(UI_MOTION_MS,1000);assert.equal(UI_MOTION_SECONDS,1);
@@ -15,4 +15,12 @@ test('UI easing settles at its endpoints without overshoot or reversal',()=>{
  for(let i=0;i<=100;i++){
   const value=uiMotionEase(i/100);assert.ok(value>=previous&&value<=1);previous=value;
  }
+});
+
+
+test('a delayed UI reveal keeps the delay and settles after one second',()=>{
+ assert.equal(uiRevealOpacity(0,2),0);assert.equal(uiRevealOpacity(1.999,2),0);assert.equal(uiRevealOpacity(2,2),0);
+ assert.ok(Math.abs(uiRevealOpacity(2.30125,2)-.78125)<1e-6);
+ assert.equal(uiRevealOpacity(3,2),1);assert.equal(uiRevealOpacity(6.5,2),1);
+ assert.equal(uiRevealOpacity(1.999,2,true),0);assert.equal(uiRevealOpacity(2,2,true),1);
 });

@@ -7,12 +7,16 @@
 
 body.test-render-media :is(.tr-caption,.tr-archive-cta),
 body.test-render-media #storyIndexBar::before,
+body.test-render-media #storyIndexBar :is(a,button),
+body .archive #archiveStoryIndexBar :is(a,button),
 body .archive :is(.hotspot,.surface-toggle,.panel-toggle i),
-body .wrap :is(.back-link,.social-link,.gallery-trigger svg,.experience-path strong,.production-trigger>span:first-child){
+body .wrap :is(a,.back-link,.social-link,.gallery-trigger svg,.experience-path strong,.production-trigger>span:first-child){
  transition-duration:var(--ui-motion-duration)!important;
  transition-timing-function:var(--ui-motion-ease)!important;
 }
-body.test-render-media :is(#cinemaDialogue,.tr-archive-cta),
+/* The ending link opacity is already eased by the renderer on every frame. */
+body.test-render-media #stage .tr-archive-cta{transition-property:color,border-color!important}
+body.test-render-media #cinemaDialogue,
 body .process-gallery[open]{
  animation-duration:var(--ui-motion-duration)!important;
  animation-timing-function:var(--ui-motion-ease)!important;
@@ -43,10 +47,12 @@ body .archive .light-toggle::after{
 @media(prefers-reduced-motion:reduce){
  body.test-render-media :is(.tr-caption,.tr-archive-cta,#cinemaDialogue),
  body.test-render-media #storyIndexBar::before,
+ body.test-render-media #storyIndexBar :is(a,button),
+ body .archive #archiveStoryIndexBar :is(a,button),
  body .archive :is(.hotspot,.surface-toggle,.panel-toggle i,.inspection-hint,.hotspot span),
  body .archive .surface-toggle::after,
  body .archive .light-toggle::after,
  body .archive .global-hotspot-set .inspection-tools>.light-toggle,
- body .wrap :is(.back-link,.social-link,.gallery-trigger svg,.experience-path strong,.production-trigger>span:first-child),
+ body .wrap :is(a,.back-link,.social-link,.gallery-trigger svg,.experience-path strong,.production-trigger>span:first-child),
  body .process-gallery[open]{transition:none!important;animation:none!important}
 }

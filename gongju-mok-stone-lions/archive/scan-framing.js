@@ -115,6 +115,10 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
  }
  function resize(r,goal){
   lastRect=r;if(!current)return;const next=distanceFor(current,r);
+  // A user may have interrupted a close-up before entering its normal orbit
+  // range. Carry that range through layout changes; focus() resets it for the
+  // next explicit observation.
+  const limits=fitted>0?[controls.minDistance/fitted,controls.maxDistance/fitted]:null;
   if(!fitted){const initial=goalFor(current,next);controls.target.copy(initial.target);camera.position.copy(initial.position);}
   else if(Math.abs(next-fitted)>.00001){
    // Resize the destination rather than jumping the displayed camera. Reusing
@@ -125,6 +129,7 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
    goal.position.sub(goal.target).multiplyScalar(ratio);goal.target.add(shift);goal.position.add(goal.target);
   }
   fitted=next;publish(r);
+  if(limits){controls.minDistance=Math.min(controls.minDistance,next*limits[0]);controls.maxDistance=Math.max(controls.maxDistance,next*limits[1]);}
   return goal;
  }
  function naturalOverviewHeight(){

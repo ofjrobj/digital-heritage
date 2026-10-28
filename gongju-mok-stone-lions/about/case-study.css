@@ -72,7 +72,7 @@
 .measurement-source { color: #68685f; font: 13px/1.8 var(--story-sans, sans-serif); }
 .case-study-reveal { opacity: 1; transform: none; background: var(--paper); }
 @media (prefers-reduced-motion: no-preference) {
-  .case-study-reveal { transition: opacity .55s ease, transform .55s ease; }
+  .case-study-reveal { transition: opacity var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1)), transform var(--ui-motion-duration,1s) var(--ui-motion-ease,cubic-bezier(.22,.75,.25,1)); }
   .case-study-reveal:not(.is-visible) { opacity: 0; transform: translateY(12px); }
   .making-steps a { transition: color .2s ease, transform .2s ease; }
   .making-steps a:hover { transform: translateX(3px); }
