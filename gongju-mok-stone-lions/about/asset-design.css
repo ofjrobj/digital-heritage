@@ -86,3 +86,10 @@
   .house-study { padding: 26px 0; }
   .landscape-collection { gap: 30px; }
 }
+
+/* Character sheets: 01–03 together, followed by the wider 04–05 row. */
+@media(min-width:701px){
+ .cast-collection{grid-template-columns:repeat(6,minmax(0,1fr))}
+ .cast-collection>.cast-study{grid-column:span 2}
+ .cast-collection>.cast-study:nth-child(n+4){grid-column:span 3}
+}

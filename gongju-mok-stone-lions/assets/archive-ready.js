@@ -1,4 +1,4 @@
-// Reveal the paired scan archive together after both decoded models are ready.
+// Render the interface immediately; reveal paired scans after both models decode.
 // Loaded in the head so one model cannot flash before the other appears.
 (() => {
   const root = document.documentElement;
@@ -14,7 +14,7 @@
       label.className = `archive-model-status ${side}`;
       label.setAttribute('role', 'status');
       label.setAttribute('aria-live', 'polite');
-      label.textContent = `${index === 0 ? '수사자' : '암사자'} 3D 불러오는 중`;
+      label.textContent = 'Loading...';
       gate.append(label);
       return label;
     });
@@ -25,15 +25,16 @@
     retry.addEventListener('click', () => location.reload());
     gate.append(retry);
     document.body.append(gate);
-    const compactPortrait = matchMedia('(max-width: 800px) and (orientation: portrait)');
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    root.dataset.archiveUi = 'entering';
+    setTimeout(() => { root.dataset.archiveUi = 'ready'; }, reducedMotion.matches ? 0 : 1000);
     let revealing = false;
     const fail = delayed => {
       if (revealing) return;
       root.dataset.archiveState = delayed ? 'delayed' : 'error';
       modelLabels.forEach((label, index) => {
         const loaded = document.getElementById(index === 0 ? 'male-scene' : 'female-scene')?.dataset.loaded;
-        if (loaded !== 'true') label.textContent = delayed ? '3D 자료를 불러오고 있습니다.' : '3D 자료를 불러오지 못했습니다.';
+        if (loaded !== 'true') label.textContent = delayed ? 'Loading...' : '3D 자료를 불러오지 못했습니다.';
       });
       retry.hidden = false;
     };
@@ -42,9 +43,6 @@
       revealing = true;
       clearTimeout(slowTimer);
       requestAnimationFrame(() => requestAnimationFrame(() => {
-        // Keep the familiar Story / Index menu visible while loading. In a
-        // narrow portrait it first moves to its responsive header position;
-        // only then do the title, controls and sculptures enter.
         root.dataset.archiveState = 'positioning';
         gate.setAttribute('aria-hidden', 'true');
         setTimeout(() => {
@@ -55,7 +53,7 @@
             gate.remove();
             observer.disconnect();
           }, reducedMotion.matches ? 0 : 1700);
-        }, compactPortrait.matches && !reducedMotion.matches ? 780 : 0);
+        }, 0);
       }));
     };
     const inspect = () => {
@@ -70,7 +68,7 @@
     observer.observe(archive, { subtree: true, attributes: true, attributeFilter: ['data-loaded'] });
     const slowTimer = setTimeout(() => fail(true), 45000);
     addEventListener('error', event => {
-      if (String(event.filename || event.target?.src || '').includes('/archive/app.js')) fail(false);
+      if (String(event.filename || event.target?.src || '').includes('/archive/app.js?v=requested-fixes-20261028-v7')) fail(false);
     }, true);
     inspect();
   };

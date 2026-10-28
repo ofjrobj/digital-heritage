@@ -18,12 +18,12 @@ test('light direction covers the full circle, including behind the model, withou
  for(const invalid of [NaN,Infinity,-Infinity,'invalid'])assert.deepEqual(lightPositionAt(invalid,base),lightPositionAt(0,base));
 });
 
-test('rotary inspection softens the key and restores its exact original position, color and intensity when off',()=>{
+test('rotary inspection preserves directional contrast and restores its exact original position, color and intensity when off',()=>{
  const key=new THREE.DirectionalLight(0xffffff,2.4);key.position.set(-3,4,5);
  const element={dataset:{lighting:'fixed-neutral-key-chin-fill'}},before=key.position.clone();let redraws=0;
  const lighting=createInspectionLight(key,element,()=>redraws++);
  lighting.setEnabled(true);assert.deepEqual(key.position,before,'opening the control does not jump the light');
- assert.ok(Math.abs(key.intensity-1.8)<1e-12);assert.equal(key.color.getHex(),0xffffff);
+ assert.ok(Math.abs(key.intensity-2.64)<1e-12);assert.equal(key.color.getHex(),0xffffff);
  lighting.setAngle(60);const adjusted=key.position.clone();assert.ok(adjusted.x>0);
  lighting.setEnabled(false);assert.deepEqual(key.position,before);
  assert.equal(element.dataset.lighting,'fixed-neutral-key-chin-fill');
@@ -32,7 +32,7 @@ test('rotary inspection softens the key and restores its exact original position
  assert.ok(redraws>=4);
 });
 
-test('inspection adds balanced sky and lower fill while preserving both originals across repeated toggles',()=>{
+test('inspection keeps the key dominant over sky and lower fill and restores originals across repeated toggles',()=>{
  const scene=new THREE.Scene(),key=new THREE.DirectionalLight(0xffffff,1.8);
  key.position.set(-3,4,5);
  const hemisphere=new THREE.HemisphereLight(0xffffff,0x888888,.8),fill=new THREE.DirectionalLight(0xffffff,.65);
@@ -40,7 +40,8 @@ test('inspection adds balanced sky and lower fill while preserving both original
  const ground=hemisphere.groundColor.clone(),lighting=createInspectionLight(key,{dataset:{lighting:'original'}},()=>{});
  for(let i=0;i<3;i++){
   lighting.setEnabled(true);lighting.setAngle(180);
-  assert.ok(key.intensity<1.8);assert.ok(hemisphere.intensity>.8);assert.ok(fill.intensity>.65);
+  assert.ok(key.intensity>1.8);assert.ok(hemisphere.intensity>=.8&&hemisphere.intensity<=1);assert.equal(fill.intensity,.65);
+  assert.ok(key.intensity>hemisphere.intensity+fill.intensity,'directional light must dominate diffuse fill to reveal relief');
   assert.ok(hemisphere.groundColor.r>ground.r);
   lighting.setEnabled(false);
   assert.equal(key.intensity,1.8);assert.equal(hemisphere.intensity,.8);assert.equal(fill.intensity,.65);
@@ -80,6 +81,8 @@ test('the sun itself exposes the angle, controls both viewers with keys, and res
   const calls={male:[],female:[]},viewers=Object.fromEntries(Object.keys(calls).map(sex=>[sex,{setLightEnabled:v=>calls[sex].push(['enabled',v]),setLightAngle:v=>calls[sex].push(['angle',v])}]));
   const {button}=mountInspectionLight(viewers);
   assert.equal(button.getAttribute('role'),'slider');assert.equal(button.getAttribute('aria-label'),'빛 방향');
+  assert.equal(button.dataset.tooltip,undefined,'no visible angle/status tooltip is added');
+  assert.equal(button.getAttribute('title'),undefined);
   assert.equal(button.getAttribute('aria-valuemin'),'0');assert.equal(button.getAttribute('aria-valuemax'),'359');
   assert.equal(button.getAttribute('aria-valuenow'),'329');assert.equal(button.getAttribute('aria-valuetext'),'329도, 조명 꺼짐');assert.equal(button.dataset.enabled,'false');
   button.dispatchEvent(new Event('click'));
@@ -197,6 +200,8 @@ test('the brief rotation hint expires, dismisses on use and mode exit, and resta
   const hint=button.parentNode.children.find(node=>node.className==='inspection-hint');
   assert.equal(hint.textContent,'원을 잡고 돌려보세요');
   assert.equal(hint.getAttribute('aria-hidden'),'true','existing described-by help stays the accessible instruction');
+  assert.equal(hint.dataset.visible,'true','show the existing hint when the light control first appears');
+  assert.equal(timers.size,1);
   button.dispatchEvent(new Event('click'));
   assert.equal(hint.dataset.visible,'true');assert.equal(timers.size,1);
   const timer=[...timers.values()][0];assert.equal(timer.delay,2600);timer.callback();
@@ -213,5 +218,8 @@ test('the brief rotation hint expires, dismisses on use and mode exit, and resta
   setEnabled(false);setEnabled(true);
   surface.dataset.mode='color';surface.notifyMode();
   assert.equal(hint.dataset.visible,'false');assert.equal(timers.size,0);
+  surface.dataset.mode='relief';surface.notifyMode();
+  assert.equal(hint.dataset.visible,'true','returning to an inspection mode briefly shows the existing instruction');
+  assert.equal(timers.size,1);
  }finally{Object.assign(globalThis,previous);}
 });

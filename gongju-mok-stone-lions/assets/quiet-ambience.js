@@ -64,6 +64,9 @@ export function createQuietAmbience(stage) {
         if(state.active&&state.moving)seasonHandoff.elapsed+=dt;
       }else seasonHandoff=null;
       const seasonal=tracks.seasons.audio;
+      // The final modern scene slows to 0.75x. Match that clock instead of
+      // repeatedly seeking a 1x soundtrack backwards as its drift grows.
+      if(isSeasons)setPlaybackRate(seasonal,state.playbackRate??1);
       if(state.scene?.id==='seasons' && seasonal.readyState>=1 &&
         (previousScene!=='seasons'||Math.abs(seasonal.currentTime-state.time)>.30)) {
         seasonal.currentTime=Math.max(0,Math.min(state.time,19.98));
@@ -108,3 +111,5 @@ export function createQuietAmbience(stage) {
     blocked(){return Object.values(tracks).some(t=>t.target>0&&t.blocked);}
   };
 }
+import {setPlaybackRate} from './video-playback.js?v=frame-paced-scroll-20261026';
+

@@ -67,11 +67,13 @@ function pairedControl(loads=[]){
 test('the one surface button cycles actual normal, color, and untextured materials on both scans',async()=>{
  const {button,fixtures}=pairedControl();
  assert.equal(button.dataset.mode,'color');
+ assert.equal(button.attributes['aria-label'],'컬러맵');assert.equal(button.dataset.tooltip,'컬러맵');
  fixtures.forEach(f=>assert.equal(f.mesh.material,f.color));
  await button.click();assert.equal(button.dataset.mode,'relief');
  fixtures.forEach(f=>assert.equal(f.mesh.material,f.original));
- assert.match(button.attributes['aria-label'],/무채색.*노멀맵/);
+ assert.equal(button.attributes['aria-label'],'흑백맵');assert.equal(button.dataset.tooltip,'흑백맵');
  await button.click();assert.equal(button.dataset.mode,'normal-map');
+ assert.equal(button.attributes['aria-label'],'노멀맵');assert.equal(button.dataset.tooltip,'노멀맵');
  fixtures.forEach(f=>assert.equal(f.mesh.material.normalMap,f.texture));
  await button.click();assert.equal(button.dataset.mode,'color');
  fixtures.forEach(f=>assert.equal(f.mesh.material,f.color));
@@ -94,6 +96,7 @@ test('one failed normal map restores both scans and the merged button can retry'
  const {button,fixtures}=pairedControl([undefined,texture=>++attempts===1?Promise.reject(Error('network')):Promise.resolve(texture)]);
  await button.click();await button.click();
  assert.equal(button.dataset.mode,'relief');fixtures.forEach(f=>assert.equal(f.mesh.material,f.original));
+ assert.equal(button.attributes['aria-label'],'흑백맵');assert.equal(button.dataset.tooltip,'흑백맵');
  await button.click();
  assert.equal(button.dataset.mode,'normal-map');fixtures.forEach(f=>assert.equal(f.mesh.material.normalMap,f.texture));
 });

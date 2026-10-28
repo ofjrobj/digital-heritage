@@ -1,6 +1,26 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
 import {createIntroEntry} from '../assets/intro-entry.js';
+
+test('a fresh intro URL still requires the invitation after the media-ready gate', () => {
+  const runtime=readFileSync(new URL('../assets/test-render-media.js',import.meta.url),'utf8');
+  const init=runtime.slice(runtime.indexOf('const embeddedStory='),runtime.indexOf('const walkingInput='));
+  const screen=runtime.match(/const entryScreen=.*?;\n/)[0];
+  for(const search of ['', '?start=intro', '?start=intro&preview=ux', '?embed=story&start=intro']){
+    const nodes={introWelcome:{},introRecommendation:{},introEnter:{focus(){}}};
+    const body={dataset:{},hasAttribute:name=>name==='data-intro-entry'};
+    const context=vm.createContext({URLSearchParams,location:{search},document:{body,fonts:{ready:Promise.resolve()}},$:id=>nodes[id],createIntroEntry});
+    vm.runInContext(init+screen+';globalThis.state={entryAccepted,entryScreen};',context);
+    assert.equal(context.state.entryAccepted,false,search);
+    assert.equal(nodes.introEnter.hidden,true,search);
+    assert.equal(context.state.entryScreen.accept(),false,search);
+    context.state.entryScreen.start();context.state.entryScreen.advance(2);
+    assert.equal(nodes.introEnter.hidden,false,search);
+    assert.equal(context.state.entryScreen.accept(),true,search);
+  }
+});
 
 function invitation(options = {}) {
   const body = {dataset: {}};

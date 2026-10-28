@@ -19,13 +19,13 @@ export function createInspectionLight(key,element,redraw){
  function apply(){
   if(enabled&&angle!==null)key.position.set(...lightPositionAt(angle,base));
   else key.position.copy(base);
-  // A rotating key should reveal relief without turning the unlit side black.
-  // Trade some key contrast for neutral sky/ground and frontal fill only while
-  // inspecting; color mode and the off state retain the exact original setup.
-  key.intensity=enabled?keyIntensity*.75:previousKeyIntensity;
+  // Directional illumination must dominate the fill so small carved ridges
+  // retain visible light/shade contrast. A modest sky/ground fill still keeps
+  // the unlit face readable; switching off restores the material baseline.
+  key.intensity=enabled?keyIntensity*1.1:previousKeyIntensity;
   for(const {light,intensity,previousIntensity,ground} of fills){
-   light.intensity=enabled?intensity*(ground?2.75:1.3):previousIntensity;
-   if(ground){light.groundColor.copy(ground);if(enabled)light.groundColor.lerp(light.color,.5);}
+   light.intensity=enabled?intensity*(ground?1.25:1):previousIntensity;
+   if(ground){light.groundColor.copy(ground);if(enabled)light.groundColor.lerp(light.color,.18);}
   }
   element.dataset.lighting=enabled?'adjustable-neutral-key-chin-fill':originalLighting;
   redraw();
@@ -68,7 +68,6 @@ export function mountInspectionLight(viewers){
   const bearing=normalizeAngle(angle),direction=`${bearing}도`;
   button.dataset.enabled=String(enabled);button.setAttribute('aria-valuenow',String(bearing));
   button.setAttribute('aria-valuetext',`${direction}, 조명 ${enabled?'켜짐':'꺼짐'}`);
-  button.dataset.tooltip=`빛 방향 · ${direction} (${enabled?'켜짐':'꺼짐'})`;
   button.style.setProperty('--light-angle',`${angle}deg`);
  }
  function setEnabled(value,showGuide=true){
@@ -126,6 +125,7 @@ export function mountInspectionLight(viewers){
  });
  function syncSurfaceMode(){
   const visible=['relief','normal-map'].includes(surface.dataset.mode);
+  const wasVisible=row.dataset.lightVisible==='true';
   if(!visible){
    hideHint();
    if(document.activeElement===button)surface.focus({preventScroll:true});
@@ -134,6 +134,7 @@ export function mountInspectionLight(viewers){
   }
   row.dataset.lightVisible=String(visible);button.inert=!visible;button.tabIndex=visible?0:-1;
   button.setAttribute('aria-hidden',String(!visible));
+  if(visible&&!wasVisible)showHint();
  }
  const modeObserver=new MutationObserver(syncSurfaceMode);
  modeObserver.observe(surface,{attributes:true,attributeFilter:['data-mode']});

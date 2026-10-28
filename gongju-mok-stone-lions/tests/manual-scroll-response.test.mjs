@@ -28,7 +28,7 @@ const forwardBranch = between(
   "}else if(s.scrollPlayback==='seek'&&!previewAuto){", 1,
 );
 
-function createJourney({scene = walkingScene, end = 1000} = {}) {
+function createJourney({scene = walkingScene, end = 1000, pixelRatio = 1} = {}) {
   let now = 0, mediaTime = 0, seeks = 0, starts = 0, stops = 0, wheelHandler;
   const video = {
     paused: true, seeking: false, readyState: 4, playbackRate: 1,
@@ -43,7 +43,7 @@ function createJourney({scene = walkingScene, end = 1000} = {}) {
     previewAuto: false, manualIdleMs: 120, lastManualInputAt: -Infinity,
     lastScrollAt: -Infinity, lastWheelMoveAt: -Infinity, lastDragMoveAt: -Infinity,
     sceneJoin: null, seamMatch: null,
-    walkingInput: createWalkingInput({oneStepPerGesture: true}),
+    walkingInput: createWalkingInput({oneStepPerGesture: true,pixelRatio}),
     performance: {now: () => now},
     stage: {addEventListener(type, handler) { if (type === 'wheel') wheelHandler = handler; }},
     canWalk: () => true, enterFromIntro: () => false, scrollDriven: () => true,
@@ -84,8 +84,8 @@ function createJourney({scene = walkingScene, end = 1000} = {}) {
   };
 }
 
-function simulate({magnitude = 100, interval = 250, inputMs = 10000, endMs = inputMs + 500, frameRate = 60} = {}) {
-  const journey = createJourney();
+function simulate({magnitude = 100, interval = 250, inputMs = 10000, endMs = inputMs + 500, frameRate = 60, pixelRatio = 1} = {}) {
+  const journey = createJourney({pixelRatio});
   const events = [];
   for (let time = 0; time < inputMs; time += interval) events.push([time, 'wheel']);
   for (let frame = 0; frame <= Math.ceil(endMs * frameRate / 1000); frame++) events.push([frame * 1000 / frameRate, 'frame']);
@@ -147,6 +147,16 @@ test('repeated mouse notches stay in native playback instead of restarting on ev
     assert.ok(result.source > 7.4 && result.source < 8.1);
     assert.equal(result.paused, true);
     assert.equal(result.seeks, 0);
+  }
+});
+
+test('Retina and zoom-scaled mouse notches retain continuous decoding and the same pace', () => {
+  for (const pixelRatio of [1.25,1.5,2,3]) {
+    const result=simulate({magnitude:100/pixelRatio,pixelRatio,interval:283,inputMs:5000});
+    assert.ok(result.starts<=2,`${pixelRatio}x screen restarted ${result.starts} times`);
+    assert.ok(result.source>7.4&&result.source<8.1,`${pixelRatio}x screen advanced ${result.source}s`);
+    assert.equal(result.paused,true);
+    assert.equal(result.seeks,0);
   }
 });
 

@@ -1,9 +1,11 @@
 // Public navigation shares the existing story/scan assets.
 // Derive the deployment prefix from this module so project Pages and local previews work.
+import './fullscreen.js?v=requested-fixes-20261028-v7';
+import {previewRoute} from './ui-preview.js?v=requested-fixes-20261028-v7';
 const nativePage=new URLSearchParams(location.search).get('native');
 const nativeReturn=['blender-test','play','review'].includes(nativePage);
-const storyURL = new URL(nativeReturn?'../blender-test/?start=intro':'../?start=intro', import.meta.url).href;
-const archiveURL = new URL('../archive/'+(nativeReturn?'?native=blender-test':''),import.meta.url).href;
+const storyURL = previewRoute(new URL(nativeReturn?'../blender-test/?start=intro':'../?start=intro', import.meta.url).href);
+const archiveURL = previewRoute(new URL('../archive/'+(nativeReturn?'?native=blender-test':''),import.meta.url).href);
 const setLink = (element, href) => {
   if (element && element.href !== href) element.href = href;
 };

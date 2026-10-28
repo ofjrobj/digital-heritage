@@ -1,12 +1,9 @@
-/* Keep both scans hidden until the navigation has reached its final position. */
-html:is([data-archive-state="loading"], [data-archive-state="delayed"], [data-archive-state="error"], [data-archive-state="positioning"]) :is(.archive .object-stage, .archive .info-panel, .archive .wordmark, .archive .masthead > p, .archive-corner-frame) {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+/* The interface enters independently; only the paired canvases wait for decoding. */
+html:is([data-archive-state="loading"], [data-archive-state="delayed"], [data-archive-state="error"], [data-archive-state="positioning"]) .archive .scene {
+ opacity:0; visibility:hidden; pointer-events:none;
 }
-html:is([data-archive-state="revealing"], [data-archive-state="ready"]) :is(.archive .object-stage, .archive .info-panel, .archive .wordmark, .archive .masthead > p, .archive-corner-frame) {
-  opacity: 1;
-  visibility: visible;
+html:is([data-archive-state="revealing"], [data-archive-state="ready"]) .archive .scene {
+ opacity:1; visibility:visible;
 }
 .archive-ready-status{position:fixed;inset:0;z-index:5;pointer-events:none;color:#77776e;font:300 12px/1.6 'KoPubWorld Dotum Light',sans-serif;transition:opacity .25s ease}
 .archive-model-status{position:absolute;top:46%;width:40%;margin:0;text-align:center;animation:archive-loading-appear .3s .45s both}
@@ -19,30 +16,15 @@ html:is([data-archive-state="positioning"],[data-archive-state="revealing"],[dat
 @keyframes archive-loading-appear{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.archive-ready-status{transition:none}.archive-model-status{animation:none}}
 
-/* Independent translate leaves the viewer/panel layout transforms untouched. */
-html[data-archive-state="revealing"] .archive .wordmark { animation: archive-ui-enter .6s cubic-bezier(.22,.75,.25,1) both; }
-html[data-archive-state="revealing"] .archive-corner-frame { animation: archive-ui-enter .6s ease .04s both; }
-html[data-archive-state="revealing"] .archive .global-hotspot-set { animation: archive-ui-enter .6s cubic-bezier(.22,.75,.25,1) .14s both; }
-html[data-archive-state="revealing"] .archive .male-card { animation: archive-scan-enter .8s cubic-bezier(.22,.75,.25,1) .3s both; }
-html[data-archive-state="revealing"] .archive .female-card { animation: archive-scan-enter .8s cubic-bezier(.22,.75,.25,1) .5s both; }
-html[data-archive-state="revealing"] .archive .info-panel { animation: archive-ui-enter .65s cubic-bezier(.22,.75,.25,1) .74s both; }
-html[data-archive-state="revealing"] .archive .detail-card { animation: archive-ui-enter .65s cubic-bezier(.22,.75,.25,1) .9s both; }
+/* Independent translate leaves layout and camera transforms untouched. */
+html[data-archive-ui="entering"] .archive .wordmark { animation:archive-ui-enter .6s cubic-bezier(.22,.75,.25,1) both; }
+html[data-archive-ui="entering"] .archive-corner-frame { animation:archive-ui-enter .6s ease .04s both; }
+html[data-archive-ui="entering"] .archive .global-hotspot-set { animation:archive-ui-enter .6s cubic-bezier(.22,.75,.25,1) .14s both; }
+html[data-archive-ui="entering"] .archive .info-panel { animation:archive-ui-enter .65s cubic-bezier(.22,.75,.25,1) .2s both; }
+html[data-archive-ui="entering"] .archive .card-label { animation:archive-ui-enter .65s cubic-bezier(.22,.75,.25,1) .26s both; }
+html[data-archive-state="revealing"] .archive .scene { animation:archive-scan-enter .8s cubic-bezier(.22,.75,.25,1) both; }
 @keyframes archive-ui-enter { from { opacity:0; translate:0 8px; } to { opacity:1; translate:0 0; } }
-@keyframes archive-scan-enter { from { opacity:0; translate:0 12px; scale:.975; } to { opacity:1; translate:0 0; scale:1; } }
-
-/* Its final right edge is shared with pair-layout.css. The initial offset
-   always centres the menu, even if the window is resized while loading. */
-@media(max-width:800px) and (orientation:portrait){
- .archive{--archive-nav-edge:28px}
- html[data-archive-state] .archive #archiveStoryIndexBar{
-  translate:0 0;
-  transition:translate .72s cubic-bezier(.22,.75,.25,1);
- }
- html:is([data-archive-state="loading"],[data-archive-state="delayed"],[data-archive-state="error"]) .archive #archiveStoryIndexBar{
-  translate:calc(-50vw + var(--archive-nav-edge) + 50%) 0;
- }
-}
-@media (prefers-reduced-motion: reduce) {
- html[data-archive-state="revealing"] :is(.archive .wordmark,.archive .global-hotspot-set,.archive .male-card,.archive .female-card,.archive .info-panel,.archive .detail-card,.archive-corner-frame){animation:none}
- html[data-archive-state] .archive #archiveStoryIndexBar{transition:none}
+@keyframes archive-scan-enter { from { opacity:0; } to { opacity:1; } }
+@media (prefers-reduced-motion:reduce) {
+ html[data-archive-ui] :is(.archive .wordmark,.archive .global-hotspot-set,.archive .card-label,.archive .info-panel,.archive-corner-frame),html[data-archive-state="revealing"] .archive .scene{animation:none}
 }

@@ -20,6 +20,17 @@ export function endingMusicGain(time,duration){
  return 1-t*t*(3-2*t);
 }
 
+// Let every soundtrack leave over the final four source seconds, reaching
+// silence on the last decodable frame before the picture's paper reveal.
+export function endingAudioGain({finalScene=false,time=0,duration=0,fps=30,finished=false}={}){
+ if(finished)return 0;
+ if(!finalScene||!(duration>0))return 1;
+ const end=Math.max(0,duration-1/(fps>0?fps:30));
+ const start=Math.max(0,end-4);
+ const t=Math.max(0,Math.min(1,(time-start)/Math.max(.001,end-start)));
+ return 1-t*t*(3-2*t);
+}
+
 // Keep the dialogue envelope separate from the ending fade, so a changing
 // ending gain does not restart the volume ramp on every animation frame.
 export function createStoryMusic(audio){

@@ -1,16 +1,16 @@
 const LEVEL={male:[-.078247699,.032765705],female:[-.103479210,-.003594774]};
 // The scans' body axes are aligned, but their carved faces are not parallel.
 // These camera angles follow each face's frontal surface, without changing vertices.
-const FACE={male:{yaw:5,pitch:4},female:{yaw:-10,pitch:13}};
+const FACE={male:{yaw:5,pitch:4},female:{yaw:-10,pitch:4}};
 // Measured centreline from the support to the upper back (middle body bands).
 // Only the back camera follows this small lean; scan placement stays unchanged.
 const BACK_ROLL={male:-.37,female:-3.63};
 const PARTS=[
  {band:[.80,1],direction:[-.20,1,.10]},
- {all:true,face:true,width:.80,height:.88},
+ {band:[.46,.66],front:.78,face:true,width:.88,height:.82},
  {all:true,direction:[-.002,1,.00001],height:.9},
- {band:[.47,1],face:true,angle:12,width:.86,height:.88},
- {band:[.45,1],face:true,width:.86,height:.88}
+ {band:[.47,1],face:true,width:.86,height:.88},
+ {band:[.70,.84],front:.74,face:true,width:.9,height:.82}
 ];
 export function levelScan(THREE,scan,{yaw,targetSize,sex}){
  scan.rotation.y=yaw;
@@ -28,7 +28,7 @@ export function createInspectionFraming(THREE,{camera,controls,element}){
  let bounds=null,current=null,overview=null,overviewHeight=null,fitted=0,lastRect=null,pending=null;
  function view(index){
   const part=Number.isInteger(index)?PARTS[index]:null,size=bounds.getSize(new THREE.Vector3());
-  const selected=part&&!part.all?all.filter(p=>p.x>=bounds.min.x+size.x*.65&&p.y>=bounds.min.y+size.y*part.band[0]&&p.y<=bounds.min.y+size.y*part.band[1]):all;
+  const selected=part&&!part.all?all.filter(p=>p.x>=bounds.min.x+size.x*(part.front??.65)&&p.y>=bounds.min.y+size.y*part.band[0]&&p.y<=bounds.min.y+size.y*part.band[1]):all;
   const points=selected.length>20?selected:all;
   const target=part?new THREE.Box3().setFromPoints(points).getCenter(new THREE.Vector3()):bounds.getCenter(new THREE.Vector3());
   const sex=element.id==='female-scene'?'female':'male',face=FACE[sex];

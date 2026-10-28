@@ -71,7 +71,6 @@
 /* One responsive type scale, with readable floors for every hierarchy. */
 .archive{
  --archive-copy:clamp(16px,min(calc(12px + .625vw),2.7dvh),20px);
- --shared-nav-font:var(--archive-copy);
  --archive-secondary:max(14px,calc(var(--archive-copy)*.85));
  --archive-caption:max(12px,calc(var(--archive-copy)*.72));
  --archive-tab-width:clamp(28px,min(3.5vw,5dvh),48px);
@@ -92,9 +91,9 @@
 .archive .panel-content .panel-kicker{font-size:var(--archive-caption)}
 .archive .panel-content :is(.panel-note,.panel-observation){font-size:var(--archive-secondary);line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}
 .archive .panel-content .panel-observation{margin:1.1em 0 0;text-align:left}
-.archive .global-hotspot-set>p,
 .archive .object-card .card-label em{font-size:var(--archive-caption)}
-.archive .global-hotspot-set :is(.hotspot,.surface-toggle){font-size:var(--archive-secondary)}
+.archive .global-hotspot-set>p{font-family:var(--sans);font-size:max(10px,calc(var(--archive-control)*.262));line-height:1.4;letter-spacing:.14em}
+.archive .global-hotspot-set .hotspot{font-family:var(--sans);font-size:max(12px,calc(var(--archive-control)/3));line-height:1}
 .archive .global-hotspot-set :is(.hotspot,.surface-toggle) span{font-size:var(--archive-secondary)}
 /* These selectors intentionally match the shared detail stylesheet's specificity. */
 body .archive .detail-card{font-size:var(--archive-copy);overflow:auto}
@@ -277,7 +276,12 @@ html body .archive .detail-card{max-height:none;overflow:visible}
  .archive .global-hotspot-set .surface-toggle[data-tooltip]::after{left:0;transform:none}
 }
 
-.archive .wordmark{translate:0 10px}
+@media(max-width:800px){.archive .wordmark{translate:0 10px}}
+@media(min-width:801px) and (min-height:601px){
+ .archive .wordmark{top:clamp(48px,9dvh,72px);translate:none}
+ .archive .wordmark .wordmark-title{font-size:clamp(22px,2.1vw,27px)}
+ .archive .wordmark small{font-size:clamp(10px,calc(var(--archive-copy)*.6),12px);margin-top:.85em}
+}
 @media(max-width:620px){
  html[data-archive-overview="hint"] body .archive:not(:has(.hotspot.is-active)) .detail-card h3{font-size:clamp(14px,2.7vw,16px)}
  html[data-archive-overview="hint"] body .archive:not(:has(.hotspot.is-active)) .detail-card .detail-copy{font-size:clamp(12px,2.25vw,14px);line-height:1.5}
@@ -362,4 +366,31 @@ html body .archive .detail-card{max-height:none;overflow:visible}
 }
 @media(min-width:601px) and (max-width:899px) and (min-height:441px){
  .archive .object-stage{column-gap:38px}
+}
+
+/* Keep close-up canvases wide enough to frame a feature inside the existing slot.
+   The card, caption and central controls retain their established positions. */
+@media(max-width:800px) and (orientation:portrait){
+ .archive .object-card .scene:is([data-framing="02"],[data-framing="05"]){height:auto;max-height:100%;aspect-ratio:1.45/1;align-self:center}
+}
+
+/* Restore the original drawer's reading rhythm where height permits it.
+   Short windows retain the compact rows above instead of shrinking the text. */
+.archive .panel-content .panel-note{font-family:var(--serif);letter-spacing:-.05em}
+@media(min-height:701px){
+ .archive .panel-content{padding-top:28px;padding-bottom:25px}
+ .archive .left-panel .panel-content{padding-left:25px;padding-right:calc(var(--archive-tab-width) + 25px)}
+ .archive .right-panel .panel-content{padding-right:25px;padding-left:calc(var(--archive-tab-width) + 25px)}
+ .archive .panel-content .panel-kicker{font-size:max(10px,calc(var(--archive-copy)*.65));margin-bottom:1.2em;line-height:1.4}
+ .archive .panel-content h2{font-size:clamp(22px,calc(var(--archive-copy)*1.7),30px);line-height:1.3}
+ .archive .panel-content .panel-subtitle{margin-top:7px;font-size:1.1em;line-height:1.4}
+ .archive .panel-content .object-size-list,
+ .archive .panel-content .object-size-list:has(>div:nth-child(4)){margin-top:28px}
+ .archive .panel-content .object-size-list div{padding:8px 0;gap:4px}
+ .archive .panel-content .object-size-list dt{font-size:max(14px,calc(var(--archive-copy)*.72));line-height:1.4}
+ .archive .panel-content .object-size-list dd{font-size:max(16px,calc(var(--archive-copy)*.95));line-height:1.4}
+ .archive .panel-content .panel-note{margin-top:1.25em;padding-top:.9em;font-size:max(12px,calc(var(--archive-copy)*.74));line-height:1.5}
+ .archive .panel-content:has(.object-size-list>div:nth-child(5)) .object-size-list{margin-top:16px}
+ .archive .panel-content .object-size-list:has(>div:nth-child(5)) div{padding:4px 0;gap:2px}
+ .archive .panel-content:has(.object-size-list>div:nth-child(5)) .panel-note{margin-top:.8em;padding-top:.65em}
 }

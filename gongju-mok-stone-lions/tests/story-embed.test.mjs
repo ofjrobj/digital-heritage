@@ -77,7 +77,7 @@ test('the preview entry starts the real intro once, while the normal entry keeps
 
 test('voice cannot be enabled by embedded scene updates', () => {
   const values = [];
-  const context = vm.createContext({embeddedStory: true, lastVoiceEnable: null, voices: {setEnabled(value) { values.push(value); }}});
+  const context = vm.createContext({embeddedStory: true, uiPreview:false, lastVoiceEnable: null, voices: {setEnabled(value) { values.push(value); }}});
   vm.runInContext(between('function voiceEnabled(', 'function seasonUiInsets('), context);
   context.voiceEnabled(true);
   assert.deepEqual(values, [false]);

@@ -42,50 +42,66 @@ export function mountSurfaceToggle(viewers, root = document) {
   button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path data-mode="color" d="M12 12V3a9 9 0 0 1 7.794 13.5Z"/><path data-mode="relief" d="M12 12l7.794 4.5a9 9 0 0 1-15.588 0Z"/><path data-mode="normal-map" d="M12 12l-7.794 4.5A9 9 0 0 1 12 3Z"/></svg>';
   root.querySelector('.global-hotspot-set p').after(button);
   const modes = ['color', 'relief', 'normal-map'];
-  const labels = {color:'컬러', relief:'무채색', 'normal-map':'노멀맵'};
+  const labels = {color:'컬러맵', relief:'흑백맵', 'normal-map':'노멀맵'};
   const pair = Object.values(viewers);
   const scenes = [...(root.querySelectorAll?.('.scene') || [])];
   const window = root.defaultView;
   let mode = 'color', stableMode = 'color', request = 0, initialized = false;
-  let fades = [];
-  function fadeTo(opacity, duration) {
-    const starts = scenes.map(scene => Number(window?.getComputedStyle(scene).opacity) || 1);
-    fades.forEach(animation => animation.cancel()); fades = [];
-    if (window?.matchMedia('(prefers-reduced-motion: reduce)').matches || !scenes.length || scenes.some(scene => !scene.animate)) return null;
-    // Fade only the rendered scans. Controls, camera and observation selection
-    // stay put, and the model is never hidden while a normal texture loads.
-    fades = scenes.map((scene, index) => scene.animate(
-      [{opacity:starts[index]}, {opacity}],
-      {duration, easing:'cubic-bezier(.22,.61,.36,1)', fill:'forwards'}
-    ));
-    return Promise.allSettled(fades.map(animation => animation.finished));
+  let scans = [];
+  const clearScan = () => {
+    scans.forEach(({canvas, animation}) => { animation?.cancel(); canvas.remove(); });
+    scans = [];
+  };
+  function captureScans() {
+    clearScan();
+    if (window?.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    scenes.forEach((scene, index) => {
+      const canvas = pair[index]?.snapshot?.();
+      if (!canvas) return;
+      canvas.className = 'surface-scan-snapshot';
+      canvas.setAttribute('aria-hidden', 'true');
+      scene.append(canvas);
+      scans.push({canvas, animation:null});
+    });
   }
-  async function finishFade(token) {
-    const finished = fadeTo(1, 240);
-    if (finished) await finished;
+  async function revealScan(token) {
+    // Give the freshly selected material a render before exposing it. The old
+    // render remains above it while a normal map downloads.
+    if (window?.requestAnimationFrame) await new Promise(resolve => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
     if (token !== request) return;
-    fades.forEach(animation => animation.cancel()); fades = [];
+    const current = scans;
+    const finishes = current.map(item => {
+      if (!item.canvas.animate) return Promise.resolve();
+      item.animation = item.canvas.animate(
+        [{clipPath:'inset(0% 0 0 0)'}, {clipPath:'inset(100% 0 0 0)'}],
+        {duration:740, easing:'cubic-bezier(.3,.08,.3,1)', fill:'forwards'}
+      );
+      return item.animation.finished;
+    });
+    await Promise.allSettled(finishes);
+    if (token === request) clearScan();
   }
+  scenes.forEach(scene => {
+    scene.addEventListener('pointerdown', clearScan, {passive:true});
+    scene.addEventListener('wheel', clearScan, {passive:true});
+  });
   function updateButton() {
-    const next = modes[(modes.indexOf(mode) + 1) % modes.length];
     button.dataset.mode = mode;
-    button.setAttribute('aria-label', `보기 전환: ${labels[mode]} · 다음 ${labels[next]}`);
-    button.dataset.tooltip = `${labels[mode]} · 클릭하면 ${labels[next]}`;
+    button.setAttribute('aria-label', labels[mode]);
+    button.dataset.tooltip = labels[mode];
     button.querySelectorAll('[data-mode]').forEach(sector => sector.classList.toggle('is-selected', sector.dataset.mode === mode));
   }
   async function setMode(value) {
     if (!modes.includes(value)) return;
     mode = value; const token = ++request;
     button.removeAttribute('aria-busy'); updateButton();
-    const dimmed = initialized ? fadeTo(.62, 120) : null;
+    if (initialized) captureScans();
     initialized = true;
-    if (dimmed) await dimmed;
-    if (token !== request) return;
     if (mode !== 'normal-map') {
       stableMode = mode;
       // Also cancels any pending normal texture request before changing materials.
       pair.forEach(viewer => viewer.setColor(mode === 'color'));
-      if (dimmed) await finishFade(token);
+      await revealScan(token);
       return;
     }
     button.setAttribute('aria-busy', 'true');
@@ -96,9 +112,8 @@ export function mountSurfaceToggle(viewers, root = document) {
       mode = stableMode;
       pair.forEach(viewer => viewer.setColor(mode === 'color'));
       updateButton();
-      button.dataset.tooltip = '노멀맵을 불러오지 못했습니다. 다시 눌러 재시도';
     }
-    if (dimmed) await finishFade(token);
+    await revealScan(token);
   }
   button.addEventListener('click', () => setMode(modes[(modes.indexOf(mode) + 1) % modes.length]));
   setMode('color');

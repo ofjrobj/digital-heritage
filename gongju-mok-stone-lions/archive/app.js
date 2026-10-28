@@ -1,7 +1,7 @@
-import {levelScan,createInspectionFraming} from './scan-framing.js?v=review-final-20261028-v6';
-import {createViewportBuffer,framingBlend} from './viewer-motion.js?v=smooth-pair-20261026';
-import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=review-final-20261028-v6';
-import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=review-final-20261028-v6';
+import {levelScan,createInspectionFraming} from './scan-framing.js?v=requested-fixes-20261028-v7';
+import {createViewportBuffer,createFramingTransition} from './viewer-motion.js?v=requested-fixes-20261028-v7';
+import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=requested-fixes-20261028-v7';
+import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=requested-fixes-20261028-v7';
 import {createNormalMapView} from './normal-map-view.js?v=review-final-20261028-v6';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -65,7 +65,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   key.position.set(-3, 4, 5); scene.add(key);
   const fill = new THREE.DirectionalLight(0xffffff, .65);
   fill.position.set(3, -3, 4); scene.add(fill);
-  let dirty = true, ready = false, goal = null;
+  let dirty = true, ready = false, goal = null, cameraTransition = null;
   const inspectionLight=createInspectionLight(key,element,()=>{dirty=true;});
   let resizePending = true, lastFrameAt = performance.now();
   const viewportBuffer=createViewportBuffer();
@@ -91,7 +91,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   new ResizeObserver(()=>{resizePending=true;}).observe(element);
   new MutationObserver(()=>{resizePending=true;}).observe(document.documentElement,{attributes:true,attributeFilter:['data-archive-overview']});
   const loaded = loader.loadAsync(modelUrl, event => {
-    loading.textContent = event.total ? `불러오는 중 ${Math.min(100,Math.round(event.loaded/event.total*100))}%` : '스캔 데이터를 불러오는 중…';
+    loading.textContent = event.total ? `Loading... ${Math.min(100,Math.round(event.loaded/event.total*100))}%` : 'Loading...';
   }).then(gltf => {
     const model=levelScan(THREE,gltf.scene,{yaw,targetSize,sex:element.id==='male-scene'?'male':'female'});
     model.traverse(n=>{if(n.isMesh){n.material.roughness=.95;n.material.metalness=0;n.material.map && (n.material.map.anisotropy=renderer.capabilities.getMaxAnisotropy());}});
@@ -101,8 +101,8 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   }).catch(error => {
     console.error(error);loading.textContent='모델을 불러오지 못했습니다. 새로고침해 주세요.';element.dataset.loaded='error';
   });
-  function focus(index){goal=framing.focus(index);element.dataset.viewSource='preset';dirty=true;synchronizeOverview();}
-  controls.addEventListener('start',()=>{goal=null;element.dataset.viewSource='interaction';});
+  function focus(index){goal=framing.focus(index);cameraTransition=goal?createFramingTransition(THREE,camera.position,controls.target):null;element.dataset.viewSource='preset';dirty=true;synchronizeOverview();}
+  controls.addEventListener('start',()=>{goal=null;cameraTransition=null;element.dataset.viewSource='interaction';});
   function animate(now=performance.now()){
     requestAnimationFrame(animate);
     const elapsed=Math.max(0,(now-lastFrameAt)/1000);lastFrameAt=now;
@@ -111,8 +111,19 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
     const buffer=viewportBuffer.consume(now);
     // Resize and redraw in the same task, after the changing layout settles.
     if(buffer){renderer.setSize(buffer.width,buffer.height,false);element.dataset.bufferCommits=String(Number(element.dataset.bufferCommits||0)+1);dirty=true;}
-    if(goal){const blend=framingBlend(elapsed,reducedMotion.matches);camera.position.lerp(goal.position,blend);controls.target.lerp(goal.target,blend);dirty=true;if(camera.position.distanceTo(goal.position)<.002&&controls.target.distanceTo(goal.target)<.002){camera.position.copy(goal.position);controls.target.copy(goal.target);goal=null;}}
+    const limits=[controls.minDistance,controls.maxDistance];
+    if(goal){
+      cameraTransition ||= createFramingTransition(THREE,camera.position,controls.target);
+      const pose=cameraTransition.sample(goal,elapsed,reducedMotion.matches);
+      camera.position.copy(pose.position);controls.target.copy(pose.target);dirty=true;
+      // The new detail's orbit limits must not clamp the preceding wider view
+      // while it is still travelling toward the close-up.
+      const distance=camera.position.distanceTo(controls.target);
+      controls.minDistance=Math.min(limits[0],distance);controls.maxDistance=Math.max(limits[1],distance);
+      if(pose.done){camera.position.copy(goal.position);controls.target.copy(goal.target);goal=null;cameraTransition=null;}
+    }
     if(controls.update())dirty=true;
+    [controls.minDistance,controls.maxDistance]=limits;
     if(dirty){
       camera.updateMatrixWorld(true);
       inspectionRoot.matrix.copy(camera.matrixWorldInverse);
@@ -125,7 +136,7 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
       dirty=false;
     }
   }
-  animate();return {focus,loaded,setColor(value){normalMap.setEnabled(false);surface.setColor(value);},setNormalMap:normalMap.setEnabled,setLightEnabled:inspectionLight.setEnabled,setLightAngle:inspectionLight.setAngle,framingHeight:framing.naturalFramingHeight,setFramingHeight(height){if(framing.setFramingHeight(height))resizePending=true;}};
+  animate();return {focus,loaded,snapshot(){renderer.render(scene,renderCamera);const copy=document.createElement('canvas');copy.width=renderer.domElement.width;copy.height=renderer.domElement.height;copy.getContext('2d').drawImage(renderer.domElement,0,0);return copy;},setColor(value){normalMap.setEnabled(false);surface.setColor(value);},setNormalMap:normalMap.setEnabled,setLightEnabled:inspectionLight.setEnabled,setLightAngle:inspectionLight.setAngle,framingHeight:framing.naturalFramingHeight,setFramingHeight(height){if(framing.setFramingHeight(height))resizePending=true;}};
 }
 const viewers = {
  male:createViewer({element:document.querySelector('#male-scene'),loading:document.querySelector('#male-loading'),modelUrl:'models/male-continuous.glb',targetSize:1.83,yaw:-3.902609*Math.PI/180}),

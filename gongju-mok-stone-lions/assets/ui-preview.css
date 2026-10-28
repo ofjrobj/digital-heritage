@@ -1,0 +1,2 @@
+html[data-ui-preview="true"], html[data-ui-preview="true"] body { overscroll-behavior: none; }
+html[data-ui-preview="true"] #soundToggle { display: none !important; }

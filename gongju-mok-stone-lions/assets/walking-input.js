@@ -1,8 +1,14 @@
 // Roll a conventional Windows mouse wheel away/up to move forward (negative DOM delta).
 // Every accepted packet contributes distance.
-export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = false, gestureIdleMs = 220} = {}) {
+export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = false, gestureIdleMs = 220, pixelRatio = globalThis.devicePixelRatio || 1} = {}) {
   const pixelStep = Number.isFinite(pixelsPerStep) && pixelsPerStep > 0 ? pixelsPerStep : 100;
   const idle = Number.isFinite(gestureIdleMs) && gestureIdleMs > 0 ? gestureIdleMs : 220;
+  const ratio = Number.isFinite(pixelRatio) && pixelRatio > 0 ? pixelRatio : 1;
+  // Chromium can report a physical mouse notch in CSS pixels (50 on a 2x
+  // screen). Recognize both conventions so Retina/zoom does not turn every
+  // notch into a 120ms trackpad burst and repeatedly stop the video decoder.
+  const isNotch = (x, magnitude) => x === 0 && [100,120].some(step =>
+    Math.abs(magnitude-step)<.01 || Math.abs(magnitude*ratio-step)<.01);
   let lastPacketAt = -Infinity, lastDirection = 0, lastStepAt = -Infinity, lastMagnitude = 0, lastActiveAt = -Infinity, lastDetentAt = -Infinity, momentumTail = false, fallingPackets = 0, decayStart = 0, releaseDelay = 120;
 
   function wheelGestureSteps(event, now) {
@@ -15,7 +21,7 @@ export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = fal
       const direction = -Math.sign(y), magnitude = Math.abs(y);
       const newGesture = now - lastPacketAt >= idle || direction !== lastDirection;
       // Discrete wheel notches must not be swallowed by the trackpad burst lock.
-      const detent = mode !== 0 || x === 0 && (magnitude === 100 || magnitude === 120);
+      const detent = mode !== 0 || isNotch(x,magnitude);
       // A small fluctuation is still direct input. Only a sustained decay
       // of at least 25% identifies momentum; its rounded tail stays blocked until input rises.
       if (newGesture || detent || magnitude > lastMagnitude) {
@@ -51,7 +57,7 @@ export function createWalkingInput({pixelsPerStep = 100, oneStepPerGesture = fal
     if (mode !== 0) return 0;
     // Browsers use either convention for one discrete Windows mouse detent.
     // Pixel packets otherwise stay continuous, without a gesture threshold or lockout.
-    if (x === 0 && (Math.abs(y) === 100 || Math.abs(y) === 120)) return -Math.sign(y);
+    if (isNotch(x,Math.abs(y))) return -Math.sign(y);
     return -y / pixelStep;
   }
 

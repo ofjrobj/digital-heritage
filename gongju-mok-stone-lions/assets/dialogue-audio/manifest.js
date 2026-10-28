@@ -17,6 +17,7 @@ export const dialogueAudio = [
   {
     "role": "cook",
     "file": "cook-v2.mp3",
+    "url": "../media/v28/cook-voice-dry.mp3",
     "duration": 14.288979166666667,
     "source": "3.찬모_ver2.mp3",
     "sourceSha256": "821eeb275c84596d9364aad3120db316655d20d84a4723480a53b6b527dfc828"
@@ -31,7 +32,7 @@ export const dialogueAudio = [
   {
     "role": "woodcutter",
     "file": "woodcutter-v2.mp3",
-    "url": "../media/v17/woodcutter-mature.mp3",
+    "url": "../media/v28/woodcutter-voice-deeper.mp3",
     "duration": 17.475916666666667,
     "source": "5.나무꾼_ver2.mp3",
     "sourceSha256": "0a8074f6e58df3176a6976a11a49da34f39d6d40b62b39a166c6a183a26c4cd9"

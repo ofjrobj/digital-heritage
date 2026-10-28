@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../vendor/three/three.module.js';
-import {createViewportBuffer,framingBlend} from '../viewer-motion.js';
+import {createViewportBuffer,framingBlend,createFramingTransition} from '../viewer-motion.js';
 import {createInspectionFraming} from '../scan-framing.js';
 
 test('a grid enlargement keeps its drawing buffer until layout settles',()=>{
@@ -37,6 +37,35 @@ test('framing easing is monotone, independent of display refresh rate, and honor
   };
   assert.ok(Math.abs(travel(60)-travel(120))<1e-12);
   assert.equal(framingBlend(1/60,true),1);
+});
+
+test('preset travel eases into and out of the shortest orbit without crossing the model',()=>{
+ const point=degrees=>new THREE.Vector3(Math.cos(degrees*Math.PI/180),0,Math.sin(degrees*Math.PI/180)).multiplyScalar(3);
+ const target=new THREE.Vector3(),start=point(350),goal={position:point(10),target};
+ const motion=createFramingTransition(THREE,start,target),steps=[];
+ let previous=start,travel=0,pose;
+ for(let i=0;i<90;i++){
+  pose=motion.sample(goal,1/60);
+  const angle=previous.clone().normalize().angleTo(pose.position.clone().normalize());
+  steps.push(angle);travel+=angle;previous=pose.position;
+  assert.ok(Math.abs(pose.position.length()-3)<1e-9,'the path keeps its orbit radius');
+ }
+ assert.ok(Math.abs(travel-20*Math.PI/180)<1e-6,'rotation takes the 20-degree path');
+ assert.ok(steps[0]<Math.max(...steps)*.02,'there is no fast first-frame whip');
+ assert.ok(pose.done);assert.ok(pose.position.distanceTo(goal.position)<1e-9);
+});
+
+test('retargeting starts at the displayed pose and reduced motion settles immediately',()=>{
+ const target=new THREE.Vector3(),goal={position:new THREE.Vector3(0,3,0),target};
+ const moving=createFramingTransition(THREE,new THREE.Vector3(3,0,0),target);
+ let pose;for(let i=0;i<20;i++)pose=moving.sample(goal,1/60);
+ const next={position:new THREE.Vector3(0,0,-2),target:new THREE.Vector3(.2,.1,0)};
+ const retargeted=createFramingTransition(THREE,pose.position,pose.target);
+ const first=retargeted.sample(next,0);
+ assert.ok(first.position.distanceTo(pose.position)<1e-9);
+ assert.ok(first.target.distanceTo(pose.target)<1e-9);
+ const reduced=retargeted.sample(next,1/60,true);
+ assert.ok(reduced.done);assert.ok(reduced.position.distanceTo(next.position)<1e-9);
 });
 
 function fixture(width,height,id='male-scene'){

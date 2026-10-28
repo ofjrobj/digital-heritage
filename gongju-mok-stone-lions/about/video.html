@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Higgsfield 영상·편집 — 봉황동 석사자</title>
   <meta name="description" content="참조 구도와 스타일 프레임을 바탕으로 Story 영상을 생성하고 편집한 과정을 소개합니다.">
-  <link rel="stylesheet" href="./assets/fonts/fonts.css">
+  <link rel="stylesheet" href="./assets/fonts/fonts.css?v=requested-fixes-20261028-v7">
   <link rel="stylesheet" href="./about.css?v=planning-pages-v49">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
+  <link rel="stylesheet" href="./style-frames.css?v=fixed-four-20261026">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/video.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
@@ -20,7 +21,7 @@
   <meta name="twitter:title" content="Higgsfield 영상·편집 — 봉황동 석사자">
   <meta name="twitter:description" content="Story 영상 제작에 사용한 실제 프롬프트와 장면별 움직임을 소개합니다.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/video-production-flow-v1.webp">
-<link rel="stylesheet" href="./case-study.css?v=54">
+<link rel="stylesheet" href="./case-study.css?v=requested-fixes-20261028-v7">
 
 <link rel="stylesheet" href="./page-motion.css?v=20261028"><script defer src="./page-motion.js?v=20261028"></script></head>
 <body class="materials-page video-process-page">
@@ -37,20 +38,67 @@
         <p class="material-intro">Blender 카메라 가이드와 스타일 프레임을 바탕으로 인물의 작은 몸짓과 길을 따라가는 움직임을 생성하고, 장면의 순서와 길이를 편집했습니다.</p>
       </header>
 
-<details class="prompt-details"><summary>Higgsfield 프롬프트</summary>
-<p class="prompt-provenance">실제 제작 프롬프트에서 핵심 지시만 발췌했습니다. 초 단위 표기는 생성 요청 기준이며, 최종 영상 길이는 편집 후 달라질 수 있습니다.</p>
-<p class="prompt-provenance"><a href="https://www.figma.com/board/5bWhFaY63IrDFhjK0M632d/Prompt-for-Higgsfield" target="_blank" rel="noopener noreferrer" aria-label="Higgsfield 프롬프트 Figma에서 보기 (새 탭)">Higgsfield 프롬프트 · Figma에서 보기 ↗</a></p>
-<article class="prompt-record"><h3>장사꾼 · 고정 구도 28초</h3>
-<p>음성은 따로 재생하고, 인물은 입을 움직이지 않는 작은 몸짓으로 표현합니다.</p>
-<blockquote class="prompt-excerpt" lang="en">This is the quiet animated image shown while an independently recorded 19.64-second testimony plays on the website. Do NOT depict him speaking. His lips stay gently together and the jaw remains relaxed and still for the entire shot, including during all gestures and blinks. No lip synchronization, mouth opening, mouthing words, talking, teeth, tongue, chewing, sighing mouth motion, or speech-related facial performance. Do not generate the testimony or any audio. The slight motion should feel like a living painted portrait waiting attentively, never a talking avatar.</blockquote></article>
-<article class="prompt-record"><h3>나무꾼 · 산길 이동 12초</h3>
-<p>Blender에서 정한 길을 따라 사람의 눈높이로 이동합니다.</p>
-<blockquote class="prompt-excerpt" lang="en">FIRST-PERSON WALK UP THE ORIGINAL HILLSIDE PATH TO WOODCUTTER 5 — 12 SECONDS
-One continuous new 16:9, 1080p Korean ink-and-light-colour illustrated shot. The VIEWER walks uphill; the WOODCUTTER remains planted. Begin partway up the hill in START and finish at END. Follow the original Blender/web hillside route described below. The camera stays at a pedestrian&#x27;s eye level above the local path; its elevation changes only because the ground under the walker changes. Never fly above the slope, crane upward, descend from the sky, orbit off the path, or take a shortcut to the man.</blockquote></article>
-<article class="prompt-record"><h3>두 석사자 · 시간의 흐름 20초</h3>
-<p>석사자의 형태와 자리는 고정한 채 빛과 계절만 변화시킵니다.</p>
-<blockquote class="prompt-excerpt" lang="en">Both stone lions and their slabs remain physically present, completely stationary and individually unchanged throughout all twenty seconds. Preserve each head, worn facial marks, ears, body, feet, silhouette, relative positions and orientation from the last video frame. They are stone objects, never living animals. Only soft changes of illumination and natural surface snow are allowed. No disappearance, duplication, melting, walking, facial animation or sculptural morphing. Snow settles on top of the existing forms and later melts; the stone beneath never changes. People stay behind the pair and never hide either lion.</blockquote></article>
-</details>
+<section aria-labelledby="video-style-frames"><h2 id="video-style-frames">스타일 프레임</h2>
+      <ol class="style-frame-grid" aria-label="장면별 스타일 프레임">
+        <li class="style-frame-card" data-source-frame="02_1">
+          <figure aria-labelledby="compare-01-title">
+            <div class="frame-window" style="--frame-x:821;--frame-y:30"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="마을 전경 · Higgsfield 스타일 프레임" loading="eager" decoding="async"></div>
+            <figcaption id="compare-01-title"><span class="frame-number">#01</span>마을 전경</figcaption>
+          </figure>
+        </li>
+        <li class="style-frame-card" data-source-frame="04_2">
+          <figure aria-labelledby="compare-02-title">
+            <div class="frame-window" style="--frame-x:30;--frame-y:1050"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="장사꾼 · Higgsfield 스타일 프레임" loading="eager" decoding="async"></div>
+            <figcaption id="compare-02-title"><span class="frame-number">#02</span>장사꾼</figcaption>
+          </figure>
+        </li>
+        <li class="style-frame-card" data-source-frame="05_3">
+          <figure aria-labelledby="compare-03-title">
+            <div class="frame-window" style="--frame-x:2403;--frame-y:1050"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="농민 · Higgsfield 스타일 프레임" loading="eager" decoding="async"></div>
+            <figcaption id="compare-03-title"><span class="frame-number">#03</span>농민</figcaption>
+          </figure>
+        </li>
+        <li class="style-frame-card" data-source-frame="06_3">
+          <figure aria-labelledby="compare-04-title">
+            <div class="frame-window" style="--frame-x:1612;--frame-y:1560"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="찬모 · Higgsfield 스타일 프레임" loading="eager" decoding="async"></div>
+            <figcaption id="compare-04-title"><span class="frame-number">#04</span>찬모</figcaption>
+          </figure>
+        </li>
+        <li class="style-frame-card" data-source-frame="07_2">
+          <figure aria-labelledby="compare-05-title">
+            <div class="frame-window" style="--frame-x:30;--frame-y:2070"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="민가와 골목 · Higgsfield 스타일 프레임" loading="lazy" decoding="async"></div>
+            <figcaption id="compare-05-title"><span class="frame-number">#05</span>민가와 골목</figcaption>
+          </figure>
+        </li>
+        <li class="style-frame-card" data-source-frame="07_3">
+          <figure aria-labelledby="compare-06-title">
+            <div class="frame-window" style="--frame-x:821;--frame-y:2070"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="주민 삼총사 · Higgsfield 스타일 프레임" loading="lazy" decoding="async"></div>
+            <figcaption id="compare-06-title"><span class="frame-number">#06</span>주민 삼총사</figcaption>
+          </figure>
+        </li>
+        <li class="style-frame-card" data-source-frame="08_3">
+          <figure aria-labelledby="compare-07-title">
+            <div class="frame-window" style="--frame-x:30;--frame-y:2580"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="나무꾼 · Higgsfield 스타일 프레임" loading="lazy" decoding="async"></div>
+            <figcaption id="compare-07-title"><span class="frame-number">#07</span>나무꾼</figcaption>
+          </figure>
+        </li>
+        <li class="style-frame-card" data-source-frame="09_3">
+          <figure aria-labelledby="compare-08-title">
+            <div class="frame-window" style="--frame-x:2403;--frame-y:2580"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="두 석사자 · Higgsfield 스타일 프레임" loading="lazy" decoding="async"></div>
+            <figcaption id="compare-08-title"><span class="frame-number">#08</span>두 석사자</figcaption>
+          </figure>
+        </li>
+        <li class="style-frame-card" data-source-frame="10_5">
+          <figure aria-labelledby="compare-09-title">
+            <div class="frame-window" style="--frame-x:30;--frame-y:3600"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="현재의 석사자 · Higgsfield 스타일 프레임" loading="lazy" decoding="async"></div>
+            <figcaption id="compare-09-title"><span class="frame-number">#09</span>현재의 석사자</figcaption>
+          </figure>
+        </li>
+      </ol>
+
+</section>
+
+<a class="prompt-link" href="https://www.figma.com/board/5bWhFaY63IrDFhjK0M632d/Prompt-for-Higgsfield" target="_blank" rel="noopener noreferrer" aria-label="Higgsfield 프롬프트 Figma에서 보기 (새 탭)">Higgsfield 프롬프트</a>
     </main>
     <footer class="material-footer">
       <a href="./#step-motion">기획과 제작으로 돌아가기</a>

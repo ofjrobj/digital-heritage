@@ -1,4 +1,4 @@
-import {dialogueAudio} from './dialogue-audio/manifest.js?v=mature-timbre-v17';
+import {dialogueAudio} from './dialogue-audio/manifest.js?v=voice-refined-20261028';
 export function createStoryVoices(stage,{leadSeconds=.5,tailSeconds=1,onEnded=()=>{}}={}) {
  const audio=document.createElement('audio');
  audio.id='storyVoice';audio.preload='auto';audio.volume=.9;stage.append(audio);
@@ -23,7 +23,7 @@ export function createStoryVoices(stage,{leadSeconds=.5,tailSeconds=1,onEnded=()
  document.addEventListener('visibilitychange',()=>{if(document.hidden)audio.pause();else play();});
  addEventListener('pagehide',()=>audio.pause());
  function tick(dt){if(index<0||document.hidden)return;leadElapsed+=Math.max(0,dt);if(audio.ended)tailElapsed+=Math.max(0,dt);play();}
- return {select,setEnabled,tick,duration:i=>dialogueAudio[i]?.duration??0,
+ return {select,setEnabled,tick,setGain:gain=>{audio.volume=.9*Math.max(0,Math.min(1,Number.isFinite(gain)?gain:1));},duration:i=>dialogueAudio[i]?.duration??0,
   sceneDuration:i=>(dialogueAudio[i]?.duration??0)+leadSeconds+tailSeconds,
   canFinish:()=>!enabled||failed||index<0||(audio.ended&&tailElapsed>=tailSeconds),
   proof:()=>({leadSeconds,leadElapsed,tailElapsed,tailSeconds,index,enabled,failed,paused:audio.paused,ended:audio.ended,time:audio.currentTime,duration:Number.isFinite(audio.duration)?audio.duration:null,source:audio.currentSrc})};

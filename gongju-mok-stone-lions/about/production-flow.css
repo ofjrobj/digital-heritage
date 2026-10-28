@@ -1,44 +1,44 @@
-/* Read the making process as one shared start, two lanes, then one result. */
-#process.section{grid-template-columns:1fr;gap:32px}
-.making-flow{--flow-ink:#72766b;--flow-border:#7f83755c;--flow-paper:#f3f3ef;min-width:0;width:100%;max-width:840px;margin-inline:auto}
-.making-shared,.making-outputs{position:relative;width:58%;max-width:380px;margin-inline:auto;border:1px solid var(--flow-border);background:var(--flow-paper);text-align:center}
-.making-shared h3,.making-outputs h3{margin:0;font-size:clamp(19px,2.4vw,23px);font-weight:300;line-height:1.45}
-.making-shared .production-trigger{justify-content:center;min-height:68px;padding:16px 20px;text-align:center}
-.making-shared:first-child{background:#dfe3da;border-color:#7f83758c}
-.making-shared::after{content:"";position:absolute;top:100%;left:50%;height:25px;border-left:1px solid var(--flow-ink)}
-.making-branches{--branch-gap:clamp(16px,3vw,36px);--branch-center:calc((100% - var(--branch-gap))/4);position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--branch-gap);margin:50px 0}
-.making-branches::before,.making-branches::after{content:"";position:absolute;left:var(--branch-center);right:var(--branch-center);height:26px;border:1px solid var(--flow-ink)}
+/* A compact, monochrome diagram: two production paths share a start and finish. */
+#process.section{grid-template-columns:1fr;gap:30px}
+.making-flow{--flow-line:rgba(55,55,55,.27);--flow-border:rgba(55,55,55,.19);min-width:0;width:100%;max-width:700px;margin-inline:auto;color:#373737}
+.making-shared,.making-outputs{position:relative;width:210px;max-width:70%;margin-inline:auto;text-align:center}
+.making-shared h3,.making-outputs h3{margin:0;font-size:19px;font-weight:300;line-height:1.45}
+.making-flow .making-shared .production-trigger{justify-content:center;min-height:48px;padding:10px 18px;border:1px solid var(--flow-line);background:transparent;color:inherit;text-align:center}
+.making-shared::after{content:"";position:absolute;top:100%;left:50%;height:18px;border-left:1px solid var(--flow-line)}
+.making-branches{--branch-gap:clamp(20px,5vw,60px);--branch-center:calc((100% - var(--branch-gap))/4);position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--branch-gap);margin:36px 0}
+.making-branches::before,.making-branches::after{content:"";position:absolute;left:var(--branch-center);right:var(--branch-center);height:19px;border:1px solid var(--flow-line)}
 .making-branches::before{bottom:100%;border-bottom:0}
 .making-branches::after{top:100%;border-top:0}
-.making-branch{position:relative;min-width:0;display:flex;flex-direction:column;border:1px solid #7f837533;background:#ffffff24;padding:18px 16px 0}
-.making-branch::before{content:"";position:absolute;top:-5px;left:calc(50% - 4px);width:7px;height:7px;border-right:1px solid var(--flow-ink);border-bottom:1px solid var(--flow-ink);transform:rotate(45deg)}
-.making-branch::after{content:"";flex:1;min-height:20px;border-left:1px solid var(--flow-ink);align-self:center}
-.making-branch h3{margin:0 0 24px;text-align:center;font-size:clamp(22px,2.8vw,27px);font-weight:300;line-height:1.4}
-.making-steps{list-style:none;margin:0;padding:0;display:grid;gap:24px}
+.making-branch{position:relative;min-width:0;display:flex;flex-direction:column;padding:0;border:0;background:transparent}
+.making-branch::after{content:"";flex:1;min-height:20px;border-left:1px solid var(--flow-line);align-self:center}
+.making-branch h3{margin:0 0 16px;text-align:center;font-size:25px;font-weight:300;line-height:1.5}
+.making-steps{list-style:none;margin:0;padding:0;display:grid;gap:16px}
 .making-steps li{position:relative;min-width:0}
-.making-steps li+li::before{content:"";position:absolute;bottom:100%;left:50%;height:24px;border-left:1px solid var(--flow-ink)}
-.making-steps li+li::after{content:"";position:absolute;top:-6px;left:calc(50% - 3px);width:6px;height:6px;border-right:1px solid var(--flow-ink);border-bottom:1px solid var(--flow-ink);transform:rotate(45deg)}
-.making-flow .making-steps a{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;align-items:center;min-height:74px;padding:14px;border:1px solid var(--flow-border);background:var(--flow-paper);font-size:clamp(15px,1.9vw,18px);line-height:1.6;transition:background .2s ease,border-color .2s ease,color .2s ease}
-.making-flow .making-steps a:hover{transform:none;background:#fafaf7;border-color:#666c59;color:#4d5741}
-.making-flow .making-steps a:focus-visible{outline:2px solid #666c59;outline-offset:3px}
-.making-step-number{display:grid;place-items:center;width:28px;height:28px;border:1px solid #8c917f;border-radius:50%;background:#e7eae1;font:12px/1 var(--story-sans,sans-serif);color:#525b47}
+.making-steps li+li::before{content:"";position:absolute;bottom:100%;left:50%;height:16px;border-left:1px solid var(--flow-line)}
+.making-steps li+li::after{content:"";position:absolute;top:-5px;left:calc(50% - 3px);width:5px;height:5px;border-right:1px solid var(--flow-line);border-bottom:1px solid var(--flow-line);transform:rotate(45deg)}
+.making-flow .making-steps a{display:grid;grid-template-columns:20px minmax(0,1fr);gap:12px;align-items:center;min-height:52px;padding:10px 16px;border:1px solid var(--flow-border);background:transparent;color:inherit;font-size:17px;line-height:1.55;transition:color .2s ease,border-color .2s ease}
+.making-flow .making-steps a:hover{transform:none;border-color:#555;color:#161616}
+.making-flow .making-shared .production-trigger:hover{border-color:#555;color:#161616}
+.making-flow a:focus-visible{outline:1px solid #555;outline-offset:4px}
+.making-step-number{font:300 11px/1.5 var(--story-sans,sans-serif);color:#777;letter-spacing:.04em}
 .making-step-label{min-width:0;word-break:keep-all;overflow-wrap:anywhere}
-.making-merge::before{content:"";position:absolute;bottom:100%;left:50%;height:25px;border-left:1px solid var(--flow-ink)}
-.making-merge h3::before,.making-outputs h3::before{content:"";position:absolute;top:-5px;left:calc(50% - 4px);width:7px;height:7px;border-right:1px solid var(--flow-ink);border-bottom:1px solid var(--flow-ink);transform:rotate(45deg)}
-.making-outputs{margin-top:50px;padding:18px 14px;background:transparent}
-.making-outputs::before{content:"";position:absolute;bottom:100%;left:50%;height:25px;border-left:1px solid var(--flow-ink)}
+.making-merge::before{content:"";position:absolute;bottom:100%;left:50%;height:18px;border-left:1px solid var(--flow-line)}
+.making-outputs{margin-top:36px;padding:8px 0}
+.making-outputs::before{content:"";position:absolute;bottom:100%;left:50%;height:18px;border-left:1px solid var(--flow-line)}
+.making-outputs h3::before{content:"";position:absolute;top:-5px;left:calc(50% - 3px);width:5px;height:5px;border-right:1px solid var(--flow-line);border-bottom:1px solid var(--flow-line);transform:rotate(45deg)}
 .process-grid{row-gap:32px}
-.process-grid p{font-size:15px;color:#62625a}
-@media(max-width:760px){.making-shared,.making-outputs{width:72%}.making-branch{padding:16px 12px 0}.making-flow .making-steps a{grid-template-columns:24px minmax(0,1fr);gap:8px;padding:12px}.making-step-number{width:24px;height:24px}}
-@media(max-width:480px){
- #process.section{gap:28px}
- .making-shared,.making-outputs{width:82%}
- .making-branch{padding:14px 8px 0}
- .making-branch h3{margin-bottom:20px}
- .making-flow .making-steps a{grid-template-columns:1fr;justify-items:center;text-align:center;gap:7px;min-height:106px;padding:12px 8px}
- .making-step-label{align-self:start}
+@media(max-width:600px){
+ .making-flow{max-width:520px}
+ .making-branch h3{font-size:22px;margin-bottom:13px}
+ .making-flow .making-steps a{grid-template-columns:16px minmax(0,1fr);gap:8px;min-height:62px;padding:9px 10px;font-size:15px}
+ .making-shared h3,.making-outputs h3{font-size:18px}
 }
-@media(prefers-reduced-motion:reduce){.making-flow .making-steps a{transition:none}}
+@media(max-width:380px){
+ .making-branches{--branch-gap:20px}
+ .making-flow .making-steps a{grid-template-columns:1fr;gap:3px;min-height:80px;padding:8px 10px}
+ .making-step-number{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){.making-flow a{transition:none}}
 
 .experience-paths-static .experience-kind{display:grid;place-items:center;width:108px;aspect-ratio:1;border:1px solid var(--line);border-radius:50%;margin-bottom:10px;font-weight:300}
 .experience-paths-static .experience-path strong{font-weight:300}

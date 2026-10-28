@@ -1,10 +1,10 @@
 {
-  "version": "continuity-final-20261026",
+  "version": "continuity-smooth60-20261028",
   "scenes": [
     {
       "id": "intro",
       "label": "사자 일러스트 → 먹 번짐 → 산과 안개 → 마을 입구",
-      "src": "./media/v23/intro-mountain-rush.mp4",
+      "src": "https://d2ol7oe51mr4n9.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/3f627a03-a493-4006-be59-4ef37654b8a6.mp4",
       "duration": 19.433333333333334,
       "mode": "scroll",
       "caption": "돌에 새긴 선, 풍경이 되다",
@@ -21,15 +21,24 @@
           1920,
           1080
         ],
-        "delivery": "Bitstream copy, no recompression. Visible frames 0–582 match approved video. Native 1x playback preserves the source 30 fps cadence and its baked mountain speed ramp. Source video is silent; a separate extracted drum cue is mixed beneath narration.",
-        "deliverySha256": "001746587660b767a72ff46bd455ddc0e51ac11e633d21dfd489471730abe25c",
-        "paperColor": "#E8E8E6"
+        "delivery": "Motion-compensated interpolation to 1080p60 from the approved opening. 94 repeated cadence frames were omitted while retaining original source timestamps; adaptive bidirectional optical-flow interpolation fills the intermediate frames. The existing speed ramp, visible duration, composition and separate audio timing are unchanged.",
+        "deliverySha256": "94334494ddc6f04a62ff15f1ca98533e7c928ab4ee93192ec284085857b37a05",
+        "paperColor": "#E8E8E6",
+        "interpolation": {
+          "source": "media/v23/intro-mountain-rush.mp4",
+          "sourceSha256": "001746587660b767a72ff46bd455ddc0e51ac11e633d21dfd489471730abe25c",
+          "sourceFps": 30,
+          "sourceFrames": 600,
+          "outputFps": 60,
+          "method": "FFmpeg minterpolate mci/aobmc/bidir/vsbmc, source PTS preserved",
+          "approvedVisibleDuration": 19.433333333333334
+        }
       },
       "footsteps": false,
-      "sourceDuration": 20,
+      "sourceDuration": 19.95,
       "ambience": "",
-      "sourceFrames": 600,
-      "fps": 30,
+      "sourceFrames": 1197,
+      "fps": 60,
       "clipIn": 0,
       "nativeAudio": false,
       "playOnScroll": true,
@@ -727,13 +736,19 @@
         }
       ],
       "departureGrade": {
-        "until": 3.8,
+        "start": 0.35,
+        "until": 3.0,
         "gain": [
-          0.96,
-          0.97,
-          0.98
+          0.94,
+          0.95,
+          0.96
         ],
-        "saturation": 0.94
+        "shadowGain": [
+          0.94,
+          0.92,
+          0.9
+        ],
+        "saturation": 0.97
       }
     },
     {

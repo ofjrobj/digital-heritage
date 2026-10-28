@@ -53,7 +53,7 @@ test('back camera follows the measured body lean without rotating scan geometry'
 });
 
 test('beard and eyes look straight at each scan’s own frontal face plane',()=>{
- for(const [sex,yaw,pitch] of [['male',5,4],['female',-10,13]]){
+ for(const [sex,yaw,pitch] of [['male',5,4],['female',-10,4]]){
   const {framing,model}=fixture(sex),vertices=Array.from(model.geometry.attributes.position.array);
   for(const index of [1,4]){
    const actual=angles(framing.focus(index));
@@ -65,26 +65,29 @@ test('beard and eyes look straight at each scan’s own frontal face plane',()=>
  }
 });
 
-test('facial-feature portraits turn only twelve degrees from each frontal view',()=>{
- for(const [sex,offset] of [['male',12],['female',-12]]){
+test('facial-feature portraits use the same frontal elevation as the feature close-ups',()=>{
+ for(const sex of ['male','female']){
   const {framing}=fixture(sex),front=angles(framing.focus(4)),portrait=angles(framing.focus(3));
-  assert.ok(Math.abs(portrait.yaw-front.yaw-offset)<1e-8);
+  assert.ok(Math.abs(portrait.yaw-front.yaw)<1e-8);
   assert.ok(Math.abs(portrait.pitch-front.pitch)<1e-8);
+  assert.ok(Math.abs(portrait.pitch-4)<1e-8,'neither portrait looks down over the back');
  }
 });
 
-test('beard view fits the complete object from crown to feet',()=>{
+test('beard and eye views crop the body and use distinct feature centres',()=>{
  for(const sex of ['male','female']){
-  const {framing,model}=fixture(sex),camera=framing.reference(1,600,600);
-  const vertices=model.geometry.attributes.position;
-  for(let i=0;i<vertices.count;i++){
-   const p=new THREE.Vector3().fromBufferAttribute(vertices,i).project(camera);
-   assert.ok(Math.abs(p.x)<.95&&Math.abs(p.y)<.95,'the full object stays within the viewport');
+  const {framing,model}=fixture(sex),beard=framing.focus(1),eyes=framing.focus(4),face=framing.focus(3);
+  assert.ok(eyes.target.y>beard.target.y+.2,'the eye crop is clearly above the beard crop');
+  for(const index of [1,4]){
+   const camera=framing.reference(index,600,600),goal=framing.focus(index);
+   assert.ok(goal.position.distanceTo(goal.target)<face.position.distanceTo(face.target),'detail views are closer than the full face');
+   const foot=new THREE.Vector3(1,-.7,0).project(camera);
+   assert.ok(foot.y < -1,'feet are outside the selected feature viewport');
   }
  }
 });
 
-test('paired front views share crown and foot baselines despite different proportions and camera zoom',()=>{
+test('paired close-ups centre the selected beard band at a shared visible height',()=>{
  const pair=[fixture('male',1.8,1.5,.65),fixture('female',2.4,1,1.2)];
  const goals=pair.map(v=>v.framing.focus(1));
  const height=Math.min(...pair.map(v=>v.framing.naturalFramingHeight()));
@@ -95,7 +98,9 @@ test('paired front views share crown and foot baselines despite different propor
   let top=Infinity,bottom=-Infinity;
   const vertices=v.model.geometry.attributes.position;
   for(let i=0;i<vertices.count;i++){
-   const p=new THREE.Vector3().fromBufferAttribute(vertices,i).project(v.camera),y=(1-p.y)*300;
+   const vertex=new THREE.Vector3().fromBufferAttribute(vertices,i),box=new THREE.Box3().setFromObject(v.model),size=box.getSize(new THREE.Vector3());
+   if(vertex.x<box.min.x+size.x*.78||vertex.y<box.min.y+size.y*.46||vertex.y>box.min.y+size.y*.66)continue;
+   const p=vertex.project(v.camera),y=(1-p.y)*300;
    top=Math.min(top,y);bottom=Math.max(bottom,y);
   }
   assert.ok(Math.abs((top+bottom)/2-300)<.1,'the visible silhouette is centred');
@@ -105,11 +110,11 @@ test('paired front views share crown and foot baselines despite different propor
  assert.ok(Math.abs(bounds[0].bottom-bounds[1].bottom)<.1);
 });
 
-test('face and eye framing includes the crown and excludes lower-body fitting points',()=>{
+test('face and eye framing focus above the body centre',()=>{
  const {framing}=fixture('male');
  for(const index of [3,4]){
   const goal=framing.focus(index);
-  assert.ok(goal.target.y>.3,'focus moves above the body centre');
+  assert.ok(goal.target.y>.2,'focus moves above the body centre');
   assert.ok(Number.isFinite(goal.position.length()));
  }
 });

@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
-import {levelScan, createInspectionFraming} from './scan-framing.js?v=review-final-20261028-v6';
-import {createSurfaceView} from './surface-view.js?v=review-final-20261028-v6';
-import {createViewportBuffer, framingBlend} from './viewer-motion.js?v=smooth-pair-20261026';
+import {levelScan, createInspectionFraming} from './scan-framing.js?v=requested-fixes-20261028-v7';
+import {createSurfaceView} from './surface-view.js?v=requested-fixes-20261028-v7';
+import {createViewportBuffer, framingBlend} from './viewer-motion.js?v=requested-fixes-20261028-v7';
 
 const sex = new URLSearchParams(location.search).get('model') === 'female' ? 'female' : 'male';
 const name = sex === 'male' ? '수사자' : '암사자';
@@ -74,7 +74,7 @@ try {
   const decoder = new DRACOLoader().setDecoderPath('./vendor/draco/').setWorkerLimit(1);
   const loader = new GLTFLoader().setDRACOLoader(decoder);
   loader.loadAsync(`./models/${sex}-continuous.glb`, event => {
-    message.textContent = event.total ? `3D 모델을 불러오는 중 ${Math.min(100, Math.round(event.loaded / event.total * 100))}%` : '3D 모델을 불러오는 중…';
+    message.textContent = event.total ? `Loading... ${Math.min(100, Math.round(event.loaded / event.total * 100))}%` : 'Loading...';
   }).then(gltf => {
     const model = levelScan(THREE, gltf.scene, {
       sex,
