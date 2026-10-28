@@ -1,6 +1,6 @@
 import {levelScan,createInspectionFraming} from './scan-framing.js?v=requested-fixes-20261028-v7';
-import {createViewportBuffer,createFramingTransition} from './viewer-motion.js?v=requested-fixes-20261028-v7';
-import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=requested-fixes-20261028-v7';
+import {createViewportBuffer,createFramingTransition} from './viewer-motion.js?v=requested-fixes-20261028-v8';
+import {createSurfaceView,mountSurfaceToggle} from './surface-view.js?v=requested-fixes-20261028-v8';
 import {createInspectionLight,mountInspectionLight} from './inspection-light.js?v=requested-fixes-20261028-v7';
 import {createNormalMapView} from './normal-map-view.js?v=review-final-20261028-v6';
 import * as THREE from "three";
@@ -101,8 +101,27 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
   }).catch(error => {
     console.error(error);loading.textContent='모델을 불러오지 못했습니다. 새로고침해 주세요.';element.dataset.loaded='error';
   });
-  function focus(index){goal=framing.focus(index);cameraTransition=goal?createFramingTransition(THREE,camera.position,controls.target):null;element.dataset.viewSource='preset';dirty=true;synchronizeOverview();}
-  controls.addEventListener('start',()=>{goal=null;cameraTransition=null;element.dataset.viewSource='interaction';});
+  function useOrbitUp(up){
+    camera.up.copy(up);
+    controls._quat.setFromUnitVectors(camera.up,new THREE.Vector3(0,1,0));
+    controls._quatInverse.copy(controls._quat).invert();
+  }
+  function beginTransition(){return createFramingTransition(THREE,camera.position,controls.target,{quaternion:camera.quaternion,up:camera.up});}
+  function focus(index){
+    const displayedUp=camera.up.clone();
+    goal=framing.focus(index);
+    if(goal){
+      // Framing supplies the authored destination up-axis. Keep it with the
+      // destination instead of applying it to the currently displayed camera.
+      goal.up=camera.up.clone();useOrbitUp(displayedUp);
+      cameraTransition=beginTransition();
+    }else cameraTransition=null;
+    element.dataset.viewSource='preset';dirty=true;synchronizeOverview();
+  }
+  controls.addEventListener('start',()=>{
+    // A drag can interrupt a preset at any point without changing its roll.
+    useOrbitUp(camera.up);goal=null;cameraTransition=null;element.dataset.viewSource='interaction';
+  });
   function animate(now=performance.now()){
     requestAnimationFrame(animate);
     const elapsed=Math.max(0,(now-lastFrameAt)/1000);lastFrameAt=now;
@@ -112,17 +131,24 @@ function createViewer({ element, loading, modelUrl, targetSize, yaw = 0, display
     // Resize and redraw in the same task, after the changing layout settles.
     if(buffer){renderer.setSize(buffer.width,buffer.height,false);element.dataset.bufferCommits=String(Number(element.dataset.bufferCommits||0)+1);dirty=true;}
     const limits=[controls.minDistance,controls.maxDistance];
+    const travelling=!!goal;
     if(goal){
-      cameraTransition ||= createFramingTransition(THREE,camera.position,controls.target);
+      goal.up ||= camera.up.clone();
+      cameraTransition ||= beginTransition();
       const pose=cameraTransition.sample(goal,elapsed,reducedMotion.matches);
-      camera.position.copy(pose.position);controls.target.copy(pose.target);dirty=true;
+      camera.position.copy(pose.position);controls.target.copy(pose.target);
+      camera.quaternion.copy(pose.quaternion);camera.up.copy(pose.up);dirty=true;
       // The new detail's orbit limits must not clamp the preceding wider view
       // while it is still travelling toward the close-up.
       const distance=camera.position.distanceTo(controls.target);
       controls.minDistance=Math.min(limits[0],distance);controls.maxDistance=Math.max(limits[1],distance);
-      if(pose.done){camera.position.copy(goal.position);controls.target.copy(goal.target);goal=null;cameraTransition=null;}
+      if(pose.done){
+        camera.position.copy(goal.position);controls.target.copy(goal.target);
+        useOrbitUp(goal.up);controls.update();goal=null;cameraTransition=null;
+      }
     }
-    if(controls.update())dirty=true;
+    // OrbitControls would run lookAt again and reintroduce the pole singularity.
+    if(!travelling&&controls.update())dirty=true;
     [controls.minDistance,controls.maxDistance]=limits;
     if(dirty){
       camera.updateMatrixWorld(true);

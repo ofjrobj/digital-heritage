@@ -64,10 +64,10 @@ test('stable navigation does not mutate DOM state on every animation frame',()=>
   const nav={inert:false,getAttribute:key=>attributes.get(key),hasAttribute:key=>attributes.has(key),
     setAttribute(key,value){writes++;attributes.set(key,value);},removeAttribute(key){writes++;attributes.delete(key);}};
   const context=vm.createContext({
-    $:()=>nav,navOpacity:1,transition:null,current:null,scenes:[{mode:'scroll'}],index:0,fogLevel:0,
+    $:()=>nav,navOpacity:1,transition:null,current:null,scenes:[{mode:'scroll'}],index:0,fogLevel:0,entryGate:false,
     document:{body:{dataset}},stage:{style:{getPropertyValue:key=>properties.get(key)||'',setProperty(key,value){writes++;properties.set(key,value);}}},
   });
-  const code=runtime.slice(runtime.indexOf('function updateStoryNavigation()'),runtime.indexOf('function advance()'));
+  const code=runtime.slice(runtime.indexOf('function updateStoryNavigation('),runtime.indexOf('function advance()'));
   vm.runInContext(code,context);context.updateStoryNavigation();const initial=writes;
   for(let i=0;i<120;i++)context.updateStoryNavigation();
   assert.equal(writes,initial);

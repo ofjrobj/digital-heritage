@@ -6,9 +6,9 @@ body[data-media-profile="selected-higgsfield"] #stage #loading{
   font-size:14px!important;font-weight:400!important;line-height:1.6!important;
   text-align:center;letter-spacing:0;background:#e8e8e6!important;
 }
-body[data-intro-entry="loading"] #stage>:not(#loading):not(#storyIndexBar),
-body:is([data-intro-entry="recommendation"],[data-intro-entry="ready"]) #stage>:not(#introWelcome):not(#storyIndexBar){visibility:hidden!important}
-body:is([data-intro-entry="loading"],[data-intro-entry="recommendation"],[data-intro-entry="ready"]) #stage #storyIndexBar{z-index:201;opacity:1!important;visibility:visible!important;pointer-events:auto}
+body[data-intro-entry="loading"] #stage>:not(#loading),
+body:is([data-intro-entry="recommendation"],[data-intro-entry="ready"]) #stage>:not(#introWelcome){visibility:hidden!important}
+body:is([data-intro-entry="loading"],[data-intro-entry="recommendation"],[data-intro-entry="ready"]) #stage #storyIndexBar{opacity:0!important;visibility:hidden!important;pointer-events:none}
 #introWelcome{
   position:absolute;inset:0;z-index:200;display:grid;place-items:center;
   background:#e8e8e6;color:#373734;opacity:1;transition:opacity .7s ease;

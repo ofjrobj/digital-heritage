@@ -22,26 +22,32 @@ export function framingBlend(elapsedSeconds, reducedMotion = false) {
   return reducedMotion ? 1 : 1 - Math.exp(-Math.max(0, Math.min(.1, elapsedSeconds)) / .22);
 }
 
-// Move around the object, not through it. Each retarget starts at the displayed
-// viewpoint; the shortest rotation and a zero-slope ease avoid a fast initial whip.
-export function createFramingTransition(THREE, position, target) {
- const origin=target.clone(),offset=position.clone().sub(target),radius=offset.length();
- const direction=offset.normalize(),rotation=new THREE.Quaternion(),turn=new THREE.Quaternion();
+// Interpolate the complete camera orientation. Rebuilding lookAt from a changing
+// direction and a fixed up vector is singular over the back: one small orbit step
+// can roll the whole scan by half a turn. The quaternion path has no such pole.
+export function createFramingTransition(THREE, position, target, {quaternion,up=new THREE.Vector3(0,1,0)}={}) {
+ const origin=target.clone(),radius=position.distanceTo(target),initialUp=up.clone();
+ const orientation=quaternion?.clone()??new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().lookAt(position,target,initialUp));
+ const destinationOrientation=new THREE.Quaternion(),rotationMatrix=new THREE.Matrix4();
+ const cameraBack=new THREE.Vector3(0,0,1),cameraUp=new THREE.Vector3(0,1,0);
+ const maxAngularSpeed=THREE.MathUtils.degToRad(95);
  let elapsed=0;
  return {
   sample(goal, seconds, reducedMotion=false) {
-   const destination=goal.position.clone().sub(goal.target),distance=destination.length();
-   destination.normalize();
-   const angle=Math.acos(THREE.MathUtils.clamp(direction.dot(destination),-1,1));
-   const duration=.9+.35*angle/Math.PI;
+   const distance=goal.position.distanceTo(goal.target);
+   destinationOrientation.setFromRotationMatrix(rotationMatrix.lookAt(goal.position,goal.target,goal.up??initialUp));
+   const angle=orientation.angleTo(destinationOrientation);
+   // Quintic easing peaks at 1.875 times the average speed. Large orientation
+   // changes therefore get the time they need; neighbouring close-ups stay quick.
+   const duration=Math.max(.9,1.875*angle/maxAngularSpeed);
    elapsed+=Math.max(0,Math.min(.1,seconds));
    const progress=reducedMotion?1:Math.min(1,elapsed/duration);
    const eased=progress*progress*progress*(progress*(progress*6-15)+10);
-   rotation.setFromUnitVectors(direction,destination);
-   turn.identity().slerp(rotation,eased);
+   const nextOrientation=orientation.clone().slerp(destinationOrientation,eased);
    const nextTarget=origin.clone().lerp(goal.target,eased);
-   const nextPosition=direction.clone().applyQuaternion(turn).multiplyScalar(radius+(distance-radius)*eased).add(nextTarget);
-   return {position:nextPosition,target:nextTarget,done:progress===1};
+   const nextPosition=cameraBack.clone().applyQuaternion(nextOrientation).multiplyScalar(radius+(distance-radius)*eased).add(nextTarget);
+   if(progress===1)nextPosition.copy(goal.position);
+   return {position:nextPosition,target:nextTarget,quaternion:nextOrientation,up:cameraUp.clone().applyQuaternion(nextOrientation),done:progress===1};
   }
  };
 }

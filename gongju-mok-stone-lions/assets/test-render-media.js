@@ -478,10 +478,11 @@ function play(r){
   }
  }).finally(()=>{r.playPending=false;});
 }
-let fogLevel=0,navOpacity=1;
+let fogLevel=0,navOpacity=1,entryNavReveal=entryGate?0:1;
+const entryNavReducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 function mistAmount(p){fogLevel=p;mist.style.opacity=String(p);mist.style.setProperty('--veil',String(clamp((p-.62)/.38)));mist.style.setProperty('--drift',String((1-p)*12)+'%');mist.style.setProperty('--fog-progress',String(p));footageFog.update(p);}
 // Navigation is veiled by the same fog, then stays absent during dialogue.
-function updateStoryNavigation(){
+function updateStoryNavigation(dt=0){
  const nav=$('storyIndexBar');if(!nav)return;
  const t=transition,underFog=!!t&&!t.initial&&t.fade>0&&!t.record.error;
  navOpacity=scenes[index]?.mode==='dialogue'?0:1;
@@ -492,6 +493,12 @@ function updateStoryNavigation(){
  }
  if(current?.approaching&&!t)navOpacity*=1-(current.approachCover||0);
  if(t?.record.error)navOpacity=1;
+ // The invitation owns the screen until Enter is accepted and the scene opens.
+ if(entryGate){
+  const entryOpening=entryAccepted&&!['loading','gap'].includes(document.body.dataset.startup);
+  entryNavReveal=!entryOpening?0:entryNavReducedMotion.matches?1:Math.min(1,entryNavReveal+dt/.7);
+  navOpacity*=ease(entryNavReveal);
+ }
  const opacity=String(navOpacity),hidden=navOpacity<.005,inert=navOpacity<.35;
  if(stage.style.getPropertyValue('--story-nav-opacity')!==opacity)stage.style.setProperty('--story-nav-opacity',opacity);
  if(document.body.dataset.navFog!==String(underFog))document.body.dataset.navFog=String(underFog);
@@ -690,7 +697,7 @@ function frame(now){
  if($('reviewTime'))$('reviewTime').disabled=!!transition||scenes[index]?.mode==='dialogue';
  if($('reviewTime')&&document.activeElement!==$('reviewTime'))$('reviewTime').value=String(Math.round(local/duration(index)*1000));
  if($('reviewReadout'))$('reviewReadout').textContent=`${Math.max(0,index)+1} / ${scenes.length} · ${local.toFixed(1)} / ${duration(index).toFixed(1)}초`;
- updateStoryNavigation();
+ updateStoryNavigation(dt);
  adaptiveNavPaper.tick(now,dt,hasFrame,{visible:!embeddedStory&&navOpacity>.005,frameKey:canvasPaints});
  footageFog.tick(now,paused||document.hidden);
  const musicScene=scenes[index],musicVoice=voices.proof();

@@ -115,3 +115,31 @@ test('an error hides either invitation state and retry gets the complete recomme
     assert.equal(body.dataset.introEntry, 'ready');
   }
 });
+
+test('Story/Index stays inaccessible before Enter and fades in only with the opened scene', () => {
+  const runtime=readFileSync(new URL('../assets/test-render-media.js',import.meta.url),'utf8');
+  const source=runtime.slice(runtime.indexOf('function updateStoryNavigation('),runtime.indexOf('\nfunction advance()'));
+  const attributes=new Map(),styles=new Map(),nav={inert:true,getAttribute:key=>attributes.get(key),setAttribute:(key,value)=>attributes.set(key,value),hasAttribute:key=>attributes.has(key),removeAttribute:key=>attributes.delete(key)};
+  const context=vm.createContext({$:()=>nav,entryGate:true,entryAccepted:false,entryNavReveal:0,entryNavReducedMotion:{matches:false},transition:null,current:null,scenes:[{mode:'walk'}],index:0,navOpacity:1,fogLevel:0,clamp:x=>Math.max(0,Math.min(1,x)),ease:x=>x*x*(3-2*x),stage:{style:{getPropertyValue:key=>styles.get(key),setProperty:(key,value)=>styles.set(key,value)}},document:{body:{dataset:{startup:'loading'}}}});
+  vm.runInContext(source,context);
+  for(const startup of ['loading','entry']){
+    context.document.body.dataset.startup=startup;
+    context.updateStoryNavigation(10);
+    assert.equal(context.navOpacity,0);
+    assert.equal(nav.inert,true);
+    assert.equal(attributes.get('aria-hidden'),'true');
+  }
+  context.entryAccepted=true;context.document.body.dataset.startup='gap';
+  context.updateStoryNavigation(.1);assert.equal(context.navOpacity,0);
+  context.document.body.dataset.startup='reveal';context.updateStoryNavigation(.1);
+  assert.ok(context.navOpacity>0&&context.navOpacity<1);
+  context.updateStoryNavigation(.6);
+  assert.equal(context.navOpacity,1);assert.equal(nav.inert,false);
+  assert.equal(attributes.has('aria-hidden'),false);
+  context.scenes[0].mode='dialogue';context.updateStoryNavigation(.1);
+  assert.equal(context.navOpacity,0);assert.equal(nav.inert,true);
+  context.scenes[0].mode='walk';context.entryAccepted=false;context.updateStoryNavigation(.1);
+  assert.equal(context.navOpacity,0);assert.equal(nav.inert,true);
+  context.entryAccepted=true;context.entryNavReducedMotion.matches=true;context.updateStoryNavigation(.01);
+  assert.equal(context.navOpacity,1);
+});

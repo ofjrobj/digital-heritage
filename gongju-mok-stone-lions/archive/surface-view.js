@@ -47,10 +47,13 @@ export function mountSurfaceToggle(viewers, root = document) {
   const scenes = [...(root.querySelectorAll?.('.scene') || [])];
   const window = root.defaultView;
   let mode = 'color', stableMode = 'color', request = 0, initialized = false;
-  let scans = [];
+  let scans = [], scanFrame = 0, finishScan = null;
   const clearScan = () => {
-    scans.forEach(({canvas, animation}) => { animation?.cancel(); canvas.remove(); });
+    if (scanFrame) window?.cancelAnimationFrame(scanFrame);
+    scanFrame = 0;
+    scans.forEach(({canvas, particles}) => { canvas.remove(); particles?.remove(); });
     scans = [];
+    finishScan?.(); finishScan = null;
   };
   function captureScans() {
     clearScan();
@@ -61,29 +64,89 @@ export function mountSurfaceToggle(viewers, root = document) {
       canvas.className = 'surface-scan-snapshot';
       canvas.setAttribute('aria-hidden', 'true');
       scene.append(canvas);
-      scans.push({canvas, animation:null});
+      const rect=scene.getBoundingClientRect();
+      scans.push({canvas, scene, particles:null, grains:[], width:rect.width, height:rect.height, pose:scene.dataset.objectTransform});
     });
+  }
+  function clearIfMoved() {
+    const moved=scans.some(item=>{
+      const rect=item.scene.getBoundingClientRect();
+      return Math.abs(rect.width-item.width)>.5 || Math.abs(rect.height-item.height)>.5 || item.scene.dataset.objectTransform!==item.pose;
+    });
+    if(moved)clearScan();
+    return moved;
   }
   async function revealScan(token) {
     // Give the freshly selected material a render before exposing it. The old
     // render remains above it while a normal map downloads.
     if (window?.requestAnimationFrame) await new Promise(resolve => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
     if (token !== request) return;
-    const current = scans;
-    const finishes = current.map(item => {
-      if (!item.canvas.animate) return Promise.resolve();
-      item.animation = item.canvas.animate(
-        [{clipPath:'inset(0% 0 0 0)'}, {clipPath:'inset(100% 0 0 0)'}],
-        {duration:740, easing:'cubic-bezier(.3,.08,.3,1)', fill:'forwards'}
-      );
-      return item.animation.finished;
+    if (!scans.length || !window?.requestAnimationFrame) { clearScan(); return; }
+    // Sample only the scan silhouette: the page and controls never emit particles.
+    for (const item of scans) {
+      const probe = root.createElement('canvas');
+      const scale = 180 / Math.max(item.canvas.width, item.canvas.height);
+      probe.width = Math.max(1, Math.round(item.canvas.width * scale));
+      probe.height = Math.max(1, Math.round(item.canvas.height * scale));
+      const sample = probe.getContext('2d', {willReadFrequently:true});
+      sample.drawImage(item.canvas, 0, 0, probe.width, probe.height);
+      const pixels = sample.getImageData(0, 0, probe.width, probe.height).data;
+      let seed = 17;
+      const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+      for (let y=1; y<probe.height; y+=3) for (let x=1; x<probe.width; x+=3) {
+        const i=(y*probe.width+x)*4;
+        if (pixels[i+3]<150 || random()>.72) continue;
+        const shade=Math.round(Math.max(68, Math.min(146, (pixels[i]+pixels[i+1]+pixels[i+2])/3)));
+        item.grains.push({x:(x+random()*2)/probe.width, y:(y+random()*2)/probe.height, drift:(random()-.5)*14, rise:3+random()*8, size:.45+random()*.65, alpha:.35+random()*.35, shade});
+      }
+      const r=item.scene.getBoundingClientRect();
+      const particles=root.createElement('canvas');
+      particles.className='surface-scan-particles'; particles.setAttribute('aria-hidden','true');
+      const ratio=Math.min(window.devicePixelRatio || 1, 1.5);
+      particles.width=Math.max(1,Math.round(r.width*ratio)); particles.height=Math.max(1,Math.round(r.height*ratio));
+      item.context=particles.getContext('2d'); item.ratio=ratio; item.particles=particles;
+      item.scene.append(particles);
+    }
+    const current=scans;
+    await new Promise(resolve => {
+      finishScan=resolve;
+      let started=null;
+      const draw = now => {
+        if (token!==request || clearIfMoved()) { resolve(); return; }
+        started ??= now;
+        const progress=Math.min(1,(now-started)/1180);
+        const eased=progress*progress*(3-2*progress), front=-.08+eased*1.16;
+        for (const item of current) {
+          // A feathered boundary dissolves the old material into the new one.
+          const mask=`linear-gradient(to bottom, transparent ${(front-.045)*100}%, #000 ${(front+.045)*100}%)`;
+          item.canvas.style.maskImage=mask; item.canvas.style.webkitMaskImage=mask;
+          item.canvas.dataset.scanProgress=progress.toFixed(3);
+          const {context:ctx,particles:layer,ratio}=item;
+          ctx.clearRect(0,0,layer.width,layer.height);
+          for (const grain of item.grains) {
+            const life=(front-grain.y+.025)/.16;
+            if (life<=0 || life>=1) continue;
+            const alpha=Math.sin(Math.PI*life)*grain.alpha;
+            ctx.fillStyle=`rgba(${grain.shade},${grain.shade},${grain.shade},${alpha})`;
+            const x=grain.x*layer.width+grain.drift*life*ratio;
+            const y=grain.y*layer.height-grain.rise*life*ratio;
+            ctx.beginPath();ctx.arc(x,y,grain.size*ratio*(1-.45*life),0,Math.PI*2);ctx.fill();
+          }
+        }
+        if(progress<1) scanFrame=window.requestAnimationFrame(draw);
+        else { finishScan=null; resolve(); }
+      };
+      scanFrame=window.requestAnimationFrame(draw);
     });
-    await Promise.allSettled(finishes);
     if (token === request) clearScan();
   }
+
   scenes.forEach(scene => {
     scene.addEventListener('pointerdown', clearScan, {passive:true});
     scene.addEventListener('wheel', clearScan, {passive:true});
+    // A still overlay cannot follow a camera move or a changing panel layout.
+    if(window?.ResizeObserver)new window.ResizeObserver(clearIfMoved).observe(scene);
+    if(window?.MutationObserver)new window.MutationObserver(clearIfMoved).observe(scene,{attributes:true,attributeFilter:['data-object-transform']});
   });
   function updateButton() {
     button.dataset.mode = mode;
