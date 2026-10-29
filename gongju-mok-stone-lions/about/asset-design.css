@@ -185,14 +185,21 @@
 .asset-process-route li + li::before { content: '→'; margin-right: 30px; color: #8a8a80; }
 .architecture-process { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
 .architecture-process > figure { min-width: 0; }
+.architecture-process .asset-image-label,
+.architecture-process figcaption { overflow-wrap: anywhere; }
 .architecture-process .asset-image { display: flex; align-items: center; aspect-ratio: 8 / 5; background: #f3f2ec66; }
 .architecture-process .asset-image img { width: 100%; height: 100%; object-fit: contain; }
 .architecture-process .asset-photo-credit { display: inline-block; margin-top: 7px; font-size: 12px; overflow-wrap: anywhere; }
 @media (max-width: 900px) {
-  .architecture-process { grid-template-columns: minmax(0, 1fr); gap: 30px; max-width: 620px; }
-  .architecture-process .asset-image { max-height: 360px; }
+  .architecture-process { gap: clamp(8px, 2vw, 20px); }
+  .architecture-process .asset-image-label { min-height: 2.8em; margin-bottom: 8px; font-size: 11px; line-height: 1.4; letter-spacing: 0; }
+  .architecture-process figcaption { margin-top: 8px; font-size: 12px; line-height: 1.6; }
+  .architecture-process .asset-photo-credit { margin-top: 4px; font-size: 11px; }
 }
 @media (max-width: 440px) {
+  .architecture-process .asset-image-label { font-size: 10px; margin-bottom: 6px; }
+  .architecture-process figcaption { font-size: 11px; line-height: 1.55; }
+  .architecture-process .asset-photo-credit { font-size: 10px; }
   .asset-process-route { gap: 8px 18px; font-size: 13px; }
   .asset-process-route li + li::before { margin-right: 18px; }
 }

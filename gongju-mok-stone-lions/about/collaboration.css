@@ -12,4 +12,18 @@
 .collaboration-handoffs{margin:0}
 .collaboration-handoffs>div{display:grid;grid-template-columns:220px minmax(0,1fr);gap:32px;border-top:1px solid var(--line);padding:24px 0}
 .collaboration-handoffs dt{font:15px/1.9 var(--story-sans,sans-serif)}
+.collaboration-section .collaboration-intro{max-width:900px;margin:0 0 30px}
+.collaboration-section .collaboration-note{margin:25px 0;font-size:15px}
+.collaboration-table{width:100%;border-collapse:collapse;table-layout:fixed;text-align:left;font:15px/1.8 var(--story-sans,sans-serif);color:#62625a;word-break:keep-all;overflow-wrap:anywhere}
+.collaboration-table caption.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.collaboration-table th,.collaboration-table td{padding:20px 20px 20px 0;border-top:1px solid var(--line);vertical-align:top}
+.collaboration-table tr>:last-child{padding-right:0}
+.collaboration-table thead th{font-weight:400;font-size:13px;color:#77776c;padding-top:12px;padding-bottom:12px}
+.collaboration-table th:first-child{width:23%}
+.collaboration-table th:nth-child(2){width:34%}
+.collaboration-table tbody th{font-weight:500;color:#3f403b}
+.collaboration-table tbody th span{display:block;font-weight:400;font-size:12px;color:#77776c;margin-bottom:5px}
+.tools-table th:first-child{width:22%}
+.tools-table th:nth-child(2){width:29%}
+@media(max-width:640px){.collaboration-table,.collaboration-table tbody,.collaboration-table tr,.collaboration-table th,.collaboration-table td{display:block;width:auto!important}.collaboration-table thead{display:none}.collaboration-table tr{padding:22px 0;border-top:1px solid var(--line)}.collaboration-table tbody th,.collaboration-table tbody td{border:0;padding:0}.collaboration-table tbody th{font-size:18px;margin-bottom:14px}.collaboration-table tbody th span{display:inline;margin-right:12px}.collaboration-table td+td{margin-top:14px}.collaboration-table td:before{content:attr(data-label);display:block;font-size:11px;color:#77776c;letter-spacing:.04em;margin-bottom:3px}.collaboration-section .collaboration-note{font-size:14px}}
 @media(max-width:760px){.collaboration-pair{grid-template-columns:1fr;gap:28px}.collaboration-section{padding:32px 0}.collaboration-section h2{font-size:26px}.collaboration-section p,.collaboration-section dd{font-size:16px}.collaboration-flow li{grid-template-columns:32px minmax(0,1fr);gap:14px}.collaboration-handoffs>div{grid-template-columns:1fr;gap:10px}}
