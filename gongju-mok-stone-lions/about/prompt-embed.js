@@ -4,6 +4,7 @@ document.querySelectorAll('a.prompt-link').forEach((link, index) => {
   if (source.hostname !== 'www.figma.com' || !source.pathname.startsWith('/board/')) return;
 
   const label = link.textContent.trim();
+  const defaultOpen = link.hasAttribute('data-default-open');
   const id = `prompt-embed-${index + 1}`;
   const embed = new URL(source);
   embed.hostname = 'embed.figma.com';
@@ -70,4 +71,5 @@ document.querySelectorAll('a.prompt-link').forEach((link, index) => {
     event.preventDefault();
     setOpen(false, true);
   });
+  if (defaultOpen) setOpen(true);
 });
