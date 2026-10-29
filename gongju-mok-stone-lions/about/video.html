@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Higgsfield 영상·편집 — 봉황동 석사자</title>
-  <meta name="description" content="참조 구도와 스타일 프레임을 바탕으로 Story 영상을 생성하고 편집한 과정을 소개합니다.">
+  <meta name="description" content="Higgsfield 영상 생성과 웹에서의 구간 편집 과정입니다.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css?v=requested-fixes-20261028-v7">
   <link rel="stylesheet" href="./about.css?v=approved-fonts-20261028">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
-  <link rel="stylesheet" href="./style-frames.css?v=fixed-four-20261026">
+  <link rel="stylesheet" href="./video-process.css?v=video-examples-20261029">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/video.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
@@ -37,68 +37,14 @@
       <header class="material-header">
         <p class="eyebrow">Story · 04</p>
         <h1>Higgsfield 영상·편집</h1>
-        <p class="material-intro">Blender 카메라 가이드와 스타일 프레임을 바탕으로 인물의 작은 몸짓과 길을 따라가는 움직임을 생성하고, 장면의 순서와 길이를 편집했습니다.</p>
+        <p class="material-intro">스타일 프레임과 Blender 카메라 가이드를 참조해 Higgsfield에서 이동·대화 영상을 생성했습니다.</p>
       </header>
 
-<section aria-labelledby="video-style-frames"><h2 id="video-style-frames">스타일 프레임</h2>
-      <ol class="style-frame-grid" aria-label="장면별 스타일 프레임">
-        <li class="style-frame-card" data-source-frame="02_1">
-          <figure aria-labelledby="compare-01-title">
-            <div class="frame-window" style="--frame-x:821;--frame-y:30"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="마을 전경 · Higgsfield 스타일 프레임" loading="eager" decoding="async"></div>
-            <figcaption id="compare-01-title"><span class="frame-number">#01</span>마을 전경</figcaption>
-          </figure>
-        </li>
-        <li class="style-frame-card" data-source-frame="04_2">
-          <figure aria-labelledby="compare-02-title">
-            <div class="frame-window" style="--frame-x:30;--frame-y:1050"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="장사꾼 · Higgsfield 스타일 프레임" loading="eager" decoding="async"></div>
-            <figcaption id="compare-02-title"><span class="frame-number">#02</span>장사꾼</figcaption>
-          </figure>
-        </li>
-        <li class="style-frame-card" data-source-frame="05_3">
-          <figure aria-labelledby="compare-03-title">
-            <div class="frame-window" style="--frame-x:2403;--frame-y:1050"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="농민 · Higgsfield 스타일 프레임" loading="eager" decoding="async"></div>
-            <figcaption id="compare-03-title"><span class="frame-number">#03</span>농민</figcaption>
-          </figure>
-        </li>
-        <li class="style-frame-card" data-source-frame="06_3">
-          <figure aria-labelledby="compare-04-title">
-            <div class="frame-window" style="--frame-x:1612;--frame-y:1560"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="찬모 · Higgsfield 스타일 프레임" loading="eager" decoding="async"></div>
-            <figcaption id="compare-04-title"><span class="frame-number">#04</span>찬모</figcaption>
-          </figure>
-        </li>
-        <li class="style-frame-card" data-source-frame="07_2">
-          <figure aria-labelledby="compare-05-title">
-            <div class="frame-window" style="--frame-x:30;--frame-y:2070"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="민가와 골목 · Higgsfield 스타일 프레임" loading="lazy" decoding="async"></div>
-            <figcaption id="compare-05-title"><span class="frame-number">#05</span>민가와 골목</figcaption>
-          </figure>
-        </li>
-        <li class="style-frame-card" data-source-frame="07_3">
-          <figure aria-labelledby="compare-06-title">
-            <div class="frame-window" style="--frame-x:821;--frame-y:2070"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="주민 삼총사 · Higgsfield 스타일 프레임" loading="lazy" decoding="async"></div>
-            <figcaption id="compare-06-title"><span class="frame-number">#06</span>주민 삼총사</figcaption>
-          </figure>
-        </li>
-        <li class="style-frame-card" data-source-frame="08_3">
-          <figure aria-labelledby="compare-07-title">
-            <div class="frame-window" style="--frame-x:30;--frame-y:2580"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="나무꾼 · Higgsfield 스타일 프레임" loading="lazy" decoding="async"></div>
-            <figcaption id="compare-07-title"><span class="frame-number">#07</span>나무꾼</figcaption>
-          </figure>
-        </li>
-        <li class="style-frame-card" data-source-frame="09_3">
-          <figure aria-labelledby="compare-08-title">
-            <div class="frame-window" style="--frame-x:2403;--frame-y:2580"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="두 석사자 · Higgsfield 스타일 프레임" loading="lazy" decoding="async"></div>
-            <figcaption id="compare-08-title"><span class="frame-number">#08</span>두 석사자</figcaption>
-          </figure>
-        </li>
-        <li class="style-frame-card" data-source-frame="10_5">
-          <figure aria-labelledby="compare-09-title">
-            <div class="frame-window" style="--frame-x:30;--frame-y:3600"><img src="./assets/frames-final.jpg" width="3200" height="4116" alt="현재의 석사자 · Higgsfield 스타일 프레임" loading="lazy" decoding="async"></div>
-            <figcaption id="compare-09-title"><span class="frame-number">#09</span>현재의 석사자</figcaption>
-          </figure>
-        </li>
-      </ol>
-
+<section class="video-examples" aria-label="Higgsfield 생성 영상">
+  <figure><video controls playsinline preload="none" poster="./assets/style-scene-03.webp" src="../media/v17/entry-merchant.mp4"></video><figcaption>이동 · 제금루의 장사꾼에게 접근</figcaption></figure>
+  <figure><video controls playsinline preload="none" poster="./assets/style-scene-03.webp" src="https://d8j0ntlcm91z4.cloudfront.net/user_3GnUBQ5Hr05qllQJ2NH8rbiaT3p/hf_20261019_004850_6528607e-1c57-4842-ad4c-c2e90bd52f65.mp4"></video><figcaption>대화 · 고정된 구도에서 인물의 작은 몸짓</figcaption></figure>
 </section>
+<section class="video-edit-notes" aria-labelledby="video-edit-title"><h2 id="video-edit-title">웹에서 구간 편집</h2><p>생성 영상을 이동·대화 구간으로 나누고, 시작·종료 시점과 페이드 전환을 웹에서 조정했습니다. 이동 구간은 스크롤에, 대화 구간은 음성 길이에 맞춰 연결했습니다.</p></section>
 
 <a class="prompt-link" href="https://www.figma.com/board/5bWhFaY63IrDFhjK0M632d/Prompt-for-Higgsfield" target="_blank" rel="noopener noreferrer" aria-label="Higgsfield 프롬프트 Figma에서 보기 (새 탭)">Higgsfield 프롬프트</a>
     </main>

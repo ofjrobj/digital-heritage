@@ -6,7 +6,7 @@ body{background:#e8e8e6;color:#555550;font:13px/1.8 var(--story-sans,sans-serif)
 canvas{display:block;width:100%;height:100%;cursor:grab}
 canvas:active{cursor:grabbing}
 canvas:focus-visible{outline:1px solid #77776c;outline-offset:-5px}
-.compare-toolbar{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:14px 18px;border-bottom:1px solid #d0d0ca}
+.compare-toolbar{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:12px;padding:14px 18px;border-bottom:1px solid #d0d0ca}
 .compare-toolbar [role="group"]{display:flex;gap:8px}
 .compare-toolbar button{padding:7px 12px;border:1px solid #aaa99f;background:transparent;color:#555550;font:inherit;cursor:pointer}
 .compare-toolbar button[aria-pressed="true"]{color:#fafaf8;background:#555550;border-color:#555550}

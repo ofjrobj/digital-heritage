@@ -92,16 +92,6 @@ try {
     useOrbitUp(camera.up); goal = cameraTransition = null;
   });
   focusPart(2);
-  document.querySelectorAll('[data-part]').forEach(button => button.addEventListener('click', () => {
-    const displayedUp = camera.up.clone();
-    goal = focusPart(Number(button.dataset.part));
-    if (goal) {
-      goal.up = camera.up.clone(); useOrbitUp(displayedUp);
-      cameraTransition = beginTransition();
-    }
-    document.querySelectorAll('[data-part]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
-    dirty = true;
-  }));
   document.querySelectorAll('[data-surface]').forEach(button => button.addEventListener('click', () => {
     surface.setColor(button.dataset.surface === 'color');
     document.querySelectorAll('[data-surface]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));

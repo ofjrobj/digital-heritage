@@ -196,3 +196,11 @@
   .asset-process-route { gap: 8px 18px; font-size: 13px; }
   .asset-process-route li + li::before { margin-right: 18px; }
 }
+
+/* Character settings from the approved design brief. */
+.cast-profile .cast-profile-title{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;margin:0 0 12px;color:#393934;font-size:18px;font-weight:600}
+.cast-profile-title span{color:#77776c;font-size:13px;font-weight:400}
+.cast-profile dl{display:grid;gap:9px;margin:0}
+.cast-profile dl>div{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px}
+.cast-profile dt{color:#77776c;font-size:12px}
+.cast-profile dd{margin:0;color:#55554e;font-size:14px;line-height:1.8}

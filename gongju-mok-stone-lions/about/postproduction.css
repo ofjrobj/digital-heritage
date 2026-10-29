@@ -35,3 +35,8 @@
   .postproduction-page .postproduction-section h2 { font-size: 24px; }
   .postproduction-page .postproduction-section dd { font-size: 16px; }
 }
+
+.postproduction-page .sound-intro{margin:0 0 24px;font-size:17px;line-height:1.85}
+.postproduction-page .voice-settings{gap:16px}
+.postproduction-page .voice-settings>div{padding-bottom:14px;border-bottom:1px solid var(--line)}
+.postproduction-page .voice-settings dt{font-weight:600;margin-bottom:4px}

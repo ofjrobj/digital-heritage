@@ -78,18 +78,6 @@
           <div class="material-image"><img src="./assets/blender-camera-route-v2.svg" width="1536" height="1024" alt="짐을 멘 장사꾼은 제금루, 괭이를 든 농민은 혜의당, 쟁반을 든 찬모는 객사, 주민 삼총사는 민가, 장작과 도끼를 든 나무꾼은 봉황산에 표시된 제작용 지도. 파란 경로가 이들을 거쳐 객사터의 두 석사자로 이어집니다." loading="lazy" decoding="async"></div>
           <figcaption>인물 배치와 이동 순서. 점선은 마지막 석사자 장면으로의 연결입니다.</figcaption>
         </figure>
-        <div class="blender-methods">
-          <article>
-            <h3>카메라의 위치와 시선</h3>
-            <p>장사꾼 → 농민 → 찬모 → 주민 삼총사 → 나무꾼 → 석사자로 이어지는 동선을 여섯 구간으로 나눴습니다. 길 위의 경로점을 부드럽게 연결하고, 지면 높이에 맞춰 카메라의 위치와 회전을 24fps 키프레임으로 기록했습니다.</p>
-            <p>기본 눈높이는 지면보다 1.65 높게 설정했습니다. 인물에게 다가갈 때에는 진행 방향을 보던 시선이 얼굴과 상반신을 향하도록 회전을 조정하고, 마지막 위치에서는 대화 구도를 유지했습니다. 이 높이는 Blender 장면의 연출용 값입니다.</p>
-          </article>
-          <article>
-            <h3>인물의 생활 동작</h3>
-            <p>인물의 몸통·머리·팔을 연결한 계층을 유지하고 각 부분의 회전에 키프레임을 적용했습니다. 물 나르기, 바느질, 천 정리 등 역할에 따라 팔과 몸통의 움직임 크기와 주기를 다르게 설정했습니다.</p>
-            <p>웹용 미리보기에는 10초 동안의 위치·회전을 별도로 기록해 모델의 같은 이름을 가진 부위에 연결했습니다. 반복이 끝날 무렵 첫 자세로 돌아가도록 보간해 동작을 이어지게 했습니다. 아래 미리보기에서 Blender 모형과 카메라 동선을 확인할 수 있습니다.</p>
-          </article>
-        </div>
       </section>
       <section class="blender-stage" id="blender-frames" aria-labelledby="blender-frames-title">
         <header class="blender-stage-heading">
