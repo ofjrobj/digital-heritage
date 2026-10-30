@@ -105,73 +105,6 @@
   white-space: nowrap;
   border: 0;
 }
-.asset-book-controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  max-width: 960px;
-  margin: 0 auto 18px;
-  font: 300 14px/1.6 var(--story-sans, sans-serif);
-  color: #66665d;
-}
-.asset-book-controls button {
-  border: 0;
-  padding: 9px 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-  transition: opacity var(--ui-motion-duration, 1s) var(--ui-motion-ease, ease);
-}
-.asset-book-controls button:disabled { opacity: .32; cursor: default; }
-.asset-book-count { font-variant-numeric: tabular-nums; }
-.cast-collection.asset-book {
-  display: block;
-  position: relative;
-  max-width: 960px;
-  margin: 0 auto;
-  overflow: clip;
-  touch-action: pan-y;
-}
-.asset-book:focus-visible,
-.asset-book-controls button:focus-visible { outline: 1px solid currentColor; outline-offset: 5px; }
-.asset-book .cast-study { position: relative; width: 100%; }
-.asset-book .cast-study[hidden] { display: none !important; }
-.asset-book .cast-study.is-leaving { position: absolute; inset: 0; pointer-events: none; }
-.asset-book .asset-image {
-  height: clamp(280px, 68svh, 760px);
-  border: 1px solid var(--line) !important;
-  background: #f3f2ec66;
-}
-.asset-design-page .asset-book .asset-sheet img {
-  width: 100%;
-  height: 100%;
-  aspect-ratio: auto;
-  object-fit: contain;
-}
-.asset-book .cast-study.is-entering {
-  animation: asset-page-in var(--ui-motion-duration, 1s) var(--ui-motion-ease, ease) both;
-}
-.asset-book .cast-study.is-leaving {
-  animation: asset-page-out var(--ui-motion-duration, 1s) var(--ui-motion-ease, ease) both;
-}
-@keyframes asset-page-in {
-  from { opacity: 0; transform: translateX(calc(var(--page-direction) * 22px)); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes asset-page-out {
-  from { opacity: 1; transform: none; }
-  to { opacity: 0; transform: translateX(calc(var(--page-direction) * -18px)); }
-}
-@media (max-width: 700px) {
-  .asset-book .asset-image { height: min(68svh, calc((100vw - 38px) * 1.25)); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .asset-book .cast-study,
-  .asset-book-controls button { animation: none !important; transition: none !important; }
-}
-
 .asset-process-route {
   display: flex;
   flex-wrap: wrap;
@@ -211,3 +144,175 @@
 .cast-profile dl>div{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px}
 .cast-profile dt{color:#77776c;font-size:12px}
 .cast-profile dd{margin:0;color:#55554e;font-size:14px;line-height:1.8}
+
+/* A spread stays open at every width; only the sheet turns. */
+.asset-book-shell {
+  container-type: inline-size;
+  --book-height: clamp(360px, 58cqw, 650px);
+  --book-paper: #f6f3eb;
+  margin: 0 auto 36px;
+  max-width: 1160px;
+}
+.asset-book-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding-top: 22px;
+  font: 400 14px/1.6 var(--story-sans, sans-serif);
+  color: #66665d;
+}
+.asset-book-controls button {
+  border: 0;
+  padding: 10px 4px;
+  min-height: 44px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: opacity .2s ease;
+}
+.asset-book-controls button:disabled { opacity: .32; cursor: default; }
+.asset-book-count { font-variant-numeric: tabular-nums; }
+.asset-design-page .asset-book {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: var(--book-height);
+  margin: 0;
+  border: 1px solid #c9c6bb;
+  background: var(--book-paper);
+  perspective: 2200px;
+  touch-action: pan-y pinch-zoom;
+  box-shadow: 0 3px 0 -1px #e1ddd2, 0 5px 0 -1px #bdb9ad, 0 14px 22px -16px #514a3b70;
+}
+.asset-book::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 26px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 5;
+  background: linear-gradient(90deg, transparent, #564d3b0a 30%, #564d3b20 49%, #fff8 52%, transparent);
+}
+.asset-book:focus-visible,
+.asset-book-controls button:focus-visible { outline: 1px solid currentColor; outline-offset: 6px; }
+.asset-design-page .asset-book .asset-book-page {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  margin: 0;
+  border: 0;
+  background: var(--book-paper);
+  overflow: hidden;
+}
+.asset-book .asset-book-page[hidden] { display: none !important; }
+.asset-design-page .asset-book .is-under-page { position: absolute; inset: 0; z-index: 1; }
+.asset-book.is-forward .is-under-page { clip-path: inset(0 0 0 50%); }
+.asset-book.is-backward .is-under-page { clip-path: inset(0 50% 0 0); }
+.asset-book .is-outgoing { pointer-events: none; }
+.asset-book-leaf {
+  position: absolute;
+  z-index: 6;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.asset-book.is-backward .asset-book-leaf { left: 0; transform-origin: right center; }
+.asset-book-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--book-paper);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.asset-book-face--back { transform: rotateY(180deg); }
+.asset-design-page .asset-book .asset-book-replica {
+  position: absolute;
+  top: 0;
+  width: 200%;
+  max-width: none;
+  height: 100%;
+  left: 0;
+}
+.asset-book.is-forward .asset-book-face--front .asset-book-replica,
+.asset-book.is-backward .asset-book-face--back .asset-book-replica { left: -100%; }
+.asset-book-face::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #433a2b40, #433a2b0a 80%);
+  opacity: 0;
+  pointer-events: none;
+}
+.asset-book.is-turning .asset-book-leaf { animation: asset-sheet-forward .85s cubic-bezier(.22,.62,.28,1) both; }
+.asset-book.is-turning.is-backward .asset-book-leaf { animation-name: asset-sheet-backward; }
+.asset-book.is-turning .asset-book-face::after { animation: asset-sheet-shade .85s ease-in-out both; }
+@keyframes asset-sheet-forward { from { transform: rotateY(0deg); } to { transform: rotateY(-180deg); } }
+@keyframes asset-sheet-backward { from { transform: rotateY(0deg); } to { transform: rotateY(180deg); } }
+@keyframes asset-sheet-shade { 0%, 100% { opacity: 0; } 45%, 60% { opacity: 1; } }
+
+/* Image on the left, the approved character settings on the right. */
+.asset-book--characters .asset-sheet { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); height: 100%; }
+.asset-book--characters .asset-image { display: flex; align-items: center; height: 100%; padding: clamp(6px,1.5cqw,20px); box-sizing: border-box; }
+.asset-design-page .asset-book--characters .asset-sheet img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: contain; }
+.asset-design-page .asset-book--characters .cast-profile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: clamp(16px,4cqw,54px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  text-align: left;
+}
+.asset-design-page .asset-book--characters .cast-profile-title { display: block; margin: 0 0 clamp(20px,4cqw,42px); font: 400 clamp(20px,3.2cqw,34px)/1.5 var(--story-serif,serif); color: #383831; }
+.asset-book--characters .cast-profile-title span { display: block; margin-top: 9px; font: 400 clamp(12px,1.4cqw,15px)/1.6 var(--story-sans,sans-serif); }
+.asset-book--characters .cast-profile dl { gap: clamp(14px,2.5cqw,28px); }
+.asset-book--characters .cast-profile dl>div { display: block; }
+.asset-book--characters .cast-profile dt { margin-bottom: 5px; font-size: clamp(11px,1.3cqw,13px); }
+.asset-book--characters .cast-profile dd { font-size: clamp(13px,1.7cqw,18px); line-height: 1.85; word-break: keep-all; overflow-wrap: anywhere; }
+
+/* Wide sheets and the three production images share one open spread. */
+.asset-design-page .asset-book--sheets .asset-book-page { display: flex; flex-direction: column; padding: clamp(14px,3cqw,36px); }
+.asset-book--sheets .asset-image { display: flex; flex: 1; min-height: 0; align-items: center; justify-content: center; }
+.asset-design-page .asset-book--sheets .asset-image img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: contain; }
+.asset-book--sheets .asset-book-page figcaption { flex: none; text-align: center; margin: 14px 0 0; }
+.asset-design-page .asset-book--architecture .asset-book-page,
+.asset-design-page .asset-book--houses .asset-book-page { display: flex; flex-direction: column; padding: clamp(14px,3cqw,36px); }
+.asset-book--architecture .architecture-study-heading { margin-bottom: 20px; }
+.asset-book--architecture .architecture-study-heading h3 { font-size: clamp(20px,2.8cqw,29px); }
+.asset-book--architecture .architecture-process { margin: auto 0; grid-template-columns: repeat(3,minmax(0,1fr)); gap: clamp(8px,2cqw,24px); }
+.asset-book--houses .house-study-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: clamp(8px,2cqw,24px); align-items: stretch; }
+.asset-book--houses .house-related { display: contents; }
+.asset-book--houses .asset-sheet { display: flex; flex-direction: column; min-height: 0; }
+.asset-book--houses .asset-image { display: flex; flex: 1; min-height: 0; align-items: center; }
+.asset-design-page .asset-book--houses .asset-sheet img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: contain; }
+@media (max-width: 600px) {
+  .asset-design-page .asset-book--characters .cast-profile { padding: 16px 13px; justify-content: flex-start; }
+  .asset-design-page .asset-book--characters .cast-profile-title { font-size: 20px; margin-bottom: 18px; }
+  .asset-book--characters .cast-profile dd { font-size: 13px; line-height: 1.7; }
+  .asset-book-controls { padding-top: 14px; font-size: 13px; }
+  .asset-book--architecture .architecture-study-heading { grid-template-columns: 24px minmax(0,1fr); gap: 10px; }
+  .asset-book--architecture .architecture-study-heading p { font-size: 12px; }
+  .asset-book--houses .house-study h4 { font-size: 21px; }
+  .asset-book--houses .asset-sheet figcaption { font-size: 11px; line-height: 1.6; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .asset-book-leaf,
+  .asset-book-face::after,
+  .asset-book-controls button { animation: none !important; transition: none !important; }
+}
