@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>기능 설정 — 봉황동 석사자</title>
-  <meta name="description" content="Index의 전체 비교, 부위별 확대, 표면색 전환, 정보창 기능을 정리했습니다.">
+  <title>기능 디자인 — 봉황동 석사자</title>
+  <meta name="description" content="Index의 전체 비교, 부위별 확대, 표면 표현과 조명 조절, 측정 정보 기능을 소개합니다.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css?v=requested-fixes-20261028-v7">
   <link rel="stylesheet" href="./about.css?v=approved-fonts-20261028">
-  <link rel="stylesheet" href="./index-plan.css?v=focused-controls-20261030">
+  <link rel="stylesheet" href="./index-plan.css?v=lighting-guide-20261030">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/index-plan.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
-  <meta property="og:title" content="기능 설정 — 봉황동 석사자">
-  <meta property="og:description" content="Index의 전체 비교, 부위별 확대, 표면색 전환, 정보창 기능을 정리했습니다.">
+  <meta property="og:title" content="기능 디자인 — 봉황동 석사자">
+  <meta property="og:description" content="Index의 전체 비교, 부위별 확대, 표면 표현과 조명 조절, 측정 정보 기능을 소개합니다.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/index-plan.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/archive-comparison.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -30,9 +30,8 @@
     </header>
     <main id="index-plan">
       <header class="index-plan-hero">
-        <div><p class="eyebrow">Index · 03</p><h1>기능 설정</h1>
+        <div><p class="eyebrow">Index · 03</p><h1>기능 디자인</h1>
         <p class="production-tools">사용 도구 · Figma</p></div>
-        <img src="./assets/sketch-lions-v2.png" width="1536" height="1024" alt="긴 몸통과 짧은 다리를 가진 두 석사자의 흑백 러프 스케치" decoding="async">
       </header>
       <ol class="index-plan-sequence">
         <li id="plan-purpose">
@@ -48,7 +47,7 @@
         <li id="plan-pair">
           <span class="plan-number">#02</span>
           <div><h2>부위별 확대</h2>
-            <p>관찰 항목을 선택하면 두 석사자의 같은 부위를 나란히 보여줍니다.</p>
+            <p>번호를 누르면 두 석사자의 같은 부위를 확대합니다. 선택한 번호를 다시 누르면 전체 모습으로 돌아갑니다.</p>
           </div>
           <div class="plan-example" data-detail-example>
             <div class="plan-controls plan-feature-controls" role="group" aria-label="관찰 부위 선택">
@@ -67,7 +66,7 @@
         </li>
         <li id="plan-features">
           <span class="plan-number">#03</span>
-          <div><h2>표면색 전환</h2>
+          <div><h2>표면 표현 전환</h2>
             <p>아이콘을 눌러 표면색, 조각의 굴곡, 노멀 맵을 차례로 살펴봅니다.</p>
           </div>
           <div class="plan-example" data-surface-example>
@@ -80,19 +79,36 @@
             </figure>
           </div>
         </li>
-        <li id="plan-record">
+        <li id="plan-light">
           <span class="plan-number">#04</span>
+          <div><h2>조명 방향 조절</h2>
+            <p>흑백맵과 노멀맵에서는 빛의 방향을 바꿔 조각의 굴곡을 살펴볼 수 있습니다. 조명 아이콘을 켜고 원을 드래그하면 빛이 360도 회전합니다.</p>
+          </div>
+          <figure class="plan-example plan-light-guide">
+            <svg class="plan-light-diagram" viewBox="0 0 180 150" role="img" aria-label="원을 따라 빛의 방향을 돌리는 조명 아이콘">
+              <path class="light-orbit" d="M48 115a54 54 0 1 1 84 0"/>
+              <path class="light-arrow" d="M39 110l9 5 3-10M129 105l3 10 9-5"/>
+              <circle class="light-control-outline" cx="90" cy="73" r="27"/>
+              <g class="light-control-symbol" transform="translate(74 57) scale(1.333333)"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/><circle class="light-bearing" cx="12" cy="2" r="1.5"/></g>
+              <text x="90" y="140" text-anchor="middle">360°</text>
+            </svg>
+            <figcaption><span>클릭 · 조명 켜기 / 끄기</span><span>드래그 · 빛 방향 회전</span><span>방향키 · 미세 조절</span></figcaption>
+          </figure>
+        </li>
+        <li id="plan-record">
+          <span class="plan-number">#05</span>
           <div><h2>정보창</h2>
-            <p>각 사자의 정보 버튼을 누르면 치수와 측정 기록을 확인할 수 있습니다.</p>
+            <p>각 사자의 정보창에서 치수와 개수를 확인할 수 있습니다. 위에서 부위를 바꾸면 해당 항목의 측정 기록을 보여줍니다.</p>
           </div>
           <div class="plan-example plan-info-example">
-            <details>
+            <p class="plan-info-caption" role="status" aria-live="polite">갈기 측정 기록</p>
+            <details data-sex="male">
               <summary>수사자 정보</summary>
-              <dl><div><dt>높이</dt><dd>71.7 cm</dd></div><div><dt>몸 길이</dt><dd>104.6 cm</dd></div><div><dt>얼굴 길이</dt><dd>36.8 cm</dd></div><div><dt>얼굴 넓이</dt><dd>37.6 cm</dd></div></dl>
+              <dl><div><dt>정수리 갈기 수</dt><dd>11개</dd></div></dl>
             </details>
-            <details>
+            <details data-sex="female">
               <summary>암사자 정보</summary>
-              <dl><div><dt>높이</dt><dd>61.4 cm</dd></div><div><dt>몸 길이</dt><dd>120.1 cm</dd></div><div><dt>얼굴 길이</dt><dd>34.1 cm</dd></div><div><dt>얼굴 넓이</dt><dd>34.5 cm</dd></div></dl>
+              <dl><div><dt>정수리 갈기 수</dt><dd>8개</dd></div></dl>
             </details>
             <p class="plan-source">소장 · 공주대학교 박물관 / 측정 기록 · 사자성어 팀</p>
           </div>
@@ -102,7 +118,7 @@
     <footer class="index-plan-footer"><p>디지털헤리티지큐레이터 3기 · 가치해석 1팀 사자성어</p><a href="./#step-observation">뒤로가기</a></footer>
   </div>
 <script src="./about.js?v=54" defer></script>
-<script src="./index-plan.js?v=icons-normal-20261030" defer></script>
+<script type="module" src="./index-plan.js?v=lighting-guide-20261030"></script>
 <script src="./scan-features.js?v=icons-normal-20261030" defer></script>
 </body>
 </html>

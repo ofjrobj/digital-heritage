@@ -5,4 +5,12 @@
 .frame-window { display:block; position:relative; overflow:hidden; width:100%; aspect-ratio:766 / 431; background:#deded9; }
 .frame-window img { display:block; position:absolute; width:calc(3200 * 100% / 766); height:auto; max-width:none; left:calc(var(--frame-x) * -100% / 766); top:calc(var(--frame-y) * -100% / 431); }
 .frames-related { margin:0 0 42px; font:13px/1.8 var(--story-sans,sans-serif); color:#77776d; }
+.style-frame-process { padding: 28px 0 38px; border-top: 1px solid var(--line); }
+.style-frame-process h2, .style-frame-gallery-title { margin: 0 0 18px; font-size: clamp(23px, 3vw, 30px); font-weight: 400; line-height: 1.6; }
+.style-frame-process > p { max-width: 42em; margin: 0 0 28px; font-size: 18px; line-height: 1.9; word-break: keep-all; overflow-wrap: anywhere; }
+.style-frame-comparison { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: clamp(12px,3vw,30px); }
+.style-frame-comparison figure { min-width: 0; margin: 0; }
+.style-frame-comparison figcaption { margin-top: 12px; color: #68685f; font: 13px/1.8 var(--story-sans,sans-serif); }
+.style-frame-gallery-title { margin-top: 10px; }
 @media(max-width:600px) { .style-frame-grid { padding-block:26px 32px; } .frame-number { font-size:10px; } }
+@media(max-width:600px) { .style-frame-process { padding: 24px 0 30px; } .style-frame-process > p { font-size: 16px; } .style-frame-comparison figcaption { font-size: 12px; } }

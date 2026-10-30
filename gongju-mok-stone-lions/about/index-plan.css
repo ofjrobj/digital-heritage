@@ -1,7 +1,6 @@
 .index-plan-page .top>a:last-child{font-size:13px}
-.index-plan-hero{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:64px 0;border-bottom:1px solid var(--line,#c7c7c1)}
+.index-plan-hero{display:block;padding:64px 0;border-bottom:1px solid var(--line,#c7c7c1)}
 .index-plan-hero h1{font-size:clamp(38px,4.4vw,66px);line-height:1.5;font-weight:400;letter-spacing:-.045em;margin:22px 0 0}
-.index-plan-hero img{width:100%;height:auto;display:block}
 .index-plan-sequence{list-style:none;padding:0;margin:0}
 .index-plan-sequence>li{display:grid;grid-template-columns:70px minmax(0,1fr);gap:26px;padding:54px 0;border-bottom:1px solid var(--line,#c7c7c1)}
 .plan-number{font:13px/2 var(--story-sans,sans-serif);color:#85857a;padding-top:8px}
@@ -45,3 +44,15 @@
 .plan-info-example dd{margin:0;font-variant-numeric:tabular-nums}
 .index-plan-sequence .plan-source{grid-column:1/-1;margin:0;font:12px/1.8 var(--story-sans,sans-serif);color:#85857a}
 @media(max-width:760px){.plan-example{grid-column:1/-1}.plan-controls{margin-bottom:18px}.plan-feature-controls{gap:6px}.plan-controls button{font-size:13px}.plan-info-example{gap:10px}.plan-info-example summary{padding:11px 12px;font-size:14px}.plan-info-example dl{padding:12px;font-size:13px}.plan-pair-labels{font-size:12px}}
+
+.plan-light-guide{display:flex;align-items:center;gap:clamp(24px,5vw,64px);padding:16px 0}
+.plan-light-diagram{display:block;flex:none;width:clamp(120px,20vw,180px);height:auto;color:#555550;overflow:visible}
+.plan-light-diagram .light-orbit{fill:none;stroke:#97978d;stroke-width:1.2;stroke-dasharray:3 4}
+.plan-light-diagram .light-arrow,.plan-light-diagram .light-control-symbol{fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.plan-light-diagram .light-control-outline{fill:#f1f1ed;stroke:currentColor;stroke-width:1}
+.plan-light-diagram .light-bearing{fill:currentColor;stroke:none}
+.plan-light-diagram text{fill:currentColor;font:13px var(--story-sans,sans-serif)}
+.plan-light-guide figcaption{display:grid;gap:10px;margin:0;font:14px/1.7 var(--story-sans,sans-serif);color:#62625a}
+.index-plan-sequence .plan-info-caption{grid-column:1/-1;margin:0;font:13px/1.7 var(--story-sans,sans-serif);color:#62625a}
+.plan-info-example small{font-size:10px;color:#77776c}
+@media(max-width:480px){.plan-light-guide{gap:16px}.plan-light-guide figcaption{font-size:12px}.plan-light-diagram{width:112px}}

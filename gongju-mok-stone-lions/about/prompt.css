@@ -1,0 +1,63 @@
+.prompt-page{--ai-paper:#d9ded5;--ai-ink:#42503d}
+.prompt-section{padding:44px 0;border-top:1px solid var(--line)}
+.prompt-section .number{margin:0}
+.prompt-section h2{margin:12px 0 30px;font-size:29px;font-weight:400}
+.prompt-page svg{fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+.workflow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px;list-style:none;padding:0;margin:0}
+.workflow>li{position:relative;display:flex;flex-direction:column;align-items:center;padding:24px 12px 26px;border:1px solid var(--line);text-align:center}
+.workflow>li+li:before{content:'→';position:absolute;left:-29px;top:50%;transform:translateY(-50%);font:22px/1 var(--story-sans,sans-serif);color:#77776c}
+.workflow .workflow-ai{background:var(--ai-paper);border-color:#7b877b66;color:var(--ai-ink)}
+.workflow-role{font:12px/1.5 var(--story-sans,sans-serif);letter-spacing:.08em}
+.workflow svg{width:48px;height:48px;margin:20px 0 12px}
+.workflow h3{font-size:24px;font-weight:400;margin:0 0 12px}
+.workflow p{font:15px/1.8 var(--story-sans,sans-serif);margin:0;color:#62625a}
+.workflow-return{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:13px 0 28px;font:12px/1.7 var(--story-sans,sans-serif);color:#62625a}
+.workflow-return svg{width:24px;height:20px}
+.preparation-tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;margin:0;padding-top:24px;border-top:1px solid var(--line);font-family:var(--story-sans,sans-serif)}
+.preparation-tools dt{font-size:14px;line-height:1.6}
+.preparation-tools dd{margin:5px 0 0;font-size:13px;line-height:1.7;color:#62625a}
+.scope-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+.scope-key{display:flex;gap:8px;align-items:center;margin:0 0 35px;font:12px/1.5 var(--story-sans,sans-serif);color:#62625a}
+.scope-key span{width:12px;height:12px;background:var(--ai-paper);border:1px solid #7b877b66}
+.tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.tool-card{border:1px solid var(--line);padding:28px;min-width:0}
+.tool-card header{display:flex;align-items:center;gap:18px;margin-bottom:25px}
+.tool-card header svg{width:48px;height:48px;flex:none;color:#62625a}
+.tool-card h3{font-size:25px;font-weight:400;margin:0 0 3px}
+.tool-card header a,.tool-name{font:13px/1.7 var(--story-sans,sans-serif);color:#62625a}
+.tool-card header a:hover{text-decoration:underline;text-underline-offset:4px}
+.tool-flow{list-style:none;padding:0;margin:0;font-family:var(--story-sans,sans-serif)}
+.tool-flow li{position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;align-items:center;padding:13px 14px;min-height:50px}
+.tool-flow li+li{margin-top:14px}
+.tool-flow li+li:before{content:'↓';position:absolute;top:-17px;left:22px;font-size:12px;line-height:16px;color:#77776c}
+.tool-flow li>span{font-size:11px;letter-spacing:.04em;color:#62625a}
+.tool-flow p{font-size:15px;line-height:1.65;margin:0;overflow-wrap:anywhere}
+.tool-flow .ai-task{background:var(--ai-paper);color:var(--ai-ink)}
+.tool-flow .ai-task>span{color:var(--ai-ink)}
+@media(max-width:760px){
+ .prompt-section{padding:32px 0}
+ .prompt-section h2{font-size:26px}
+ .workflow{gap:24px}
+ .workflow>li{padding:20px 8px}
+ .workflow>li+li:before{left:-21px;font-size:18px}
+ .workflow h3{font-size:20px}
+ .workflow p{font-size:13px}
+ .preparation-tools{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+ .tool-grid{grid-template-columns:1fr;gap:22px}
+ .tool-card{padding:24px}
+}
+@media(max-width:420px){
+ .workflow{gap:16px}
+ .workflow>li{padding:18px 3px}
+ .workflow>li+li:before{left:-15px;font-size:14px}
+ .workflow-role{font-size:10px}
+ .workflow svg{width:34px;height:34px;margin:16px 0 12px}
+ .workflow h3{font-size:17px;margin-bottom:8px;white-space:nowrap}
+ .workflow p{font-size:11px;line-height:1.85}
+ .scope-heading{display:block}
+ .scope-heading h2{margin-bottom:12px}
+ .scope-key{margin-bottom:24px}
+ .tool-card{padding:20px 16px}
+ .tool-flow li{gap:8px;padding:12px 10px}
+ .tool-flow p{font-size:14px}
+}
