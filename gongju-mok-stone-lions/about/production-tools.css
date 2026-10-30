@@ -1,0 +1,14 @@
+/* 제작 상세 제목 아래의 사용 도구 표기 */
+header .production-tools {
+  margin: 16px 0 0;
+  color: #66665d;
+  font: 14px/1.8 var(--story-sans, sans-serif);
+  letter-spacing: 0;
+}
+.production-tools a {
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+@media (max-width: 560px) {
+  header .production-tools { margin-top: 12px; font-size: 12px; }
+}
