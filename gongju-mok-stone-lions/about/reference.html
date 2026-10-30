@@ -33,12 +33,11 @@
     .reference-item h3{margin:0 0 7px;font-size:18px;font-weight:400;line-height:1.5;letter-spacing:-.02em}
     .reference-item p{margin:0;font-size:14px;line-height:1.75;color:#62625a}
     .reference-item .reference-credit{margin-top:8px;font:12px/1.7 var(--story-sans,sans-serif);color:#77776c}
-    .reference-style-boards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+    .reference-style-boards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(10px,2.5vw,28px)}
     .reference-style-boards figure{min-width:0;margin:0}
     .reference-style-boards figure > a{display:block}
-    .reference-style-boards img{display:block;width:100%;height:400px;object-fit:contain;background:#eeede9}
-    @media(max-width:640px){.reference-style-boards{grid-template-columns:1fr}.reference-style-boards img{height:300px}}
-    .reference-style-boards figcaption{margin-top:12px;font:300 13px/1.8 var(--story-sans,sans-serif);color:#77776c}
+    .reference-style-boards img{display:block;width:100%;height:clamp(140px,32vw,400px);object-fit:contain;background:#eeede9}
+    .reference-style-boards figcaption{margin-top:12px;font:300 clamp(11px,1.7vw,13px)/1.8 var(--story-sans,sans-serif);color:#77776c;overflow-wrap:anywhere}
     .reference-style-source{margin:20px 0 0;font:300 13px/1.8 var(--story-sans,sans-serif);color:#77776c}
     @media(max-width:760px){.reference-grid{gap:24px 12px}.reference-section-title{font-size:23px}.reference-collection{margin-bottom:44px}.reference-item h3{font-size:15px}.reference-item p{font-size:13px}.reference-item .reference-credit{font-size:12px}}
     @media(max-width:480px){.reference-grid{gap:20px 8px}.reference-page .reference-thumb{margin-bottom:9px}.reference-item h3{font-size:14px}.reference-item p{font-size:13px}.reference-item .reference-credit{font-size:12px}}

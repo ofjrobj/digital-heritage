@@ -147,33 +147,52 @@
 
 /* A spread stays open at every width; only the sheet turns. */
 .asset-book-shell {
+  position: relative;
+  box-sizing: border-box;
   container-type: inline-size;
   --book-height: clamp(360px, 58cqw, 650px);
   --book-paper: #f6f3eb;
   margin: 0 auto 36px;
   max-width: 1160px;
+  padding-inline: 20px;
 }
 .asset-book-controls {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
-  padding-top: 22px;
-  font: 400 14px/1.6 var(--story-sans, sans-serif);
-  color: #66665d;
-}
-.asset-book-controls button {
-  border: 0;
-  padding: 10px 4px;
-  min-height: 44px;
-  background: none;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
+  pointer-events: none;
+  opacity: 0;
+  color: #55554d;
   transition: opacity .2s ease;
 }
-.asset-book-controls button:disabled { opacity: .32; cursor: default; }
-.asset-book-count { font-variant-numeric: tabular-nums; }
+.asset-book-controls button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 52px;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+.asset-book-controls svg { width: 18px; height: 29px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.asset-book-shell:hover .asset-book-controls,
+.asset-book-shell:focus-within .asset-book-controls { opacity: 1; }
+.asset-book-shell:hover .asset-book-controls button,
+.asset-book-shell:focus-within .asset-book-controls button { pointer-events: auto; }
+.asset-book-controls button:disabled { opacity: .2; cursor: default; }
+.asset-book-count { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (hover: none), (pointer: coarse) {
+  .asset-book-controls { opacity: 1; }
+  .asset-book-controls button { pointer-events: auto; }
+}
 .asset-design-page .asset-book {
   display: block;
   position: relative;
@@ -296,7 +315,7 @@
 .asset-book--architecture .architecture-study-heading { margin-bottom: 20px; }
 .asset-book--architecture .architecture-study-heading h3 { font-size: clamp(20px,2.8cqw,29px); }
 .asset-book--architecture .architecture-process { margin: auto 0; grid-template-columns: repeat(3,minmax(0,1fr)); gap: clamp(8px,2cqw,24px); }
-.asset-book--houses .house-study-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: clamp(8px,2cqw,24px); align-items: stretch; }
+.asset-book--houses .house-study-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: clamp(12px,3cqw,32px); align-items: stretch; }
 .asset-book--houses .house-related { display: contents; }
 .asset-book--houses .asset-sheet { display: flex; flex-direction: column; min-height: 0; }
 .asset-book--houses .asset-image { display: flex; flex: 1; min-height: 0; align-items: center; }
@@ -305,7 +324,6 @@
   .asset-design-page .asset-book--characters .cast-profile { padding: 16px 13px; justify-content: flex-start; }
   .asset-design-page .asset-book--characters .cast-profile-title { font-size: 20px; margin-bottom: 18px; }
   .asset-book--characters .cast-profile dd { font-size: 13px; line-height: 1.7; }
-  .asset-book-controls { padding-top: 14px; font-size: 13px; }
   .asset-book--architecture .architecture-study-heading { grid-template-columns: 24px minmax(0,1fr); gap: 10px; }
   .asset-book--architecture .architecture-study-heading p { font-size: 12px; }
   .asset-book--houses .house-study h4 { font-size: 21px; }
@@ -314,5 +332,6 @@
 @media (prefers-reduced-motion: reduce) {
   .asset-book-leaf,
   .asset-book-face::after,
+  .asset-book-controls,
   .asset-book-controls button { animation: none !important; transition: none !important; }
 }

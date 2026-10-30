@@ -34,8 +34,10 @@
     const next = document.createElement('button');
     const count = document.createElement('span');
     previous.type = next.type = 'button';
-    previous.textContent = '← 이전';
-    next.textContent = '다음 →';
+    previous.className = 'asset-book-previous';
+    next.className = 'asset-book-next';
+    previous.innerHTML = '<svg viewBox="0 0 20 32" aria-hidden="true" focusable="false"><path d="M15 5 4 16l11 11"/></svg>';
+    next.innerHTML = '<svg viewBox="0 0 20 32" aria-hidden="true" focusable="false"><path d="m5 5 11 11-11 11"/></svg>';
     previous.setAttribute('aria-label', `${label} 이전 페이지`);
     next.setAttribute('aria-label', `${label} 다음 페이지`);
     count.className = 'asset-book-count';
@@ -61,7 +63,7 @@
     }
 
     function updateControls() {
-      count.textContent = `${String(current + 1).padStart(2, '0')} / ${String(pages.length).padStart(2, '0')}`;
+      count.textContent = `${pages.length}쪽 중 ${current + 1}쪽`;
       previous.disabled = current === 0;
       next.disabled = current === pages.length - 1;
       warmImages(current);
