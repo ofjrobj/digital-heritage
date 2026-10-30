@@ -1,0 +1,8 @@
+.scan-feature-intro { max-width: 760px; margin: 0 0 24px; color: var(--muted); font-size: 18px; line-height: 1.9; word-break: keep-all; }
+.scan-feature-controls { display: flex; justify-content: flex-end; gap: 6px; margin-bottom: 12px; }
+.scan-feature-controls button { min-height: 40px; padding: 7px 14px; border: 1px solid #aaa99e; background: transparent; color: #62625a; font: 13px/1.6 var(--story-sans, sans-serif); cursor: pointer; }
+.scan-feature-controls button[aria-pressed="true"] { background: #55564f; border-color: #55564f; color: #fff; }
+.scan-feature-controls button:focus-visible { outline: 2px solid #55564f; outline-offset: 3px; }
+.scan-feature-controls button:hover { border-color: #55564f; }
+.scan-feature-status { margin: 8px 0 0; color: #62625a; font: 12px/1.6 var(--story-sans, sans-serif); }
+@media (max-width: 680px) { .scan-feature-intro { font-size: 16px; } .scan-feature-controls button { min-height: 44px; } }

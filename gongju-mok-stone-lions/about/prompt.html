@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>AI 협업 방식 설계 — 봉황동 석사자</title>
-  <meta name="description" content="공주목 이야기의 장면별 자료와 제작 도구, 팀과 AI의 역할을 정리했습니다.">
+  <meta name="description" content="제작 도구별 AI 활용 범위와 팀의 기획·검토 역할을 정리했습니다.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css?v=requested-fixes-20261028-v7">
   <link rel="stylesheet" href="./about.css?v=approved-fonts-20261028">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
@@ -14,12 +14,12 @@
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="AI 협업 방식 설계 — 봉황동 석사자">
-  <meta property="og:description" content="공주목 이야기의 장면별 자료와 제작 도구, 팀과 AI의 역할을 정리했습니다.">
+  <meta property="og:description" content="제작 도구별 AI 활용 범위와 팀의 기획·검토 역할을 정리했습니다.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/prompt.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AI 협업 방식 설계 — 봉황동 석사자">
-  <meta name="twitter:description" content="공주목 이야기의 장면별 자료와 제작 도구, 팀과 AI의 역할을 정리했습니다.">
+  <meta name="twitter:description" content="제작 도구별 AI 활용 범위와 팀의 기획·검토 역할을 정리했습니다.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
 <link rel="stylesheet" href="./case-study.css?v=ui-motion-audit-20261028">
 <link rel="stylesheet" href="./page-motion.css?v=ui-motion-1s"><script defer src="./page-motion.js?v=20261028"></script><link rel="stylesheet" href="../assets/ui-motion.css?v=ui-motion-audit-20261028">
@@ -36,68 +36,24 @@
         <h1>AI 협업 방식 설계</h1>
       </header>
       <section class="collaboration-section" aria-labelledby="collaboration-roles">
-        <p class="number">01 / ROLES</p>
-        <h2 id="collaboration-roles">역할 분담</h2>
-        <div class="collaboration-pair">
-          <article><h3>조사·해석·연출</h3><p>스캔 관찰과 문헌 조사를 바탕으로 이야기, 인물 설정, 대사와 연출을 정했습니다. 생성한 이미지와 영상은 인물의 생김새와 장면 연결을 확인하며 수정했습니다.</p></article>
-          <article><h3>이미지·영상·음성·코드</h3><p>인물 설정화, Blender 장면, 확정 대사를 각 도구의 입력 자료로 사용했습니다. 이미지와 영상을 만들고 음성을 입힌 뒤, Codex로 Story 재생과 Index의 3D 조작을 구현했습니다.</p></article>
-        </div>
+        <p class="number">01 / WORKFLOW</p>
+        <h2 id="collaboration-roles">협업 방식</h2>
+        <p class="collaboration-intro">팀이 조사와 해석, 디자인을 정하고 AI에 입력할 자료를 준비했습니다. 생성 결과는 팀이 검토해 수정 방향과 최종 사용 여부를 결정했습니다.</p>
+        <p>Google Docs에서 조사·대사·피드백을 공유하고, Figma에서 화면을 설계했습니다. 스캔 정리와 후처리는 Artec Studio·ZBrush, 공간과 카메라 구성은 Blender에서 진행했습니다.</p>
       </section>
       <section class="collaboration-section" aria-labelledby="collaboration-tools">
-        <p class="number">02 / TOOLS</p>
-        <h2 id="collaboration-tools">제작 단계별 도구</h2>
+        <p class="number">02 / SCOPE</p>
+        <h2 id="collaboration-tools">도구별 활용 범위</h2>
         <table class="collaboration-table tools-table">
-          <caption class="visually-hidden">제작에 사용한 자료와 도구, 작업 결과</caption>
-          <thead><tr><th scope="col">단계</th><th scope="col">사용 도구</th><th scope="col">작업 내용</th></tr></thead>
+          <caption class="visually-hidden">도구별 AI 활용 범위와 팀의 작업 범위</caption>
+          <thead><tr><th scope="col">도구</th><th scope="col">AI 활용</th><th scope="col">팀의 작업</th></tr></thead>
           <tbody>
-            <tr><th scope="row">기획과 기록</th><td data-label="사용 도구">Google Docs · PowerPoint</td><td data-label="작업 내용">조사 내용과 출처, 스토리보드, 인물 설정, 대사와 피드백을 공유하고 발표 자료로 정리</td></tr>
-            <tr><th scope="row">3D 스캔</th><td data-label="사용 도구">Artec Studio</td><td data-label="작업 내용">두 석사자의 스캔 데이터를 정합해 전체 형상 구성</td></tr>
-            <tr><th scope="row">스캔 후처리</th><td data-label="사용 도구">ZBrush</td><td data-label="작업 내용">메시와 텍스처 정리, 촬영되지 않은 하부 보완, 웹에 사용할 모델 준비</td></tr>
-            <tr><th scope="row">어셋</th><td data-label="사용 도구">ChatGPT · Higgsfield</td><td data-label="작업 내용">인물 설정과 참고 이미지에 맞춰 주요 인물·주변 주민·집·나무 이미지 제작</td></tr>
-            <tr><th scope="row">공간과 카메라</th><td data-label="사용 도구">Blender</td><td data-label="작업 내용">1872년 공주목지도와 건축 자료를 참고해 지형·건물·인물을 배치하고 이동 경로와 구도 구성</td></tr>
-            <tr><th scope="row">그림체와 영상</th><td data-label="사용 도구">Higgsfield</td><td data-label="작업 내용">Blender 장면을 바탕으로 스타일 프레임 제작, 시작·도착 구도와 움직임을 지정해 이동·대화 영상 생성</td></tr>
-            <tr><th scope="row">인물 음성과 효과음</th><td data-label="사용 도구">ElevenLabs</td><td data-label="작업 내용">확정 대사의 인물별 음성, 마을의 말소리 등 효과음 제작</td></tr>
-            <tr><th scope="row">화면 설계</th><td data-label="사용 도구">Figma</td><td data-label="작업 내용">Story·Index 화면, 대사창, 내비게이션과 조작 버튼 설계</td></tr>
-            <tr><th scope="row">웹 구현</th><td data-label="사용 도구">Codex · HTML/CSS/JavaScript · Three.js</td><td data-label="작업 내용">스크롤에 따른 영상 재생, 대사·음성 연결, 3D 모델의 회전·확대·부위 비교 구현</td></tr>
+            <tr><th scope="row"><a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">ChatGPT</a></th><td data-label="AI 활용">인물·건축·수목의 이미지 시안 생성</td><td data-label="팀의 작업">참고 자료와 설정 제공, 형태·복식·그림체 검토</td></tr>
+            <tr><th scope="row"><a href="https://higgsfield.ai/" target="_blank" rel="noopener noreferrer">Higgsfield</a></th><td data-label="AI 활용">장면의 일러스트화, 이동·인물 영상 생성</td><td data-label="팀의 작업">Blender 구도와 동선 제공, 움직임 지정, 장면 연결 검토</td></tr>
+            <tr><th scope="row"><a href="https://elevenlabs.io/" target="_blank" rel="noopener noreferrer">ElevenLabs</a></th><td data-label="AI 활용">인물 음성·효과음 생성</td><td data-label="팀의 작업">대사 작성, 목소리와 발음 확인, 영상에 맞춰 편집</td></tr>
+            <tr><th scope="row">Codex</th><td data-label="AI 활용">웹 코드 작성·수정, 기능 구현 보조</td><td data-label="팀의 작업">Figma 디자인과 기능 요구 전달, 화면·재생·3D 조작 검수</td></tr>
           </tbody>
         </table>
-      </section>
-      <section class="collaboration-section" aria-labelledby="collaboration-scenes">
-        <p class="number">03 / SCENES</p>
-        <h2 id="collaboration-scenes">장면별 구성과 제작</h2>
-        <p class="collaboration-intro">대화 장면에는 인물 영상과 별도로 제작한 음성, 대사창을 함께 사용했습니다.</p>
-        <table class="collaboration-table scene-table">
-          <caption class="visually-hidden">현재 Story의 14개 구간에 사용한 자료와 제작 도구</caption>
-          <thead><tr><th scope="col">장면</th><th scope="col">준비한 자료·화면 요소</th><th scope="col">제작 내용·도구</th></tr></thead>
-          <tbody>
-            <tr data-scene="intro"><th scope="row"><span>01</span>먹선에서 마을로</th><td data-label="자료·화면 요소">석사자 먹선 일러스트, 산과 안개, 마을 전경, 도입 자막</td><td data-label="제작 내용·도구">Higgsfield로 먹이 번지며 산과 마을이 드러나는 도입 영상 제작</td></tr>
-            <tr data-scene="entry-merchant"><th scope="row"><span>02</span>마을 입구 → 제금루</th><td data-label="자료·화면 요소">입구와 제금루 구도, 길과 담장, 장사꾼 도착 장면</td><td data-label="제작 내용·도구">Blender 공간·카메라 가이드를 바탕으로 Higgsfield에서 접근 영상 제작</td></tr>
-            <tr data-scene="merchant"><th scope="row"><span>03</span>장사꾼의 이야기</th><td data-label="자료·화면 요소">장사꾼 설정화와 짐, 제금루 배경, 얼굴 크기와 치켜뜬 눈매에 관한 대사</td><td data-label="제작 내용·도구">Higgsfield 인물 영상 + ElevenLabs 음성 + 웹 대사창</td></tr>
-            <tr data-scene="merchant-farmer"><th scope="row"><span>04</span>제금루 → 동헌</th><td data-label="자료·화면 요소">관아 진입로와 마당, 동헌·혜의당, 농민의 위치</td><td data-label="제작 내용·도구">Blender 동선을 참고해 Higgsfield에서 농민에게 다가가는 영상 제작</td></tr>
-            <tr data-scene="farmer"><th scope="row"><span>05</span>농민의 이야기</th><td data-label="자료·화면 요소">농민 설정화와 문서 보따리, 동헌 배경, 흐릿했던 이목구비가 드러나는 대사</td><td data-label="제작 내용·도구">Higgsfield 인물 영상 + ElevenLabs 음성 + 웹 대사창</td></tr>
-            <tr data-scene="farmer-cook"><th scope="row"><span>06</span>동헌 → 객사</th><td data-label="자료·화면 요소">동헌 출발 구도, 객사로 이어지는 길, 찬모 도착 구도</td><td data-label="제작 내용·도구">Blender 공간을 참고해 Higgsfield에서 장소 사이의 이동 영상 제작</td></tr>
-            <tr data-scene="cook"><th scope="row"><span>07</span>찬모의 이야기</th><td data-label="자료·화면 요소">찬모 설정화와 쟁반, 객사 배경, 정수리의 곱슬 갈기에 관한 대사</td><td data-label="제작 내용·도구">Higgsfield 인물 영상 + ElevenLabs 음성 + 웹 대사창</td></tr>
-            <tr data-scene="cook-trio"><th scope="row"><span>08</span>객사에서 민가 쪽으로 회전</th><td data-label="자료·화면 요소">찬모 대화가 끝나는 구도, 주변 건물과 골목, 멀리 보이는 세 주민</td><td data-label="제작 내용·도구">Higgsfield 회전 영상. 인물·건물 배치와 다음 접근 장면의 연결을 비교해 선택</td></tr>
-            <tr data-scene="cook-trio-approach"><th scope="row"><span>09</span>주민 삼총사에게 접근</th><td data-label="자료·화면 요소">민가와 나무, 세 주민의 배치, 대화가 시작될 거리와 구도</td><td data-label="제작 내용·도구">Higgsfield로 세 주민을 향해 걸어가는 접근 영상 제작</td></tr>
-            <tr data-scene="trio"><th scope="row"><span>10</span>주민 삼총사의 이야기</th><td data-label="자료·화면 요소">세 주민의 설정화, 민가 배경, 웃는 표정과 뻗은 수염에 관한 대사</td><td data-label="제작 내용·도구">Higgsfield 인물 영상 + ElevenLabs 음성 + 웹 대사창</td></tr>
-            <tr data-scene="trio-woodcutter"><th scope="row"><span>11</span>민가 → 뒷산</th><td data-label="자료·화면 요소">마을에서 산으로 이어지는 길, 수목, 나무꾼 도착 구도</td><td data-label="제작 내용·도구">Blender 동선을 참고해 Higgsfield에서 산길 이동 영상 제작</td></tr>
-            <tr data-scene="woodcutter"><th scope="row"><span>12</span>나무꾼의 이야기</th><td data-label="자료·화면 요소">나무꾼 설정화와 지게·도끼, 산길 배경, 산등성이를 닮은 털결에 관한 대사</td><td data-label="제작 내용·도구">Higgsfield 인물 영상 + ElevenLabs 음성 + 웹 대사창</td></tr>
-            <tr data-scene="return-lions"><th scope="row"><span>13</span>석사자를 찾아가는 길</th><td data-label="자료·화면 요소">산길에서 객사터로 돌아오는 동선, 두 석사자의 배치와 도착 구도</td><td data-label="제작 내용·도구">Blender 공간·카메라 가이드를 바탕으로 Higgsfield에서 마지막 이동 영상 제작</td></tr>
-            <tr data-scene="seasons"><th scope="row"><span>14</span>사계절과 현재</th><td data-label="자료·화면 요소">두 석사자를 바라보는 구도, 계절별 풍경, 현재로 이어지는 장면</td><td data-label="제작 내용·도구">Higgsfield 계절 변화 영상. 자동 재생 뒤 ‘아카이브 탐색’ 버튼 표시</td></tr>
-          </tbody>
-        </table>
-      </section>
-      <section class="collaboration-section" aria-labelledby="collaboration-index">
-        <p class="number">04 / INDEX</p>
-        <h2 id="collaboration-index">인물별 대사와 스캔 비교 항목</h2>
-        <p class="collaboration-intro">각 인물의 대사에 등장하는 특징을 Index의 다섯 비교 항목으로 구성했습니다. 두 석사자의 스캔 모델과 측정 기록을 함께 볼 수 있도록 했습니다.</p>
-        <dl class="collaboration-handoffs">
-          <div><dt>갈기 · 찬모</dt><dd>갈기의 개수와 배치, 음각·양각 비교</dd></div>
-          <div><dt>수염 · 주민 삼총사</dt><dd>수염의 길이와 휘어진 모양 비교</dd></div>
-          <div><dt>등무늬 · 나무꾼</dt><dd>등에 새긴 선의 개수와 굽은 방향 비교</dd></div>
-          <div><dt>이목구비 · 농민</dt><dd>표면색을 끄고 눈·코·입과 얼굴 윤곽 관찰</dd></div>
-          <div><dt>눈매 · 장사꾼</dt><dd>눈꼬리의 방향과 눈의 윤곽 비교</dd></div>
-        </dl>
       </section>
     </main>
     <footer class="material-footer">

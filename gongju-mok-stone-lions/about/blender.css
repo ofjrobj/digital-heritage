@@ -34,7 +34,7 @@
 }
 @media(max-width:560px){
   .blender-stage-heading{grid-template-columns:minmax(0,1fr);gap:12px}
-  .blender-comparison{grid-template-columns:minmax(0,1fr);gap:30px}
+  .blender-comparison{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
   .blender-figure figcaption{font-size:12px}
   .blender-route{grid-template-columns:minmax(0,1fr);margin-top:24px}
   .blender-route li{padding:18px 0}

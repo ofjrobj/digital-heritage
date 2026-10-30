@@ -63,3 +63,10 @@
   .curation-mood-notes p { margin-top: 7px; font-size: 15px; }
   .curation-footer { align-items: flex-start; flex-direction: column; gap: 10px; }
 }
+
+.curation-viewing-flow{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:clamp(10px,3vw,36px);align-items:center;border-top:1px solid var(--line);padding:32px 0 38px}
+.curation-viewing-flow>div{min-width:0}
+.curation-viewing-flow div>span{display:block;font-size:24px;margin-bottom:12px}
+.curation-viewing-flow strong{font:14px/1.8 var(--story-sans,sans-serif);color:#66665d;word-break:keep-all}
+.curation-flow-arrow{color:#77776c;font-size:22px}
+@media(max-width:560px){.curation-viewing-flow div>span{font-size:21px}.curation-viewing-flow strong{font-size:12px}}

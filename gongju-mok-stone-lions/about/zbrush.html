@@ -24,8 +24,13 @@
   <link rel="stylesheet" href="./scan-records.css?v=scan-comparison-v58">
 <link rel="stylesheet" href="./page-motion.css?v=ui-motion-1s"><script defer src="./page-motion.js?v=20261028"></script><link rel="stylesheet" href="../assets/ui-motion.css?v=ui-motion-audit-20261028">
   <link rel="stylesheet" href="./production-tools.css?v=20261030">
+  <style>
+    .zbrush-page .scan-map-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,3vw,28px)}
+    .zbrush-page .scan-map-grid figure{min-width:0;margin:0}
+    .zbrush-page .scan-map-grid figcaption{font-size:clamp(11px,1.6vw,14px);overflow-wrap:anywhere}
+  </style>
 </head>
-<body class="materials-page">
+<body class="materials-page zbrush-page">
   <a class="skip" href="#material">본문으로 건너뛰기</a>
   <div class="wrap">
     <header class="top">

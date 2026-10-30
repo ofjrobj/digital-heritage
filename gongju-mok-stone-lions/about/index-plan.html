@@ -7,7 +7,7 @@
   <meta name="description" content="Index의 전체 비교, 부위별 확대, 표면색 전환, 정보창 기능을 정리했습니다.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css?v=requested-fixes-20261028-v7">
   <link rel="stylesheet" href="./about.css?v=approved-fonts-20261028">
-  <link rel="stylesheet" href="./index-plan.css?v=interactive-features-20261030">
+  <link rel="stylesheet" href="./index-plan.css?v=focused-controls-20261030">
   <link rel="canonical" href="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/index-plan.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
@@ -37,78 +37,64 @@
         <li id="plan-purpose">
           <span class="plan-number">#01</span>
           <div><h2>전체 비교</h2>
-            <p>두 석사자를 나란히 배치하고, 모델을 돌려 전체 형태와 비례를 비교할 수 있게 했습니다.</p>
+            <p>두 석사자를 나란히 배치해 전체 형태와 비례를 비교합니다. Index에서는 각 모델을 회전하고 확대할 수 있습니다.</p>
           </div>
-          <div class="plan-preview" data-preview="overview" data-preview-title="전체 비교">
-            <div class="plan-preview-toolbar">
-              <span class="plan-preview-status" role="status" aria-live="polite">기능 미리보기</span>
-              <button class="plan-preview-finish" type="button" hidden>조작 마치기</button>
-            </div>
-            <div class="plan-preview-window" id="preview-overview">
-              <div class="plan-preview-cover">
-                <img src="./assets/ux-index-overview-20261028.webp" alt="두 석사자를 나란히 놓은 Index 전체 비교 화면" loading="lazy" decoding="async">
-                <button class="plan-preview-start" type="button" aria-label="전체 비교 직접 조작하기" aria-controls="preview-overview" aria-expanded="false" hidden>직접 조작하기</button>
-              </div>
-            </div>
-            <noscript><a href="../archive/">Index에서 기능 보기</a></noscript>
-          </div>
+          <figure class="plan-example plan-overview">
+            <img src="./assets/scan-feature-overview-color-20261030.webp" width="1200" height="600" alt="두 석사자의 전체 형태 비교. 왼쪽 수사자, 오른쪽 암사자." loading="lazy" decoding="async">
+            <figcaption class="plan-pair-labels"><span>수사자</span><span>암사자</span></figcaption>
+          </figure>
         </li>
         <li id="plan-pair">
           <span class="plan-number">#02</span>
           <div><h2>부위별 확대</h2>
-            <p>관찰 항목을 선택하면 두 모델의 같은 부위를 같은 각도에서 확대해 보여줍니다.</p>
-            <p><a href="./scan.html#scan-features">스캔에서 찾은 다섯 가지 특징 보기</a></p>
+            <p>관찰 항목을 선택하면 두 석사자의 같은 부위를 나란히 보여줍니다.</p>
           </div>
-          <div class="plan-preview" data-preview="detail" data-preview-title="부위별 확대">
-            <div class="plan-preview-toolbar">
-              <span class="plan-preview-status" role="status" aria-live="polite">기능 미리보기</span>
-              <button class="plan-preview-finish" type="button" hidden>조작 마치기</button>
+          <div class="plan-example" data-detail-example>
+            <div class="plan-controls plan-feature-controls" role="group" aria-label="관찰 부위 선택">
+              <button type="button" data-feature="mane" aria-pressed="true" aria-controls="plan-detail-image"><span>01</span>갈기</button>
+              <button type="button" data-feature="whiskers" aria-pressed="false" aria-controls="plan-detail-image"><span>02</span>수염</button>
+              <button type="button" data-feature="pattern" aria-pressed="false" aria-controls="plan-detail-image"><span>03</span>등무늬</button>
+              <button type="button" data-feature="face" aria-pressed="false" aria-controls="plan-detail-image"><span>04</span>이목구비</button>
+              <button type="button" data-feature="eyes" aria-pressed="false" aria-controls="plan-detail-image"><span>05</span>눈매</button>
             </div>
-            <div class="plan-preview-window" id="preview-detail">
-              <div class="plan-preview-cover">
-                <img src="./assets/observation-mane-scan-20261029.webp" alt="같은 각도에서 확대한 두 석사자의 갈기" loading="lazy" decoding="async">
-                <button class="plan-preview-start" type="button" aria-label="부위별 확대 직접 조작하기" aria-controls="preview-detail" aria-expanded="false" hidden>직접 조작하기</button>
-              </div>
-            </div>
-            <noscript><a href="../archive/">Index에서 기능 보기</a></noscript>
+            <figure class="plan-detail-figure">
+              <img id="plan-detail-image" src="./assets/scan-feature-mane-color-20261030.webp" width="1200" height="450" alt="두 석사자의 갈기 비교. 왼쪽 수사자, 오른쪽 암사자." loading="lazy" decoding="async">
+              <figcaption class="plan-pair-labels"><span>수사자</span><span>암사자</span></figcaption>
+            </figure>
+            <p class="plan-detail-caption" role="status" aria-live="polite">갈기 · 정수리와 목 뒤</p>
           </div>
         </li>
         <li id="plan-features">
           <span class="plan-number">#03</span>
           <div><h2>표면색 전환</h2>
-            <p>표면색을 끄면 음영만으로 조각선과 굴곡을 살펴볼 수 있습니다.</p>
+            <p>컬러에서는 표면의 색을, 무채색에서는 음영에 따른 조각선과 굴곡을 살펴봅니다.</p>
           </div>
-          <div class="plan-preview" data-preview="surface" data-preview-title="표면색 전환">
-            <div class="plan-preview-toolbar">
-              <span class="plan-preview-status" role="status" aria-live="polite">기능 미리보기</span>
-              <button class="plan-preview-finish" type="button" hidden>조작 마치기</button>
+          <div class="plan-example" data-surface-example>
+            <div class="plan-controls" role="group" aria-label="등무늬 표면 표현">
+              <button type="button" data-surface="color" aria-pressed="true" aria-controls="plan-surface-image">컬러</button>
+              <button type="button" data-surface="relief" aria-pressed="false" aria-controls="plan-surface-image">무채색</button>
             </div>
-            <div class="plan-preview-window" id="preview-surface">
-              <div class="plan-preview-cover">
-                <img src="./assets/ux-index-detail-20261028.webp" alt="표면색을 끄고 등무늬를 비교하는 Index 화면" loading="lazy" decoding="async">
-                <button class="plan-preview-start" type="button" aria-label="표면색 전환 직접 조작하기" aria-controls="preview-surface" aria-expanded="false" hidden>직접 조작하기</button>
-              </div>
-            </div>
-            <noscript><a href="../archive/">Index에서 기능 보기</a></noscript>
+            <figure class="plan-surface-figure">
+              <img id="plan-surface-image" src="./assets/scan-feature-pattern-color-20261030.webp" width="1200" height="780" alt="컬러로 본 두 석사자의 등무늬. 왼쪽 수사자, 오른쪽 암사자." loading="lazy" decoding="async">
+              <figcaption class="plan-pair-labels"><span>수사자</span><span>암사자</span></figcaption>
+            </figure>
           </div>
         </li>
         <li id="plan-record">
           <span class="plan-number">#04</span>
           <div><h2>정보창</h2>
-            <p>각 사자의 정보창에서 선택한 부위의 치수와 개수, 자료 출처를 확인할 수 있습니다.</p>
+            <p>각 사자의 정보 버튼을 누르면 치수와 측정 기록을 확인할 수 있습니다.</p>
           </div>
-          <div class="plan-preview" data-preview="info" data-preview-title="정보창">
-            <div class="plan-preview-toolbar">
-              <span class="plan-preview-status" role="status" aria-live="polite">기능 미리보기</span>
-              <button class="plan-preview-finish" type="button" hidden>조작 마치기</button>
-            </div>
-            <div class="plan-preview-window" id="preview-info">
-              <div class="plan-preview-cover">
-                <img src="./assets/archive-comparison.png" alt="암사자 정보창을 연 Index 화면" loading="lazy" decoding="async">
-                <button class="plan-preview-start" type="button" aria-label="정보창 직접 조작하기" aria-controls="preview-info" aria-expanded="false" hidden>직접 조작하기</button>
-              </div>
-            </div>
-            <noscript><a href="../archive/">Index에서 기능 보기</a></noscript>
+          <div class="plan-example plan-info-example">
+            <details>
+              <summary>수사자 정보</summary>
+              <dl><div><dt>높이</dt><dd>71.7 cm</dd></div><div><dt>몸 길이</dt><dd>104.6 cm</dd></div><div><dt>얼굴 길이</dt><dd>36.8 cm</dd></div><div><dt>얼굴 넓이</dt><dd>37.6 cm</dd></div></dl>
+            </details>
+            <details>
+              <summary>암사자 정보</summary>
+              <dl><div><dt>높이</dt><dd>61.4 cm</dd></div><div><dt>몸 길이</dt><dd>120.1 cm</dd></div><div><dt>얼굴 길이</dt><dd>34.1 cm</dd></div><div><dt>얼굴 넓이</dt><dd>34.5 cm</dd></div></dl>
+            </details>
+            <p class="plan-source">소장 · 공주대학교 박물관 / 측정 기록 · 사자성어 팀</p>
           </div>
         </li>
       </ol>
@@ -116,6 +102,6 @@
     <footer class="index-plan-footer"><p>디지털헤리티지큐레이터 3기 · 가치해석 1팀 사자성어</p><a href="./#step-observation">뒤로가기</a></footer>
   </div>
 <script src="./about.js?v=54" defer></script>
-<script src="./index-plan.js?v=interactive-features-20261030" defer></script>
+<script src="./index-plan.js?v=focused-controls-20261030" defer></script>
 </body>
 </html>
