@@ -26,6 +26,7 @@
 <link rel="stylesheet" href="./page-motion.css?v=ui-motion-1s"><script defer src="./page-motion.js?v=20261028"></script><link rel="stylesheet" href="../assets/ui-motion.css?v=ui-motion-audit-20261028">
   <link rel="stylesheet" href="./production-tools.css?v=20261030">
   <link rel="stylesheet" href="./scan-features.css?v=20261030">
+  <link rel="stylesheet" href="./comparison-icons.css?v=icons-normal-20261030">
 </head>
 <body class="materials-page">
   <a class="skip" href="#material">본문으로 건너뛰기</a>
@@ -49,7 +50,7 @@
       </section>
       <section class="observation-study" id="scan-features" aria-labelledby="scan-features-title">
         <h2 id="scan-features-title">스캔에서 찾은 다섯 가지 특징</h2>
-        <p class="scan-feature-intro">표면색을 제외한 스캔 모델로 조각의 굴곡을 살폈습니다. 각 항목에서 컬러와 무채색을 전환해 형태를 비교할 수 있습니다.</p>
+        <p class="scan-feature-intro">표면색을 제외한 스캔 모델로 조각의 굴곡을 살폈습니다. 각 항목의 아이콘을 누르면 컬러·흑백·노멀 맵을 차례로 비교할 수 있습니다.</p>
         <p class="observation-order">봉황동 석사자 3D 스캔 · 왼쪽 수사자, 오른쪽 암사자</p>
         <ol class="observation-points">
           <li id="observation-mane">
@@ -58,10 +59,9 @@
             </div>
             <figure class="observation-scan observation-scan--mane">
               <div class="scan-feature-controls" role="group" aria-label="갈기 표면 표현">
-                <button type="button" data-scan-mode="color" aria-pressed="true" aria-controls="scan-image-mane">컬러</button>
-                <button type="button" data-scan-mode="relief" aria-pressed="false" aria-controls="scan-image-mane">무채색</button>
+                <button type="button" class="comparison-surface-toggle" data-surface-cycle="color" data-tooltip="컬러맵" aria-label="현재 컬러맵. 흑백맵으로 전환" aria-controls="scan-image-mane"><svg viewBox="0 0 24 24" aria-hidden="true"><path data-mode="color" class="is-selected" d="M12 12V3a9 9 0 0 1 7.794 13.5Z"/><path data-mode="relief" d="M12 12l7.794 4.5a9 9 0 0 1-15.588 0Z"/><path data-mode="normal" d="M12 12l-7.794 4.5A9 9 0 0 1 12 3Z"/></svg></button>
               </div>
-              <img id="scan-image-mane" src="./assets/scan-feature-mane-color-20261030.webp" data-color="./assets/scan-feature-mane-color-20261030.webp" data-relief="./assets/scan-feature-mane-relief-20261030.webp" width="1200" height="450" alt="두 석사자의 갈기 스캔 비교. 왼쪽 수사자, 오른쪽 암사자. 컬러." loading="lazy" decoding="async">
+              <img id="scan-image-mane" data-normal="./assets/scan-feature-mane-normal-20261030.webp" src="./assets/scan-feature-mane-color-20261030.webp" data-color="./assets/scan-feature-mane-color-20261030.webp" data-relief="./assets/scan-feature-mane-relief-20261030.webp" width="1200" height="450" alt="두 석사자의 갈기 스캔 비교. 왼쪽 수사자, 오른쪽 암사자. 컬러." loading="lazy" decoding="async">
               <figcaption><span>수사자</span><span>암사자</span></figcaption>
             </figure>
           </li>
@@ -71,10 +71,9 @@
             </div>
             <figure class="observation-scan observation-scan--whiskers">
               <div class="scan-feature-controls" role="group" aria-label="수염 표면 표현">
-                <button type="button" data-scan-mode="color" aria-pressed="true" aria-controls="scan-image-whiskers">컬러</button>
-                <button type="button" data-scan-mode="relief" aria-pressed="false" aria-controls="scan-image-whiskers">무채색</button>
+                <button type="button" class="comparison-surface-toggle" data-surface-cycle="color" data-tooltip="컬러맵" aria-label="현재 컬러맵. 흑백맵으로 전환" aria-controls="scan-image-whiskers"><svg viewBox="0 0 24 24" aria-hidden="true"><path data-mode="color" class="is-selected" d="M12 12V3a9 9 0 0 1 7.794 13.5Z"/><path data-mode="relief" d="M12 12l7.794 4.5a9 9 0 0 1-15.588 0Z"/><path data-mode="normal" d="M12 12l-7.794 4.5A9 9 0 0 1 12 3Z"/></svg></button>
               </div>
-              <img id="scan-image-whiskers" src="./assets/scan-feature-whiskers-color-20261030.webp" data-color="./assets/scan-feature-whiskers-color-20261030.webp" data-relief="./assets/scan-feature-whiskers-relief-20261030.webp" width="1200" height="330" alt="두 석사자의 수염 스캔 비교. 왼쪽 수사자, 오른쪽 암사자. 컬러." loading="lazy" decoding="async">
+              <img id="scan-image-whiskers" data-normal="./assets/scan-feature-whiskers-normal-20261030.webp" src="./assets/scan-feature-whiskers-color-20261030.webp" data-color="./assets/scan-feature-whiskers-color-20261030.webp" data-relief="./assets/scan-feature-whiskers-relief-20261030.webp" width="1200" height="330" alt="두 석사자의 수염 스캔 비교. 왼쪽 수사자, 오른쪽 암사자. 컬러." loading="lazy" decoding="async">
               <figcaption><span>수사자</span><span>암사자</span></figcaption>
             </figure>
           </li>
@@ -84,10 +83,9 @@
             </div>
             <figure class="observation-scan observation-scan--pattern">
               <div class="scan-feature-controls" role="group" aria-label="등무늬 표면 표현">
-                <button type="button" data-scan-mode="color" aria-pressed="true" aria-controls="scan-image-pattern">컬러</button>
-                <button type="button" data-scan-mode="relief" aria-pressed="false" aria-controls="scan-image-pattern">무채색</button>
+                <button type="button" class="comparison-surface-toggle" data-surface-cycle="color" data-tooltip="컬러맵" aria-label="현재 컬러맵. 흑백맵으로 전환" aria-controls="scan-image-pattern"><svg viewBox="0 0 24 24" aria-hidden="true"><path data-mode="color" class="is-selected" d="M12 12V3a9 9 0 0 1 7.794 13.5Z"/><path data-mode="relief" d="M12 12l7.794 4.5a9 9 0 0 1-15.588 0Z"/><path data-mode="normal" d="M12 12l-7.794 4.5A9 9 0 0 1 12 3Z"/></svg></button>
               </div>
-              <img id="scan-image-pattern" src="./assets/scan-feature-pattern-color-20261030.webp" data-color="./assets/scan-feature-pattern-color-20261030.webp" data-relief="./assets/scan-feature-pattern-relief-20261030.webp" width="1200" height="780" alt="두 석사자의 등무늬 스캔 비교. 왼쪽 수사자, 오른쪽 암사자. 컬러." loading="lazy" decoding="async">
+              <img id="scan-image-pattern" data-normal="./assets/scan-feature-pattern-normal-20261030.webp" src="./assets/scan-feature-pattern-color-20261030.webp" data-color="./assets/scan-feature-pattern-color-20261030.webp" data-relief="./assets/scan-feature-pattern-relief-20261030.webp" width="1200" height="780" alt="두 석사자의 등무늬 스캔 비교. 왼쪽 수사자, 오른쪽 암사자. 컬러." loading="lazy" decoding="async">
               <figcaption><span>수사자</span><span>암사자</span></figcaption>
             </figure>
           </li>
@@ -97,10 +95,9 @@
             </div>
             <figure class="observation-scan observation-scan--face">
               <div class="scan-feature-controls" role="group" aria-label="이목구비 표면 표현">
-                <button type="button" data-scan-mode="color" aria-pressed="true" aria-controls="scan-image-face">컬러</button>
-                <button type="button" data-scan-mode="relief" aria-pressed="false" aria-controls="scan-image-face">무채색</button>
+                <button type="button" class="comparison-surface-toggle" data-surface-cycle="color" data-tooltip="컬러맵" aria-label="현재 컬러맵. 흑백맵으로 전환" aria-controls="scan-image-face"><svg viewBox="0 0 24 24" aria-hidden="true"><path data-mode="color" class="is-selected" d="M12 12V3a9 9 0 0 1 7.794 13.5Z"/><path data-mode="relief" d="M12 12l7.794 4.5a9 9 0 0 1-15.588 0Z"/><path data-mode="normal" d="M12 12l-7.794 4.5A9 9 0 0 1 12 3Z"/></svg></button>
               </div>
-              <img id="scan-image-face" src="./assets/scan-feature-face-color-20261030.webp" data-color="./assets/scan-feature-face-color-20261030.webp" data-relief="./assets/scan-feature-face-relief-20261030.webp" width="1200" height="620" alt="두 석사자의 이목구비 스캔 비교. 왼쪽 수사자, 오른쪽 암사자. 컬러." loading="lazy" decoding="async">
+              <img id="scan-image-face" data-normal="./assets/scan-feature-face-normal-20261030.webp" src="./assets/scan-feature-face-color-20261030.webp" data-color="./assets/scan-feature-face-color-20261030.webp" data-relief="./assets/scan-feature-face-relief-20261030.webp" width="1200" height="620" alt="두 석사자의 이목구비 스캔 비교. 왼쪽 수사자, 오른쪽 암사자. 컬러." loading="lazy" decoding="async">
               <figcaption><span>수사자</span><span>암사자</span></figcaption>
             </figure>
           </li>
@@ -110,10 +107,9 @@
             </div>
             <figure class="observation-scan observation-scan--eyes">
               <div class="scan-feature-controls" role="group" aria-label="눈매 표면 표현">
-                <button type="button" data-scan-mode="color" aria-pressed="true" aria-controls="scan-image-eyes">컬러</button>
-                <button type="button" data-scan-mode="relief" aria-pressed="false" aria-controls="scan-image-eyes">무채색</button>
+                <button type="button" class="comparison-surface-toggle" data-surface-cycle="color" data-tooltip="컬러맵" aria-label="현재 컬러맵. 흑백맵으로 전환" aria-controls="scan-image-eyes"><svg viewBox="0 0 24 24" aria-hidden="true"><path data-mode="color" class="is-selected" d="M12 12V3a9 9 0 0 1 7.794 13.5Z"/><path data-mode="relief" d="M12 12l7.794 4.5a9 9 0 0 1-15.588 0Z"/><path data-mode="normal" d="M12 12l-7.794 4.5A9 9 0 0 1 12 3Z"/></svg></button>
               </div>
-              <img id="scan-image-eyes" src="./assets/scan-feature-eyes-color-20261030.webp" data-color="./assets/scan-feature-eyes-color-20261030.webp" data-relief="./assets/scan-feature-eyes-relief-20261030.webp" width="1200" height="230" alt="두 석사자의 눈매 스캔 비교. 왼쪽 수사자, 오른쪽 암사자. 컬러." loading="lazy" decoding="async">
+              <img id="scan-image-eyes" data-normal="./assets/scan-feature-eyes-normal-20261030.webp" src="./assets/scan-feature-eyes-color-20261030.webp" data-color="./assets/scan-feature-eyes-color-20261030.webp" data-relief="./assets/scan-feature-eyes-relief-20261030.webp" width="1200" height="230" alt="두 석사자의 눈매 스캔 비교. 왼쪽 수사자, 오른쪽 암사자. 컬러." loading="lazy" decoding="async">
               <figcaption><span>수사자</span><span>암사자</span></figcaption>
             </figure>
           </li>
@@ -126,6 +122,6 @@
     </footer>
   </div>
 <script src="./about.js?v=54" defer></script>
-<script src="./scan-features.js?v=20261030" defer></script>
+<script src="./scan-features.js?v=icons-normal-20261030" defer></script>
 </body>
 </html>

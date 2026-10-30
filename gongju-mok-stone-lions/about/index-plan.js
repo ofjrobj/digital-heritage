@@ -17,14 +17,4 @@
       detail.querySelectorAll('[data-feature]').forEach(control => control.setAttribute('aria-pressed', String(control === button)));
     });
   });
-  const surface = document.querySelector('[data-surface-example]');
-  surface?.querySelectorAll('[data-surface]').forEach(button => {
-    button.addEventListener('click', () => {
-      const mode = button.dataset.surface;
-      const image = surface.querySelector('img');
-      image.src = `./assets/scan-feature-pattern-${mode}-20261030.webp`;
-      image.alt = `${mode === 'color' ? '컬러로' : '무채색으로'} 본 두 석사자의 등무늬. 왼쪽 수사자, 오른쪽 암사자.`;
-      surface.querySelectorAll('[data-surface]').forEach(control => control.setAttribute('aria-pressed', String(control === button)));
-    });
-  });
 })();

@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="./case-study.css?v=ui-motion-audit-20261028">
 <link rel="stylesheet" href="./page-motion.css?v=ui-motion-1s"><script defer src="./page-motion.js?v=20261028"></script><link rel="stylesheet" href="../assets/ui-motion.css?v=ui-motion-audit-20261028">
   <link rel="stylesheet" href="./production-tools.css?v=20261030">
+  <link rel="stylesheet" href="./comparison-icons.css?v=icons-normal-20261030">
 </head>
 <body class="index-plan-page">
   <a class="skip" href="#index-plan">본문으로 건너뛰기</a>
@@ -51,11 +52,11 @@
           </div>
           <div class="plan-example" data-detail-example>
             <div class="plan-controls plan-feature-controls" role="group" aria-label="관찰 부위 선택">
-              <button type="button" data-feature="mane" aria-pressed="true" aria-controls="plan-detail-image"><span>01</span>갈기</button>
-              <button type="button" data-feature="whiskers" aria-pressed="false" aria-controls="plan-detail-image"><span>02</span>수염</button>
-              <button type="button" data-feature="pattern" aria-pressed="false" aria-controls="plan-detail-image"><span>03</span>등무늬</button>
-              <button type="button" data-feature="face" aria-pressed="false" aria-controls="plan-detail-image"><span>04</span>이목구비</button>
-              <button type="button" data-feature="eyes" aria-pressed="false" aria-controls="plan-detail-image"><span>05</span>눈매</button>
+              <button type="button" data-feature="mane" aria-label="갈기 비교" aria-pressed="true" aria-controls="plan-detail-image"><span class="feature-number" aria-hidden="true">01</span><span class="feature-tooltip" aria-hidden="true">갈기</span></button>
+              <button type="button" data-feature="whiskers" aria-label="수염 비교" aria-pressed="false" aria-controls="plan-detail-image"><span class="feature-number" aria-hidden="true">02</span><span class="feature-tooltip" aria-hidden="true">수염</span></button>
+              <button type="button" data-feature="pattern" aria-label="등무늬 비교" aria-pressed="false" aria-controls="plan-detail-image"><span class="feature-number" aria-hidden="true">03</span><span class="feature-tooltip" aria-hidden="true">등무늬</span></button>
+              <button type="button" data-feature="face" aria-label="이목구비 비교" aria-pressed="false" aria-controls="plan-detail-image"><span class="feature-number" aria-hidden="true">04</span><span class="feature-tooltip" aria-hidden="true">이목구비</span></button>
+              <button type="button" data-feature="eyes" aria-label="눈매 비교" aria-pressed="false" aria-controls="plan-detail-image"><span class="feature-number" aria-hidden="true">05</span><span class="feature-tooltip" aria-hidden="true">눈매</span></button>
             </div>
             <figure class="plan-detail-figure">
               <img id="plan-detail-image" src="./assets/scan-feature-mane-color-20261030.webp" width="1200" height="450" alt="두 석사자의 갈기 비교. 왼쪽 수사자, 오른쪽 암사자." loading="lazy" decoding="async">
@@ -67,15 +68,14 @@
         <li id="plan-features">
           <span class="plan-number">#03</span>
           <div><h2>표면색 전환</h2>
-            <p>컬러에서는 표면의 색을, 무채색에서는 음영에 따른 조각선과 굴곡을 살펴봅니다.</p>
+            <p>아이콘을 눌러 표면색, 조각의 굴곡, 노멀 맵을 차례로 살펴봅니다.</p>
           </div>
           <div class="plan-example" data-surface-example>
             <div class="plan-controls" role="group" aria-label="등무늬 표면 표현">
-              <button type="button" data-surface="color" aria-pressed="true" aria-controls="plan-surface-image">컬러</button>
-              <button type="button" data-surface="relief" aria-pressed="false" aria-controls="plan-surface-image">무채색</button>
+              <button type="button" class="comparison-surface-toggle" data-surface-cycle="color" data-tooltip="컬러맵" aria-label="현재 컬러맵. 흑백맵으로 전환" aria-controls="plan-surface-image"><svg viewBox="0 0 24 24" aria-hidden="true"><path data-mode="color" class="is-selected" d="M12 12V3a9 9 0 0 1 7.794 13.5Z"/><path data-mode="relief" d="M12 12l7.794 4.5a9 9 0 0 1-15.588 0Z"/><path data-mode="normal" d="M12 12l-7.794 4.5A9 9 0 0 1 12 3Z"/></svg></button>
             </div>
             <figure class="plan-surface-figure">
-              <img id="plan-surface-image" src="./assets/scan-feature-pattern-color-20261030.webp" width="1200" height="780" alt="컬러로 본 두 석사자의 등무늬. 왼쪽 수사자, 오른쪽 암사자." loading="lazy" decoding="async">
+              <img id="plan-surface-image" data-color="./assets/scan-feature-pattern-color-20261030.webp" data-relief="./assets/scan-feature-pattern-relief-20261030.webp" data-normal="./assets/scan-feature-pattern-normal-20261030.webp" src="./assets/scan-feature-pattern-color-20261030.webp" width="1200" height="780" alt="컬러로 본 두 석사자의 등무늬. 왼쪽 수사자, 오른쪽 암사자." loading="lazy" decoding="async">
               <figcaption class="plan-pair-labels"><span>수사자</span><span>암사자</span></figcaption>
             </figure>
           </div>
@@ -102,6 +102,7 @@
     <footer class="index-plan-footer"><p>디지털헤리티지큐레이터 3기 · 가치해석 1팀 사자성어</p><a href="./#step-observation">뒤로가기</a></footer>
   </div>
 <script src="./about.js?v=54" defer></script>
-<script src="./index-plan.js?v=focused-controls-20261030" defer></script>
+<script src="./index-plan.js?v=icons-normal-20261030" defer></script>
+<script src="./scan-features.js?v=icons-normal-20261030" defer></script>
 </body>
 </html>
