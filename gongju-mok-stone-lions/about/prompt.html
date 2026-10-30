@@ -39,7 +39,7 @@
         <p class="number">01 / ROLES</p>
         <h2 id="collaboration-roles">팀이 정한 것과 AI에 맡긴 것</h2>
         <div class="collaboration-pair">
-          <article><h3>조사·해석·연출</h3><p>스캔에서 발견한 특징과 문헌을 바탕으로 이야기의 순서, 인물의 생활 배경과 대사, 공간과 그림체를 정했습니다. 생성 결과를 보고 인물의 생김새와 장면 연결을 수정했습니다.</p></article>
+          <article><h3>조사·해석·연출</h3><p>스캔 관찰과 문헌 조사를 바탕으로 이야기, 인물 설정, 대사와 연출을 정했습니다. 생성한 이미지와 영상은 인물의 생김새와 장면 연결을 확인하며 수정했습니다.</p></article>
           <article><h3>이미지·영상·음성·코드</h3><p>인물 설정화, Blender 장면, 확정 대사를 각 도구의 입력 자료로 사용했습니다. 이미지와 영상을 만들고 음성을 입힌 뒤, Codex로 Story 재생과 Index의 3D 조작을 구현했습니다.</p></article>
         </div>
       </section>
@@ -53,7 +53,7 @@
             <tr><th scope="row">기획과 기록</th><td data-label="사용 도구">Google Docs · PowerPoint</td><td data-label="작업 내용">조사 내용과 출처, 스토리보드, 인물 설정, 대사와 피드백을 공유하고 발표 자료로 정리</td></tr>
             <tr><th scope="row">3D 스캔</th><td data-label="사용 도구">Artec Studio</td><td data-label="작업 내용">두 석사자의 스캔 데이터를 정합해 전체 형상 구성</td></tr>
             <tr><th scope="row">스캔 후처리</th><td data-label="사용 도구">ZBrush</td><td data-label="작업 내용">메시와 텍스처 정리, 촬영되지 않은 하부 보완, 웹에 사용할 모델 준비</td></tr>
-            <tr><th scope="row">어셋</th><td data-label="사용 도구">ChatGPT · Higgsfield</td><td data-label="작업 내용">인물 설정과 참고 이미지에 맞춰 인물·주민·집·나무 이미지 제작</td></tr>
+            <tr><th scope="row">어셋</th><td data-label="사용 도구">ChatGPT · Higgsfield</td><td data-label="작업 내용">인물 설정과 참고 이미지에 맞춰 주요 인물·주변 주민·집·나무 이미지 제작</td></tr>
             <tr><th scope="row">공간과 카메라</th><td data-label="사용 도구">Blender</td><td data-label="작업 내용">1872년 공주목지도와 건축 자료를 참고해 지형·건물·인물을 배치하고 이동 경로와 구도 구성</td></tr>
             <tr><th scope="row">그림체와 영상</th><td data-label="사용 도구">Higgsfield</td><td data-label="작업 내용">Blender 장면을 바탕으로 스타일 프레임 제작, 시작·도착 구도와 움직임을 지정해 이동·대화 영상 생성</td></tr>
             <tr><th scope="row">인물 음성과 효과음</th><td data-label="사용 도구">ElevenLabs</td><td data-label="작업 내용">확정 대사의 인물별 음성, 마을의 말소리 등 효과음 제작</td></tr>
@@ -65,7 +65,7 @@
       <section class="collaboration-section" aria-labelledby="collaboration-scenes">
         <p class="number">03 / SCENES</p>
         <h2 id="collaboration-scenes">장면별 구성과 제작</h2>
-        <p class="collaboration-intro">대화 장면은 인물 영상에 별도로 만든 음성과 대사창을 연결했습니다.</p>
+        <p class="collaboration-intro">대화 장면에는 인물 영상과 별도로 제작한 음성, 대사창을 함께 사용했습니다.</p>
         <table class="collaboration-table scene-table">
           <caption class="visually-hidden">현재 Story의 14개 구간에 사용한 자료와 제작 도구</caption>
           <thead><tr><th scope="col">장면</th><th scope="col">준비한 자료·화면 요소</th><th scope="col">제작 내용·도구</th></tr></thead>
@@ -89,8 +89,8 @@
       </section>
       <section class="collaboration-section" aria-labelledby="collaboration-index">
         <p class="number">04 / INDEX</p>
-        <h2 id="collaboration-index">이야기 뒤에 만나는 실제 스캔</h2>
-        <p class="collaboration-intro">마을에서 들은 소문이 어떤 형태에서 비롯되었는지 실제 데이터로 살펴보는 화면입니다. 두 석사자의 스캔 모델과 측정 기록을 사용하고, 인물들이 묘사한 특징을 다섯 관찰 항목으로 연결했습니다.</p>
+        <h2 id="collaboration-index">인물별 대사와 스캔 비교 항목</h2>
+        <p class="collaboration-intro">각 인물의 대사에 등장하는 특징을 Index의 다섯 비교 항목으로 구성했습니다. 두 석사자의 스캔 모델과 측정 기록을 함께 볼 수 있도록 했습니다.</p>
         <dl class="collaboration-handoffs">
           <div><dt>갈기 · 찬모</dt><dd>갈기의 개수와 배치, 음각·양각 비교</dd></div>
           <div><dt>수염 · 주민 삼총사</dt><dd>수염의 길이와 휘어진 모양 비교</dd></div>
@@ -98,7 +98,6 @@
           <div><dt>이목구비 · 농민</dt><dd>표면색을 끄고 눈·코·입과 얼굴 윤곽 관찰</dd></div>
           <div><dt>눈매 · 장사꾼</dt><dd>눈꼬리의 방향과 눈의 윤곽 비교</dd></div>
         </dl>
-        <p class="collaboration-note">Artec Studio·ZBrush에서 준비한 모델을 Three.js로 표시하고, Figma 화면 설계를 바탕으로 Codex에서 조작과 정보 패널을 구현했습니다.</p>
       </section>
     </main>
     <footer class="material-footer">
