@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>AI 협업 방식 설계 — 봉황동 석사자</title>
-  <meta name="description" content="제작 도구별 AI 활용 범위와 팀의 기획·검토 역할을 정리했습니다.">
+  <meta name="description" content="유산 해석과 창작의 범위를 정하고, 이미지·영상·음성·코드를 생성한 뒤 검토 결과를 제작에 반영한 AI 협업 과정입니다.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css?v=requested-fixes-20261028-v7">
   <link rel="stylesheet" href="./about.css?v=approved-fonts-20261028">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
@@ -13,12 +13,12 @@
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="AI 협업 방식 설계 — 봉황동 석사자">
-  <meta property="og:description" content="제작 도구별 AI 활용 범위와 팀의 기획·검토 역할을 정리했습니다.">
+  <meta property="og:description" content="유산 해석과 창작의 범위를 정하고, 이미지·영상·음성·코드를 생성한 뒤 검토 결과를 제작에 반영한 AI 협업 과정입니다.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/prompt.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AI 협업 방식 설계 — 봉황동 석사자">
-  <meta name="twitter:description" content="제작 도구별 AI 활용 범위와 팀의 기획·검토 역할을 정리했습니다.">
+  <meta name="twitter:description" content="유산 해석과 창작의 범위를 정하고, 이미지·영상·음성·코드를 생성한 뒤 검토 결과를 제작에 반영한 AI 협업 과정입니다.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/assets/cover-reference.png">
 <link rel="stylesheet" href="./case-study.css?v=ui-motion-audit-20261028">
 <link rel="stylesheet" href="./page-motion.css?v=ui-motion-1s"><script defer src="./page-motion.js?v=20261028"></script><link rel="stylesheet" href="../assets/ui-motion.css?v=ui-motion-audit-20261028">
@@ -34,12 +34,12 @@
     <main id="material">
       <header class="material-header">
         <h1>AI 협업 방식 설계</h1>
-        <p class="material-intro">유산 자료의 조사와 해석, 표현 기준 설정과 결과물 검토는 팀이 담당했습니다. AI는 정해진 기준에 따라 이미지·영상·음성 시안을 만들고 웹 구현을 위한 코드를 작성하는 데 활용했습니다.</p>
+        <p class="material-intro">팀은 석사자의 자료를 조사하고 이야기의 해석 방향, 장면 구성, 웹 기능을 정했습니다. 이 기획을 바탕으로 AI를 이미지·영상·음성 생성과 코드 작성에 활용하고, 생성 결과를 비교해 수정할 부분과 최종 사용할 결과물을 선택했습니다.</p>
       </header>
       <section class="prompt-section" aria-labelledby="collaboration-roles">
         <p class="number">01 / WORKFLOW</p>
         <h2 id="collaboration-roles">기획에서 최종 선택까지</h2>
-        <p class="material-intro">역사적 근거를 확인할 내용과 창작으로 표현할 범위를 구분했습니다. 생성된 장면이 유물의 특징과 기획 의도를 충실히 담는지 검토하고, 반복 생성으로 해결되지 않는 부분은 직접 수정하도록 기준을 정했습니다.</p>
+        <p class="material-intro">석사자의 특징과 장소에 관한 자료를 확인하고, 인물과 대사처럼 창작한 표현을 구분했습니다. 생성된 장면이 유물의 특징과 기획한 구도를 담는지 살피는 것을 검토 기준으로 삼았습니다. 반복 생성으로 해결되지 않는 부분은 직접 수정하는 방식으로 작업을 계획했습니다.</p>
         <ol class="workflow" aria-label="팀의 기획, AI의 제작, 팀의 검토 순서">
           <li>
             <span class="workflow-role">01 · 팀</span>
@@ -71,7 +71,7 @@
           <article class="tool-card" aria-labelledby="tool-image-title">
             <header><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="9" width="36" height="30" rx="1"/><circle cx="16" cy="19" r="3"/><path d="m7 34 10-9 7 6 7-10 10 13"/></svg><div><h3 id="tool-image-title">이미지 시안</h3><a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">ChatGPT <span aria-hidden="true">↗</span></a></div></header>
             <ol class="tool-flow">
-              <li><span>팀</span><p>참고 자료·인물 설정</p></li>
+              <li><span>팀</span><p>인물 설정·건축물 사진</p></li>
               <li class="ai-task"><span>AI</span><p>인물·건축·수목 이미지 생성</p></li>
               <li><span>팀</span><p>형태·복식·그림체 검토</p></li>
             </ol>
@@ -79,9 +79,9 @@
           <article class="tool-card" aria-labelledby="tool-video-title">
             <header><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="10" width="38" height="28" rx="1"/><path d="m20 17 12 7-12 7Z M11 10v28 M37 10v28 M5 18h6 M5 30h6 M37 18h6 M37 30h6"/></svg><div><h3 id="tool-video-title">일러스트·영상</h3><a href="https://higgsfield.ai/" target="_blank" rel="noopener noreferrer">Higgsfield <span aria-hidden="true">↗</span></a></div></header>
             <ol class="tool-flow">
-              <li><span>팀</span><p>Blender 구도·동선·움직임 지정</p></li>
+              <li><span>팀</span><p>카메라 영상·어셋·스타일 프레임</p></li>
               <li class="ai-task"><span>AI</span><p>장면 일러스트화·영상 생성</p></li>
-              <li><span>팀</span><p>움직임·장면 연결 검토</p></li>
+              <li><span>팀</span><p>480p 테스트·프롬프트 수정</p></li>
             </ol>
           </article>
           <article class="tool-card" aria-labelledby="tool-audio-title">
@@ -89,7 +89,7 @@
             <ol class="tool-flow">
               <li><span>팀</span><p>대사 작성·목소리 선택</p></li>
               <li class="ai-task"><span>AI</span><p>인물 음성·효과음 생성</p></li>
-              <li><span>팀</span><p>발음 확인·영상에 맞춰 편집</p></li>
+              <li><span>팀</span><p>대사·환경음의 음량 조정</p></li>
             </ol>
           </article>
           <article class="tool-card" aria-labelledby="tool-web-title">
@@ -97,9 +97,21 @@
             <ol class="tool-flow">
               <li><span>팀</span><p>Figma 디자인·필요 기능 전달</p></li>
               <li class="ai-task"><span>AI</span><p>코드 작성·수정</p></li>
-              <li><span>팀</span><p>화면·재생·3D 조작 확인</p></li>
+              <li><span>팀</span><p>스크롤·터치·3D 조작 확인</p></li>
             </ol>
           </article>
+        </div>
+      </section>
+      <section class="prompt-section" aria-labelledby="collaboration-review">
+        <p class="number">03 / REVIEW</p>
+        <h2 id="collaboration-review">검토 결과를 제작에 반영한 사례</h2>
+        <div class="copy">
+          <h3>명암이 부족했던 초기 화풍</h3>
+          <p>수묵담채화풍의 시험 렌더링에서는 대상의 굴곡과 부피가 충분히 드러나지 않았습니다. 진채화의 채색 표현을 섞어 입체감을 보완하는 방향으로 조정했습니다.</p>
+          <h3>테스트 영상과 최종 렌더의 분리</h3>
+          <p>Blender 영상과 어셋, 스타일 프레임을 참고 자료로 준비해 산수화풍 영상의 프롬프트를 작성했습니다. 먼저 480p로 테스트한 뒤 프롬프트를 수정하고, 최종 영상은 1080p로 렌더링했습니다.</p>
+          <h3>웹에서의 이동과 대사 전달</h3>
+          <p>스크롤에 따라 재생되는 영상 구간을 조정하고, 모바일에서는 쓸어 올리는 동작으로 이동하도록 구현했습니다. 대사가 재생될 때에는 환경음의 음량을 낮춰 목소리가 묻히지 않게 했습니다.</p>
         </div>
       </section>
     </main>

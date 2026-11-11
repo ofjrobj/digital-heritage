@@ -70,3 +70,5 @@
 .curation-viewing-flow strong{font:14px/1.8 var(--story-sans,sans-serif);color:#66665d;word-break:keep-all}
 .curation-flow-arrow{color:#77776c;font-size:22px}
 @media(max-width:560px){.curation-viewing-flow div>span{font-size:21px}.curation-viewing-flow strong{font-size:12px}}
+
+@media(min-width:761px){.curation-section-heading{grid-template-rows:auto 1fr;align-items:start}}

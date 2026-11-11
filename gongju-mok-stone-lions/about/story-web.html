@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Story 웹 구현 — 봉황동 석사자</title>
-  <meta name="description" content="스크롤로 공주목의 풍경을 탐색하고, 인물의 이야기에서 석사자의 특징을 발견하도록 설계한 Story의 웹 구현 과정을 소개합니다.">
+  <meta name="description" content="Codex로 스크롤 이동·대사·내레이션을 연결하고, 피드백에 따라 재생 속도와 모바일 터치 조작을 조정한 Story 웹 구현 과정입니다.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css?v=requested-fixes-20261028-v7">
   <link rel="stylesheet" href="./about.css?v=approved-fonts-20261028">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
@@ -14,12 +14,12 @@
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="Story 웹 구현 — 봉황동 석사자">
-  <meta property="og:description" content="스크롤로 공주목의 풍경을 탐색하고, 인물의 이야기에서 석사자의 특징을 발견하도록 설계한 Story의 웹 구현 과정을 소개합니다.">
+  <meta property="og:description" content="Codex로 스크롤 이동·대사·내레이션을 연결하고, 피드백에 따라 재생 속도와 모바일 터치 조작을 조정한 Story 웹 구현 과정입니다.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/story-web.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/merchant-final.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Story 웹 구현 — 봉황동 석사자">
-  <meta name="twitter:description" content="스크롤로 공주목의 풍경을 탐색하고, 인물의 이야기에서 석사자의 특징을 발견하도록 설계한 Story의 웹 구현 과정을 소개합니다.">
+  <meta name="twitter:description" content="Codex로 스크롤 이동·대사·내레이션을 연결하고, 피드백에 따라 재생 속도와 모바일 터치 조작을 조정한 Story 웹 구현 과정입니다.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/merchant-final.png">
 <link rel="stylesheet" href="./page-motion.css?v=ui-motion-1s"><script defer src="./page-motion.js?v=20261028"></script><link rel="stylesheet" href="../assets/ui-motion.css?v=ui-motion-audit-20261028">
   <link rel="stylesheet" href="./production-tools.css?v=20261030">
@@ -36,13 +36,34 @@
         <p class="eyebrow">Story · 05</p>
         <h1>Story 웹 구현</h1>
         <p class="production-tools">사용 도구 · Codex · HTML · CSS · JavaScript</p>
-        <p class="material-intro">관람객이 이동 속도와 머무는 시간을 정할 수 있도록 영상 재생을 스크롤과 연결했습니다. 모바일에서는 화면을 아래에서 위로 쓸어 올려 다음 장면으로 이동할 수 있습니다.</p>
-        <p class="material-intro">인물에게 다가가면 클로즈업 장면에서 대사 패널을 읽을 수 있습니다. 내레이션은 장면의 배경과 상황을 설명하고, 인물의 말에서 얻은 단서는 Index의 3D 모델에서 확인하도록 구성했습니다.</p>
+        <p class="material-intro">Codex를 활용해 영상 재생, 대사 패널, 내레이션을 웹의 조작 흐름으로 연결했습니다. 인물에게 다가가 이야기를 듣고, 거기서 얻은 단서를 Index의 3D 모델에서 확인하도록 구성했습니다.</p>
       </header>
       <figure class="story-preview">
         <iframe src="../?embed=story" title="화면 UI와 소리를 제외한 Story 체험" loading="lazy"></iframe>
         <figcaption>이 미리보기에서는 UI와 소리를 제외한 장면의 흐름을 살펴볼 수 있습니다. 프레임 안에서 스크롤하거나 드래그해 이동할 수 있습니다.</figcaption>
       </figure>
+      <section class="section" aria-labelledby="story-interaction-title">
+        <div><p class="number">01 / INTERACTION</p><h2 id="story-interaction-title">이동과 대화를 연결한 방식</h2></div>
+        <div class="copy">
+          <h3>머무는 시간을 정하는 스크롤</h3>
+          <p>장면을 살펴보고 대사를 읽는 데 필요한 시간은 사람마다 다릅니다. 관람객이 이동 속도와 머무는 시간을 정할 수 있도록 영상 재생을 스크롤에 연결했습니다. 모바일에서는 화면을 아래에서 위로 쓸어 올려 다음 장면으로 이동할 수 있습니다.</p>
+          <h3>클로즈업과 대사 패널</h3>
+          <p>주요 인물에게 다가가면 화면이 페이드아웃된 뒤 클로즈업 장면으로 전환되도록 했습니다. 이때 대사 패널을 함께 표시해, 소리를 켜지 않아도 인물의 말을 읽으며 내용을 파악할 수 있게 했습니다.</p>
+          <h3>상황을 짚는 내레이션</h3>
+          <p>공주목을 처음 접하는 관람객을 위해 장면의 배경과 상황을 설명하는 내레이션 패널을 넣었습니다. 인물의 대사만으로 전달하기 어려운 맥락을 짚고, 이야기에서 얻은 단서를 Index에서 살펴보는 흐름으로 이어지도록 구성했습니다.</p>
+        </div>
+      </section>
+      <section class="section" aria-labelledby="story-testing-title">
+        <div><p class="number">02 / TESTING</p><h2 id="story-testing-title">피드백을 반영한 조작 조정</h2></div>
+        <div class="copy">
+          <h3>스크롤과 재생 속도</h3>
+          <p>테스트 과정에서 스크롤 한 번에 약 2초 분량의 영상이 재생되도록 조정했습니다. 한 인물에서 다음 인물까지 약 5~9회의 스크롤로 이동할 수 있도록 재생 구간을 맞췄습니다.</p>
+          <h3>모바일 터치 조작</h3>
+          <p>QR 코드로 접속하는 상황을 고려해 아이폰에서 터치 조작을 적용했습니다. PC의 스크롤 대신 화면을 아래에서 위로 쓸어 올리는 동작으로 장면을 넘기도록 했습니다.</p>
+          <h3>로딩 상태 안내</h3>
+          <p>첫 화면이 늦게 나타나면 사용자가 사이트가 멈췄다고 여길 수 있었습니다. 콘텐츠를 불러오는 중임을 알 수 있도록 로딩 안내를 표시하는 방안을 개선 사항으로 정리했습니다.</p>
+        </div>
+      </section>
     </main>
     <footer class="material-footer">
       <a href="./#step-story-web">뒤로가기</a>
