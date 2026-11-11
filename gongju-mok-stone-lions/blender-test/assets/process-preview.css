@@ -1,0 +1,33 @@
+/* The process embed shows only the original Blender scene and an empty panel guide. */
+html[data-process-preview="true"],
+html[data-process-preview="true"] body {
+  width:100%;height:100%;min-height:0!important;margin:0!important;
+  overflow:hidden!important;background:#dedfd1;touch-action:none;
+}
+html[data-process-preview="true"] body > :not(#blenderSpatialView):not(#cinemaDialogue) {
+  display:none!important;
+}
+html[data-process-preview="true"] body[data-process-preview="true"] #blenderSpatialView {
+  position:fixed!important;inset:0!important;z-index:1!important;
+  width:100%!important;height:100%!important;pointer-events:none!important;
+}
+html[data-process-preview="true"] body[data-process-preview="true"] #blenderSpatialView canvas {
+  display:block!important;width:100%!important;height:100%!important;
+}
+html[data-process-preview="true"] body[data-process-preview="true"] #cinemaDialogue {
+  display:block!important;position:fixed!important;z-index:2!important;
+  left:3.57%!important;right:3.57%!important;bottom:2.4%!important;top:auto!important;
+  width:auto!important;height:24vh!important;min-height:0!important;max-height:none!important;
+  margin:0!important;padding:0!important;box-sizing:border-box!important;
+  border:1px solid rgba(65,75,65,.55)!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;
+  opacity:1!important;transform:none!important;pointer-events:none!important;
+}
+html[data-process-preview="true"] body[data-process-preview="true"] #cinemaDialogue[hidden] {
+  display:none!important;
+}
+html[data-process-preview="true"] body[data-process-preview="true"] #cinemaDialogue::before,
+html[data-process-preview="true"] body[data-process-preview="true"] #cinemaDialogue::after,
+html[data-process-preview="true"] body[data-process-preview="true"] #cinemaDialogue * {
+  display:none!important;content:none!important;
+}

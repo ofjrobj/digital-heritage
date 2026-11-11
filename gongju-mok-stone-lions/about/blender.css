@@ -8,7 +8,7 @@
 .blender-figure figcaption{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 20px;margin-top:14px;font:13px/1.85 var(--story-sans,sans-serif);color:#77776c}
 .blender-credit{font-size:11px}
 .blender-comparison{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}
-.blender-comparison .material-image{display:block;aspect-ratio:9/7}
+.blender-comparison .material-image{display:block;aspect-ratio:708/440}
 .blender-comparison img{width:100%;height:100%;object-fit:contain}
 .blender-route{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 28px;padding:0;margin:36px 0 0}
 .blender-route li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;padding:22px 0;border-top:1px solid var(--line)}
@@ -19,8 +19,8 @@
 .blender-frame-grid li,.blender-frame{min-width:0;margin:0}
 .blender-frame figcaption{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;margin:12px 0 0;font-size:clamp(11px,1.4vw,16px);line-height:1.7;color:#55554e;word-break:normal;overflow-wrap:anywhere}
 .blender-frame .frame-number{flex:none;font:12px/1.8 var(--story-sans,sans-serif);color:#77776c}
-.blender-frame-window{position:relative;overflow:hidden;width:100%;aspect-ratio:766/431;background:#deded9}
-.blender-frame-window img{position:absolute;display:block;max-width:none;width:calc(3200 * 100% / 766);height:auto;left:calc(var(--frame-x) * -100% / 766);top:calc(var(--frame-y) * -100% / 431)}
+.blender-frame-window{position:relative;overflow:hidden;width:100%;aspect-ratio:16/9;background:#deded9}
+.blender-frame-window img{display:block;width:100%;height:100%;object-fit:cover}
 .blender-frames-related{margin:28px 0 0;font:13px/1.8 var(--story-sans,sans-serif);color:#77776c}
 @media(max-width:600px){.blender-frame .frame-number{font-size:10px}}
 @media(max-width:760px){
@@ -40,7 +40,7 @@
   .blender-route li{padding:18px 0}
 }
 
-.blender-map-comparison{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,2.2vw,28px)}
+.blender-map-comparison{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,2.2vw,28px)}
 .blender-map-comparison .material-image{display:grid;place-items:center;aspect-ratio:3/2}
 .blender-map-comparison img{width:100%;height:100%;object-fit:contain}
 .blender-map-comparison figcaption{display:block;font-size:clamp(11px,1.3vw,13px);word-break:keep-all;overflow-wrap:anywhere}
@@ -54,3 +54,5 @@
 .blender-web-preview iframe{display:block;width:100%;height:clamp(320px,62vw,720px);border:1px solid var(--line);background:#e8e8e6}
 .blender-web-preview figcaption{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px 24px;margin-top:14px;font:13px/1.85 var(--story-sans,sans-serif);color:#77776c}
 @media(max-width:760px){.blender-methods{grid-template-columns:1fr;gap:20px;margin-top:28px}}
+
+@media(max-width:560px){.blender-map-comparison{grid-template-columns:1fr}.blender-map-comparison .material-image{aspect-ratio:auto}.blender-map-comparison img{height:auto}}

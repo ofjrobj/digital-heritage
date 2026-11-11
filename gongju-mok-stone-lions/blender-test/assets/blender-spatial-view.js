@@ -4,6 +4,7 @@ import {prepareEndingDaylight} from './ending-daylight.js?v=74-route4';
 import {GLTFLoader} from './vendor/GLTFLoader.js';
 import {syncCinemaFrame} from './cinema-frame.js?v=74-route4';
 import {prepareTownAmbience} from './town-ambience.js?v=74-route4';
+const processPreview=document.documentElement.dataset.processPreview==='true';
 const cv=p=>new THREE.Vector3(p[0],p[2],-p[1]);
 const conversion=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),-Math.PI/2);
 const quat=q=>conversion.clone().multiply(new THREE.Quaternion(q[1],q[2],q[3],q[0]));
@@ -33,7 +34,7 @@ town.traverse(o=>{
 });
 const motion=await fetch('./assets/town-motion.json?v=74-route4').then(r=>r.json());const tracks=motion.tracks.map(t=>({...t,o:byName.get(canonical(t.name))})).filter(t=>t.o);
 const walkers=(motion.walkers||[]).map(t=>({...t,o:byName.get(canonical(t.name))})).filter(t=>t.o);
-const ambience=prepareTownAmbience(camera,walkers);
+const ambience=processPreview?{stop(){},update(){}}:prepareTownAmbience(camera,walkers);
 const seasonalGeometry=new THREE.BufferGeometry();const seasonalPositions=new Float32Array(560*3),seasonalSeeds=[];
 for(let i=0;i<560;i++)seasonalSeeds.push({x:16+((i*17.719)%33),z:-77-((i*9.719)%26),phase:(i*.618)%1});
 seasonalGeometry.setAttribute('position',new THREE.BufferAttribute(seasonalPositions,3));
@@ -98,7 +99,7 @@ document.addEventListener('story-home',()=>{host.style.display='none';ambience.s
 document.addEventListener('archive-open',()=>{host.style.display='none';ambience.stop();});
 document.addEventListener('archive-story',()=>{if(lastPose)show();});
 let last=0,time=0;
-function tick(now){requestAnimationFrame(tick);const dt=last?Math.min(.08,(now-last)/1000):0;last=now;if(document.hidden||host.style.display==='none'||document.body.classList.contains('archive-active'))return;time+=dt;
+function tick(now){requestAnimationFrame(tick);const dt=last?Math.min(.08,(now-last)/1000):0;last=now;if(document.hidden||host.style.display==='none'||document.body.classList.contains('archive-active'))return;if(processPreview&&document.body.dataset.processMotionTime!==undefined)time=Number(document.body.dataset.processMotionTime)||0;else time+=dt;
  for(const t of tracks){const f=((time+(t.phase||0))%motion.period)/motion.period*(t.frames.length-1),i=Math.min(t.frames.length-2,Math.floor(f)),u=f-i,a=t.frames[i],b=t.frames[i+1];if(t.location)t.o.position.copy(cv(a.p).lerp(cv(b.p),u));if(t.rotation){const q1=new THREE.Quaternion(a.q[1],a.q[3],-a.q[2],a.q[0]),q2=new THREE.Quaternion(b.q[1],b.q[3],-b.q[2],b.q[0]);t.o.quaternion.copy(q1).slerp(q2,u);}}
  for(const w of walkers){const f=((time+w.phase)%w.period)/w.period*(w.frames.length-1),i=Math.min(w.frames.length-2,Math.floor(f)),u=f-i,a=w.frames[i],b=w.frames[i+1];w.o.position.copy(cv(a.p).lerp(cv(b.p),u));w.o.quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),a.yaw+(b.yaw-a.yaw)*u);w.walking=!!a.walking;}
  if(dialogueMix)fitDialogue();host.dataset.lionsVisible=String(lions.filter(o=>o.visible).length);if(mode==='ending')seasons(endingTime);ambience.update(time,dt);renderer.render(scene,camera);host.dataset.drawCalls=String(renderer.info.render.calls);host.dataset.triangles=String(renderer.info.render.triangles);host.dataset.motionTime=time.toFixed(2);
