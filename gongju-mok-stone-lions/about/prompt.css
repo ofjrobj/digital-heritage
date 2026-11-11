@@ -1,5 +1,6 @@
 .prompt-page{--ai-paper:#d9ded5;--ai-ink:#42503d}
 .prompt-section{padding:44px 0;border-top:1px solid var(--line)}
+.prompt-section > .material-intro{margin:0 0 30px}
 .prompt-section .number{margin:0}
 .prompt-section h2{margin:12px 0 30px;font-size:29px;font-weight:400}
 .prompt-page svg{fill:none;stroke:currentColor;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}

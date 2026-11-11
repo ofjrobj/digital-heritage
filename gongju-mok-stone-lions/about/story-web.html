@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Story 웹 구현 — 봉황동 석사자</title>
-  <meta name="description" content="스크롤과 드래그로 둘러보는 공주목 Story.">
+  <meta name="description" content="스크롤로 공주목의 풍경을 탐색하고, 인물의 이야기에서 석사자의 특징을 발견하도록 설계한 Story의 웹 구현 과정을 소개합니다.">
   <link rel="stylesheet" href="./assets/fonts/fonts.css?v=requested-fixes-20261028-v7">
   <link rel="stylesheet" href="./about.css?v=approved-fonts-20261028">
   <link rel="stylesheet" href="./materials.css?v=materials-pages-v1">
@@ -14,12 +14,12 @@
   <meta property="og:locale" content="ko_KR">
   <meta property="og:site_name" content="봉황동 석사자">
   <meta property="og:title" content="Story 웹 구현 — 봉황동 석사자">
-  <meta property="og:description" content="스크롤과 드래그로 둘러보는 공주목 Story.">
+  <meta property="og:description" content="스크롤로 공주목의 풍경을 탐색하고, 인물의 이야기에서 석사자의 특징을 발견하도록 설계한 Story의 웹 구현 과정을 소개합니다.">
   <meta property="og:url" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/story-web.html">
   <meta property="og:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/merchant-final.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Story 웹 구현 — 봉황동 석사자">
-  <meta name="twitter:description" content="스크롤과 드래그로 둘러보는 공주목 Story.">
+  <meta name="twitter:description" content="스크롤로 공주목의 풍경을 탐색하고, 인물의 이야기에서 석사자의 특징을 발견하도록 설계한 Story의 웹 구현 과정을 소개합니다.">
   <meta name="twitter:image" content="https://ofjrobj.github.io/digital-heritage/gongju-mok-stone-lions/about/assets/merchant-final.png">
 <link rel="stylesheet" href="./page-motion.css?v=ui-motion-1s"><script defer src="./page-motion.js?v=20261028"></script><link rel="stylesheet" href="../assets/ui-motion.css?v=ui-motion-audit-20261028">
   <link rel="stylesheet" href="./production-tools.css?v=20261030">
@@ -35,11 +35,13 @@
       <header class="story-preview-header">
         <p class="eyebrow">Story · 06</p>
         <h1>Story 웹 구현</h1>
-        <p class="production-tools">사용 도구 · Codex</p>
+        <p class="production-tools">사용 도구 · Codex · HTML · CSS · JavaScript</p>
+        <p class="material-intro">관람객이 장면을 살펴보고 대사를 읽는 속도에 맞춰 이동할 수 있도록 영상 재생을 스크롤과 연결했습니다. 모바일에서는 화면을 쓸어 올리는 동작으로 다음 장면을 탐색합니다.</p>
+        <p class="material-intro">마을의 인물에게 다가가면 클로즈업 장면으로 전환되고 대사 패널이 나타납니다. 인물의 말에서 얻은 단서는 두 석사자를 만난 뒤 Index에서 직접 확인하도록 구성했습니다.</p>
       </header>
       <figure class="story-preview">
         <iframe src="../?embed=story" title="화면 UI와 소리를 제외한 Story 체험" loading="lazy"></iframe>
-        <figcaption>프레임 안에서 스크롤하거나 드래그해 이동합니다.</figcaption>
+        <figcaption>이 미리보기에서는 UI와 소리를 제외한 장면의 흐름을 살펴볼 수 있습니다. 프레임 안에서 스크롤하거나 드래그해 이동합니다.</figcaption>
       </figure>
     </main>
     <footer class="material-footer">

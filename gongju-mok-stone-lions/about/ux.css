@@ -1,5 +1,7 @@
 .ux-hero { padding: 80px 0 52px; }
 .ux-hero .eyebrow { margin: 0 0 22px; }
+.ux-hero > .copy { max-width: 46em; margin-top: 24px; }
+.ux-track > .copy { max-width: 46em; margin-bottom: 26px; }
 .ux-hero h1 { margin: 0; font-size: clamp(34px, 4.5vw, 56px); line-height: 1.45; letter-spacing: -.04em; font-weight: 400; }
 .ux-track { padding: 42px 0 56px; border-bottom: 1px solid var(--line); }
 .ux-track-heading { margin: 0 0 26px; }
