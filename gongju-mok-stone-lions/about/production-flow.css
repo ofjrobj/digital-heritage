@@ -23,6 +23,8 @@
 .making-step-number{font:300 11px/1.5 var(--story-sans,sans-serif);color:#777;letter-spacing:.04em}
 .making-step-label{min-width:0;word-break:keep-all;overflow-wrap:anywhere}
 .making-merge::before{content:"";position:absolute;bottom:100%;left:50%;height:18px;border-left:1px solid var(--flow-line)}
+.making-common{margin-top:36px}
+.making-common::before{content:"";position:absolute;bottom:100%;left:50%;height:18px;border-left:1px solid var(--flow-line)}
 .making-outputs{margin-top:36px;padding:8px 0}
 .making-outputs::before{content:"";position:absolute;bottom:100%;left:50%;height:18px;border-left:1px solid var(--flow-line)}
 .making-outputs h3::before{content:"";position:absolute;top:-5px;left:calc(50% - 3px);width:5px;height:5px;border-right:1px solid var(--flow-line);border-bottom:1px solid var(--flow-line);transform:rotate(45deg)}
