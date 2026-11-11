@@ -1,0 +1,22 @@
+.portfolio-figure{margin:28px 0;min-width:0}
+.portfolio-figure a{display:block}
+.portfolio-figure img{display:block;width:100%;height:auto;max-height:560px;object-fit:contain;object-position:center;background:transparent}
+.portfolio-figure figcaption{margin-top:10px;color:#77776c;font:13px/1.8 var(--story-sans,sans-serif);word-break:keep-all}
+.portfolio-figure a:focus-visible{outline:1px solid #785b43;outline-offset:5px}
+.portfolio-pair,.portfolio-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin:28px 0}
+.portfolio-gallery{grid-template-columns:repeat(3,minmax(0,1fr))}
+.portfolio-pair>.portfolio-figure,.portfolio-gallery>.portfolio-figure{margin:0}
+.portfolio-pair img{max-height:400px}
+.portfolio-ui img{border:1px solid var(--line);background:#e8e8e6}
+.portfolio-diagram img{max-height:300px;mix-blend-mode:multiply}
+.ux-features{margin:0 0 30px}
+.ux-feature{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:40px;align-items:center;padding:26px 0;border-top:1px solid var(--line)}
+.ux-feature:first-child{padding-top:0;border-top:0}
+.ux-feature .copy h3{margin:0 0 12px;font-size:23px;font-weight:300}
+.ux-feature .copy p{margin:0}
+.ux-feature .portfolio-figure{margin:0}
+.ux-page #ui-design>.copy{max-width:none}
+.ux-page #ui-design>.copy>p{max-width:46em}
+.curation-section>.portfolio-figure,.curation-section>.portfolio-pair{margin-bottom:0}
+@media(max-width:760px){.portfolio-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.ux-feature{grid-template-columns:1fr;gap:20px;padding:28px 0}.ux-feature .copy h3{font-size:21px}.portfolio-diagram img{max-height:280px}.portfolio-figure figcaption{font-size:12px}}
+@media(max-width:560px){.portfolio-pair,.portfolio-gallery{grid-template-columns:1fr;gap:24px}.portfolio-figure{margin:24px 0}.portfolio-pair img{max-height:420px}}
